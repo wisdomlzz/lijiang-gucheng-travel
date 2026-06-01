@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "xunfei": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "讯飞星火",
+      "options": {
+        "baseURL": "https://maas-coding-api.cn-huabei-1.xf-yun.com/v2"
+      },
+      "models": {
+        "astron-code-latest": {
+          "name": "Astron Code Latest"
+        }
+      }
+    }
+  }
+}

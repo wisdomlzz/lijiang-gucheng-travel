@@ -26,7 +26,7 @@ const DEFAULT_GRID_ITEMS: GridItemConfig[] = [
   { id: "g16", imageUrl: ICON_DONE, label: "一键投诉", route: "/c/complaint", page: 2, visible: true, order: 15 },
   // 第 3 页（order 16-17）
   { id: "g17", imageUrl: ICON_TODO, label: "联票套餐", route: "crmeb", page: 3, visible: true, order: 16 },
-  { id: "g18", imageUrl: ICON_DONE, label: "随手拍", route: "/c/photo-records", page: 3, visible: true, order: 17 },
+  { id: "g18", imageUrl: ICON_DONE, label: "随手拍", route: "/c/photo-report", page: 3, visible: true, order: 17 },
 ];
 
 const DEFAULT_BANNERS: BannerConfig[] = [

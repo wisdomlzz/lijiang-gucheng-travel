@@ -1,6 +1,7 @@
+import { useState } from "react";
 import {
   ChevronRight, MapPin, Bell, MessageSquareWarning,
-  Heart, Edit3, Scan, Camera, Store,
+  Heart, Edit3, Scan, Camera, Store, Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
@@ -12,6 +13,7 @@ import { useAuthStore } from "../../shared/stores/auth-store";
 export function ProfilePage() {
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
+  const [showFabMenu, setShowFabMenu] = useState(false);
   const pendingServiceOrders = useConvenienceStore(
     (s) => s.orders.filter((o) => o.status !== "S40" && o.status !== "S50").length
   );
@@ -182,6 +184,37 @@ export function ProfilePage() {
         </div>
       </div>
 
+      {/* 浮动新增按钮 */}
+      {showFabMenu && (
+        <div className="fixed inset-0 z-50" onClick={() => setShowFabMenu(false)} />
+      )}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        {showFabMenu && (
+          <>
+            <button
+              onClick={() => { setShowFabMenu(false); navigate("/c/photo-report"); }}
+              className="flex items-center gap-2 px-4 h-11 rounded-full bg-white shadow-lg text-[14px] text-text-body font-medium active:scale-95 transition-transform"
+            >
+              <Camera size={16} className="text-[#A855F7]" />
+              随手拍上报
+            </button>
+            <button
+              onClick={() => { setShowFabMenu(false); navigate("/c/complaint"); }}
+              className="flex items-center gap-2 px-4 h-11 rounded-full bg-white shadow-lg text-[14px] text-text-body font-medium active:scale-95 transition-transform"
+            >
+              <MessageSquareWarning size={16} className="text-[#1E3A5F]" />
+              提交投诉
+            </button>
+          </>
+        )}
+        <button
+          onClick={() => setShowFabMenu(!showFabMenu)}
+          className="w-14 h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+          style={{ boxShadow: "0 4px 20px rgba(37, 99, 235, 0.4)" }}
+        >
+          <Plus size={24} className={`transition-transform ${showFabMenu ? "rotate-45" : ""}`} />
+        </button>
+      </div>
     </div>
   );
 }
