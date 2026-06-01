@@ -1,0 +1,3103 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 19,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "src/c-end/pages/AIChatPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 750,
+      "nonEmptyLines": 693,
+      "functions": [
+        {
+          "name": "getMockResponse",
+          "startLine": 173,
+          "endLine": 255,
+          "params": [
+            "input"
+          ]
+        },
+        {
+          "name": "ThinkingBubble",
+          "startLine": 260,
+          "endLine": 279,
+          "params": []
+        },
+        {
+          "name": "RouteCardItem",
+          "startLine": 281,
+          "endLine": 311,
+          "params": [
+            "{ card }"
+          ]
+        },
+        {
+          "name": "MerchantCardItem",
+          "startLine": 313,
+          "endLine": 349,
+          "params": [
+            "{ card }"
+          ]
+        },
+        {
+          "name": "ProductCardItem",
+          "startLine": 351,
+          "endLine": 377,
+          "params": [
+            "{ card }"
+          ]
+        },
+        {
+          "name": "AIBubble",
+          "startLine": 379,
+          "endLine": 439,
+          "params": [
+            "{ message }"
+          ]
+        },
+        {
+          "name": "UserBubble",
+          "startLine": 441,
+          "endLine": 449,
+          "params": [
+            "{ message }"
+          ]
+        },
+        {
+          "name": "ConfirmDialog",
+          "startLine": 454,
+          "endLine": 486,
+          "params": [
+            "{\n  message,\n  onConfirm,\n  onCancel,\n}"
+          ]
+        },
+        {
+          "name": "newId",
+          "startLine": 492,
+          "endLine": 494,
+          "params": []
+        },
+        {
+          "name": "AIChatPage",
+          "startLine": 504,
+          "endLine": 750,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AIChatPage",
+          "line": 504,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getMockResponse",
+          "callee": "input.toLowerCase",
+          "lineNumber": 178
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 180
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 180
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 180
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 188
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 188
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 188
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 196
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 196
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 196
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 209
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 210
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 211
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 212
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 222
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 223
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 224
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 225
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 234
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 234
+        },
+        {
+          "caller": "getMockResponse",
+          "callee": "q.includes",
+          "lineNumber": 234
+        },
+        {
+          "caller": "ThinkingBubble",
+          "callee": "[0, 1, 2].map",
+          "lineNumber": 268
+        },
+        {
+          "caller": "RouteCardItem",
+          "callee": "useNavigate",
+          "lineNumber": 282
+        },
+        {
+          "caller": "RouteCardItem",
+          "callee": "navigate",
+          "lineNumber": 285
+        },
+        {
+          "caller": "MerchantCardItem",
+          "callee": "useNavigate",
+          "lineNumber": 314
+        },
+        {
+          "caller": "MerchantCardItem",
+          "callee": "navigate",
+          "lineNumber": 317
+        },
+        {
+          "caller": "ProductCardItem",
+          "callee": "window.open",
+          "lineNumber": 354
+        },
+        {
+          "caller": "renderText",
+          "callee": "text.split(\"\\n\").map",
+          "lineNumber": 381
+        },
+        {
+          "caller": "renderText",
+          "callee": "text.split",
+          "lineNumber": 381
+        },
+        {
+          "caller": "renderText",
+          "callee": "line.split",
+          "lineNumber": 382
+        },
+        {
+          "caller": "renderText",
+          "callee": "parts.map",
+          "lineNumber": 385
+        },
+        {
+          "caller": "renderText",
+          "callee": "text.split",
+          "lineNumber": 394
+        },
+        {
+          "caller": "AIBubble",
+          "callee": "renderText",
+          "lineNumber": 413
+        },
+        {
+          "caller": "AIBubble",
+          "callee": "(message.cards as RouteCard[]).map",
+          "lineNumber": 423
+        },
+        {
+          "caller": "AIBubble",
+          "callee": "(message.cards as MerchantCard[]).map",
+          "lineNumber": 427
+        },
+        {
+          "caller": "AIBubble",
+          "callee": "(message.cards as ProductCard[]).map",
+          "lineNumber": 431
+        },
+        {
+          "caller": "newId",
+          "callee": "Date.now",
+          "lineNumber": 493
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useState",
+          "lineNumber": 505
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useState",
+          "lineNumber": 506
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useState",
+          "lineNumber": 507
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useRef",
+          "lineNumber": 508
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useRef",
+          "lineNumber": 509
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useRef",
+          "lineNumber": 510
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useCallback",
+          "lineNumber": 512
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setTimeout",
+          "lineNumber": 513
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "chatRef.current?.scrollTo",
+          "lineNumber": 514
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useEffect",
+          "lineNumber": 521
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "scrollToBottom",
+          "lineNumber": 522
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useEffect",
+          "lineNumber": 525
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "messages.find",
+          "lineNumber": 526
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "clearInterval",
+          "lineNumber": 533
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "clearInterval",
+          "lineNumber": 539
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setInterval",
+          "lineNumber": 541
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setMessages",
+          "lineNumber": 542
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "prev.findIndex",
+          "lineNumber": 543
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "clearInterval",
+          "lineNumber": 547
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "Math.min",
+          "lineNumber": 551
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "msg.text.slice",
+          "lineNumber": 552
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "clearInterval",
+          "lineNumber": 560
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "messages.map((m) => m.id + m.isThinking).join",
+          "lineNumber": 563
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "messages.map",
+          "lineNumber": 563
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "useCallback",
+          "lineNumber": 565
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "text.trim",
+          "lineNumber": 566
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setInput",
+          "lineNumber": 569
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "newId",
+          "lineNumber": 575
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "newId",
+          "lineNumber": 582
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setMessages",
+          "lineNumber": 591
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setTimeout",
+          "lineNumber": 593
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "getMockResponse",
+          "lineNumber": 594
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setMessages",
+          "lineNumber": 595
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "prev.map",
+          "lineNumber": 596
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "Math.random",
+          "lineNumber": 609
+        },
+        {
+          "caller": "handleSuggestion",
+          "callee": "sendMessage",
+          "lineNumber": 613
+        },
+        {
+          "caller": "handleSend",
+          "callee": "input.trim",
+          "lineNumber": 617
+        },
+        {
+          "caller": "handleSend",
+          "callee": "sendMessage",
+          "lineNumber": 617
+        },
+        {
+          "caller": "clearSession",
+          "callee": "clearInterval",
+          "lineNumber": 622
+        },
+        {
+          "caller": "clearSession",
+          "callee": "setMessages",
+          "lineNumber": 625
+        },
+        {
+          "caller": "clearSession",
+          "callee": "Date.now",
+          "lineNumber": 625
+        },
+        {
+          "caller": "handleInputChange",
+          "callee": "setInput",
+          "lineNumber": 629
+        },
+        {
+          "caller": "handleInputChange",
+          "callee": "Math.min",
+          "lineNumber": 632
+        },
+        {
+          "caller": "handleKeyDown",
+          "callee": "e.preventDefault",
+          "lineNumber": 637
+        },
+        {
+          "caller": "handleKeyDown",
+          "callee": "handleSend",
+          "lineNumber": 638
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "input.trim",
+          "lineNumber": 642
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setShowClearConfirm",
+          "lineNumber": 660
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "messages.map",
+          "lineNumber": 674
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "QUICK_SUGGESTIONS.map",
+          "lineNumber": 694
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "handleSuggestion",
+          "lineNumber": 697
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setShowClearConfirm",
+          "lineNumber": 742
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "clearSession",
+          "lineNumber": 743
+        },
+        {
+          "caller": "AIChatPage",
+          "callee": "setShowClearConfirm",
+          "lineNumber": 745
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 10,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/AppLayout.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 114,
+      "nonEmptyLines": 107,
+      "functions": [
+        {
+          "name": "AppLayout",
+          "startLine": 15,
+          "endLine": 114,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AppLayout",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AppLayout",
+          "callee": "useLocation",
+          "lineNumber": 16
+        },
+        {
+          "caller": "AppLayout",
+          "callee": "useNavigate",
+          "lineNumber": 17
+        },
+        {
+          "caller": "AppLayout",
+          "callee": "navigate",
+          "lineNumber": 31
+        },
+        {
+          "caller": "AppLayout",
+          "callee": "tabs.map",
+          "lineNumber": 51
+        },
+        {
+          "caller": "AppLayout",
+          "callee": "window.open",
+          "lineNumber": 76
+        },
+        {
+          "caller": "AppLayout",
+          "callee": "navigate",
+          "lineNumber": 78
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/CulturalCourtyardDetailPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 517,
+      "nonEmptyLines": 477,
+      "functions": [
+        {
+          "name": "getDistance",
+          "startLine": 14,
+          "endLine": 26,
+          "params": [
+            "lat1",
+            "lng1",
+            "lat2",
+            "lng2"
+          ]
+        },
+        {
+          "name": "CulturalCourtyardDetailPage",
+          "startLine": 30,
+          "endLine": 517,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "CulturalCourtyardDetailPage",
+          "line": 30,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getDistance",
+          "callee": "Math.sin",
+          "lineNumber": 19
+        },
+        {
+          "caller": "getDistance",
+          "callee": "Math.sin",
+          "lineNumber": 19
+        },
+        {
+          "caller": "getDistance",
+          "callee": "Math.cos",
+          "lineNumber": 20
+        },
+        {
+          "caller": "getDistance",
+          "callee": "Math.cos",
+          "lineNumber": 21
+        },
+        {
+          "caller": "getDistance",
+          "callee": "Math.sin",
+          "lineNumber": 22
+        },
+        {
+          "caller": "getDistance",
+          "callee": "Math.sin",
+          "lineNumber": 23
+        },
+        {
+          "caller": "getDistance",
+          "callee": "Math.atan2",
+          "lineNumber": 24
+        },
+        {
+          "caller": "getDistance",
+          "callee": "Math.sqrt",
+          "lineNumber": 24
+        },
+        {
+          "caller": "getDistance",
+          "callee": "Math.sqrt",
+          "lineNumber": 24
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useParams",
+          "lineNumber": 31
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useNavigate",
+          "lineNumber": 32
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 33
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "courtyards.find",
+          "lineNumber": 34
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useState",
+          "lineNumber": 36
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useState",
+          "lineNumber": 37
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useState",
+          "lineNumber": 38
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useState",
+          "lineNumber": 39
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useState",
+          "lineNumber": 40
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useRef",
+          "lineNumber": 41
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useState",
+          "lineNumber": 43
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useState",
+          "lineNumber": 44
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useState",
+          "lineNumber": 45
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useCheckinStore",
+          "lineNumber": 47
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useCheckinStore",
+          "lineNumber": 48
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "visitRecords.filter",
+          "lineNumber": 50
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "myVisits.find",
+          "lineNumber": 51
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "Boolean",
+          "lineNumber": 52
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useEffect",
+          "lineNumber": 54
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "setPlaying",
+          "lineNumber": 56
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "setCurrentTime",
+          "lineNumber": 57
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "setDuration",
+          "lineNumber": 58
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "useEffect",
+          "lineNumber": 62
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "audioRef.current.pause",
+          "lineNumber": 65
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "audioRef.current.pause",
+          "lineNumber": 74
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "audioRef.current.play",
+          "lineNumber": 76
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "setPlaying",
+          "lineNumber": 78
+        },
+        {
+          "caller": "handleTimeUpdate",
+          "callee": "setCurrentTime",
+          "lineNumber": 83
+        },
+        {
+          "caller": "handleLoadedMetadata",
+          "callee": "setDuration",
+          "lineNumber": 89
+        },
+        {
+          "caller": "handleSeek",
+          "callee": "Number",
+          "lineNumber": 94
+        },
+        {
+          "caller": "handleSeek",
+          "callee": "setCurrentTime",
+          "lineNumber": 95
+        },
+        {
+          "caller": "formatTime",
+          "callee": "Math.floor",
+          "lineNumber": 102
+        },
+        {
+          "caller": "formatTime",
+          "callee": "Math.floor",
+          "lineNumber": 103
+        },
+        {
+          "caller": "formatTime",
+          "callee": "m.toString().padStart",
+          "lineNumber": 104
+        },
+        {
+          "caller": "formatTime",
+          "callee": "m.toString",
+          "lineNumber": 104
+        },
+        {
+          "caller": "formatTime",
+          "callee": "sec.toString().padStart",
+          "lineNumber": 104
+        },
+        {
+          "caller": "formatTime",
+          "callee": "sec.toString",
+          "lineNumber": 104
+        },
+        {
+          "caller": "openPlayer",
+          "callee": "setPlayerOpen",
+          "lineNumber": 109
+        },
+        {
+          "caller": "openPlayer",
+          "callee": "setPlaying",
+          "lineNumber": 110
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "setCheckinOpen",
+          "lineNumber": 115
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "setCheckinStatus",
+          "lineNumber": 116
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "navigator.geolocation.getCurrentPosition",
+          "lineNumber": 118
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "getDistance",
+          "lineNumber": 122
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "setCheckinDistance",
+          "lineNumber": 123
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "Math.round",
+          "lineNumber": 123
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "setCheckinStatus",
+          "lineNumber": 126
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "addCheckin",
+          "lineNumber": 130
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "setCheckinStatus",
+          "lineNumber": 139
+        },
+        {
+          "caller": "triggerCheckin",
+          "callee": "setCheckinStatus",
+          "lineNumber": 142
+        },
+        {
+          "caller": "closeCheckinModal",
+          "callee": "setCheckinOpen",
+          "lineNumber": 149
+        },
+        {
+          "caller": "closeCheckinModal",
+          "callee": "setCheckinStatus",
+          "lineNumber": 150
+        },
+        {
+          "caller": "closeCheckinModal",
+          "callee": "setCheckinDistance",
+          "lineNumber": 151
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "navigate",
+          "lineNumber": 159
+        },
+        {
+          "caller": "handleShare",
+          "callee": "navigator.share",
+          "lineNumber": 171
+        },
+        {
+          "caller": "handleShare",
+          "callee": "toast.success",
+          "lineNumber": 180
+        },
+        {
+          "caller": "handleNavigate",
+          "callee": "encodeURIComponent",
+          "lineNumber": 189
+        },
+        {
+          "caller": "handleNavigate",
+          "callee": "encodeURIComponent",
+          "lineNumber": 190
+        },
+        {
+          "caller": "handleNavigate",
+          "callee": "encodeURIComponent",
+          "lineNumber": 191
+        },
+        {
+          "caller": "handleNavigate",
+          "callee": "window.open",
+          "lineNumber": 193
+        },
+        {
+          "caller": "handleNavigate",
+          "callee": "window.open",
+          "lineNumber": 195
+        },
+        {
+          "caller": "handleNavigate",
+          "callee": "encodeURIComponent",
+          "lineNumber": 195
+        },
+        {
+          "caller": "handleCall",
+          "callee": "window.open",
+          "lineNumber": 201
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "navigate",
+          "lineNumber": 216
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "navigate",
+          "lineNumber": 237
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "blocks.map",
+          "lineNumber": 311
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "setPreviewImage",
+          "lineNumber": 325
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "new Date(visitRecord.createdAt).toLocaleDateString",
+          "lineNumber": 365
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "setPreviewImage",
+          "lineNumber": 390
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "setPreviewImage",
+          "lineNumber": 399
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "setPlaying",
+          "lineNumber": 415
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "formatTime",
+          "lineNumber": 428
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "formatTime",
+          "lineNumber": 437
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "setPlayerOpen",
+          "lineNumber": 441
+        },
+        {
+          "caller": "CulturalCourtyardDetailPage",
+          "callee": "new Date().toLocaleDateString",
+          "lineNumber": 471
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/CulturalCourtyardVRPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 58,
+      "nonEmptyLines": 53,
+      "functions": [
+        {
+          "name": "CulturalCourtyardVRPage",
+          "startLine": 6,
+          "endLine": 58,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "CulturalCourtyardVRPage",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "useParams",
+          "lineNumber": 7
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "useNavigate",
+          "lineNumber": 8
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 9
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "courtyards.find",
+          "lineNumber": 10
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "useState",
+          "lineNumber": 11
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "navigate",
+          "lineNumber": 18
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "navigate",
+          "lineNumber": 35
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "document.exitFullscreen",
+          "lineNumber": 44
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "setIsFullscreen",
+          "lineNumber": 45
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "document.documentElement.requestFullscreen",
+          "lineNumber": 47
+        },
+        {
+          "caller": "CulturalCourtyardVRPage",
+          "callee": "setIsFullscreen",
+          "lineNumber": 48
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/CulturalCourtyardsPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 100,
+      "nonEmptyLines": 95,
+      "functions": [
+        {
+          "name": "CulturalCourtyardsPage",
+          "startLine": 8,
+          "endLine": 100,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "CulturalCourtyardsPage",
+          "line": 8,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "useNavigate",
+          "lineNumber": 9
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 10
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "useCheckinStore",
+          "lineNumber": 11
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "checkins.filter((c) => c.userId === \"user-1\").map",
+          "lineNumber": 12
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "checkins.filter",
+          "lineNumber": 12
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "Math.round",
+          "lineNumber": 13
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "courtyards.map",
+          "lineNumber": 32
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "visitedIds.has",
+          "lineNumber": 33
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "navigate",
+          "lineNumber": 41
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "navigate",
+          "lineNumber": 55
+        },
+        {
+          "caller": "CulturalCourtyardsPage",
+          "callee": "navigate",
+          "lineNumber": 77
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/FavoritesPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 103,
+      "nonEmptyLines": 94,
+      "functions": [
+        {
+          "name": "FavoritesPage",
+          "startLine": 25,
+          "endLine": 103,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "FavoritesPage",
+          "line": 25,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "FavoritesPage",
+          "callee": "useNavigate",
+          "lineNumber": 26
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "useFavoriteStore",
+          "lineNumber": 27
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "useFavoriteStore.getState",
+          "lineNumber": 28
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "useState",
+          "lineNumber": 29
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "favorites.filter",
+          "lineNumber": 31
+        },
+        {
+          "caller": "handleItemClick",
+          "callee": "navigate",
+          "lineNumber": 34
+        },
+        {
+          "caller": "handleItemClick",
+          "callee": "navigate",
+          "lineNumber": 35
+        },
+        {
+          "caller": "handleItemClick",
+          "callee": "navigate",
+          "lineNumber": 36
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "tabs.map",
+          "lineNumber": 46
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "setTab",
+          "lineNumber": 49
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "filtered.map",
+          "lineNumber": 66
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "handleItemClick",
+          "lineNumber": 68
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "remove",
+          "lineNumber": 92
+        },
+        {
+          "caller": "FavoritesPage",
+          "callee": "toast.success",
+          "lineNumber": 92
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/HomePage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 344,
+      "nonEmptyLines": 330,
+      "functions": [
+        {
+          "name": "HomePage",
+          "startLine": 73,
+          "endLine": 344,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "HomePage",
+          "line": 73,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HomePage",
+          "callee": "useNavigate",
+          "lineNumber": 74
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useHomepageConfigStore",
+          "lineNumber": 75
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useHomepageConfigStore",
+          "lineNumber": 76
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useMemo",
+          "lineNumber": 78
+        },
+        {
+          "caller": "HomePage",
+          "callee": "rawBanners.filter((b) => b.scene === \"home\" && b.visible).sort",
+          "lineNumber": 79
+        },
+        {
+          "caller": "HomePage",
+          "callee": "rawBanners.filter",
+          "lineNumber": 79
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useMemo",
+          "lineNumber": 82
+        },
+        {
+          "caller": "HomePage",
+          "callee": "rawGridItems.filter",
+          "lineNumber": 83
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useMemo",
+          "lineNumber": 86
+        },
+        {
+          "caller": "HomePage",
+          "callee": "[...visibleGridItems].sort",
+          "lineNumber": 87
+        },
+        {
+          "caller": "HomePage",
+          "callee": "pages.push",
+          "lineNumber": 90
+        },
+        {
+          "caller": "HomePage",
+          "callee": "sorted.slice",
+          "lineNumber": 90
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useState",
+          "lineNumber": 95
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useState",
+          "lineNumber": 96
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useState",
+          "lineNumber": 97
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useRef",
+          "lineNumber": 98
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useRef",
+          "lineNumber": 99
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useRef",
+          "lineNumber": 100
+        },
+        {
+          "caller": "HomePage",
+          "callee": "useEffect",
+          "lineNumber": 102
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setInterval",
+          "lineNumber": 104
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setBannerIdx",
+          "lineNumber": 104
+        },
+        {
+          "caller": "HomePage",
+          "callee": "clearInterval",
+          "lineNumber": 105
+        },
+        {
+          "caller": "handleBannerClick",
+          "callee": "navigate",
+          "lineNumber": 110
+        },
+        {
+          "caller": "HomePage",
+          "callee": "handleBannerClick",
+          "lineNumber": 119
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setBannerHover",
+          "lineNumber": 120
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setBannerHover",
+          "lineNumber": 121
+        },
+        {
+          "caller": "HomePage",
+          "callee": "banners.map",
+          "lineNumber": 154
+        },
+        {
+          "caller": "HomePage",
+          "callee": "e.stopPropagation",
+          "lineNumber": 157
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setBannerIdx",
+          "lineNumber": 157
+        },
+        {
+          "caller": "HomePage",
+          "callee": "Math.abs",
+          "lineNumber": 186
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setGridPage",
+          "lineNumber": 188
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setGridPage",
+          "lineNumber": 190
+        },
+        {
+          "caller": "HomePage",
+          "callee": "Math.abs",
+          "lineNumber": 199
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setGridPage",
+          "lineNumber": 201
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setGridPage",
+          "lineNumber": 203
+        },
+        {
+          "caller": "HomePage",
+          "callee": "gridPages[gridPage].map",
+          "lineNumber": 218
+        },
+        {
+          "caller": "HomePage",
+          "callee": "window.open",
+          "lineNumber": 225
+        },
+        {
+          "caller": "HomePage",
+          "callee": "item.route.endsWith",
+          "lineNumber": 226
+        },
+        {
+          "caller": "HomePage",
+          "callee": "window.open",
+          "lineNumber": 227
+        },
+        {
+          "caller": "HomePage",
+          "callee": "navigate",
+          "lineNumber": 229
+        },
+        {
+          "caller": "HomePage",
+          "callee": "navigate",
+          "lineNumber": 231
+        },
+        {
+          "caller": "HomePage",
+          "callee": "item.label.charAt",
+          "lineNumber": 241
+        },
+        {
+          "caller": "HomePage",
+          "callee": "gridPages.map",
+          "lineNumber": 255
+        },
+        {
+          "caller": "HomePage",
+          "callee": "setGridPage",
+          "lineNumber": 258
+        },
+        {
+          "caller": "HomePage",
+          "callee": "navigate",
+          "lineNumber": 278
+        },
+        {
+          "caller": "HomePage",
+          "callee": "recommendRoutes.map",
+          "lineNumber": 283
+        },
+        {
+          "caller": "HomePage",
+          "callee": "navigate",
+          "lineNumber": 286
+        },
+        {
+          "caller": "HomePage",
+          "callee": "navigate",
+          "lineNumber": 310
+        },
+        {
+          "caller": "HomePage",
+          "callee": "activities.map",
+          "lineNumber": 316
+        },
+        {
+          "caller": "HomePage",
+          "callee": "navigate",
+          "lineNumber": 319
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/InfoCreatePage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 227,
+      "nonEmptyLines": 213,
+      "functions": [
+        {
+          "name": "InfoCreatePage",
+          "startLine": 8,
+          "endLine": 196,
+          "params": []
+        },
+        {
+          "name": "Field",
+          "startLine": 198,
+          "endLine": 208,
+          "params": [
+            "{ label, children }"
+          ]
+        },
+        {
+          "name": "TextInput",
+          "startLine": 210,
+          "endLine": 227,
+          "params": [
+            "{\n  value,\n  onChange,\n  placeholder,\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "InfoCreatePage",
+          "line": 8,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useNavigate",
+          "lineNumber": 9
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 10
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 11
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 13
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 14
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 15
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 16
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 17
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 18
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "useState",
+          "lineNumber": 19
+        },
+        {
+          "caller": "submit",
+          "callee": "toast.error",
+          "lineNumber": 23
+        },
+        {
+          "caller": "submit",
+          "callee": "title.trim",
+          "lineNumber": 26
+        },
+        {
+          "caller": "submit",
+          "callee": "toast.error",
+          "lineNumber": 27
+        },
+        {
+          "caller": "submit",
+          "callee": "phone.trim",
+          "lineNumber": 30
+        },
+        {
+          "caller": "submit",
+          "callee": "toast.error",
+          "lineNumber": 31
+        },
+        {
+          "caller": "submit",
+          "callee": "/^1[3-9]\\d{9}$/.test",
+          "lineNumber": 34
+        },
+        {
+          "caller": "submit",
+          "callee": "phone.trim",
+          "lineNumber": 34
+        },
+        {
+          "caller": "submit",
+          "callee": "toast.error",
+          "lineNumber": 35
+        },
+        {
+          "caller": "submit",
+          "callee": "desc.trim",
+          "lineNumber": 38
+        },
+        {
+          "caller": "submit",
+          "callee": "toast.error",
+          "lineNumber": 39
+        },
+        {
+          "caller": "submit",
+          "callee": "setSubmitting",
+          "lineNumber": 42
+        },
+        {
+          "caller": "submit",
+          "callee": "setTimeout",
+          "lineNumber": 43
+        },
+        {
+          "caller": "submit",
+          "callee": "toast.success",
+          "lineNumber": 44
+        },
+        {
+          "caller": "submit",
+          "callee": "setSubmitting",
+          "lineNumber": 45
+        },
+        {
+          "caller": "submit",
+          "callee": "navigate",
+          "lineNumber": 46
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "navigate",
+          "lineNumber": 62
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "setShowPicker",
+          "lineNumber": 77
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "toast.info",
+          "lineNumber": 111
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "setDesc",
+          "lineNumber": 129
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "e.target.value.slice",
+          "lineNumber": 129
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "setShowPicker",
+          "lineNumber": 158
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "e.stopPropagation",
+          "lineNumber": 162
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "infoCategories.map",
+          "lineNumber": 170
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "setCategory",
+          "lineNumber": 174
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "setShowPicker",
+          "lineNumber": 175
+        },
+        {
+          "caller": "InfoCreatePage",
+          "callee": "setShowPicker",
+          "lineNumber": 186
+        },
+        {
+          "caller": "TextInput",
+          "callee": "onChange",
+          "lineNumber": 222
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/InfoDetailPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 87,
+      "nonEmptyLines": 78,
+      "functions": [
+        {
+          "name": "InfoDetailPage",
+          "startLine": 6,
+          "endLine": 87,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "InfoDetailPage",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "InfoDetailPage",
+          "callee": "useParams",
+          "lineNumber": 7
+        },
+        {
+          "caller": "InfoDetailPage",
+          "callee": "useNavigate",
+          "lineNumber": 8
+        },
+        {
+          "caller": "InfoDetailPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 9
+        },
+        {
+          "caller": "InfoDetailPage",
+          "callee": "news.find",
+          "lineNumber": 10
+        },
+        {
+          "caller": "InfoDetailPage",
+          "callee": "navigate",
+          "lineNumber": 16
+        },
+        {
+          "caller": "InfoDetailPage",
+          "callee": "navigate",
+          "lineNumber": 40
+        },
+        {
+          "caller": "InfoDetailPage",
+          "callee": "item.body.map",
+          "lineNumber": 79
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/MapPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 455,
+      "nonEmptyLines": 430,
+      "functions": [
+        {
+          "name": "MapPage",
+          "startLine": 102,
+          "endLine": 455,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MapPage",
+          "line": 102,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "MapPage",
+          "callee": "useState",
+          "lineNumber": 103
+        },
+        {
+          "caller": "MapPage",
+          "callee": "useState",
+          "lineNumber": 104
+        },
+        {
+          "caller": "MapPage",
+          "callee": "useState",
+          "lineNumber": 105
+        },
+        {
+          "caller": "MapPage",
+          "callee": "useState",
+          "lineNumber": 106
+        },
+        {
+          "caller": "MapPage",
+          "callee": "useState",
+          "lineNumber": 107
+        },
+        {
+          "caller": "MapPage",
+          "callee": "useEffect",
+          "lineNumber": 109
+        },
+        {
+          "caller": "MapPage",
+          "callee": "navigator.geolocation.getCurrentPosition",
+          "lineNumber": 111
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setUserLat",
+          "lineNumber": 112
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setUserLng",
+          "lineNumber": 112
+        },
+        {
+          "caller": "MapPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 118
+        },
+        {
+          "caller": "MapPage",
+          "callee": "categories.find",
+          "lineNumber": 120
+        },
+        {
+          "caller": "MapPage",
+          "callee": "pins.filter",
+          "lineNumber": 121
+        },
+        {
+          "caller": "MapPage",
+          "callee": "parkings.filter",
+          "lineNumber": 125
+        },
+        {
+          "caller": "MapPage",
+          "callee": "parkings.filter",
+          "lineNumber": 126
+        },
+        {
+          "caller": "MapPage",
+          "callee": "categories.map",
+          "lineNumber": 157
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setActiveCat",
+          "lineNumber": 164
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setSelectedPin",
+          "lineNumber": 165
+        },
+        {
+          "caller": "MapPage",
+          "callee": "parkingPins.map",
+          "lineNumber": 202
+        },
+        {
+          "caller": "MapPage",
+          "callee": "getParkingColor",
+          "lineNumber": 204
+        },
+        {
+          "caller": "MapPage",
+          "callee": "getParkingIcon",
+          "lineNumber": 205
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setSelectedPin",
+          "lineNumber": 212
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setDetailTab",
+          "lineNumber": 226
+        },
+        {
+          "caller": "MapPage",
+          "callee": "formatDistance",
+          "lineNumber": 242
+        },
+        {
+          "caller": "MapPage",
+          "callee": "haversineDistance",
+          "lineNumber": 242
+        },
+        {
+          "caller": "MapPage",
+          "callee": "visiblePins.map",
+          "lineNumber": 277
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setSelectedPin",
+          "lineNumber": 281
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setDetailTab",
+          "lineNumber": 282
+        },
+        {
+          "caller": "MapPage",
+          "callee": "(() => {\n                    const Icon = current.icon;\n                    return <Icon size={15} color=\"#fff\" />;\n                  })",
+          "lineNumber": 291
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setSelectedPin",
+          "lineNumber": 346
+        },
+        {
+          "caller": "MapPage",
+          "callee": "detailTabs.map",
+          "lineNumber": 354
+        },
+        {
+          "caller": "MapPage",
+          "callee": "setDetailTab",
+          "lineNumber": 360
+        },
+        {
+          "caller": "MapPage",
+          "callee": "window.open",
+          "lineNumber": 408
+        },
+        {
+          "caller": "MapPage",
+          "callee": "encodeURIComponent",
+          "lineNumber": 409
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/MerchantDetailPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 323,
+      "nonEmptyLines": 303,
+      "functions": [
+        {
+          "name": "getBusinessStatus",
+          "startLine": 14,
+          "endLine": 40,
+          "params": [
+            "hours"
+          ]
+        },
+        {
+          "name": "MerchantDetailPage",
+          "startLine": 48,
+          "endLine": 323,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MerchantDetailPage",
+          "line": 48,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getBusinessStatus",
+          "callee": "hours.match",
+          "lineNumber": 18
+        },
+        {
+          "caller": "getBusinessStatus",
+          "callee": "now.getHours",
+          "lineNumber": 23
+        },
+        {
+          "caller": "getBusinessStatus",
+          "callee": "now.getMinutes",
+          "lineNumber": 23
+        },
+        {
+          "caller": "getBusinessStatus",
+          "callee": "parseInt",
+          "lineNumber": 24
+        },
+        {
+          "caller": "getBusinessStatus",
+          "callee": "parseInt",
+          "lineNumber": 24
+        },
+        {
+          "caller": "getBusinessStatus",
+          "callee": "parseInt",
+          "lineNumber": 25
+        },
+        {
+          "caller": "getBusinessStatus",
+          "callee": "parseInt",
+          "lineNumber": 25
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "useParams",
+          "lineNumber": 49
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "useNavigate",
+          "lineNumber": 50
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "useState",
+          "lineNumber": 51
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "useState",
+          "lineNumber": 52
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 53
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "s.merchants.find",
+          "lineNumber": 53
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "useAuthStore",
+          "lineNumber": 55
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "useFavoriteStore",
+          "lineNumber": 57
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "s.isFavorited",
+          "lineNumber": 57
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "useFavoriteStore",
+          "lineNumber": 58
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "new Date().getFullYear",
+          "lineNumber": 68
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "getMerchantCategoryLabel",
+          "lineNumber": 69
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "getBusinessStatus",
+          "lineNumber": 70
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "navigate",
+          "lineNumber": 79
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "toast.success",
+          "lineNumber": 86
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "toggleFavorite",
+          "lineNumber": 94
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "toast.success",
+          "lineNumber": 95
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "merchant.reviewCount.toLocaleString",
+          "lineNumber": 133
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "window.open",
+          "lineNumber": 160
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "window.open",
+          "lineNumber": 171
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "merchant.gallery.map",
+          "lineNumber": 195
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "setPreviewImage",
+          "lineNumber": 198
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "qualificationBadges.map",
+          "lineNumber": 220
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "merchant.certificates.map",
+          "lineNumber": 235
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "setPreviewCert",
+          "lineNumber": 238
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "window.open",
+          "lineNumber": 264
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "window.open",
+          "lineNumber": 271
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "setPreviewImage",
+          "lineNumber": 281
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "setPreviewImage",
+          "lineNumber": 290
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "setPreviewCert",
+          "lineNumber": 300
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "e.stopPropagation",
+          "lineNumber": 303
+        },
+        {
+          "caller": "MerchantDetailPage",
+          "callee": "setPreviewCert",
+          "lineNumber": 312
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/MyCheckinsPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 76,
+      "nonEmptyLines": 73,
+      "functions": [
+        {
+          "name": "MyCheckinsPage",
+          "startLine": 7,
+          "endLine": 76,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MyCheckinsPage",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "MyCheckinsPage",
+          "callee": "useNavigate",
+          "lineNumber": 8
+        },
+        {
+          "caller": "MyCheckinsPage",
+          "callee": "useCheckinStore",
+          "lineNumber": 9
+        },
+        {
+          "caller": "MyCheckinsPage",
+          "callee": "checkins.filter",
+          "lineNumber": 10
+        },
+        {
+          "caller": "MyCheckinsPage",
+          "callee": "navigate",
+          "lineNumber": 25
+        },
+        {
+          "caller": "MyCheckinsPage",
+          "callee": "myCheckins.map",
+          "lineNumber": 32
+        },
+        {
+          "caller": "MyCheckinsPage",
+          "callee": "navigate",
+          "lineNumber": 64
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/MyPostsPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 138,
+      "nonEmptyLines": 123,
+      "functions": [
+        {
+          "name": "MyPostsPage",
+          "startLine": 44,
+          "endLine": 138,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MyPostsPage",
+          "line": 44,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "MyPostsPage",
+          "callee": "useState",
+          "lineNumber": 45
+        },
+        {
+          "caller": "MyPostsPage",
+          "callee": "useState",
+          "lineNumber": 46
+        },
+        {
+          "caller": "MyPostsPage",
+          "callee": "posts.filter",
+          "lineNumber": 48
+        },
+        {
+          "caller": "handleDelete",
+          "callee": "setPosts",
+          "lineNumber": 51
+        },
+        {
+          "caller": "handleDelete",
+          "callee": "prev.filter",
+          "lineNumber": 51
+        },
+        {
+          "caller": "handleDelete",
+          "callee": "toast.success",
+          "lineNumber": 52
+        },
+        {
+          "caller": "handleResubmit",
+          "callee": "toast.info",
+          "lineNumber": 56
+        },
+        {
+          "caller": "MyPostsPage",
+          "callee": "tabs.map",
+          "lineNumber": 66
+        },
+        {
+          "caller": "MyPostsPage",
+          "callee": "setTab",
+          "lineNumber": 69
+        },
+        {
+          "caller": "MyPostsPage",
+          "callee": "filtered.map",
+          "lineNumber": 86
+        },
+        {
+          "caller": "MyPostsPage",
+          "callee": "handleResubmit",
+          "lineNumber": 122
+        },
+        {
+          "caller": "MyPostsPage",
+          "callee": "handleDelete",
+          "lineNumber": 126
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/NewsPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 109,
+      "nonEmptyLines": 105,
+      "functions": [
+        {
+          "name": "NewsPage",
+          "startLine": 59,
+          "endLine": 109,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "NewsPage",
+          "line": 59,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "NewsPage",
+          "callee": "useNavigate",
+          "lineNumber": 60
+        },
+        {
+          "caller": "NewsPage",
+          "callee": "navigate",
+          "lineNumber": 72
+        },
+        {
+          "caller": "NewsPage",
+          "callee": "newsItems.map",
+          "lineNumber": 81
+        },
+        {
+          "caller": "NewsPage",
+          "callee": "navigate",
+          "lineNumber": 84
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/ParkingPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 465,
+      "nonEmptyLines": 431,
+      "functions": [
+        {
+          "name": "getPosition",
+          "startLine": 21,
+          "endLine": 30,
+          "params": [
+            "id"
+          ]
+        },
+        {
+          "name": "ParkingMarker",
+          "startLine": 32,
+          "endLine": 89,
+          "params": [
+            "{\n  lot,\n  isSelected,\n  onClick,\n  userLat,\n  userLng,\n}"
+          ]
+        },
+        {
+          "name": "ParkingPage",
+          "startLine": 93,
+          "endLine": 465,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ParkingPage",
+          "line": 93,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ParkingMarker",
+          "callee": "formatDistance",
+          "lineNumber": 49
+        },
+        {
+          "caller": "ParkingMarker",
+          "callee": "haversineDistance",
+          "lineNumber": 49
+        },
+        {
+          "caller": "ParkingMarker",
+          "callee": "getPosition",
+          "lineNumber": 51
+        },
+        {
+          "caller": "ParkingMarker",
+          "callee": "lot.name.replace",
+          "lineNumber": 75
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useNavigate",
+          "lineNumber": 94
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 95
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useState",
+          "lineNumber": 97
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useState",
+          "lineNumber": 98
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useState",
+          "lineNumber": 99
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useState",
+          "lineNumber": 100
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useState",
+          "lineNumber": 101
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useCallback",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "haversineDistance",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useMemo",
+          "lineNumber": 111
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "r.sort",
+          "lineNumber": 114
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "getDist",
+          "lineNumber": 114
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "getDist",
+          "lineNumber": 114
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useMemo",
+          "lineNumber": 119
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "sorted.filter",
+          "lineNumber": 121
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "useEffect",
+          "lineNumber": 124
+        },
+        {
+          "caller": "success",
+          "callee": "setUserLat",
+          "lineNumber": 128
+        },
+        {
+          "caller": "success",
+          "callee": "setUserLng",
+          "lineNumber": 129
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "navigator.geolocation.watchPosition",
+          "lineNumber": 132
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "navigator.geolocation.clearWatch",
+          "lineNumber": 136
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setSelectedId",
+          "lineNumber": 140
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setDrawerMode",
+          "lineNumber": 141
+        },
+        {
+          "caller": "openList",
+          "callee": "setDrawerMode",
+          "lineNumber": 145
+        },
+        {
+          "caller": "goBackToList",
+          "callee": "setSelectedId",
+          "lineNumber": 149
+        },
+        {
+          "caller": "goBackToList",
+          "callee": "setDrawerMode",
+          "lineNumber": 150
+        },
+        {
+          "caller": "closeDrawer",
+          "callee": "setDrawerMode",
+          "lineNumber": 154
+        },
+        {
+          "caller": "closeDrawer",
+          "callee": "setSelectedId",
+          "lineNumber": 155
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "parkings.find",
+          "lineNumber": 158
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "parkings.filter",
+          "lineNumber": 160
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "parkings.filter",
+          "lineNumber": 161
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "parkings.map",
+          "lineNumber": 209
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "openDetail",
+          "lineNumber": 214
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "navigate",
+          "lineNumber": 242
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "FILTERS.map",
+          "lineNumber": 250
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "setFilter",
+          "lineNumber": 253
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "e.stopPropagation",
+          "lineNumber": 297
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "filtered.map",
+          "lineNumber": 327
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "getDist",
+          "lineNumber": 328
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "openDetail",
+          "lineNumber": 333
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "window.open",
+          "lineNumber": 446
+        },
+        {
+          "caller": "ParkingPage",
+          "callee": "encodeURIComponent",
+          "lineNumber": 447
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/RouteDetailPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 205,
+      "nonEmptyLines": 194,
+      "functions": [
+        {
+          "name": "RouteDetailPage",
+          "startLine": 9,
+          "endLine": 205,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "RouteDetailPage",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "RouteDetailPage",
+          "callee": "useParams",
+          "lineNumber": 10
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "useNavigate",
+          "lineNumber": 11
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 12
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "guides.find",
+          "lineNumber": 13
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "navigate",
+          "lineNumber": 19
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "navigate",
+          "lineNumber": 36
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "toast.success",
+          "lineNumber": 43
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "navigate",
+          "lineNumber": 106
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "[\n              { time: \"8:00-10:00\", level: \"拥挤\", color: \"#EF4444\", width: \"90%\" },\n              { time: \"10:00-12:00\", level: \"较挤\", color: \"#F59E0B\", width: \"60%\" },\n              { time: \"12:00-14:00\", level: \"舒适\", color: \"#22C55E\", width: \"30%\" },\n              { time: \"14:00-16:00\", level: \"较挤\", color: \"#F59E0B\", width: \"55%\" },\n              { time: \"16:00-18:00\", level: \"舒适\", color: \"#22C55E\", width: \"25%\" },\n            ].map",
+          "lineNumber": 120
+        },
+        {
+          "caller": "RouteDetailPage",
+          "callee": "route.contentBlocks.map",
+          "lineNumber": 163
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/pages/RoutePreviewPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 206,
+      "nonEmptyLines": 192,
+      "functions": [
+        {
+          "name": "RoutePreviewPage",
+          "startLine": 8,
+          "endLine": 206,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "RoutePreviewPage",
+          "line": 8,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "useParams",
+          "lineNumber": 9
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "useNavigate",
+          "lineNumber": 10
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "useContentManageStore",
+          "lineNumber": 11
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "guides.find",
+          "lineNumber": 12
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "useState",
+          "lineNumber": 13
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "navigate",
+          "lineNumber": 19
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "navigate",
+          "lineNumber": 38
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "route.spots\n              .map((s) => `${parseFloat(s.left)},${parseFloat(s.top)}`)\n              .join",
+          "lineNumber": 67
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "route.spots\n              .map",
+          "lineNumber": 67
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "parseFloat",
+          "lineNumber": 68
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "parseFloat",
+          "lineNumber": 68
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "route.spots.map",
+          "lineNumber": 80
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "setActiveIdx",
+          "lineNumber": 86
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "toast.info",
+          "lineNumber": 118
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "setActiveIdx",
+          "lineNumber": 165
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "Math.max",
+          "lineNumber": 165
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "toast.success",
+          "lineNumber": 174
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "setActiveIdx",
+          "lineNumber": 176
+        },
+        {
+          "caller": "RoutePreviewPage",
+          "callee": "toast.success",
+          "lineNumber": 187
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/c-end/routes.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 108,
+      "nonEmptyLines": 104,
+      "functions": [
+        {
+          "name": "ServiceDetailRedirect",
+          "startLine": 5,
+          "endLine": 8,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "cRoutes",
+          "line": 56,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ServiceDetailRedirect",
+          "callee": "useParams",
+          "lineNumber": 6
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/components/common/FormPage.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 31,
+      "nonEmptyLines": 30,
+      "functions": [
+        {
+          "name": "FormPage",
+          "startLine": 6,
+          "endLine": 31,
+          "params": [
+            "{\n  title, backPath, children, onSave, saving,\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FormPage",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "FormPage",
+          "callee": "useNavigate",
+          "lineNumber": 15
+        },
+        {
+          "caller": "FormPage",
+          "callee": "navigate",
+          "lineNumber": 19
+        },
+        {
+          "caller": "FormPage",
+          "callee": "navigate",
+          "lineNumber": 27
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    }
+  ]
+}

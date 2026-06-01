@@ -1,0 +1,43 @@
+{
+  "projectRoot": "/Users/lzz/Desktop/Projects/丽江古城游",
+  "batchFiles": [
+    {"path": "src/desktop/nav.ts", "language": "typescript", "sizeLines": 88, "fileCategory": "code"},
+    {"path": "src/desktop/pages/guides/create.tsx", "language": "typescript", "sizeLines": 91, "fileCategory": "code"},
+    {"path": "src/desktop/pages/guides/edit.tsx", "language": "typescript", "sizeLines": 100, "fileCategory": "code"},
+    {"path": "src/desktop/pages/news/create.tsx", "language": "typescript", "sizeLines": 101, "fileCategory": "code"},
+    {"path": "src/desktop/pages/news/edit.tsx", "language": "typescript", "sizeLines": 116, "fileCategory": "code"},
+    {"path": "src/desktop/pages/scenic-news/create.tsx", "language": "typescript", "sizeLines": 113, "fileCategory": "code"},
+    {"path": "src/desktop/pages/scenic-news/edit.tsx", "language": "typescript", "sizeLines": 131, "fileCategory": "code"},
+    {"path": "src/desktop/pages/travel-guides/create.tsx", "language": "typescript", "sizeLines": 91, "fileCategory": "code"},
+    {"path": "src/desktop/pages/travel-guides/edit.tsx", "language": "typescript", "sizeLines": 100, "fileCategory": "code"},
+    {"path": "src/shared/components/VideoPlayer.tsx", "language": "typescript", "sizeLines": 134, "fileCategory": "code"},
+    {"path": "src/shared/components/ui/image-with-fallback.tsx", "language": "typescript", "sizeLines": 18, "fileCategory": "code"},
+    {"path": "src/shared/components/ui/textarea.tsx", "language": "typescript", "sizeLines": 18, "fileCategory": "code"},
+    {"path": "src/shared/constants.ts", "language": "typescript", "sizeLines": 3, "fileCategory": "code"},
+    {"path": "src/shared/content-config.ts", "language": "typescript", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "src/shared/stores/checkin-store.ts", "language": "typescript", "sizeLines": 169, "fileCategory": "code"},
+    {"path": "src/shared/stores/content-manage-store.ts", "language": "typescript", "sizeLines": 441, "fileCategory": "code"},
+    {"path": "src/shared/types/content-types.ts", "language": "typescript", "sizeLines": 168, "fileCategory": "code"},
+    {"path": "src/shared/utils/geo.ts", "language": "typescript", "sizeLines": 47, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "src/desktop/nav.ts": ["src/shared/constants.ts"],
+    "src/desktop/pages/guides/create.tsx": ["src/desktop/components/common/FormPage.tsx", "src/shared/components/ui/input.tsx", "src/shared/components/ui/textarea.tsx", "src/shared/stores/content-manage-store.ts", "src/shared/types/content-types.ts"],
+    "src/desktop/pages/guides/edit.tsx": ["src/desktop/components/common/FormPage.tsx", "src/shared/components/ui/input.tsx", "src/shared/components/ui/textarea.tsx", "src/shared/stores/content-manage-store.ts", "src/shared/types/content-types.ts"],
+    "src/desktop/pages/news/create.tsx": ["src/desktop/components/common/FormPage.tsx", "src/shared/components/ui/input.tsx", "src/shared/components/ui/textarea.tsx", "src/shared/stores/content-manage-store.ts", "src/shared/types/content-types.ts"],
+    "src/desktop/pages/news/edit.tsx": ["src/desktop/components/common/FormPage.tsx", "src/shared/components/ui/input.tsx", "src/shared/components/ui/textarea.tsx", "src/shared/stores/content-manage-store.ts", "src/shared/types/content-types.ts"],
+    "src/desktop/pages/scenic-news/create.tsx": ["src/desktop/components/common/FormPage.tsx", "src/shared/components/ui/input.tsx", "src/shared/components/ui/select.tsx", "src/shared/components/ui/textarea.tsx", "src/shared/stores/content-manage-store.ts", "src/shared/types/content-types.ts"],
+    "src/desktop/pages/scenic-news/edit.tsx": ["src/desktop/components/common/FormPage.tsx", "src/shared/components/ui/input.tsx", "src/shared/components/ui/select.tsx", "src/shared/components/ui/textarea.tsx", "src/shared/stores/content-manage-store.ts", "src/shared/types/content-types.ts"],
+    "src/desktop/pages/travel-guides/create.tsx": ["src/desktop/components/common/FormPage.tsx", "src/shared/components/ui/input.tsx", "src/shared/components/ui/textarea.tsx", "src/shared/stores/content-manage-store.ts", "src/shared/types/content-types.ts"],
+    "src/desktop/pages/travel-guides/edit.tsx": ["src/desktop/components/common/FormPage.tsx", "src/shared/components/ui/input.tsx", "src/shared/components/ui/textarea.tsx", "src/shared/stores/content-manage-store.ts", "src/shared/types/content-types.ts"],
+    "src/shared/components/VideoPlayer.tsx": ["src/shared/components/ui/button.tsx"],
+    "src/shared/components/ui/image-with-fallback.tsx": [],
+    "src/shared/components/ui/textarea.tsx": ["src/shared/components/ui/utils.ts"],
+    "src/shared/constants.ts": [],
+    "src/shared/content-config.ts": ["src/shared/types/content-types.ts"],
+    "src/shared/stores/checkin-store.ts": ["src/shared/types/index.ts"],
+    "src/shared/stores/content-manage-store.ts": ["src/shared/types/content-types.ts"],
+    "src/shared/types/content-types.ts": [],
+    "src/shared/utils/geo.ts": []
+  }
+}

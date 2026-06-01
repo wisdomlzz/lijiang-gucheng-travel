@@ -1,0 +1,2017 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 18,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "src/desktop/nav.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 88,
+      "nonEmptyLines": 85,
+      "exports": [
+        {
+          "name": "navGroups",
+          "line": 26,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/pages/guides/create.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 91,
+      "nonEmptyLines": 86,
+      "functions": [
+        {
+          "name": "GuideCreate",
+          "startLine": 20,
+          "endLine": 91,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "GuideCreate",
+          "line": 20,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GuideCreate",
+          "callee": "useNavigate",
+          "lineNumber": 21
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "useContentManageStore",
+          "lineNumber": 22
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "useState",
+          "lineNumber": 23
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "useState",
+          "lineNumber": 26
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "handleSave",
+          "callee": "guideSchema.safeParse",
+          "lineNumber": 30
+        },
+        {
+          "caller": "handleSave",
+          "callee": "result.error.errors.forEach",
+          "lineNumber": 33
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 34
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 37
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setSaving",
+          "lineNumber": 38
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split(\",\").map((t) => t.trim()).filter",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split(\",\").map",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "t.trim",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "addGuide",
+          "lineNumber": 53
+        },
+        {
+          "caller": "handleSave",
+          "callee": "toast.success",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "navigate",
+          "lineNumber": 55
+        },
+        {
+          "caller": "set",
+          "callee": "setForm",
+          "lineNumber": 58
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "set",
+          "lineNumber": 65
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "set",
+          "lineNumber": 70
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "set",
+          "lineNumber": 74
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "set",
+          "lineNumber": 78
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "set",
+          "lineNumber": 82
+        },
+        {
+          "caller": "GuideCreate",
+          "callee": "set",
+          "lineNumber": 86
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/pages/guides/edit.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 100,
+      "nonEmptyLines": 93,
+      "functions": [
+        {
+          "name": "GuideEdit",
+          "startLine": 20,
+          "endLine": 100,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "GuideEdit",
+          "line": 20,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GuideEdit",
+          "callee": "useParams",
+          "lineNumber": 21
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "useNavigate",
+          "lineNumber": 22
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "useContentManageStore",
+          "lineNumber": 23
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "s.guides.find",
+          "lineNumber": 23
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "useContentManageStore",
+          "lineNumber": 24
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "useState",
+          "lineNumber": 25
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "useState",
+          "lineNumber": 26
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "useEffect",
+          "lineNumber": 29
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "setForm",
+          "lineNumber": 31
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "guide.tags.join",
+          "lineNumber": 33
+        },
+        {
+          "caller": "handleSave",
+          "callee": "guideSchema.safeParse",
+          "lineNumber": 45
+        },
+        {
+          "caller": "handleSave",
+          "callee": "result.error.errors.forEach",
+          "lineNumber": 48
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 49
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 52
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setSaving",
+          "lineNumber": 53
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split(\",\").map((t) => t.trim()).filter",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split(\",\").map",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "t.trim",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "updateGuide",
+          "lineNumber": 55
+        },
+        {
+          "caller": "handleSave",
+          "callee": "toast.success",
+          "lineNumber": 63
+        },
+        {
+          "caller": "handleSave",
+          "callee": "navigate",
+          "lineNumber": 64
+        },
+        {
+          "caller": "set",
+          "callee": "setForm",
+          "lineNumber": 67
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "set",
+          "lineNumber": 74
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "set",
+          "lineNumber": 79
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "set",
+          "lineNumber": 83
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "set",
+          "lineNumber": 87
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "set",
+          "lineNumber": 91
+        },
+        {
+          "caller": "GuideEdit",
+          "callee": "set",
+          "lineNumber": 95
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/pages/news/create.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 101,
+      "nonEmptyLines": 96,
+      "functions": [
+        {
+          "name": "NewsCreate",
+          "startLine": 22,
+          "endLine": 101,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "NewsCreate",
+          "line": 22,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "NewsCreate",
+          "callee": "useNavigate",
+          "lineNumber": 23
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "useContentManageStore",
+          "lineNumber": 24
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "useState",
+          "lineNumber": 25
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "useState",
+          "lineNumber": 28
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "useState",
+          "lineNumber": 29
+        },
+        {
+          "caller": "handleSave",
+          "callee": "newsSchema.safeParse",
+          "lineNumber": 32
+        },
+        {
+          "caller": "handleSave",
+          "callee": "result.error.errors.forEach",
+          "lineNumber": 35
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 36
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setSaving",
+          "lineNumber": 40
+        },
+        {
+          "caller": "handleSave",
+          "callee": "new Date().toISOString().slice",
+          "lineNumber": 46
+        },
+        {
+          "caller": "handleSave",
+          "callee": "new Date().toISOString",
+          "lineNumber": 46
+        },
+        {
+          "caller": "handleSave",
+          "callee": "addNews",
+          "lineNumber": 52
+        },
+        {
+          "caller": "handleSave",
+          "callee": "toast.success",
+          "lineNumber": 53
+        },
+        {
+          "caller": "handleSave",
+          "callee": "navigate",
+          "lineNumber": 54
+        },
+        {
+          "caller": "set",
+          "callee": "setForm",
+          "lineNumber": 57
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 64
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 69
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 74
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 75
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 80
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 84
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 88
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 92
+        },
+        {
+          "caller": "NewsCreate",
+          "callee": "set",
+          "lineNumber": 96
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/pages/news/edit.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 116,
+      "nonEmptyLines": 109,
+      "functions": [
+        {
+          "name": "NewsEdit",
+          "startLine": 22,
+          "endLine": 116,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "NewsEdit",
+          "line": 22,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "NewsEdit",
+          "callee": "useParams",
+          "lineNumber": 23
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "useNavigate",
+          "lineNumber": 24
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "useContentManageStore",
+          "lineNumber": 25
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "s.news.find",
+          "lineNumber": 25
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "useContentManageStore",
+          "lineNumber": 26
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "useState",
+          "lineNumber": 28
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "useState",
+          "lineNumber": 29
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "useEffect",
+          "lineNumber": 31
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "setForm",
+          "lineNumber": 33
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "item.body.join",
+          "lineNumber": 41
+        },
+        {
+          "caller": "handleSave",
+          "callee": "newsSchema.safeParse",
+          "lineNumber": 49
+        },
+        {
+          "caller": "handleSave",
+          "callee": "result.error.errors.forEach",
+          "lineNumber": 52
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 53
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 56
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setSaving",
+          "lineNumber": 57
+        },
+        {
+          "caller": "handleSave",
+          "callee": "updateNews",
+          "lineNumber": 58
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.body.split(\"\\n\").filter",
+          "lineNumber": 66
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.body.split",
+          "lineNumber": 66
+        },
+        {
+          "caller": "handleSave",
+          "callee": "toast.success",
+          "lineNumber": 68
+        },
+        {
+          "caller": "handleSave",
+          "callee": "navigate",
+          "lineNumber": 69
+        },
+        {
+          "caller": "set",
+          "callee": "setForm",
+          "lineNumber": 72
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 79
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 84
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 89
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 90
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 95
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 99
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 103
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 107
+        },
+        {
+          "caller": "NewsEdit",
+          "callee": "set",
+          "lineNumber": 111
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/pages/scenic-news/create.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 113,
+      "nonEmptyLines": 107,
+      "functions": [
+        {
+          "name": "ScenicNewsCreate",
+          "startLine": 26,
+          "endLine": 113,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ScenicNewsCreate",
+          "line": 26,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "useNavigate",
+          "lineNumber": 27
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "useContentManageStore",
+          "lineNumber": 28
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "useState",
+          "lineNumber": 29
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "useState",
+          "lineNumber": 32
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "useState",
+          "lineNumber": 33
+        },
+        {
+          "caller": "handleSave",
+          "callee": "newsSchema.safeParse",
+          "lineNumber": 36
+        },
+        {
+          "caller": "handleSave",
+          "callee": "result.error.errors.forEach",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 40
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 43
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setSaving",
+          "lineNumber": 44
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.body.split(\"\\n\").filter",
+          "lineNumber": 45
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.body.split",
+          "lineNumber": 45
+        },
+        {
+          "caller": "handleSave",
+          "callee": "l.trim",
+          "lineNumber": 45
+        },
+        {
+          "caller": "handleSave",
+          "callee": "new Date().toISOString().slice",
+          "lineNumber": 52
+        },
+        {
+          "caller": "handleSave",
+          "callee": "new Date().toISOString",
+          "lineNumber": 52
+        },
+        {
+          "caller": "handleSave",
+          "callee": "addNews",
+          "lineNumber": 58
+        },
+        {
+          "caller": "handleSave",
+          "callee": "toast.success",
+          "lineNumber": 59
+        },
+        {
+          "caller": "handleSave",
+          "callee": "navigate",
+          "lineNumber": 60
+        },
+        {
+          "caller": "set",
+          "callee": "setForm",
+          "lineNumber": 63
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 75
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "CATEGORIES.map",
+          "lineNumber": 78
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 84
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 88
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 92
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 100
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 104
+        },
+        {
+          "caller": "ScenicNewsCreate",
+          "callee": "set",
+          "lineNumber": 108
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/pages/scenic-news/edit.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 131,
+      "nonEmptyLines": 123,
+      "functions": [
+        {
+          "name": "ScenicNewsEdit",
+          "startLine": 26,
+          "endLine": 131,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ScenicNewsEdit",
+          "line": 26,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "useParams",
+          "lineNumber": 27
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "useNavigate",
+          "lineNumber": 28
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "useContentManageStore",
+          "lineNumber": 29
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "s.news.find",
+          "lineNumber": 29
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "useContentManageStore",
+          "lineNumber": 30
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "useState",
+          "lineNumber": 31
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "useState",
+          "lineNumber": 34
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "useState",
+          "lineNumber": 35
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "useEffect",
+          "lineNumber": 37
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "setForm",
+          "lineNumber": 39
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "newsItem.body.join",
+          "lineNumber": 48
+        },
+        {
+          "caller": "handleSave",
+          "callee": "newsSchema.safeParse",
+          "lineNumber": 56
+        },
+        {
+          "caller": "handleSave",
+          "callee": "result.error.errors.forEach",
+          "lineNumber": 59
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 60
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 63
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setSaving",
+          "lineNumber": 64
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.body.split(\"\\n\").filter",
+          "lineNumber": 65
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.body.split",
+          "lineNumber": 65
+        },
+        {
+          "caller": "handleSave",
+          "callee": "l.trim",
+          "lineNumber": 65
+        },
+        {
+          "caller": "handleSave",
+          "callee": "updateNews",
+          "lineNumber": 66
+        },
+        {
+          "caller": "handleSave",
+          "callee": "toast.success",
+          "lineNumber": 77
+        },
+        {
+          "caller": "handleSave",
+          "callee": "navigate",
+          "lineNumber": 78
+        },
+        {
+          "caller": "set",
+          "callee": "setForm",
+          "lineNumber": 81
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 88
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 93
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "CATEGORIES.map",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 102
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 110
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 114
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 118
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 122
+        },
+        {
+          "caller": "ScenicNewsEdit",
+          "callee": "set",
+          "lineNumber": 126
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/pages/travel-guides/create.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 91,
+      "nonEmptyLines": 86,
+      "functions": [
+        {
+          "name": "TravelGuidesCreate",
+          "startLine": 20,
+          "endLine": 91,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TravelGuidesCreate",
+          "line": 20,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "useNavigate",
+          "lineNumber": 21
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "useContentManageStore",
+          "lineNumber": 22
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "useState",
+          "lineNumber": 23
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "useState",
+          "lineNumber": 26
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "handleSave",
+          "callee": "guideSchema.safeParse",
+          "lineNumber": 30
+        },
+        {
+          "caller": "handleSave",
+          "callee": "result.error.errors.forEach",
+          "lineNumber": 33
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 34
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 37
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setSaving",
+          "lineNumber": 38
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split(\",\").map((t) => t.trim()).filter",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split(\",\").map",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "t.trim",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleSave",
+          "callee": "addGuide",
+          "lineNumber": 53
+        },
+        {
+          "caller": "handleSave",
+          "callee": "toast.success",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "navigate",
+          "lineNumber": 55
+        },
+        {
+          "caller": "set",
+          "callee": "setForm",
+          "lineNumber": 58
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "set",
+          "lineNumber": 65
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "set",
+          "lineNumber": 70
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "set",
+          "lineNumber": 74
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "set",
+          "lineNumber": 78
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "set",
+          "lineNumber": 82
+        },
+        {
+          "caller": "TravelGuidesCreate",
+          "callee": "set",
+          "lineNumber": 86
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/desktop/pages/travel-guides/edit.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 100,
+      "nonEmptyLines": 93,
+      "functions": [
+        {
+          "name": "TravelGuidesEdit",
+          "startLine": 20,
+          "endLine": 100,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TravelGuidesEdit",
+          "line": 20,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "useParams",
+          "lineNumber": 21
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "useNavigate",
+          "lineNumber": 22
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "useContentManageStore",
+          "lineNumber": 23
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "s.guides.find",
+          "lineNumber": 23
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "useContentManageStore",
+          "lineNumber": 24
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "useState",
+          "lineNumber": 25
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "useState",
+          "lineNumber": 26
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "useEffect",
+          "lineNumber": 29
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "setForm",
+          "lineNumber": 31
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "guide.tags.join",
+          "lineNumber": 33
+        },
+        {
+          "caller": "handleSave",
+          "callee": "guideSchema.safeParse",
+          "lineNumber": 45
+        },
+        {
+          "caller": "handleSave",
+          "callee": "result.error.errors.forEach",
+          "lineNumber": 48
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 49
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setErrors",
+          "lineNumber": 52
+        },
+        {
+          "caller": "handleSave",
+          "callee": "setSaving",
+          "lineNumber": 53
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split(\",\").map((t) => t.trim()).filter",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split(\",\").map",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "form.tags.split",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "t.trim",
+          "lineNumber": 54
+        },
+        {
+          "caller": "handleSave",
+          "callee": "updateGuide",
+          "lineNumber": 55
+        },
+        {
+          "caller": "handleSave",
+          "callee": "toast.success",
+          "lineNumber": 63
+        },
+        {
+          "caller": "handleSave",
+          "callee": "navigate",
+          "lineNumber": 64
+        },
+        {
+          "caller": "set",
+          "callee": "setForm",
+          "lineNumber": 67
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "set",
+          "lineNumber": 74
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "set",
+          "lineNumber": 79
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "set",
+          "lineNumber": 83
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "set",
+          "lineNumber": 87
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "set",
+          "lineNumber": 91
+        },
+        {
+          "caller": "TravelGuidesEdit",
+          "callee": "set",
+          "lineNumber": 95
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/components/VideoPlayer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 134,
+      "nonEmptyLines": 122,
+      "functions": [
+        {
+          "name": "VideoPlayer",
+          "startLine": 11,
+          "endLine": 134,
+          "params": [
+            "{ src, poster, className = \"\" }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "VideoPlayer",
+          "line": 11,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "VideoPlayer",
+          "callee": "useRef",
+          "lineNumber": 12
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "useState",
+          "lineNumber": 13
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "useState",
+          "lineNumber": 14
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "useState",
+          "lineNumber": 15
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "useState",
+          "lineNumber": 16
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "videoRef.current.pause",
+          "lineNumber": 21
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "videoRef.current.play",
+          "lineNumber": 23
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "setIsPlaying",
+          "lineNumber": 25
+        },
+        {
+          "caller": "toggleMute",
+          "callee": "setIsMuted",
+          "lineNumber": 32
+        },
+        {
+          "caller": "handleTimeUpdate",
+          "callee": "setProgress",
+          "lineNumber": 39
+        },
+        {
+          "caller": "handleLoadedMetadata",
+          "callee": "setDuration",
+          "lineNumber": 45
+        },
+        {
+          "caller": "formatTime",
+          "callee": "Math.floor",
+          "lineNumber": 50
+        },
+        {
+          "caller": "formatTime",
+          "callee": "Math.floor",
+          "lineNumber": 51
+        },
+        {
+          "caller": "formatTime",
+          "callee": "secs.toString().padStart",
+          "lineNumber": 52
+        },
+        {
+          "caller": "formatTime",
+          "callee": "secs.toString",
+          "lineNumber": 52
+        },
+        {
+          "caller": "handleFullscreen",
+          "callee": "document.exitFullscreen",
+          "lineNumber": 58
+        },
+        {
+          "caller": "handleFullscreen",
+          "callee": "videoRef.current.requestFullscreen",
+          "lineNumber": 60
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "setIsPlaying",
+          "lineNumber": 74
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "setIsPlaying",
+          "lineNumber": 75
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "setIsPlaying",
+          "lineNumber": 76
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "formatTime",
+          "lineNumber": 119
+        },
+        {
+          "caller": "VideoPlayer",
+          "callee": "formatTime",
+          "lineNumber": 119
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/components/ui/image-with-fallback.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 15,
+      "functions": [
+        {
+          "name": "ImageWithFallback",
+          "startLine": 3,
+          "endLine": 18,
+          "params": [
+            "props"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ImageWithFallback",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ImageWithFallback",
+          "callee": "useState",
+          "lineNumber": 4
+        },
+        {
+          "caller": "ImageWithFallback",
+          "callee": "setDidError",
+          "lineNumber": 17
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/components/ui/textarea.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 15,
+      "functions": [
+        {
+          "name": "Textarea",
+          "startLine": 5,
+          "endLine": 16,
+          "params": [
+            "{ className, ...props }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Textarea",
+          "line": 18,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Textarea",
+          "callee": "cn",
+          "lineNumber": 9
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/constants.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "exports": [
+        {
+          "name": "CRMEB_C_URL",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "CRMEB_ADMIN_URL",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/content-config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 71,
+      "functions": [
+        {
+          "name": "normalizeMerchantCategory",
+          "startLine": 43,
+          "endLine": 55,
+          "params": [
+            "category"
+          ]
+        },
+        {
+          "name": "getMerchantCategoryFromRouteKey",
+          "startLine": 57,
+          "endLine": 62,
+          "params": [
+            "routeKey"
+          ]
+        },
+        {
+          "name": "getMerchantCategoryLabel",
+          "startLine": 64,
+          "endLine": 66,
+          "params": [
+            "category"
+          ]
+        },
+        {
+          "name": "getMerchantRouteKey",
+          "startLine": 68,
+          "endLine": 70,
+          "params": [
+            "category"
+          ]
+        },
+        {
+          "name": "getMerchantRoutePath",
+          "startLine": 72,
+          "endLine": 74,
+          "params": [
+            "category"
+          ]
+        },
+        {
+          "name": "filterMerchantsByCategory",
+          "startLine": 76,
+          "endLine": 82,
+          "params": [
+            "merchants",
+            "category"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "touristServiceMenuOrder",
+          "line": 3,
+          "isDefault": false
+        },
+        {
+          "name": "merchantCategoryLabels",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "merchantCategoryRouteMap",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "merchantCategoryDesktopTitleMap",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "normalizeMerchantCategory",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "getMerchantCategoryFromRouteKey",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "getMerchantCategoryLabel",
+          "line": 64,
+          "isDefault": false
+        },
+        {
+          "name": "getMerchantRouteKey",
+          "line": 68,
+          "isDefault": false
+        },
+        {
+          "name": "getMerchantRoutePath",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "filterMerchantsByCategory",
+          "line": 76,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getMerchantCategoryFromRouteKey",
+          "callee": "Object.entries(merchantCategoryRouteMap).find",
+          "lineNumber": 59
+        },
+        {
+          "caller": "getMerchantCategoryFromRouteKey",
+          "callee": "Object.entries",
+          "lineNumber": 59
+        },
+        {
+          "caller": "getMerchantCategoryLabel",
+          "callee": "normalizeMerchantCategory",
+          "lineNumber": 65
+        },
+        {
+          "caller": "getMerchantRouteKey",
+          "callee": "normalizeMerchantCategory",
+          "lineNumber": 69
+        },
+        {
+          "caller": "getMerchantRoutePath",
+          "callee": "getMerchantRouteKey",
+          "lineNumber": 73
+        },
+        {
+          "caller": "filterMerchantsByCategory",
+          "callee": "merchants.filter",
+          "lineNumber": 81
+        },
+        {
+          "caller": "filterMerchantsByCategory",
+          "callee": "normalizeMerchantCategory",
+          "lineNumber": 81
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 10,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/stores/checkin-store.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 169,
+      "nonEmptyLines": 164,
+      "exports": [
+        {
+          "name": "useCheckinStore",
+          "line": 11,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/stores/content-manage-store.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 441,
+      "nonEmptyLines": 426,
+      "exports": [
+        {
+          "name": "useContentManageStore",
+          "line": 410,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/types/content-types.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 168,
+      "nonEmptyLines": 155,
+      "exports": [
+        {
+          "name": "MAP_POI_CATEGORIES",
+          "line": 163,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/shared/utils/geo.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 41,
+      "functions": [
+        {
+          "name": "haversineDistance",
+          "startLine": 1,
+          "endLine": 13,
+          "params": [
+            "lat1",
+            "lng1",
+            "lat2",
+            "lng2"
+          ]
+        },
+        {
+          "name": "formatDistance",
+          "startLine": 15,
+          "endLine": 18,
+          "params": [
+            "meters"
+          ]
+        },
+        {
+          "name": "matchAddressToCoords",
+          "startLine": 28,
+          "endLine": 34,
+          "params": [
+            "name",
+            "address"
+          ]
+        },
+        {
+          "name": "mapClickToCoords",
+          "startLine": 43,
+          "endLine": 47,
+          "params": [
+            "topPct",
+            "leftPct"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "haversineDistance",
+          "line": 1,
+          "isDefault": false
+        },
+        {
+          "name": "formatDistance",
+          "line": 15,
+          "isDefault": false
+        },
+        {
+          "name": "matchAddressToCoords",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "DEFAULT_COORDS",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "mapClickToCoords",
+          "line": 43,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "haversineDistance",
+          "callee": "toRad",
+          "lineNumber": 7
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "toRad",
+          "lineNumber": 8
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "Math.sin",
+          "lineNumber": 10
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "Math.cos",
+          "lineNumber": 11
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "toRad",
+          "lineNumber": 11
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "Math.cos",
+          "lineNumber": 11
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "toRad",
+          "lineNumber": 11
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "Math.sin",
+          "lineNumber": 11
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "Math.atan2",
+          "lineNumber": 12
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "Math.sqrt",
+          "lineNumber": 12
+        },
+        {
+          "caller": "haversineDistance",
+          "callee": "Math.sqrt",
+          "lineNumber": 12
+        },
+        {
+          "caller": "formatDistance",
+          "callee": "Math.round",
+          "lineNumber": 16
+        },
+        {
+          "caller": "formatDistance",
+          "callee": "(meters / 1000).toFixed",
+          "lineNumber": 17
+        },
+        {
+          "caller": "matchAddressToCoords",
+          "callee": "regex.test",
+          "lineNumber": 31
+        },
+        {
+          "caller": "mapClickToCoords",
+          "callee": "Math.round",
+          "lineNumber": 46
+        },
+        {
+          "caller": "mapClickToCoords",
+          "callee": "Math.round",
+          "lineNumber": 46
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    }
+  ]
+}

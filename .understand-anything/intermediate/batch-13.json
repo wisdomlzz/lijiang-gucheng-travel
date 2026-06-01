@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "document:.agents/skills/grill-with-docs/ADR-FORMAT.md",
+      "type": "document",
+      "name": "ADR-FORMAT.md",
+      "filePath": ".agents/skills/grill-with-docs/ADR-FORMAT.md",
+      "summary": "规定架构决策记录(ADR)的格式规范,包括模板、编号规则、可选章节,以及何时应该提议编写 ADR(难以撤销、令人意外、存在真实权衡)。",
+      "tags": ["documentation", "adr", "format-spec", "decision-record", "skill-internal"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.agents/skills/grill-with-docs/CONTEXT-FORMAT.md",
+      "type": "document",
+      "name": "CONTEXT-FORMAT.md",
+      "filePath": ".agents/skills/grill-with-docs/CONTEXT-FORMAT.md",
+      "summary": "定义项目领域术语表 CONTEXT.md 的结构、编写规则(明确单一术语、避免列表、按上下文分组),以及单上下文与多上下文仓库的存放约定。",
+      "tags": ["documentation", "glossary", "format-spec", "context-map", "skill-internal"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.agents/skills/grill-with-docs/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": ".agents/skills/grill-with-docs/SKILL.md",
+      "summary": "grill-with-docs 技能的主入口,定义一种交互式访谈流程:逐题追问设计决策、挑战术语用词、即时更新 CONTEXT.md 与 ADR,作为对计划进行领域压力测试的协作方法。",
+      "tags": ["documentation", "skill-definition", "interview-protocol", "domain-modeling", "agent-skill"],
+      "complexity": "moderate",
+      "languageNotes": "采用 YAML frontmatter(name + description)声明技能元数据,正文以 <what-to-do>/<supporting-info> 标签区分执行指令与背景知识,这是 Claude Code 技能文件的常见结构。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:.agents/skills/grill-with-docs/SKILL.md",
+      "target": "document:.agents/skills/grill-with-docs/ADR-FORMAT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.agents/skills/grill-with-docs/SKILL.md",
+      "target": "document:.agents/skills/grill-with-docs/CONTEXT-FORMAT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,0 +1,350 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "CLAUDE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 152,
+      "nonEmptyLines": 119,
+      "sections": [
+        {
+          "heading": "CLAUDE.md",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "项目概览",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "常用命令",
+          "level": 2,
+          "line": 19
+        },
+        {
+          "heading": "目录结构",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "关键架构概念",
+          "level": 2,
+          "line": 67
+        },
+        {
+          "heading": "1. 三端共享 Auth（`src/shared/stores/auth-store.ts`）",
+          "level": 3,
+          "line": 69
+        },
+        {
+          "heading": "2. 手机壳 `MiniProgramFrame`（`src/shared/components/MiniProgramFrame.tsx`）",
+          "level": 3,
+          "line": 77
+        },
+        {
+          "heading": "3. DemoSwitcher（`src/DemoSwitcher.tsx`）",
+          "level": 3,
+          "line": 83
+        },
+        {
+          "heading": "4. 模拟后端与状态机（`src/shared/mock/`）",
+          "level": 3,
+          "line": 89
+        },
+        {
+          "heading": "5. 权限系统（`src/shared/permissions/`）",
+          "level": 3,
+          "line": 105
+        },
+        {
+          "heading": "6. 路由约定",
+          "level": 3,
+          "line": 112
+        },
+        {
+          "heading": "设计系统",
+          "level": 2,
+          "line": 118
+        },
+        {
+          "heading": "数据与图片",
+          "level": 2,
+          "line": 131
+        },
+        {
+          "heading": "重要注意事项",
+          "level": 2,
+          "line": 137
+        },
+        {
+          "heading": "相关文档",
+          "level": 2,
+          "line": 145
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 15
+      }
+    },
+    {
+      "path": "DESIGN.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 385,
+      "nonEmptyLines": 326,
+      "sections": [
+        {
+          "heading": "Overview",
+          "level": 2,
+          "line": 191
+        },
+        {
+          "heading": "Colors",
+          "level": 2,
+          "line": 207
+        },
+        {
+          "heading": "Brand",
+          "level": 3,
+          "line": 209
+        },
+        {
+          "heading": "Surface",
+          "level": 3,
+          "line": 215
+        },
+        {
+          "heading": "Text",
+          "level": 3,
+          "line": 221
+        },
+        {
+          "heading": "Semantic",
+          "level": 3,
+          "line": 228
+        },
+        {
+          "heading": "Typography",
+          "level": 2,
+          "line": 235
+        },
+        {
+          "heading": "Font Stack",
+          "level": 3,
+          "line": 237
+        },
+        {
+          "heading": "Hierarchy (Mobile / 390px)",
+          "level": 3,
+          "line": 243
+        },
+        {
+          "heading": "Hierarchy (Desktop / 1440px+)",
+          "level": 3,
+          "line": 256
+        },
+        {
+          "heading": "Principles",
+          "level": 3,
+          "line": 264
+        },
+        {
+          "heading": "Layout",
+          "level": 2,
+          "line": 271
+        },
+        {
+          "heading": "Spacing (4px 栅格)",
+          "level": 3,
+          "line": 273
+        },
+        {
+          "heading": "Mobile Viewport (390×844)",
+          "level": 3,
+          "line": 280
+        },
+        {
+          "heading": "Desktop Viewport (≥1024px)",
+          "level": 3,
+          "line": 286
+        },
+        {
+          "heading": "Elevation",
+          "level": 2,
+          "line": 292
+        },
+        {
+          "heading": "Responsive Behavior",
+          "level": 2,
+          "line": 303
+        },
+        {
+          "heading": "Touch Targets",
+          "level": 3,
+          "line": 311
+        },
+        {
+          "heading": "Component Patterns",
+          "level": 2,
+          "line": 317
+        },
+        {
+          "heading": "Buttons (Do's and Don'ts)",
+          "level": 3,
+          "line": 319
+        },
+        {
+          "heading": "Cards (Do's and Don'ts)",
+          "level": 3,
+          "line": 329
+        },
+        {
+          "heading": "Typography (Do's and Don'ts)",
+          "level": 3,
+          "line": 338
+        },
+        {
+          "heading": "Inputs (Do's and Don'ts)",
+          "level": 3,
+          "line": 347
+        },
+        {
+          "heading": "Anti-Patterns (通用禁止)",
+          "level": 2,
+          "line": 356
+        },
+        {
+          "heading": "Agent Prompt Guide",
+          "level": 2,
+          "line": 369
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 25
+      }
+    },
+    {
+      "path": "index.html",
+      "language": "html",
+      "fileCategory": "markup",
+      "totalLines": 18,
+      "nonEmptyLines": 18,
+      "metrics": {}
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 61,
+      "nonEmptyLines": 61,
+      "sections": [
+        {
+          "heading": "name",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "private",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "version",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "type",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "scripts",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "dependencies",
+          "level": 1,
+          "line": 15
+        },
+        {
+          "heading": "devDependencies",
+          "level": 1,
+          "line": 52
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "skills-lock.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 179,
+      "nonEmptyLines": 179,
+      "sections": [
+        {
+          "heading": "version",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "skills",
+          "level": 1,
+          "line": 3
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 24,
+      "nonEmptyLines": 24,
+      "sections": [
+        {
+          "heading": "compilerOptions",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "include",
+          "level": 1,
+          "line": 23
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    }
+  ]
+}

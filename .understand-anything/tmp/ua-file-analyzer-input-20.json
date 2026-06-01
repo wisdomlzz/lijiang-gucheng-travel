@@ -1,0 +1,5 @@
+{
+  "projectRoot": "/Users/lzz/Desktop/Projects/丽江古城游",
+  "batchFiles": [{"path":"CLAUDE.md","language":"markdown","sizeLines":152,"fileCategory":"docs"},{"path":"DESIGN.md","language":"markdown","sizeLines":385,"fileCategory":"docs"},{"path":"index.html","language":"html","sizeLines":18,"fileCategory":"markup"},{"path":"package.json","language":"json","sizeLines":61,"fileCategory":"config"},{"path":"skills-lock.json","language":"json","sizeLines":179,"fileCategory":"config"},{"path":"tsconfig.json","language":"json","sizeLines":24,"fileCategory":"config"}],
+  "batchImportData": {"CLAUDE.md":[],"DESIGN.md":[],"index.html":[],"package.json":[],"skills-lock.json":[],"tsconfig.json":[]}
+}

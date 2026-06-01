@@ -1,0 +1,817 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/shared/mock/complaint.ts",
+      "type": "file",
+      "name": "complaint.ts",
+      "filePath": "src/shared/mock/complaint.ts",
+      "summary": "投诉管理 store，覆盖 C10 已提交 / C40 已处理 / CR 已驳回 状态机，供 C 端游客提交投诉与桌面端客诉处理共用。",
+      "tags": ["store", "投诉管理", "状态机", "模拟后端", "zustand"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/mock/convenience.ts",
+      "type": "file",
+      "name": "convenience.ts",
+      "filePath": "src/shared/mock/convenience.ts",
+      "summary": "便民服务订单核心 store（470 行非空），封装下单、派单、状态机流转以及 GeoHash 距离排序等业务规则。",
+      "tags": ["store", "便民服务", "派单", "状态机", "模拟后端"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/shared/mock/engine.ts",
+      "type": "file",
+      "name": "engine.ts",
+      "filePath": "src/shared/mock/engine.ts",
+      "summary": "模拟后端通用机制：createMachine 有限状态机、subscribeDomain 跨域事件总线、setTimeout 驱动的定时流转。",
+      "tags": ["工具函数", "状态机", "事件总线", "模拟后端", "定时器"],
+      "complexity": "moderate",
+      "languageNotes": "通过 Map+闭包实现的极简有限状态机，未引入第三方状态机库。"
+    },
+    {
+      "id": "file:src/shared/mock/favorites.ts",
+      "type": "file",
+      "name": "favorites.ts",
+      "filePath": "src/shared/mock/favorites.ts",
+      "summary": "收藏 store，提供景点/商家/路线三类收藏的增删查与状态持久化。",
+      "tags": ["store", "收藏", "模拟后端", "zustand"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/mock/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "src/shared/mock/index.ts",
+      "summary": "模拟后端 barrel 文件，聚合导出所有 store、状态机辅助函数、领域模型与状态码常量。",
+      "tags": ["barrel", "聚合导出", "模拟后端"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/mock/notifications.ts",
+      "type": "file",
+      "name": "notifications.ts",
+      "filePath": "src/shared/mock/notifications.ts",
+      "summary": "站内通知 store，提供消息列表、未读计数与相对时间格式化工具。",
+      "tags": ["store", "通知", "模拟后端", "zustand"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/mock/reviews.ts",
+      "type": "file",
+      "name": "reviews.ts",
+      "filePath": "src/shared/mock/reviews.ts",
+      "summary": "评价 store（最薄一层），按订单 ID 存取评价数据，供订单详情与商家档案复用。",
+      "tags": ["store", "评价", "模拟后端", "zustand"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/mock/seed-factory.ts",
+      "type": "file",
+      "name": "seed-factory.ts",
+      "filePath": "src/shared/mock/seed-factory.ts",
+      "summary": "种子数据工厂：定义全量便民服务状态码 ALL_CONVENIENCE_STATUSES，并提供 validateSeedCoverage 校验种子覆盖度。",
+      "tags": ["种子数据", "状态码", "校验", "工厂模式"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/mock/seed.ts",
+      "type": "file",
+      "name": "seed.ts",
+      "filePath": "src/shared/mock/seed.ts",
+      "summary": "便民服务订单种子数据（312 行非空），必须覆盖 ALL_CONVENIENCE_STATUSES 中所有状态码，由 npm run verify:seeds 强制校验。",
+      "tags": ["种子数据", "演示数据", "便民服务", "状态码"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/shared/mock/staff.ts",
+      "type": "file",
+      "name": "staff.ts",
+      "filePath": "src/shared/mock/staff.ts",
+      "summary": "服务人员 store，维护人员档案、可用状态、已派单数，并对外暴露 hasActiveOrders 工具与 tryAutoDispatch 自动派单入口。",
+      "tags": ["store", "服务人员", "派单", "模拟后端"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/mock/trust-score.ts",
+      "type": "file",
+      "name": "trust-score.ts",
+      "filePath": "src/shared/mock/trust-score.ts",
+      "summary": "信任分 store，记录每位服务人员的当前分值、加减分历史与调整记录，供 B 端人员档案与订单详情展示。",
+      "tags": ["store", "信任分", "模拟后端", "zustand"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/mock/validate-seeds.ts",
+      "type": "file",
+      "name": "validate-seeds.ts",
+      "filePath": "src/shared/mock/validate-seeds.ts",
+      "summary": "8 行种子数据校验入口脚本，调用 validateSeedCoverage 输出缺失状态码，绑定到 npm run verify:seeds。",
+      "tags": ["校验脚本", "种子数据", "npm-script"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/mock/zones.ts",
+      "type": "file",
+      "name": "zones.ts",
+      "filePath": "src/shared/mock/zones.ts",
+      "summary": "古城区域 store，分区域维护服务人员与派单范围，对应 zoneIds 维度的派单匹配。",
+      "tags": ["store", "古城区域", "派单", "模拟后端"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/orders/convenience.ts",
+      "type": "file",
+      "name": "convenience.ts",
+      "filePath": "src/shared/orders/convenience.ts",
+      "summary": "便民服务订单的状态元数据、可用操作映射以及状态过滤工具。",
+      "tags": ["状态元数据", "工具函数", "状态码"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/orders/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "src/shared/orders/index.ts",
+      "summary": "订单模块 barrel：聚合导出 CONVENIENCE_STATUS_META、resolveStaff 及对应类型。",
+      "tags": ["barrel", "聚合导出", "订单模块"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/orders/staff.ts",
+      "type": "file",
+      "name": "staff.ts",
+      "filePath": "src/shared/orders/staff.ts",
+      "summary": "resolveStaff 通过 seedUsers + 信任分 store 拼装出展示用的人员信息（剥离括号后缀、补全评分）。",
+      "tags": ["工具函数", "人员解析", "信任分"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/stores/ai-knowledge-store.ts",
+      "type": "file",
+      "name": "ai-knowledge-store.ts",
+      "filePath": "src/shared/stores/ai-knowledge-store.ts",
+      "summary": "AI 知识库 store，管理 RAG 知识条目与版本，供桌面端 AIKnowledgeBasePage 维护与查询。",
+      "tags": ["store", "AI知识库", "模拟后端"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/stores/auth-store.ts",
+      "type": "file",
+      "name": "auth-store.ts",
+      "filePath": "src/shared/stores/auth-store.ts",
+      "summary": "三端共享 Auth store，持久化到 localStorage（key: lijiang-demo-auth），管理 user.platform / currentPlatform / switchPlatform。",
+      "tags": ["store", "auth", "端切换", "localStorage"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/stores/convenience-services-store.ts",
+      "type": "file",
+      "name": "convenience-services-store.ts",
+      "filePath": "src/shared/stores/convenience-services-store.ts",
+      "summary": "便民服务类目配置 store，定义可用服务类目、图标、是否启用及默认价格。",
+      "tags": ["store", "服务配置", "模拟后端"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/stores/supplier-store.ts",
+      "type": "file",
+      "name": "supplier-store.ts",
+      "filePath": "src/shared/stores/supplier-store.ts",
+      "summary": "供应商入驻申请 store，串联 C 端 SupplierEntryPage 提交、桌面端 SupplierApplicationsList/Show 审核流程。",
+      "tags": ["store", "供应商入驻", "模拟后端"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/stores/volunteer-store.ts",
+      "type": "file",
+      "name": "volunteer-store.ts",
+      "filePath": "src/shared/stores/volunteer-store.ts",
+      "summary": "志愿者活动 store（222 行非空），管理活动列表、报名、签到与时间区间重叠检测，支撑 C 端活动页与桌面端管理页。",
+      "tags": ["store", "志愿者活动", "报名", "签到"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/shared/types/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "src/shared/types/index.ts",
+      "summary": "全局类型 + 状态码常量 + 派单类型（点对点 / 分区域）+ 服务类型枚举，定义状态标签与判定工具。",
+      "tags": ["类型定义", "状态码", "常量", "枚举"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/shared/types/seed-users.ts",
+      "type": "file",
+      "name": "seed-users.ts",
+      "filePath": "src/shared/types/seed-users.ts",
+      "summary": "演示账号种子数据 seedUsers，供三个登录页（LoginPageC / B / Desktop）选择身份登录。",
+      "tags": ["种子数据", "用户", "演示账号"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/types/trust-score.ts",
+      "type": "file",
+      "name": "trust-score.ts",
+      "filePath": "src/shared/types/trust-score.ts",
+      "summary": "信任分配置常量 TRUST_SCORE_CONFIG，定义初值、上下限与各项加减分规则。",
+      "tags": ["类型定义", "信任分", "配置"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/shared/mock/convenience.ts:rankStaffForOrder",
+      "type": "function",
+      "name": "rankStaffForOrder",
+      "filePath": "src/shared/mock/convenience.ts",
+      "lineRange": [103, 143],
+      "summary": "内部核心派单排序函数：按服务类型走 GeoHash 距离分桶或 zoneIds 匹配，桶内按 assignedOrders 升序排序。",
+      "tags": ["派单", "排序", "GeoHash", "内部函数"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/shared/mock/engine.ts:createMachine",
+      "type": "function",
+      "name": "createMachine",
+      "filePath": "src/shared/mock/engine.ts",
+      "lineRange": [13, 36],
+      "summary": "通用有限状态机构造器，接收 from/to/on/timeouts 配置，返回包含 transition / next / canTransition / tick 的状态机实例。",
+      "tags": ["状态机", "工厂函数", "导出API"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/shared/mock/engine.ts:notifyDomain",
+      "type": "function",
+      "name": "notifyDomain",
+      "filePath": "src/shared/mock/engine.ts",
+      "lineRange": [43, 45],
+      "summary": "触发跨域事件，遍历并调用 domain 维度下所有订阅者。",
+      "tags": ["事件总线", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/mock/engine.ts:subscribeDomain",
+      "type": "function",
+      "name": "subscribeDomain",
+      "filePath": "src/shared/mock/engine.ts",
+      "lineRange": [47, 55],
+      "summary": "订阅指定 domain 的事件，返回取消订阅的清理函数。",
+      "tags": ["事件总线", "订阅", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/mock/engine.ts:startTimeout",
+      "type": "function",
+      "name": "startTimeout",
+      "filePath": "src/shared/mock/engine.ts",
+      "lineRange": [60, 67],
+      "summary": "启动具名定时器，支持后续按 key 取消或覆盖。",
+      "tags": ["定时器", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/mock/engine.ts:stopTimeout",
+      "type": "function",
+      "name": "stopTimeout",
+      "filePath": "src/shared/mock/engine.ts",
+      "lineRange": [69, 75],
+      "summary": "取消指定 key 的定时器。",
+      "tags": ["定时器", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/mock/engine.ts:clearAllTimeouts",
+      "type": "function",
+      "name": "clearAllTimeouts",
+      "filePath": "src/shared/mock/engine.ts",
+      "lineRange": [77, 80],
+      "summary": "清空所有模拟后端定时器，常用于测试清理或重置。",
+      "tags": ["定时器", "清理", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/mock/seed-factory.ts:missingConvenienceStatuses",
+      "type": "function",
+      "name": "missingConvenienceStatuses",
+      "filePath": "src/shared/mock/seed-factory.ts",
+      "lineRange": [8, 11],
+      "summary": "计算全量状态码与已覆盖状态码的差集，返回缺失的状态码列表。",
+      "tags": ["工具函数", "状态码", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/mock/seed-factory.ts:validateSeedCoverage",
+      "type": "function",
+      "name": "validateSeedCoverage",
+      "filePath": "src/shared/mock/seed-factory.ts",
+      "lineRange": [13, 23],
+      "summary": "校验便民服务订单种子是否覆盖全部状态码，缺失时 console.warn 提示。",
+      "tags": ["校验", "种子数据", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/mock/staff.ts:hasActiveOrders",
+      "type": "function",
+      "name": "hasActiveOrders",
+      "filePath": "src/shared/mock/staff.ts",
+      "lineRange": [43, 49],
+      "summary": "工具函数：判断指定服务人员当前是否持有 A* 进行中或 S48 服务中等活跃订单。",
+      "tags": ["工具函数", "派单", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/mock/staff.ts:tryAutoDispatch",
+      "type": "function",
+      "name": "tryAutoDispatch",
+      "filePath": "src/shared/mock/staff.ts",
+      "lineRange": [106, 118],
+      "summary": "对指定订单尝试自动派单：根据服务类型 + 距离 + 负载挑选最佳人员并触发 manualDispatch。",
+      "tags": ["派单", "自动派单", "导出API"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/shared/orders/convenience.ts:getConvenienceActions",
+      "type": "function",
+      "name": "getConvenienceActions",
+      "filePath": "src/shared/orders/convenience.ts",
+      "lineRange": [29, 31],
+      "summary": "根据订单状态返回可执行的操作码集合，用于订单详情按钮的展示控制。",
+      "tags": ["状态机", "工具函数", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/orders/convenience.ts:matchConvenienceFilter",
+      "type": "function",
+      "name": "matchConvenienceFilter",
+      "filePath": "src/shared/orders/convenience.ts",
+      "lineRange": [33, 39],
+      "summary": "判断订单状态是否匹配给定的筛选条件（含 S40/S50/R80 等终态判断）。",
+      "tags": ["过滤", "工具函数", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/orders/staff.ts:resolveStaff",
+      "type": "function",
+      "name": "resolveStaff",
+      "filePath": "src/shared/orders/staff.ts",
+      "lineRange": [14, 30],
+      "summary": "通过 seedUsers + 信任分 store 拼装展示用的人员信息，剥离括号后缀并补全当前评分。",
+      "tags": ["人员解析", "信任分", "导出API"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/shared/types/index.ts:isPointToPoint",
+      "type": "function",
+      "name": "isPointToPoint",
+      "filePath": "src/shared/types/index.ts",
+      "lineRange": [63, 65],
+      "summary": "判断服务类型是否属于点对点派单（GeoHash 距离派单）。",
+      "tags": ["类型守卫", "派单", "导出API"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/types/index.ts:isZoneBased",
+      "type": "function",
+      "name": "isZoneBased",
+      "filePath": "src/shared/types/index.ts",
+      "lineRange": [66, 68],
+      "summary": "判断服务类型是否属于按古城区域派单。",
+      "tags": ["类型守卫", "派单", "导出API"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/shared/mock/complaint.ts",
+      "target": "file:src/shared/mock/convenience.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/complaint.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/convenience.ts",
+      "target": "file:src/shared/mock/engine.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/convenience.ts",
+      "target": "file:src/shared/mock/seed.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/convenience.ts",
+      "target": "file:src/shared/mock/staff.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/convenience.ts",
+      "target": "file:src/shared/mock/zones.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/convenience.ts",
+      "target": "file:src/shared/orders/staff.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/convenience.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/favorites.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/notifications.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/reviews.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/seed-factory.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/seed.ts",
+      "target": "file:src/shared/mock/seed-factory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/seed.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/staff.ts",
+      "target": "file:src/shared/mock/convenience.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/staff.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/trust-score.ts",
+      "target": "file:src/shared/types/trust-score.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/validate-seeds.ts",
+      "target": "file:src/shared/mock/seed-factory.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/validate-seeds.ts",
+      "target": "file:src/shared/mock/seed.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/zones.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/orders/convenience.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/orders/staff.ts",
+      "target": "file:src/shared/mock/trust-score.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/orders/staff.ts",
+      "target": "file:src/shared/types/seed-users.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/stores/ai-knowledge-store.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/stores/auth-store.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/stores/convenience-services-store.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/stores/supplier-store.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/stores/volunteer-store.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/types/seed-users.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/mock/convenience.ts",
+      "target": "function:src/shared/mock/convenience.ts:rankStaffForOrder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:createMachine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:notifyDomain",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:subscribeDomain",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:startTimeout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:stopTimeout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:clearAllTimeouts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/seed-factory.ts",
+      "target": "function:src/shared/mock/seed-factory.ts:missingConvenienceStatuses",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/seed-factory.ts",
+      "target": "function:src/shared/mock/seed-factory.ts:validateSeedCoverage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/staff.ts",
+      "target": "function:src/shared/mock/staff.ts:hasActiveOrders",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/staff.ts",
+      "target": "function:src/shared/mock/staff.ts:tryAutoDispatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/orders/convenience.ts",
+      "target": "function:src/shared/orders/convenience.ts:getConvenienceActions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/orders/convenience.ts",
+      "target": "function:src/shared/orders/convenience.ts:matchConvenienceFilter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/orders/staff.ts",
+      "target": "function:src/shared/orders/staff.ts:resolveStaff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/types/index.ts",
+      "target": "function:src/shared/types/index.ts:isPointToPoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/types/index.ts",
+      "target": "function:src/shared/types/index.ts:isZoneBased",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:createMachine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:notifyDomain",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:subscribeDomain",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:startTimeout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:stopTimeout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/engine.ts",
+      "target": "function:src/shared/mock/engine.ts:clearAllTimeouts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/seed-factory.ts",
+      "target": "function:src/shared/mock/seed-factory.ts:missingConvenienceStatuses",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/seed-factory.ts",
+      "target": "function:src/shared/mock/seed-factory.ts:validateSeedCoverage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/staff.ts",
+      "target": "function:src/shared/mock/staff.ts:hasActiveOrders",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/staff.ts",
+      "target": "function:src/shared/mock/staff.ts:tryAutoDispatch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/orders/convenience.ts",
+      "target": "function:src/shared/orders/convenience.ts:getConvenienceActions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/orders/convenience.ts",
+      "target": "function:src/shared/orders/convenience.ts:matchConvenienceFilter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/orders/staff.ts",
+      "target": "function:src/shared/orders/staff.ts:resolveStaff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/types/index.ts",
+      "target": "function:src/shared/types/index.ts:isPointToPoint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/types/index.ts",
+      "target": "function:src/shared/types/index.ts:isZoneBased",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/seed.ts",
+      "target": "file:src/shared/mock/validate-seeds.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/shared/mock/seed-factory.ts",
+      "target": "file:src/shared/mock/validate-seeds.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

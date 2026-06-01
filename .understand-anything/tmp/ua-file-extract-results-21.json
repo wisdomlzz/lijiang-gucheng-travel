@@ -1,0 +1,713 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/丽江古城游V2.0完整需求说明书.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 1416,
+      "nonEmptyLines": 1095,
+      "sections": [
+        {
+          "heading": "丽江古城游 V2.0 完整需求说明书",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "变更记录",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "一、需求分级概览",
+          "level": 2,
+          "line": 21
+        },
+        {
+          "heading": "1.1 复用功能（已实现入口，不重做 demo）",
+          "level": 3,
+          "line": 23
+        },
+        {
+          "heading": "1.2 P0 本期核心开发项",
+          "level": 3,
+          "line": 40
+        },
+        {
+          "heading": "1.2.1 便民服务（C 端，老版本优化闭环）",
+          "level": 4,
+          "line": 42
+        },
+        {
+          "heading": "1.2.2 供应商入驻（C 端 + Desktop）",
+          "level": 4,
+          "line": 54
+        },
+        {
+          "heading": "1.2.3 文化院落与打卡（C 端 + Desktop）",
+          "level": 4,
+          "line": 61
+        },
+        {
+          "heading": "1.2.4 遗产知识（C 端 + Desktop）",
+          "level": 4,
+          "line": 68
+        },
+        {
+          "heading": "1.2.5 游客服务信息（C 端）",
+          "level": 4,
+          "line": 75
+        },
+        {
+          "heading": "1.2.6 AI 智能咨询（C 端）",
+          "level": 4,
+          "line": 82
+        },
+        {
+          "heading": "1.2.7 用户与系统管理（Desktop）",
+          "level": 4,
+          "line": 88
+        },
+        {
+          "heading": "1.2.8 投诉管理（Desktop）",
+          "level": 4,
+          "line": 95
+        },
+        {
+          "heading": "1.3 P1 全新版本全流程便民服务（包含 B 端）",
+          "level": 3,
+          "line": 101
+        },
+        {
+          "heading": "二、详细功能说明",
+          "level": 2,
+          "line": 121
+        },
+        {
+          "heading": "第一部分：复用功能说明",
+          "level": 3,
+          "line": 123
+        },
+        {
+          "heading": "2.1.1 导览地图（C 端）",
+          "level": 4,
+          "line": 127
+        },
+        {
+          "heading": "2.1.2 VR 全景游览（C 端）",
+          "level": 4,
+          "line": 168
+        },
+        {
+          "heading": "2.1.3 古城资讯（C 端 + Desktop）",
+          "level": 4,
+          "line": 190
+        },
+        {
+          "heading": "2.1.4 精选/推荐线路（C 端 + Desktop）",
+          "level": 4,
+          "line": 239
+        },
+        {
+          "heading": "2.1.5 便民信息（C 端 + Desktop）",
+          "level": 4,
+          "line": 268
+        },
+        {
+          "heading": "2.1.6 游客服务 POI 维护（Desktop）",
+          "level": 4,
+          "line": 295
+        },
+        {
+          "heading": "第二部分：P0 本期核心开发项",
+          "level": 3,
+          "line": 349
+        },
+        {
+          "heading": "2.2.1 服务类型选择（C 端）",
+          "level": 4,
+          "line": 353
+        },
+        {
+          "heading": "2.2.2 订单创建（C 端）",
+          "level": 4,
+          "line": 390
+        },
+        {
+          "heading": "2.2.3 订单列表（C 端）",
+          "level": 4,
+          "line": 435
+        },
+        {
+          "heading": "2.2.4 订单详情与跟踪（C 端）",
+          "level": 4,
+          "line": 472
+        },
+        {
+          "heading": "2.2.5 投诉反馈（C 端）",
+          "level": 4,
+          "line": 518
+        },
+        {
+          "heading": "2.2.6 供应商入驻（C 端 + Desktop）",
+          "level": 4,
+          "line": 572
+        },
+        {
+          "heading": "2.2.7 文化院落与打卡（C 端 + Desktop）",
+          "level": 4,
+          "line": 641
+        },
+        {
+          "heading": "2.2.8 遗产知识（C 端 + Desktop）",
+          "level": 4,
+          "line": 700
+        },
+        {
+          "heading": "2.2.9 停车场（C 端）",
+          "level": 4,
+          "line": 733
+        },
+        {
+          "heading": "2.2.10 商家信息（C 端）",
+          "level": 4,
+          "line": 758
+        },
+        {
+          "heading": "2.2.11 AI 智能咨询（C 端）",
+          "level": 4,
+          "line": 784
+        },
+        {
+          "heading": "2.2.12 用户与系统管理（Desktop）",
+          "level": 4,
+          "line": 817
+        },
+        {
+          "heading": "2.2.13 投诉管理（Desktop）",
+          "level": 4,
+          "line": 850
+        },
+        {
+          "heading": "第三部分：P1 全新版本全流程便民服务（包含 B 端）",
+          "level": 3,
+          "line": 901
+        },
+        {
+          "heading": "2.3.1 B 端工作台",
+          "level": 4,
+          "line": 903
+        },
+        {
+          "heading": "2.3.2 B 端派单任务",
+          "level": 4,
+          "line": 945
+        },
+        {
+          "heading": "2.3.3 B 端报价与完工流程",
+          "level": 4,
+          "line": 989
+        },
+        {
+          "heading": "2.3.4 B 端历史订单",
+          "level": 4,
+          "line": 1036
+        },
+        {
+          "heading": "2.3.5 B 端个人中心",
+          "level": 4,
+          "line": 1072
+        },
+        {
+          "heading": "2.3.6 Desktop 便民服务概览",
+          "level": 4,
+          "line": 1115
+        },
+        {
+          "heading": "2.3.7 Desktop 派单列表",
+          "level": 4,
+          "line": 1153
+        },
+        {
+          "heading": "2.3.8 Desktop 片区管理",
+          "level": 4,
+          "line": 1197
+        },
+        {
+          "heading": "2.3.9 Desktop 派单配置",
+          "level": 4,
+          "line": 1236
+        },
+        {
+          "heading": "2.3.10 Desktop 服务人员管理",
+          "level": 4,
+          "line": 1275
+        },
+        {
+          "heading": "2.3.11 Desktop 价格仲裁",
+          "level": 4,
+          "line": 1312
+        },
+        {
+          "heading": "三、状态码说明",
+          "level": 2,
+          "line": 1352
+        },
+        {
+          "heading": "3.1 便民服务状态码",
+          "level": 3,
+          "line": 1354
+        },
+        {
+          "heading": "3.2 投诉状态码",
+          "level": 3,
+          "line": 1371
+        },
+        {
+          "heading": "四、数据存储",
+          "level": 2,
+          "line": 1383
+        },
+        {
+          "heading": "五、独立需求说明",
+          "level": 2,
+          "line": 1406
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 53
+      }
+    },
+    {
+      "path": "docs/丽江古城游新版完整需求说明书.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 299,
+      "nonEmptyLines": 241,
+      "sections": [
+        {
+          "heading": "丽江古城游新版完整需求说明书",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "1. 复用功能清单",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "1.1 C 端小程序复用能力",
+          "level": 3,
+          "line": 13
+        },
+        {
+          "heading": "1.2 Desktop 管理后台复用能力",
+          "level": 3,
+          "line": 31
+        },
+        {
+          "heading": "1.3 游客服务数据维护复用能力",
+          "level": 3,
+          "line": 45
+        },
+        {
+          "heading": "1.4 内容管理复用能力",
+          "level": 3,
+          "line": 67
+        },
+        {
+          "heading": "1.5 外部系统/独立需求复用",
+          "level": 3,
+          "line": 80
+        },
+        {
+          "heading": "2. P0 新增与优化功能",
+          "level": 2,
+          "line": 89
+        },
+        {
+          "heading": "2.1 C 端首页与入口收敛",
+          "level": 3,
+          "line": 93
+        },
+        {
+          "heading": "2.2 供应商入驻与商城后台边界",
+          "level": 3,
+          "line": 101
+        },
+        {
+          "heading": "2.3 购在古城与商家生态信息维护",
+          "level": 3,
+          "line": 109
+        },
+        {
+          "heading": "2.4 遗产知识",
+          "level": 3,
+          "line": 117
+        },
+        {
+          "heading": "2.5 文化院落轻量打卡",
+          "level": 3,
+          "line": 124
+        },
+        {
+          "heading": "2.6 投诉优化",
+          "level": 3,
+          "line": 135
+        },
+        {
+          "heading": "2.7 P0 一键下单：便民服务沿用老版基础能力",
+          "level": 3,
+          "line": 143
+        },
+        {
+          "heading": "3. P1 全新版本便民服务全流程",
+          "level": 2,
+          "line": 156
+        },
+        {
+          "heading": "3.1 P1 角色与职责",
+          "level": 3,
+          "line": 160
+        },
+        {
+          "heading": "3.2 C 端便民服务完整流程",
+          "level": 3,
+          "line": 168
+        },
+        {
+          "heading": "3.3 B 端便民服务人员完整流程",
+          "level": 3,
+          "line": 183
+        },
+        {
+          "heading": "3.4 Desktop 便民服务管理完整流程",
+          "level": 3,
+          "line": 201
+        },
+        {
+          "heading": "3.5 便民服务状态机",
+          "level": 3,
+          "line": 214
+        },
+        {
+          "heading": "3.6 异常与治理",
+          "level": 3,
+          "line": 232
+        },
+        {
+          "heading": "4. 非本期范围",
+          "level": 2,
+          "line": 244
+        },
+        {
+          "heading": "5. 页面与验收映射",
+          "level": 2,
+          "line": 255
+        },
+        {
+          "heading": "5.1 C 端小程序",
+          "level": 3,
+          "line": 257
+        },
+        {
+          "heading": "5.2 B 端便民服务人员端",
+          "level": 3,
+          "line": 271
+        },
+        {
+          "heading": "5.3 Desktop 管理后台",
+          "level": 3,
+          "line": 281
+        },
+        {
+          "heading": "6. 一句话对外说明",
+          "level": 2,
+          "line": 297
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 28
+      }
+    },
+    {
+      "path": "docs/便民服务三端收口说明.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 48,
+      "nonEmptyLines": 32,
+      "sections": [
+        {
+          "heading": "便民服务三端收口说明",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "范围",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "已完成的对齐方向",
+          "level": 2,
+          "line": 10
+        },
+        {
+          "heading": "C 端小程序",
+          "level": 3,
+          "line": 12
+        },
+        {
+          "heading": "B 端便民服务人员端",
+          "level": 3,
+          "line": 18
+        },
+        {
+          "heading": "Desktop 管理后台",
+          "level": 3,
+          "line": 25
+        },
+        {
+          "heading": "本次修正的关键点",
+          "level": 2,
+          "line": 31
+        },
+        {
+          "heading": "编译结果",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "备注",
+          "level": 2,
+          "line": 45
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 9
+      }
+    },
+    {
+      "path": "docs/商城派单功能独立需求文档.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 82,
+      "nonEmptyLines": 64,
+      "sections": [
+        {
+          "heading": "商城派单功能独立需求文档",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "一、背景",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "二、范围边界",
+          "level": 2,
+          "line": 11
+        },
+        {
+          "heading": "三、角色",
+          "level": 2,
+          "line": 24
+        },
+        {
+          "heading": "四、核心流程",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "五、功能清单",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "六、关键状态建议",
+          "level": 2,
+          "line": 60
+        },
+        {
+          "heading": "七、与本期 demo 的关系",
+          "level": 2,
+          "line": 72
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    },
+    {
+      "path": "docs/新旧版本差异对照与业务逻辑说明.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 234,
+      "nonEmptyLines": 184,
+      "sections": [
+        {
+          "heading": "新旧版本差异对照与业务逻辑说明",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "一、总体变化",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "二、C端小程序功能对照",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "三、B端便民服务人员小程序",
+          "level": 2,
+          "line": 44
+        },
+        {
+          "heading": "四、Desktop管理后台功能对照",
+          "level": 2,
+          "line": 58
+        },
+        {
+          "heading": "五、新版主要业务逻辑变化",
+          "level": 2,
+          "line": 83
+        },
+        {
+          "heading": "1. 便民服务从“信息入口”变为“订单履约闭环”",
+          "level": 3,
+          "line": 85
+        },
+        {
+          "heading": "2. 商家信息维护与供应商入驻纳入本期，商城交易与商城派单另出需求",
+          "level": 3,
+          "line": 117
+        },
+        {
+          "heading": "3. 投诉从表单提交变为可处理状态流",
+          "level": 3,
+          "line": 146
+        },
+        {
+          "heading": "4. 遗产保护从资料表升级为前后台管理模块",
+          "level": 3,
+          "line": 160
+        },
+        {
+          "heading": "5. 文化院落新增游客打卡闭环",
+          "level": 3,
+          "line": 172
+        },
+        {
+          "heading": "6. 诚信评分成为服务治理逻辑",
+          "level": 3,
+          "line": 184
+        },
+        {
+          "heading": "六、明确不应按“缺失”判断的复用部分",
+          "level": 2,
+          "line": 197
+        },
+        {
+          "heading": "七、当前 demo 需要特别说明的实现口径",
+          "level": 2,
+          "line": 217
+        },
+        {
+          "heading": "八、建议对外表述",
+          "level": 2,
+          "line": 230
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 15
+      }
+    },
+    {
+      "path": "docs/暂缓与删除功能复现说明.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 143,
+      "nonEmptyLines": 98,
+      "sections": [
+        {
+          "heading": "暂缓与删除功能复现说明",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "1. 志愿服务（暂缓）",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "2. C 端商城订单展示（移出本期）",
+          "level": 2,
+          "line": 25
+        },
+        {
+          "heading": "3. 商城派单（独立需求）",
+          "level": 2,
+          "line": 45
+        },
+        {
+          "heading": "4. 文化院落集章/成就玩法（移出本期）",
+          "level": 2,
+          "line": 59
+        },
+        {
+          "heading": "5. 联票套餐、优惠券、积分与购物车（移出本期）",
+          "level": 2,
+          "line": 80
+        },
+        {
+          "heading": "6. 当前本期保留边界",
+          "level": 2,
+          "line": 99
+        },
+        {
+          "heading": "7. 酒吧附属信息（并入酒吧，不再单列菜单）",
+          "level": 2,
+          "line": 110
+        },
+        {
+          "heading": "8. 资讯文章（从当前 demo 摘除）",
+          "level": 2,
+          "line": 128
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 9
+      }
+    }
+  ]
+}

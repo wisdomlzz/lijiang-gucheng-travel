@@ -1,0 +1,717 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/c-end/components/HeritageMap.tsx",
+      "type": "file",
+      "name": "HeritageMap.tsx",
+      "filePath": "src/c-end/components/HeritageMap.tsx",
+      "summary": "C端遗产详情页的位置地图组件，使用高德地图静态图 API 展示坐标并提供跳转导航的入口。",
+      "tags": ["component", "map", "amap", "heritage"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/components/HeritageMap.tsx:HeritageMap",
+      "type": "function",
+      "name": "HeritageMap",
+      "filePath": "src/c-end/components/HeritageMap.tsx",
+      "lineRange": [15, 68],
+      "summary": "接收经纬度与名称，渲染高德静态图与导航跳转链接，并显示坐标详情。",
+      "tags": ["component", "map", "navigation", "heritage"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/bridges.ts",
+      "type": "file",
+      "name": "bridges.ts",
+      "filePath": "src/c-end/data/heritage/bridges.ts",
+      "summary": "丽江古城古桥遗产条目的种子数据文件，统一为 HeritageItem 数组。",
+      "tags": ["seed-data", "heritage", "bridge"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/culturalEnvironments.ts",
+      "type": "file",
+      "name": "culturalEnvironments.ts",
+      "filePath": "src/c-end/data/heritage/culturalEnvironments.ts",
+      "summary": "丽江古城人文环境遗产条目的种子数据文件。",
+      "tags": ["seed-data", "heritage", "cultural-environment"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "src/c-end/data/heritage/index.ts",
+      "summary": "C端遗产数据的 barrel 入口：聚合 8 类子数据为 heritageData 字典，并提供按类型/ID/关键字的查询助手。",
+      "tags": ["barrel", "heritage", "data-aggregation", "search"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/data/heritage/index.ts:getHeritageByType",
+      "type": "function",
+      "name": "getHeritageByType",
+      "filePath": "src/c-end/data/heritage/index.ts",
+      "lineRange": [22, 24],
+      "summary": "按遗产类型返回对应的 HeritageItem 列表。",
+      "tags": ["helper", "heritage", "lookup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/c-end/data/heritage/index.ts:getHeritageById",
+      "type": "function",
+      "name": "getHeritageById",
+      "filePath": "src/c-end/data/heritage/index.ts",
+      "lineRange": [26, 32],
+      "summary": "跨所有遗产类型按 ID 查找首个匹配的 HeritageItem，未找到返回 undefined。",
+      "tags": ["helper", "heritage", "lookup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/c-end/data/heritage/index.ts:searchHeritage",
+      "type": "function",
+      "name": "searchHeritage",
+      "filePath": "src/c-end/data/heritage/index.ts",
+      "lineRange": [34, 43],
+      "summary": "按关键字在指定类型或全量数据中搜索名称或描述匹配的遗产条目。",
+      "tags": ["helper", "heritage", "search", "filter"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/publicStructures.ts",
+      "type": "file",
+      "name": "publicStructures.ts",
+      "filePath": "src/c-end/data/heritage/publicStructures.ts",
+      "summary": "丽江古城公共构建物遗产条目的种子数据文件。",
+      "tags": ["seed-data", "heritage", "public-structure"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/residences.ts",
+      "type": "file",
+      "name": "residences.ts",
+      "filePath": "src/c-end/data/heritage/residences.ts",
+      "summary": "丽江古城代表性民居遗产条目的种子数据文件。",
+      "tags": ["seed-data", "heritage", "residence"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/roads.ts",
+      "type": "file",
+      "name": "roads.ts",
+      "filePath": "src/c-end/data/heritage/roads.ts",
+      "summary": "丽江古城道路遗产条目的种子数据文件。",
+      "tags": ["seed-data", "heritage", "road"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/trees.ts",
+      "type": "file",
+      "name": "trees.ts",
+      "filePath": "src/c-end/data/heritage/trees.ts",
+      "summary": "丽江古城古树名木遗产条目的种子数据文件，包含编号、科属、树龄等灵活字段。",
+      "tags": ["seed-data", "heritage", "tree"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/waters.ts",
+      "type": "file",
+      "name": "waters.ts",
+      "filePath": "src/c-end/data/heritage/waters.ts",
+      "summary": "丽江古城水系遗产条目的种子数据文件。",
+      "tags": ["seed-data", "heritage", "water"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/data/heritage/wells.ts",
+      "type": "file",
+      "name": "wells.ts",
+      "filePath": "src/c-end/data/heritage/wells.ts",
+      "summary": "丽江古城古井遗产条目的种子数据文件。",
+      "tags": ["seed-data", "heritage", "well"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/c-end/pages/HeritagePage.tsx",
+      "type": "file",
+      "name": "HeritagePage.tsx",
+      "filePath": "src/c-end/pages/HeritagePage.tsx",
+      "summary": "C端遗产浏览主页面，提供分类 Tab、关键字搜索、地理定位、按距离排序与分页加载。",
+      "tags": ["page", "heritage", "search", "geo-location", "load-more"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/HeritagePage.tsx:getDistance",
+      "type": "function",
+      "name": "getDistance",
+      "filePath": "src/c-end/pages/HeritagePage.tsx",
+      "lineRange": [24, 36],
+      "summary": "使用 Haversine 公式计算两个经纬度坐标之间的球面距离（米）。",
+      "tags": ["utility", "geo", "math", "haversine"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/pages/HeritagePage.tsx:HeritagePage",
+      "type": "function",
+      "name": "HeritagePage",
+      "filePath": "src/c-end/pages/HeritagePage.tsx",
+      "lineRange": [65, 254],
+      "summary": "C端遗产列表主组件，集成定位、Tab 切换、搜索过滤、分页加载和列表卡片渲染。",
+      "tags": ["page", "heritage", "search", "geo-location", "load-more"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "type": "file",
+      "name": "HeritageDetailPage.tsx",
+      "filePath": "src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "summary": "C端遗产详情页，展示照片轮播、基础信息和每种类型专有的扩展字段。",
+      "tags": ["page", "heritage", "detail", "carousel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/heritage/HeritageDetailPage.tsx:FieldRow",
+      "type": "function",
+      "name": "FieldRow",
+      "filePath": "src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "lineRange": [10, 19],
+      "summary": "渲染扩展字段行，支持字符串与字符串数组两种值类型。",
+      "tags": ["component", "field", "render"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/c-end/pages/heritage/HeritageDetailPage.tsx:HeritageDetailPage",
+      "type": "function",
+      "name": "HeritageDetailPage",
+      "filePath": "src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "lineRange": [21, 191],
+      "summary": "C端遗产详情主组件，集成照片轮播、地图与每类型专属字段的渲染。",
+      "tags": ["page", "heritage", "detail", "carousel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/types/heritage.ts",
+      "type": "file",
+      "name": "heritage.ts",
+      "filePath": "src/c-end/types/heritage.ts",
+      "summary": "C端遗产模块的类型定义文件：HeritageType/Area 枚举、统一的 HeritageItem 接口以及每种类型的中文标签与扩展字段元数据。",
+      "tags": ["type-definition", "heritage", "metadata"],
+      "complexity": "moderate",
+      "languageNotes": "将每种类型特有的字段以 key→label 的扁平数组暴露给 UI，按需在详情页渲染。"
+    },
+    {
+      "id": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "type": "file",
+      "name": "HeritageForm.tsx",
+      "filePath": "src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "summary": "桌面端遗产条目新增/编辑表单，支持 8 种类型分支渲染、字段校验、批量数组解析与提交到 heritage-manage store。",
+      "tags": ["form", "heritage", "validation", "crud", "admin"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/desktop/pages/heritage/components/HeritageForm.tsx:FormField",
+      "type": "function",
+      "name": "FormField",
+      "filePath": "src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "lineRange": [105, 114],
+      "summary": "渲染带标签和必填标记的表单项容器。",
+      "tags": ["component", "form", "field"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/desktop/pages/heritage/components/HeritageForm.tsx:HeritageForm",
+      "type": "function",
+      "name": "HeritageForm",
+      "filePath": "src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "lineRange": [116, 762],
+      "summary": "遗产条目表单主组件：根据 type 切换不同的字段区，处理 init、validate、submit 三段式流程。",
+      "tags": ["form", "heritage", "validation", "crud"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/desktop/pages/heritage/components/HeritageForm.tsx:HeritageFormWrapper",
+      "type": "function",
+      "name": "HeritageFormWrapper",
+      "filePath": "src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "lineRange": [768, 776],
+      "summary": "根据路由参数 mode 决定新增/编辑模式，加载对应条目并注入到 HeritageForm。",
+      "tags": ["component", "heritage", "wrapper", "routing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/desktop/pages/heritage/create.tsx",
+      "type": "file",
+      "name": "create.tsx",
+      "filePath": "src/desktop/pages/heritage/create.tsx",
+      "summary": "桌面端遗产新建页面入口，转发到 HeritageFormWrapper 并以 create 模式渲染。",
+      "tags": ["page", "heritage", "entry-point", "create"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/desktop/pages/heritage/create.tsx:HeritageCreatePage",
+      "type": "function",
+      "name": "HeritageCreatePage",
+      "filePath": "src/desktop/pages/heritage/create.tsx",
+      "lineRange": [3, 5],
+      "summary": "默认导出的桌面端新建遗产页面，渲染 create 模式的表单。",
+      "tags": ["page", "heritage", "create"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/desktop/pages/heritage/edit.tsx",
+      "type": "file",
+      "name": "edit.tsx",
+      "filePath": "src/desktop/pages/heritage/edit.tsx",
+      "summary": "桌面端遗产编辑页面入口，转发到 HeritageFormWrapper 并以 edit 模式渲染。",
+      "tags": ["page", "heritage", "entry-point", "edit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/desktop/pages/heritage/edit.tsx:HeritageEditPage",
+      "type": "function",
+      "name": "HeritageEditPage",
+      "filePath": "src/desktop/pages/heritage/edit.tsx",
+      "lineRange": [3, 5],
+      "summary": "默认导出的桌面端编辑遗产页面，渲染 edit 模式的表单。",
+      "tags": ["page", "heritage", "edit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/stores/heritage-manage-store.ts",
+      "type": "file",
+      "name": "heritage-manage-store.ts",
+      "filePath": "src/shared/stores/heritage-manage-store.ts",
+      "summary": "桌面端遗产管理的 Zustand store：从 C端种子数据初始化，提供按类型切换、增删改的内存操作。",
+      "tags": ["store", "zustand", "heritage", "crud", "state-management"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/c-end/components/HeritageMap.tsx",
+      "target": "function:src/c-end/components/HeritageMap.tsx:HeritageMap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/components/HeritageMap.tsx",
+      "target": "function:src/c-end/components/HeritageMap.tsx:HeritageMap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "function:src/c-end/data/heritage/index.ts:getHeritageByType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "function:src/c-end/data/heritage/index.ts:getHeritageByType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "function:src/c-end/data/heritage/index.ts:getHeritageById",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "function:src/c-end/data/heritage/index.ts:getHeritageById",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "function:src/c-end/data/heritage/index.ts:searchHeritage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "function:src/c-end/data/heritage/index.ts:searchHeritage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/HeritagePage.tsx",
+      "target": "function:src/c-end/pages/HeritagePage.tsx:getDistance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/HeritagePage.tsx",
+      "target": "function:src/c-end/pages/HeritagePage.tsx:HeritagePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/HeritagePage.tsx",
+      "target": "function:src/c-end/pages/HeritagePage.tsx:HeritagePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "target": "function:src/c-end/pages/heritage/HeritageDetailPage.tsx:FieldRow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "target": "function:src/c-end/pages/heritage/HeritageDetailPage.tsx:HeritageDetailPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "target": "function:src/c-end/pages/heritage/HeritageDetailPage.tsx:HeritageDetailPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "function:src/desktop/pages/heritage/components/HeritageForm.tsx:FormField",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "function:src/desktop/pages/heritage/components/HeritageForm.tsx:HeritageForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "function:src/desktop/pages/heritage/components/HeritageForm.tsx:HeritageForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "function:src/desktop/pages/heritage/components/HeritageForm.tsx:HeritageFormWrapper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "function:src/desktop/pages/heritage/components/HeritageForm.tsx:HeritageFormWrapper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/create.tsx",
+      "target": "function:src/desktop/pages/heritage/create.tsx:HeritageCreatePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/create.tsx",
+      "target": "function:src/desktop/pages/heritage/create.tsx:HeritageCreatePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/edit.tsx",
+      "target": "function:src/desktop/pages/heritage/edit.tsx:HeritageEditPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/edit.tsx",
+      "target": "function:src/desktop/pages/heritage/edit.tsx:HeritageEditPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/data/heritage/bridges.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/culturalEnvironments.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/data/heritage/bridges.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/data/heritage/culturalEnvironments.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/data/heritage/publicStructures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/data/heritage/residences.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/data/heritage/roads.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/data/heritage/trees.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/data/heritage/waters.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/data/heritage/wells.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/index.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/publicStructures.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/residences.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/roads.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/trees.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/waters.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/data/heritage/wells.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/HeritagePage.tsx",
+      "target": "file:src/c-end/data/heritage/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/HeritagePage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/HeritagePage.tsx",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/HeritagePage.tsx",
+      "target": "file:src/shared/components/ui/image-with-fallback.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/HeritagePage.tsx",
+      "target": "file:src/shared/hooks/useLoadMore.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "target": "file:src/c-end/components/HeritageMap.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "target": "file:src/c-end/data/heritage/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/heritage/HeritageDetailPage.tsx",
+      "target": "file:src/shared/components/ui/image-with-fallback.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "file:src/desktop/components/common/PageLayout.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "file:src/shared/components/ui/button.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "file:src/shared/components/ui/input.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "file:src/shared/components/ui/select.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "file:src/shared/components/ui/textarea.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "target": "file:src/shared/stores/heritage-manage-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/create.tsx",
+      "target": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/heritage/edit.tsx",
+      "target": "file:src/desktop/pages/heritage/components/HeritageForm.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/stores/heritage-manage-store.ts",
+      "target": "file:src/c-end/data/heritage/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/stores/heritage-manage-store.ts",
+      "target": "file:src/c-end/types/heritage.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

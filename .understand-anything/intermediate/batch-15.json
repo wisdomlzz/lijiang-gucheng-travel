@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "id": "document:.agents/skills/prototype/LOGIC.md",
+      "type": "document",
+      "name": "LOGIC.md",
+      "filePath": ".agents/skills/prototype/LOGIC.md",
+      "summary": "AI Agent 技能文档：Logic Prototype 分支，描述如何用小型交互式 TUI（终端应用）让用户亲手驱动状态模型，验证业务逻辑、状态机和数据形状等问题。包含 7 步流程（提问→选语言→隔离逻辑→最小 TUI→一键运行→交付→记录答案）和反模式清单。",
+      "tags": ["documentation", "agent-skill", "prototype", "tui", "state-machine"],
+      "complexity": "moderate",
+      "languageNotes": "用 TUI 而非 GUI 验证状态机逻辑，强调把纯逻辑模块与 TUI 壳分离，方便验证后迁移到正式代码。"
+    },
+    {
+      "id": "document:.agents/skills/prototype/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": ".agents/skills/prototype/SKILL.md",
+      "summary": "AI Agent 技能入口：Prototype 总览，根据用户问题（逻辑/状态 vs 界面外观）路由到 LOGIC.md 或 UI.md 分支。包含两条分支的通用规则（一次性代码、一键运行、默认无持久化、跳过打磨、暴露状态、用完即删）和完工时的归档要求。",
+      "tags": ["documentation", "agent-skill", "prototype", "skill-routing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.agents/skills/prototype/UI.md",
+      "type": "document",
+      "name": "UI.md",
+      "filePath": ".agents/skills/prototype/UI.md",
+      "summary": "AI Agent 技能文档：UI Prototype 分支，描述如何在同一路由下生成多个结构差异显著的 UI 变体并通过浮动切换条对比，包含子形态 A（嵌入既有页面）与子形态 B（独立路由）、6 步流程和反模式清单（仅改颜色不算变体、变体间共享过多代码、直接进入生产等）。",
+      "tags": ["documentation", "agent-skill", "prototype", "ui-design", "design-variants"],
+      "complexity": "moderate",
+      "languageNotes": "默认推荐子形态 A（嵌入既有页面），强调变体必须在结构/层级/主操作上不同而非仅改配色；切换器需在生产构建中隐藏以防泄漏。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:.agents/skills/prototype/SKILL.md",
+      "target": "document:.agents/skills/prototype/LOGIC.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.agents/skills/prototype/SKILL.md",
+      "target": "document:.agents/skills/prototype/UI.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.agents/skills/prototype/LOGIC.md",
+      "target": "document:.agents/skills/prototype/UI.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.agents/skills/prototype/UI.md",
+      "target": "document:.agents/skills/prototype/LOGIC.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

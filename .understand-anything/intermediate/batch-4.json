@@ -1,0 +1,1208 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/c-end/pages/PhotoRecordsDetailPage.tsx",
+      "type": "file",
+      "name": "PhotoRecordsDetailPage.tsx",
+      "filePath": "src/c-end/pages/PhotoRecordsDetailPage.tsx",
+      "summary": "C端游客端照片记录详情页，展示单次打卡照片记录的全部图片与元数据，提供图片预览和返回功能。",
+      "tags": ["c-end", "photo-records", "page", "detail-view", "consumer-app"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/PhotoRecordsDetailPage.tsx:PhotoRecordsDetailPage",
+      "type": "function",
+      "name": "PhotoRecordsDetailPage",
+      "filePath": "src/c-end/pages/PhotoRecordsDetailPage.tsx",
+      "lineRange": [113, 273],
+      "summary": "照片记录详情页组件，解析 URL 参数获取记录 ID，展示图片网格、九宫格预览、轮播与元数据。",
+      "tags": ["page-component", "image-gallery", "preview", "routed-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/pages/PhotoRecordsPage.tsx",
+      "type": "file",
+      "name": "PhotoRecordsPage.tsx",
+      "filePath": "src/c-end/pages/PhotoRecordsPage.tsx",
+      "summary": "C端游客端照片记录列表页，按月份筛选所有照片打卡记录，支持点击进入详情。",
+      "tags": ["c-end", "photo-records", "page", "list-view", "consumer-app"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/PhotoRecordsPage.tsx:FilterDropdown",
+      "type": "function",
+      "name": "FilterDropdown",
+      "filePath": "src/c-end/pages/PhotoRecordsPage.tsx",
+      "lineRange": [79, 123],
+      "summary": "通用的筛选下拉组件，传入 options/value/onChange/icon，渲染点击展开的选项列表。",
+      "tags": ["dropdown", "filter", "ui-component", "reusable"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/pages/PhotoRecordsPage.tsx:PhotoRecordsPage",
+      "type": "function",
+      "name": "PhotoRecordsPage",
+      "filePath": "src/c-end/pages/PhotoRecordsPage.tsx",
+      "lineRange": [125, 213],
+      "summary": "照片记录列表页组件，渲染顶部筛选条、按月份分组的记录卡片列表，导航进入详情。",
+      "tags": ["page-component", "list", "routed-page", "navigation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/pages/PhotoReportPage.tsx",
+      "type": "file",
+      "name": "PhotoReportPage.tsx",
+      "filePath": "src/c-end/pages/PhotoReportPage.tsx",
+      "summary": "C端游客端照片上报页，支持区域/类型/对象多级下拉、定位、照片上传与备注填写，提交模拟后端保存。",
+      "tags": ["c-end", "photo-records", "form", "upload", "consumer-app"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/PhotoReportPage.tsx:SelectDropdown",
+      "type": "function",
+      "name": "SelectDropdown",
+      "filePath": "src/c-end/pages/PhotoReportPage.tsx",
+      "lineRange": [28, 78],
+      "summary": "通用选择下拉组件，传入 options/value/onChange/placeholder/disabled，渲染自定义下拉弹层。",
+      "tags": ["dropdown", "ui-component", "select", "reusable"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/pages/PhotoReportPage.tsx:PhotoReportPage",
+      "type": "function",
+      "name": "PhotoReportPage",
+      "filePath": "src/c-end/pages/PhotoReportPage.tsx",
+      "lineRange": [80, 329],
+      "summary": "照片上报页组件，提供位置/区域/类型/对象/照片/备注完整表单，模拟提交并展示成功提示。",
+      "tags": ["page-component", "form", "file-upload", "routed-page", "validation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/pages/ProfilePage.tsx",
+      "type": "file",
+      "name": "ProfilePage.tsx",
+      "filePath": "src/c-end/pages/ProfilePage.tsx",
+      "summary": "C端游客端个人中心页，展示用户信息、订单数量、设置入口列表与退出登录。",
+      "tags": ["c-end", "profile", "page", "user-center", "consumer-app"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/pages/ProfilePage.tsx:ProfilePage",
+      "type": "function",
+      "name": "ProfilePage",
+      "filePath": "src/c-end/pages/ProfilePage.tsx",
+      "lineRange": [12, 187],
+      "summary": "个人中心页组件，从 auth store 与便民服务 store 拉取用户和未完成订单数，渲染用户卡片与功能入口。",
+      "tags": ["page-component", "user-center", "routed-page", "logout"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/pages/RoutesPage.tsx",
+      "type": "file",
+      "name": "RoutesPage.tsx",
+      "filePath": "src/c-end/pages/RoutesPage.tsx",
+      "summary": "C端游客端路线/攻略页，从内容管理 store 拉取攻略，按关键词搜索路线并跳转到详情。",
+      "tags": ["c-end", "routes", "page", "search", "content-manage"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/pages/RoutesPage.tsx:RoutesPage",
+      "type": "function",
+      "name": "RoutesPage",
+      "filePath": "src/c-end/pages/RoutesPage.tsx",
+      "lineRange": [8, 89],
+      "summary": "路线/攻略页组件，读取 useContentManageStore 中的攻略，渲染搜索框与卡片列表，导航到详情。",
+      "tags": ["page-component", "search", "list", "routed-page"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/pages/ServiceTrackingPage.tsx",
+      "type": "file",
+      "name": "ServiceTrackingPage.tsx",
+      "filePath": "src/c-end/pages/ServiceTrackingPage.tsx",
+      "summary": "C端游客端便民服务订单追踪页，展示状态机进度、等待倒计时、协商价格/取消/评价/支付等操作。",
+      "tags": ["c-end", "service-tracking", "order", "state-machine", "consumer-app"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/ServiceTrackingPage.tsx:ServiceTrackingPage",
+      "type": "function",
+      "name": "ServiceTrackingPage",
+      "filePath": "src/c-end/pages/ServiceTrackingPage.tsx",
+      "lineRange": [13, 555],
+      "summary": "服务追踪页组件，按状态码驱动 StatusProgress、倒计时和底部操作栏（付款/取消/申诉/评价）。",
+      "tags": ["page-component", "state-machine", "countdown", "routed-page", "dispute"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/pages/ServicesPage.tsx",
+      "type": "file",
+      "name": "ServicesPage.tsx",
+      "filePath": "src/c-end/pages/ServicesPage.tsx",
+      "summary": "C端游客端便民服务总入口，展示服务类型卡片、当前进行中订单状态、打开下单弹窗与追踪入口。",
+      "tags": ["c-end", "convenience", "page", "service-entry", "consumer-app"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/ServicesPage.tsx:getConvenienceStepIndex",
+      "type": "function",
+      "name": "getConvenienceStepIndex",
+      "filePath": "src/c-end/pages/ServicesPage.tsx",
+      "lineRange": [16, 26],
+      "summary": "根据便民服务状态码计算其在 STATUS_STEPS 数组中的位置索引，便于进度条展示。",
+      "tags": ["utility", "state-machine", "status-mapping"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/c-end/pages/ServicesPage.tsx:OrderModal",
+      "type": "function",
+      "name": "OrderModal",
+      "filePath": "src/c-end/pages/ServicesPage.tsx",
+      "lineRange": [50, 469],
+      "summary": "便民服务下单弹窗，处理地址选择、描述、图片上传、即时/预约时间、提交后跳转追踪页。",
+      "tags": ["modal", "form", "address-picker", "scheduling", "image-upload"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/ServicesPage.tsx:ServicesPage",
+      "type": "function",
+      "name": "ServicesPage",
+      "filePath": "src/c-end/pages/ServicesPage.tsx",
+      "lineRange": [471, 607],
+      "summary": "便民服务首页组件，展示服务宫格、进行中订单横幅与状态机进度，可打开下单弹窗。",
+      "tags": ["page-component", "service-grid", "routed-page", "status-progress"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/pages/SupplierEntryPage.tsx",
+      "type": "file",
+      "name": "SupplierEntryPage.tsx",
+      "filePath": "src/c-end/pages/SupplierEntryPage.tsx",
+      "summary": "C端游客端商家入驻申请表单，多步表单含公司/联系人/资质/经营类型字段，提交后写入 supplier store。",
+      "tags": ["c-end", "supplier", "form", "onboarding", "consumer-app"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/SupplierEntryPage.tsx:SupplierEntryPage",
+      "type": "function",
+      "name": "SupplierEntryPage",
+      "filePath": "src/c-end/pages/SupplierEntryPage.tsx",
+      "lineRange": [12, 360],
+      "summary": "商家入驻申请页组件，4 步表单（基本信息/经营信息/资质上传/确认提交），含校验与图片上传。",
+      "tags": ["page-component", "multi-step-form", "validation", "file-upload", "routed-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/pages/SupplierStatusPage.tsx",
+      "type": "file",
+      "name": "SupplierStatusPage.tsx",
+      "filePath": "src/c-end/pages/SupplierStatusPage.tsx",
+      "summary": "C端游客端商家入驻查询页，输入手机号查询历史申请记录与审核状态。",
+      "tags": ["c-end", "supplier", "page", "search", "consumer-app"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/pages/SupplierStatusPage.tsx:SupplierStatusPage",
+      "type": "function",
+      "name": "SupplierStatusPage",
+      "filePath": "src/c-end/pages/SupplierStatusPage.tsx",
+      "lineRange": [15, 139],
+      "summary": "商家入驻状态查询组件，手机号正则校验后调用 supplier store 的 getByPhone 展示历史申请。",
+      "tags": ["page-component", "search", "routed-page", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/pages/VRTourPage.tsx",
+      "type": "file",
+      "name": "VRTourPage.tsx",
+      "filePath": "src/c-end/pages/VRTourPage.tsx",
+      "summary": "C端 VR 游览占位页，目前只展示 PageHeader 与简单占位提示文案。",
+      "tags": ["c-end", "vr-tour", "placeholder", "consumer-app"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/c-end/pages/VRTourPage.tsx:VRTourPage",
+      "type": "function",
+      "name": "VRTourPage",
+      "filePath": "src/c-end/pages/VRTourPage.tsx",
+      "lineRange": [4, 13],
+      "summary": "VR 游览占位组件，渲染 PageHeader 与开发中文案，预留给后续接入全景视图。",
+      "tags": ["page-component", "placeholder", "routed-page"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "type": "file",
+      "name": "VolunteerActivitiesPage.tsx",
+      "filePath": "src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "summary": "C端游客端志愿者活动列表页，展示全部活动、用户已报名活动与搜索/分页加载。",
+      "tags": ["c-end", "volunteer", "page", "list", "consumer-app"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/VolunteerActivitiesPage.tsx:VolunteerActivitiesPage",
+      "type": "function",
+      "name": "VolunteerActivitiesPage",
+      "filePath": "src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "lineRange": [26, 223],
+      "summary": "志愿者活动列表组件，从 volunteer store 拉取活动/报名，组合 useSearch/useLoadMore 渲染 Tab 与卡片。",
+      "tags": ["page-component", "search", "pagination", "tab-view", "routed-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/pages/VolunteerActivityDetailPage.tsx",
+      "type": "file",
+      "name": "VolunteerActivityDetailPage.tsx",
+      "filePath": "src/c-end/pages/VolunteerActivityDetailPage.tsx",
+      "summary": "C端游客端志愿者活动详情页，展示活动详情与报名/签到/签退按钮，根据报名状态动态渲染操作。",
+      "tags": ["c-end", "volunteer", "page", "detail-view", "consumer-app"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/c-end/pages/VolunteerActivityDetailPage.tsx:VolunteerActivityDetailPage",
+      "type": "function",
+      "name": "VolunteerActivityDetailPage",
+      "filePath": "src/c-end/pages/VolunteerActivityDetailPage.tsx",
+      "lineRange": [10, 269],
+      "summary": "志愿者活动详情页组件，根据活动状态与报名状态显示报名/签到/签退按钮，并提供分享与导航。",
+      "tags": ["page-component", "detail-view", "sign-up", "check-in", "routed-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/c-end/pages/VolunteerPlaceholderPage.tsx",
+      "type": "file",
+      "name": "VolunteerPlaceholderPage.tsx",
+      "filePath": "src/c-end/pages/VolunteerPlaceholderPage.tsx",
+      "summary": "C端游客端志愿者注册占位页，采集姓名/手机/政治面貌/工作单位后调用 register 注册到 volunteer store。",
+      "tags": ["c-end", "volunteer", "form", "registration", "consumer-app"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/c-end/pages/VolunteerPlaceholderPage.tsx:VolunteerPlaceholderPage",
+      "type": "function",
+      "name": "VolunteerPlaceholderPage",
+      "filePath": "src/c-end/pages/VolunteerPlaceholderPage.tsx",
+      "lineRange": [10, 120],
+      "summary": "志愿者注册占位组件，未注册时显示表单，已注册则展示欢迎信息并跳到活动列表。",
+      "tags": ["page-component", "registration-form", "routed-page"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "file",
+      "name": "PageHeader.tsx",
+      "filePath": "src/c-end/pages/shop/PageHeader.tsx",
+      "summary": "C端通用页面头部组件，提供标题与可定制的返回行为，被多个 C 端页面共用。",
+      "tags": ["c-end", "header", "ui-component", "reusable"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/c-end/pages/shop/PageHeader.tsx:PageHeader",
+      "type": "function",
+      "name": "PageHeader",
+      "filePath": "src/c-end/pages/shop/PageHeader.tsx",
+      "lineRange": [4, 26],
+      "summary": "页面顶部条组件，渲染返回按钮与标题，back 可为路径字符串或自定义回调。",
+      "tags": ["header", "navigation", "ui-component", "reusable"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx",
+      "type": "file",
+      "name": "SupplierEntryDesktop.tsx",
+      "filePath": "src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx",
+      "summary": "桌面端商家入驻申请表单，单页结构填写完整信息并提交到 supplier store。",
+      "tags": ["desktop", "supplier", "form", "onboarding", "admin"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx:SupplierEntryDesktop",
+      "type": "function",
+      "name": "SupplierEntryDesktop",
+      "filePath": "src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx",
+      "lineRange": [10, 213],
+      "summary": "桌面端商家入驻组件，渲染长表单（公司/联系人/经营/资质/描述），含校验与图片上传。",
+      "tags": ["page-component", "form", "validation", "file-upload", "routed-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/shared/components/LoginPageB.tsx",
+      "type": "file",
+      "name": "LoginPageB.tsx",
+      "filePath": "src/shared/components/LoginPageB.tsx",
+      "summary": "B端登录页组件，支持微信授权/密码两种登录方式，登录成功后按角色跳转工作台。",
+      "tags": ["shared", "login", "b-end", "wechat-auth", "password-login"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/shared/components/LoginPageB.tsx:LoginPageB",
+      "type": "function",
+      "name": "LoginPageB",
+      "filePath": "src/shared/components/LoginPageB.tsx",
+      "lineRange": [12, 247],
+      "summary": "B端登录页组件，封装 MiniProgramFrame + 表单/微信授权，确认后通过 auth store 写入登录态。",
+      "tags": ["login-form", "wechat-auth", "routed-page", "b-end"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/shared/components/LoginPageC.tsx",
+      "type": "file",
+      "name": "LoginPageC.tsx",
+      "filePath": "src/shared/components/LoginPageC.tsx",
+      "summary": "C端游客端登录页组件，支持微信授权/手机号验证码两种登录方式。",
+      "tags": ["shared", "login", "c-end", "wechat-auth", "sms-code"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/shared/components/LoginPageC.tsx:LoginPageC",
+      "type": "function",
+      "name": "LoginPageC",
+      "filePath": "src/shared/components/LoginPageC.tsx",
+      "lineRange": [11, 209],
+      "summary": "C端登录页组件，封装 MiniProgramFrame + 微信/手机号验证码登录流程与 60s 倒计时。",
+      "tags": ["login-form", "wechat-auth", "sms-code", "countdown", "routed-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/shared/components/LoginPageDesktop.tsx",
+      "type": "file",
+      "name": "LoginPageDesktop.tsx",
+      "filePath": "src/shared/components/LoginPageDesktop.tsx",
+      "summary": "桌面端管理后台登录页组件，支持账号密码登录与预设账号一键登录。",
+      "tags": ["shared", "login", "desktop", "password-login", "admin"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/shared/components/LoginPageDesktop.tsx:LoginPageDesktop",
+      "type": "function",
+      "name": "LoginPageDesktop",
+      "filePath": "src/shared/components/LoginPageDesktop.tsx",
+      "lineRange": [37, 271],
+      "summary": "桌面端登录页组件，渲染品牌介绍、特性卡、登录表单与预设账号快捷登录入口。",
+      "tags": ["login-form", "admin-portal", "preset-accounts", "routed-page"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/shared/components/MiniProgramFrame.tsx",
+      "type": "file",
+      "name": "MiniProgramFrame.tsx",
+      "filePath": "src/shared/components/MiniProgramFrame.tsx",
+      "summary": "三端共用的手机壳组件，固定 390x844 视口、支持缩放、顶部带端切换小按钮，包裹 C/B 端所有页面。",
+      "tags": ["shared", "frame", "mobile-shell", "zoom", "ui-component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/shared/components/MiniProgramFrame.tsx:MiniProgramFrame",
+      "type": "function",
+      "name": "MiniProgramFrame",
+      "filePath": "src/shared/components/MiniProgramFrame.tsx",
+      "lineRange": [13, 82],
+      "summary": "手机壳容器组件，封装缩放、状态栏、端切换按钮与登录态守卫。",
+      "tags": ["layout", "viewport", "zoom", "platform-switch"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/components/TrustScoreBadge.tsx",
+      "type": "file",
+      "name": "TrustScoreBadge.tsx",
+      "filePath": "src/shared/components/TrustScoreBadge.tsx",
+      "summary": "信任分徽章组件，根据分值与状态显示不同色阶的圆角徽标，用于订单详情等页面。",
+      "tags": ["shared", "badge", "trust-score", "ui-component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/components/TrustScoreBadge.tsx:TrustScoreBadge",
+      "type": "function",
+      "name": "TrustScoreBadge",
+      "filePath": "src/shared/components/TrustScoreBadge.tsx",
+      "lineRange": [9, 25],
+      "summary": "信任分徽章组件，根据 score/status 渲染对应颜色与文本的胶囊徽标。",
+      "tags": ["badge", "indicator", "ui-component", "reusable"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/components/ui/bottom-sheet-picker.tsx",
+      "type": "file",
+      "name": "bottom-sheet-picker.tsx",
+      "filePath": "src/shared/components/ui/bottom-sheet-picker.tsx",
+      "summary": "通用底部弹出选择器组件，移动端从底部滑出选项列表，单选后回调。",
+      "tags": ["shared", "ui-component", "bottom-sheet", "picker"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/components/ui/bottom-sheet-picker.tsx:BottomSheetPicker",
+      "type": "function",
+      "name": "BottomSheetPicker",
+      "filePath": "src/shared/components/ui/bottom-sheet-picker.tsx",
+      "lineRange": [12, 48],
+      "summary": "底部弹出选择器组件，渲染半透明遮罩与从底部滑入的选项面板，onSelect + onClose 回传结果。",
+      "tags": ["bottom-sheet", "picker", "mobile", "ui-component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/components/ui/image-upload.tsx",
+      "type": "file",
+      "name": "image-upload.tsx",
+      "filePath": "src/shared/components/ui/image-upload.tsx",
+      "summary": "通用图片上传组件，支持点击与拖拽上传，校验图片类型、生成 base64 预览。",
+      "tags": ["shared", "ui-component", "file-upload", "drag-drop"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/shared/components/ui/image-upload.tsx:ImageUpload",
+      "type": "function",
+      "name": "ImageUpload",
+      "filePath": "src/shared/components/ui/image-upload.tsx",
+      "lineRange": [10, 86],
+      "summary": "图片上传组件，处理点击/拖拽、文件类型校验、FileReader 转 base64，向上回传 onChange。",
+      "tags": ["file-upload", "preview", "drag-drop", "ui-component"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/shared/hooks/useLoadMore.ts",
+      "type": "file",
+      "name": "useLoadMore.ts",
+      "filePath": "src/shared/hooks/useLoadMore.ts",
+      "summary": "通用分页加载更多 hook，基于 useState/useMemo/useCallback 实现可见项切片与加载/重置。",
+      "tags": ["shared", "hook", "pagination", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/shared/hooks/useLoadMore.ts:useLoadMore",
+      "type": "function",
+      "name": "useLoadMore",
+      "filePath": "src/shared/hooks/useLoadMore.ts",
+      "lineRange": [3, 20],
+      "summary": "加载更多 hook，传入 items 和 pageSize，返回可见项、loadMore/reset 与是否还有更多。",
+      "tags": ["hook", "pagination", "list", "react"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/hooks/useSearch.ts",
+      "type": "file",
+      "name": "useSearch.ts",
+      "filePath": "src/shared/hooks/useSearch.ts",
+      "summary": "通用搜索 hook，传入 items 与过滤函数，返回 query/setQuery 与过滤后的结果。",
+      "tags": ["shared", "hook", "search", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/shared/mock/addresses.ts",
+      "type": "file",
+      "name": "addresses.ts",
+      "filePath": "src/shared/mock/addresses.ts",
+      "summary": "地址簿模拟后端 store，导出 useAddressStore 维护当前用户的地址列表（默认/常用/历史）。",
+      "tags": ["shared", "mock", "address-book", "zustand-store"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/c-end/pages/PhotoRecordsDetailPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoRecordsDetailPage.tsx",
+      "target": "function:src/c-end/pages/PhotoRecordsDetailPage.tsx:PhotoRecordsDetailPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoRecordsDetailPage.tsx",
+      "target": "function:src/c-end/pages/PhotoRecordsDetailPage.tsx:PhotoRecordsDetailPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoRecordsPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoRecordsPage.tsx",
+      "target": "function:src/c-end/pages/PhotoRecordsPage.tsx:FilterDropdown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoRecordsPage.tsx",
+      "target": "function:src/c-end/pages/PhotoRecordsPage.tsx:PhotoRecordsPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoRecordsPage.tsx",
+      "target": "function:src/c-end/pages/PhotoRecordsPage.tsx:PhotoRecordsPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoReportPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoReportPage.tsx",
+      "target": "function:src/c-end/pages/PhotoReportPage.tsx:SelectDropdown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoReportPage.tsx",
+      "target": "function:src/c-end/pages/PhotoReportPage.tsx:PhotoReportPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/PhotoReportPage.tsx",
+      "target": "function:src/c-end/pages/PhotoReportPage.tsx:PhotoReportPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/ProfilePage.tsx",
+      "target": "file:src/shared/components/ui/image-with-fallback.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ProfilePage.tsx",
+      "target": "file:src/shared/mock/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ProfilePage.tsx",
+      "target": "file:src/shared/stores/auth-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ProfilePage.tsx",
+      "target": "function:src/c-end/pages/ProfilePage.tsx:ProfilePage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/ProfilePage.tsx",
+      "target": "function:src/c-end/pages/ProfilePage.tsx:ProfilePage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/RoutesPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/RoutesPage.tsx",
+      "target": "file:src/shared/components/ui/image-with-fallback.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/RoutesPage.tsx",
+      "target": "file:src/shared/stores/content-manage-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/RoutesPage.tsx",
+      "target": "function:src/c-end/pages/RoutesPage.tsx:RoutesPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/RoutesPage.tsx",
+      "target": "function:src/c-end/pages/RoutesPage.tsx:RoutesPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/ServiceTrackingPage.tsx",
+      "target": "file:src/c-end/components/StatusProgress.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServiceTrackingPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServiceTrackingPage.tsx",
+      "target": "file:src/shared/mock/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServiceTrackingPage.tsx",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServiceTrackingPage.tsx",
+      "target": "function:src/c-end/pages/ServiceTrackingPage.tsx:ServiceTrackingPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/ServiceTrackingPage.tsx",
+      "target": "function:src/c-end/pages/ServiceTrackingPage.tsx:ServiceTrackingPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "file:src/c-end/components/StatusProgress.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "file:src/shared/mock/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "file:src/shared/stores/auth-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "file:src/shared/stores/convenience-services-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "function:src/c-end/pages/ServicesPage.tsx:getConvenienceStepIndex",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "function:src/c-end/pages/ServicesPage.tsx:OrderModal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "function:src/c-end/pages/ServicesPage.tsx:ServicesPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/ServicesPage.tsx",
+      "target": "function:src/c-end/pages/ServicesPage.tsx:ServicesPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierEntryPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierEntryPage.tsx",
+      "target": "file:src/shared/components/ui/image-upload.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierEntryPage.tsx",
+      "target": "file:src/shared/stores/supplier-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierEntryPage.tsx",
+      "target": "function:src/c-end/pages/SupplierEntryPage.tsx:SupplierEntryPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierEntryPage.tsx",
+      "target": "function:src/c-end/pages/SupplierEntryPage.tsx:SupplierEntryPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierStatusPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierStatusPage.tsx",
+      "target": "file:src/shared/stores/supplier-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierStatusPage.tsx",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierStatusPage.tsx",
+      "target": "function:src/c-end/pages/SupplierStatusPage.tsx:SupplierStatusPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/SupplierStatusPage.tsx",
+      "target": "function:src/c-end/pages/SupplierStatusPage.tsx:SupplierStatusPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/VRTourPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VRTourPage.tsx",
+      "target": "function:src/c-end/pages/VRTourPage.tsx:VRTourPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/VRTourPage.tsx",
+      "target": "function:src/c-end/pages/VRTourPage.tsx:VRTourPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "target": "file:src/shared/hooks/useLoadMore.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "target": "file:src/shared/hooks/useSearch.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "target": "file:src/shared/stores/auth-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "target": "file:src/shared/stores/volunteer-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "target": "function:src/c-end/pages/VolunteerActivitiesPage.tsx:VolunteerActivitiesPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivitiesPage.tsx",
+      "target": "function:src/c-end/pages/VolunteerActivitiesPage.tsx:VolunteerActivitiesPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivityDetailPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivityDetailPage.tsx",
+      "target": "file:src/shared/stores/auth-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivityDetailPage.tsx",
+      "target": "file:src/shared/stores/volunteer-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivityDetailPage.tsx",
+      "target": "function:src/c-end/pages/VolunteerActivityDetailPage.tsx:VolunteerActivityDetailPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerActivityDetailPage.tsx",
+      "target": "function:src/c-end/pages/VolunteerActivityDetailPage.tsx:VolunteerActivityDetailPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerPlaceholderPage.tsx",
+      "target": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerPlaceholderPage.tsx",
+      "target": "file:src/shared/stores/volunteer-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerPlaceholderPage.tsx",
+      "target": "function:src/c-end/pages/VolunteerPlaceholderPage.tsx:VolunteerPlaceholderPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/VolunteerPlaceholderPage.tsx",
+      "target": "function:src/c-end/pages/VolunteerPlaceholderPage.tsx:VolunteerPlaceholderPage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "target": "function:src/c-end/pages/shop/PageHeader.tsx:PageHeader",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/c-end/pages/shop/PageHeader.tsx",
+      "target": "function:src/c-end/pages/shop/PageHeader.tsx:PageHeader",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx",
+      "target": "file:src/shared/components/ui/image-upload.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx",
+      "target": "file:src/shared/stores/supplier-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx",
+      "target": "function:src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx:SupplierEntryDesktop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx",
+      "target": "function:src/desktop/pages/supplier-applications/SupplierEntryDesktop.tsx:SupplierEntryDesktop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/components/LoginPageB.tsx",
+      "target": "file:src/shared/components/MiniProgramFrame.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageB.tsx",
+      "target": "file:src/shared/stores/auth-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageB.tsx",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageB.tsx",
+      "target": "file:src/shared/types/seed-users.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageB.tsx",
+      "target": "function:src/shared/components/LoginPageB.tsx:LoginPageB",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/components/LoginPageB.tsx",
+      "target": "function:src/shared/components/LoginPageB.tsx:LoginPageB",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/components/LoginPageC.tsx",
+      "target": "file:src/shared/components/MiniProgramFrame.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageC.tsx",
+      "target": "file:src/shared/stores/auth-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageC.tsx",
+      "target": "file:src/shared/types/seed-users.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageC.tsx",
+      "target": "function:src/shared/components/LoginPageC.tsx:LoginPageC",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/components/LoginPageC.tsx",
+      "target": "function:src/shared/components/LoginPageC.tsx:LoginPageC",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/components/LoginPageDesktop.tsx",
+      "target": "file:src/shared/constants.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageDesktop.tsx",
+      "target": "file:src/shared/stores/auth-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageDesktop.tsx",
+      "target": "file:src/shared/types/seed-users.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/LoginPageDesktop.tsx",
+      "target": "function:src/shared/components/LoginPageDesktop.tsx:LoginPageDesktop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/components/LoginPageDesktop.tsx",
+      "target": "function:src/shared/components/LoginPageDesktop.tsx:LoginPageDesktop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/components/MiniProgramFrame.tsx",
+      "target": "file:src/shared/stores/auth-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/MiniProgramFrame.tsx",
+      "target": "file:src/shared/stores/zoom-store.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/shared/components/MiniProgramFrame.tsx",
+      "target": "function:src/shared/components/MiniProgramFrame.tsx:MiniProgramFrame",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/components/MiniProgramFrame.tsx",
+      "target": "function:src/shared/components/MiniProgramFrame.tsx:MiniProgramFrame",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/components/TrustScoreBadge.tsx",
+      "target": "function:src/shared/components/TrustScoreBadge.tsx:TrustScoreBadge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/components/TrustScoreBadge.tsx",
+      "target": "function:src/shared/components/TrustScoreBadge.tsx:TrustScoreBadge",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/components/ui/bottom-sheet-picker.tsx",
+      "target": "function:src/shared/components/ui/bottom-sheet-picker.tsx:BottomSheetPicker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/components/ui/bottom-sheet-picker.tsx",
+      "target": "function:src/shared/components/ui/bottom-sheet-picker.tsx:BottomSheetPicker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/components/ui/image-upload.tsx",
+      "target": "function:src/shared/components/ui/image-upload.tsx:ImageUpload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/components/ui/image-upload.tsx",
+      "target": "function:src/shared/components/ui/image-upload.tsx:ImageUpload",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/hooks/useLoadMore.ts",
+      "target": "function:src/shared/hooks/useLoadMore.ts:useLoadMore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/shared/hooks/useLoadMore.ts",
+      "target": "function:src/shared/hooks/useLoadMore.ts:useLoadMore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/shared/mock/addresses.ts",
+      "target": "file:src/shared/types/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

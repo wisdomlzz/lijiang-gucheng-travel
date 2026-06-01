@@ -1,0 +1,5 @@
+{
+  "projectRoot": "/Users/lzz/Desktop/Projects/丽江古城游",
+  "batchFiles": [{"path":"src/shared/styles/fonts.css","language":"css","sizeLines":4,"fileCategory":"markup"},{"path":"src/shared/styles/globals.css","language":"css","sizeLines":44,"fileCategory":"markup"},{"path":"src/shared/styles/index.css","language":"css","sizeLines":1,"fileCategory":"markup"},{"path":"src/shared/styles/tailwind.css","language":"css","sizeLines":99,"fileCategory":"markup"},{"path":"src/shared/styles/theme.css","language":"css","sizeLines":102,"fileCategory":"markup"}],
+  "batchImportData": {"src/shared/styles/fonts.css":[],"src/shared/styles/globals.css":[],"src/shared/styles/index.css":[],"src/shared/styles/tailwind.css":[],"src/shared/styles/theme.css":[]}
+}
