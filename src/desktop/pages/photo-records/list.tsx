@@ -199,7 +199,7 @@ export default function PhotoRecordsList() {
           <TabButton value="all" label="全部" />
           <TabButton value="month" label="本月" />
           <TabButton value="week" label="本周" />
-          <TabButton value="today" label="今日" />
+          <TabButton value="today" label="本日" />
           <TabButton value="custom" label="自定义" />
 
           {timeRange === "custom" && (
@@ -221,6 +221,9 @@ export default function PhotoRecordsList() {
           )}
 
           <span className="ml-auto text-xs text-text-tertiary">{timeLabel}</span>
+        </div>
+        <div className="text-[10px] text-text-tertiary/60 mt-1">
+          自然月 · 自然周（周一~周日）· 自然日
         </div>
       </div>
 
@@ -252,20 +255,20 @@ export default function PhotoRecordsList() {
             <Trophy size={16} className="text-amber-500" />
             各院落打卡排行
           </h3>
-          {courtyardStats.length > 10 && (
+          {courtyardStats.length > 5 && (
             <button
               onClick={() => setRankExpanded(!rankExpanded)}
               className="text-xs text-primary hover:underline"
             >
               {rankExpanded
-                ? "收起（显示前 10）"
+                ? "收起（显示前 5）"
                 : `展开全部 ${courtyardStats.length} 个`}
             </button>
           )}
         </div>
 
         <div className="space-y-1">
-          {(rankExpanded ? courtyardStats : courtyardStats.slice(0, 10)).map((item, idx) => (
+          {(rankExpanded ? courtyardStats : courtyardStats.slice(0, 5)).map((item, idx) => (
             <div
               key={item.id}
               className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors"

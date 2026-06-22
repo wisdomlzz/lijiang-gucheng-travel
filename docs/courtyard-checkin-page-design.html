@@ -103,7 +103,7 @@ td.action { text-align: right; }
       <button class="tab active" onclick="switchTab('all')">全部</button>
       <button class="tab" onclick="switchTab('month')">本月</button>
       <button class="tab" onclick="switchTab('week')">本周</button>
-      <button class="tab" onclick="switchTab('today')">今日</button>
+      <button class="tab" onclick="switchTab('today')">本日</button>
       <button class="tab" onclick="switchTab('custom')">自定义</button>
       <div class="custom-date-wrap" id="customDateWrap">
         <input type="date" class="date-input" id="customStart" onchange="onCustomChange()">
@@ -112,6 +112,7 @@ td.action { text-align: right; }
       </div>
       <span class="time-label" id="timeLabel">全部时间</span>
     </div>
+    <div style="font-size:10px;color:#94a3b8;opacity:0.6;margin-top:2px;padding:0 20px 4px">自然月 · 自然周（周一~周日）· 自然日</div>
   </div>
 
   <!-- ── ② KPI 行 ── -->
@@ -278,7 +279,7 @@ function renderRanking() {
   document.querySelectorAll(".rank-row[data-rid]").forEach(el => {
     const idx = parseInt(el.dataset.rid)-1;
     if (idx < sorted.length) {
-      el.style.display = "flex";
+      el.style.display = (idx >= 5 && !rankExpanded) ? "none" : "flex";
       const [name, count] = sorted[idx];
       el.querySelector(".rname").textContent = name;
       el.querySelector(".rfill").style.width = `${(count/max)*100}%`;
@@ -290,7 +291,7 @@ function renderRanking() {
     } else el.style.display = "none";
   });
   document.getElementById("rankEmpty").style.display = sorted.length===0?"block":"none";
-  document.getElementById("rankToggle").textContent = "展开全部 25 个 ➤";
+  document.getElementById("rankToggle").textContent = rankExpanded ? "收起（显示前 5）" : `展开全部 ${sorted.length} 个`;
   document.querySelectorAll(".rank-more").forEach(el => el.classList.remove("show"));
 }
 
@@ -343,7 +344,7 @@ function renderTable() {
 function clearFilters() { resetFilters(); }
 function prevPage() { if(currentPage>1){currentPage--;renderTable();} }
 function nextPage() { const tp=Math.ceil(filteredData.length/PAGE_SIZE); if(currentPage<tp){currentPage++;renderTable();} }
-function toggleRank() { rankExpanded=!rankExpanded; document.querySelectorAll(".rank-more").forEach(e=>e.classList.toggle("show",rankExpanded)); document.getElementById("rankToggle").textContent=rankExpanded?"收起（显示前 10）":"展开全部 25 个 ➤"; }
+function toggleRank() { rankExpanded=!rankExpanded; document.querySelectorAll(".rank-more").forEach(e=>e.classList.toggle("show",rankExpanded)); document.querySelectorAll(".rank-row[data-rid]").forEach(el=>{const idx=parseInt(el.dataset.rid)-1;if(idx>=5&&idx<10)el.style.display=rankExpanded?"flex":"none"}); document.getElementById("rankToggle").textContent=rankExpanded?"收起（显示前 5）":"展开全部 25 个 ➤"; }
 function onCustomChange() { if(currentTab==="custom") switchTab("custom"); }
 
 switchTab("all");
