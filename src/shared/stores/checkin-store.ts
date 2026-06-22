@@ -69,7 +69,11 @@ function generateSeedCheckins(): Checkin[] {
       idCounter++;
       const userIdx = (idCounter * 7 + 3) % USER_NAMES.length;
       const photoIdx = (idCounter * 5 + 1) % PHOTOS.length;
-      const day = 10 + (idCounter % 18); // 5-10 → 05-12 ~ 05-27
+      // 日期分布：前 46 条在 5 月，后 52 条在 6 月，使时间切片有意义
+      const month = idCounter <= 46 ? 5 : 6;
+      const dayInMonth = month === 5
+        ? 15 + (idCounter % 17)   // May 15-31
+        : 1 + ((idCounter - 47) % 25); // June 1-25
       const hour = 8 + ((idCounter * 3) % 12);
       const minute = (idCounter * 17) % 60;
       // 同一院落的不同打卡在经纬度上加微小偏移，模拟真实位置
@@ -85,7 +89,7 @@ function generateSeedCheckins(): Checkin[] {
         photo: PHOTOS[photoIdx],
         location: { lat: c.lat + latOff, lng: c.lng + lngOff },
         address: c.address,
-        createdAt: `2026-05-${String(day).padStart(2, "0")} ${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+        createdAt: `2026-${String(month).padStart(2, "0")}-${String(dayInMonth).padStart(2, "0")} ${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
         status: "approved",
       });
     }
