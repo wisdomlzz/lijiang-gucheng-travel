@@ -12,31 +12,31 @@ interface CheckinState {
 // ====== 种子数据：25 个文化院落，约 90 条打卡记录 ======
 
 const COURTYARD_SEEDS = [
-  { id: "1",  name: "木府",         lat: 26.8685, lng: 100.2312, address: "古城光义街官门口",      weight: 9 },
-  { id: "2",  name: "方国瑜故居",   lat: 26.8692, lng: 100.2356, address: "五一街文治巷42号",       weight: 7 },
-  { id: "3",  name: "万古楼",       lat: 26.8701, lng: 100.2298, address: "狮子山万古楼景区",        weight: 4 },
-  { id: "4",  name: "纳西古乐会",   lat: 26.8668, lng: 100.2298, address: "古城新义街纳西古乐会",   weight: 5 },
-  { id: "5",  name: "四方街",       lat: 26.8680, lng: 100.2345, address: "古城中心四方街",          weight: 8 },
-  { id: "6",  name: "文昌宫",       lat: 26.8712, lng: 100.2285, address: "狮子山文昌宫",            weight: 8 },
-  { id: "7",  name: "恒裕公",       lat: 26.8698, lng: 100.2338, address: "五一街文华巷",            weight: 6 },
-  { id: "8",  name: "王丕震纪念馆", lat: 26.8675, lng: 100.2342, address: "新华街翠文巷",            weight: 3 },
-  { id: "9",  name: "周霖故居",     lat: 26.8690, lng: 100.2365, address: "七一街兴文巷",            weight: 2 },
-  { id: "10", name: "顾彼得旧居",   lat: 26.8682, lng: 100.2328, address: "光义街金星巷",            weight: 2 },
-  { id: "11", name: "洛克故居",     lat: 26.8678, lng: 100.2350, address: "五一街文生巷",            weight: 1 },
-  { id: "12", name: "净莲寺",       lat: 26.8705, lng: 100.2305, address: "狮子山净莲寺",            weight: 3 },
-  { id: "13", name: "普贤寺",       lat: 26.8672, lng: 100.2335, address: "七一街崇仁巷",            weight: 1 },
-  { id: "14", name: "白马龙潭寺",   lat: 26.8660, lng: 100.2260, address: "光义街白马龙潭寺",        weight: 4 },
-  { id: "15", name: "三眼井",       lat: 26.8695, lng: 100.2348, address: "五一街三眼井",            weight: 3 },
-  { id: "16", name: "百岁坊",       lat: 26.8688, lng: 100.2332, address: "新义街百岁坊",            weight: 2 },
-  { id: "17", name: "天地院",       lat: 26.8683, lng: 100.2325, address: "新华街翠文段",            weight: 3 },
-  { id: "18", name: "银饰坊",       lat: 26.8693, lng: 100.2340, address: "七一街银饰坊",            weight: 2 },
-  { id: "19", name: "东巴纸坊",     lat: 26.8670, lng: 100.2338, address: "七一街八一巷",            weight: 4 },
-  { id: "20", name: "和志刚书斋",   lat: 26.8696, lng: 100.2358, address: "五一街振兴巷",            weight: 1 },
-  { id: "21", name: "古城画院",     lat: 26.8686, lng: 100.2320, address: "光义街现文巷",            weight: 6 },
-  { id: "22", name: "忠义坊",       lat: 26.8676, lng: 100.2310, address: "木府前忠义坊",            weight: 5 },
-  { id: "23", name: "官门口",       lat: 26.8684, lng: 100.2330, address: "四方街官门口",            weight: 2 },
-  { id: "24", name: "大水车",       lat: 26.8720, lng: 100.2320, address: "古城北门大水车广场",      weight: 5 },
-  { id: "25", name: "纳西人家",     lat: 26.8697, lng: 100.2360, address: "五一街文明巷",            weight: 2 },
+  { id: "1",  name: "木府",         lat: 26.8685, lng: 100.2312, address: "古城光义街官门口",      weight: 12 },
+  { id: "2",  name: "方国瑜故居",   lat: 26.8692, lng: 100.2356, address: "五一街文治巷42号",       weight: 9 },
+  { id: "3",  name: "万古楼",       lat: 26.8701, lng: 100.2298, address: "狮子山万古楼景区",        weight: 6 },
+  { id: "4",  name: "纳西古乐会",   lat: 26.8668, lng: 100.2298, address: "古城新义街纳西古乐会",   weight: 7 },
+  { id: "5",  name: "四方街",       lat: 26.8680, lng: 100.2345, address: "古城中心四方街",          weight: 11 },
+  { id: "6",  name: "文昌宫",       lat: 26.8712, lng: 100.2285, address: "狮子山文昌宫",            weight: 11 },
+  { id: "7",  name: "恒裕公",       lat: 26.8698, lng: 100.2338, address: "五一街文华巷",            weight: 8 },
+  { id: "8",  name: "王丕震纪念馆", lat: 26.8675, lng: 100.2342, address: "新华街翠文巷",            weight: 4 },
+  { id: "9",  name: "周霖故居",     lat: 26.8690, lng: 100.2365, address: "七一街兴文巷",            weight: 3 },
+  { id: "10", name: "顾彼得旧居",   lat: 26.8682, lng: 100.2328, address: "光义街金星巷",            weight: 3 },
+  { id: "11", name: "洛克故居",     lat: 26.8678, lng: 100.2350, address: "五一街文生巷",            weight: 2 },
+  { id: "12", name: "净莲寺",       lat: 26.8705, lng: 100.2305, address: "狮子山净莲寺",            weight: 4 },
+  { id: "13", name: "普贤寺",       lat: 26.8672, lng: 100.2335, address: "七一街崇仁巷",            weight: 2 },
+  { id: "14", name: "白马龙潭寺",   lat: 26.8660, lng: 100.2260, address: "光义街白马龙潭寺",        weight: 6 },
+  { id: "15", name: "三眼井",       lat: 26.8695, lng: 100.2348, address: "五一街三眼井",            weight: 4 },
+  { id: "16", name: "百岁坊",       lat: 26.8688, lng: 100.2332, address: "新义街百岁坊",            weight: 3 },
+  { id: "17", name: "天地院",       lat: 26.8683, lng: 100.2325, address: "新华街翠文段",            weight: 4 },
+  { id: "18", name: "银饰坊",       lat: 26.8693, lng: 100.2340, address: "七一街银饰坊",            weight: 3 },
+  { id: "19", name: "东巴纸坊",     lat: 26.8670, lng: 100.2338, address: "七一街八一巷",            weight: 6 },
+  { id: "20", name: "和志刚书斋",   lat: 26.8696, lng: 100.2358, address: "五一街振兴巷",            weight: 2 },
+  { id: "21", name: "古城画院",     lat: 26.8686, lng: 100.2320, address: "光义街现文巷",            weight: 8 },
+  { id: "22", name: "忠义坊",       lat: 26.8676, lng: 100.2310, address: "木府前忠义坊",            weight: 7 },
+  { id: "23", name: "官门口",       lat: 26.8684, lng: 100.2330, address: "四方街官门口",            weight: 3 },
+  { id: "24", name: "大水车",       lat: 26.8720, lng: 100.2320, address: "古城北门大水车广场",      weight: 7 },
+  { id: "25", name: "纳西人家",     lat: 26.8697, lng: 100.2360, address: "五一街文明巷",            weight: 3 },
 ];
 
 const USER_NAMES = ["张三","李四","王五","赵六","孙七","周八","吴九","郑十","钱一","沈二","陈三","朱四","黄五","林六","何七","马八","高九","罗十","梁一","宋二","唐三","韩四","杨五","许六","曹七"];
@@ -69,11 +69,11 @@ function generateSeedCheckins(): Checkin[] {
       idCounter++;
       const userIdx = (idCounter * 7 + 3) % USER_NAMES.length;
       const photoIdx = (idCounter * 5 + 1) % PHOTOS.length;
-      // 日期分布：前 46 条在 5 月，后 52 条在 6 月，使时间切片有意义
-      const month = idCounter <= 46 ? 5 : 6;
+      // 日期分布：前 55 条在 5 月，后 92 条在 6 月，使本周/今日也有数据
+      const month = idCounter <= 55 ? 5 : 6;
       const dayInMonth = month === 5
         ? 15 + (idCounter % 17)   // May 15-31
-        : 1 + ((idCounter - 47) % 25); // June 1-25
+        : 1 + ((idCounter - 56) % 28); // June 1-28
       const hour = 8 + ((idCounter * 3) % 12);
       const minute = (idCounter * 17) % 60;
       // 同一院落的不同打卡在经纬度上加微小偏移，模拟真实位置

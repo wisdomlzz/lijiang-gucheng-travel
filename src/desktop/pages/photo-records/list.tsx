@@ -18,7 +18,7 @@ import {
 
 const PAGE_SIZE = 10;
 
-type TimeRange = "all" | "month" | "week" | "custom";
+type TimeRange = "all" | "month" | "week" | "today" | "custom";
 
 export default function PhotoRecordsList() {
   const navigate = useNavigate();
@@ -58,6 +58,13 @@ export default function PhotoRecordsList() {
         sunday.setDate(monday.getDate() + 6);
         sunday.setHours(23, 59, 59, 999);
         return { start: monday, end: sunday };
+      }
+      case "today": {
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        return {
+          start: today,
+          end: new Date(today.getTime() + 86400000 - 1),
+        };
       }
       case "custom":
         return {
@@ -124,12 +131,18 @@ export default function PhotoRecordsList() {
   // ====== 交互 ======
   const handleTimeChange = (value: TimeRange) => {
     setTimeRange(value);
+    setRankExpanded(false);
     setPage(1);
   };
 
   const clearTableFilters = () => {
     setSearchName("");
     setCourtyardFilter("");
+    setPage(1);
+  };
+
+  const handleCourtyardChange = (value: string) => {
+    setCourtyardFilter(value === "__all__" ? "" : value);
     setPage(1);
   };
 
@@ -149,6 +162,8 @@ export default function PhotoRecordsList() {
         return `${new Date().getFullYear()}年${new Date().getMonth() + 1}月`;
       case "week":
         return `本周 (${formatDateLabel(dateRange.start)} ~ ${formatDateLabel(dateRange.end)})`;
+      case "today":
+        return formatDateLabel(new Date());
       case "custom":
         return `${customStart || "?"} ~ ${customEnd || "?"}`;
     }
@@ -184,6 +199,7 @@ export default function PhotoRecordsList() {
           <TabButton value="all" label="全部" />
           <TabButton value="month" label="本月" />
           <TabButton value="week" label="本周" />
+          <TabButton value="today" label="今日" />
           <TabButton value="custom" label="自定义" />
 
           {timeRange === "custom" && (
@@ -317,14 +333,14 @@ export default function PhotoRecordsList() {
             {/* 院落下拉 */}
             <div className="w-36">
               <Select
-                value={courtyardFilter}
-                onValueChange={(v) => { setCourtyardFilter(v); setPage(1); }}
+                value={courtyardFilter || "__all__"}
+                onValueChange={handleCourtyardChange}
               >
                 <SelectTrigger className="h-9 rounded-lg text-sm">
                   <SelectValue placeholder="全部院落" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">全部院落</SelectItem>
+                  <SelectItem value="__all__">全部院落</SelectItem>
                   {allCourtyards.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.name}

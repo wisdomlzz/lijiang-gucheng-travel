@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文化院落打卡记录 · 丽江古城游</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: "Inter", "PingFang SC", -apple-system, sans-serif;
+  background: #f1f5f9; color: #1e293b; letter-spacing: -0.01em; padding: 32px;
+}
+.page { max-width: 1000px; margin: 0 auto; }
+.breadcrumb { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+.breadcrumb span { color: #2563eb; }
+.page-title { font-size: 24px; font-weight: 700; }
+.page-desc { font-size: 13px; color: #64748b; margin-top: 4px; margin-bottom: 20px; }
+.card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 16px; }
+.time-selector { padding: 14px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.time-icon { display: flex; align-items: center; gap: 6px; margin-right: 8px; }
+.time-icon svg { color: #2563eb; }
+.time-icon span { font-size: 12px; font-weight: 500; color: #64748b; }
+.tab { padding: 5px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; border: none; cursor: pointer; background: #f1f5f9; color: #475569; transition: .15s; }
+.tab.active { background: #2563eb; color: #fff; box-shadow: 0 1px 3px rgba(37,99,235,.2); }
+.tab:hover:not(.active) { background: #e2e8f0; }
+.time-label { margin-left: auto; font-size: 11px; color: #94a3b8; }
+.custom-date-wrap { display: none; align-items: center; gap: 8px; margin-left: 8px; }
+.custom-date-wrap.show { display: flex; }
+.date-input { height: 32px; border-radius: 8px; border: 1px solid #e2e8f0; padding: 0 8px; font-size: 12px; color: #475569; background: #fff; outline: none; width: 130px; cursor: pointer; }
+.date-input:focus { border-color: #2563eb; }
+.date-sep { font-size: 11px; color: #94a3b8; }
+.kpi-row { padding: 14px 20px; display: flex; gap: 20px; align-items: center; font-size: 13px; color: #64748b; }
+.kpi-row strong { color: #1e293b; font-size: 16px; }
+.kpi-divider { width: 1px; height: 20px; flex-shrink: 0; background: #e2e8f0; }
+.rank-section { padding: 20px; }
+.rank-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.rank-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.rank-toggle { font-size: 11px; color: #2563eb; cursor: pointer; border: none; background: none; transition: .15s; }
+.rank-toggle:hover { text-decoration: underline; }
+.rank-row { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 8px; }
+.rank-row:hover { background: #f8fafc; }
+.rnum { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.rnum.gold { background: #2563eb; color: #fff; box-shadow: 0 1px 4px rgba(37,99,235,.3); }
+.rnum.silver { background: #f1f5f9; color: #64748b; }
+.rname { width: 112px; font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rbar { flex:1; min-width:0; height: 20px; background: #f1f5f9; border-radius: 9999px; overflow: hidden; }
+.rfill { height:100%; border-radius: 9999px; transition: width .5s; }
+.rcount { width: 60px; text-align: right; font-size: 13px; font-weight: 500; color: #475569; flex-shrink:0; }
+.rpct { width: 44px; text-align: right; font-size: 11px; color: #94a3b8; flex-shrink:0; }
+.rank-more { display: none; }
+.rank-more.show { display: flex; }
+.table-filter { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.search-wrap { position: relative; }
+.search-wrap input { width: 160px; height: 36px; border-radius: 8px; border: 1px solid #e2e8f0; padding: 0 12px 0 32px; font-size: 13px; outline: none; transition: .15s; }
+.search-wrap input:focus { border-color: #2563eb; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px; pointer-events: none; }
+select.dropdown { height: 36px; border-radius: 8px; border: 1px solid #e2e8f0; padding: 0 28px 0 10px; font-size: 13px; color: #475569; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center; outline: none; cursor: pointer; appearance: none; width: 136px; }
+select.dropdown:focus { border-color: #2563eb; }
+.btn-clear { height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; font-size: 12px; cursor: pointer; color: #475569; display: none; align-items: center; gap: 4px; }
+.btn-clear.show { display: inline-flex; }
+.btn-clear:hover { background: #f8fafc; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { text-align: left; padding: 12px 16px; font-weight: 500; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+thead th:last-child { text-align: right; }
+tbody td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; }
+tbody tr:last-child td { border: none; }
+tbody tr:hover { background: #f8fafc; }
+td.name { font-weight: 500; }
+td.user { color: #475569; }
+td.meta { color: #64748b; font-size: 12px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+td.action { text-align: right; }
+.btn-view { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border: none; border-radius: 6px; background: transparent; color: #2563eb; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.btn-view:hover { background: #eff6ff; }
+.table-footer { padding: 8px 20px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: flex-end; gap: 12px; font-size: 11px; color: #94a3b8; }
+.table-footer .time-info { display: none; }
+.table-footer .time-info.show { display: inline; }
+.pagination { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; margin-bottom: 20px; }
+.pagination .info { font-size: 13px; color: #94a3b8; }
+.pagination .controls { display: flex; gap: 6px; align-items: center; }
+.pagination button { height: 34px; padding: 0 14px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; font-size: 13px; cursor: pointer; color: #475569; }
+.pagination button:disabled { opacity: .4; cursor: default; }
+.pagination button:not(:disabled):hover { background: #f8fafc; }
+.page-num { font-size: 13px; padding: 0 8px; color: #64748b; }
+.page-num strong { color: #1e293b; }
+.empty-row td { padding: 48px 16px !important; text-align: center; color: #94a3b8; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="breadcrumb">运营管理 / <span>文化院落打卡记录</span></div>
+  <div class="page-title">文化院落打卡记录</div>
+  <div class="page-desc">按时间维度统计各文化院落的游客打卡分布</div>
+
+  <!-- ── ① 时间维度选择器 ── -->
+  <div class="card">
+    <div class="time-selector">
+      <div class="time-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>时间范围</span>
+      </div>
+      <button class="tab active" onclick="switchTab('all')">全部</button>
+      <button class="tab" onclick="switchTab('month')">本月</button>
+      <button class="tab" onclick="switchTab('week')">本周</button>
+      <button class="tab" onclick="switchTab('today')">今日</button>
+      <button class="tab" onclick="switchTab('custom')">自定义</button>
+      <div class="custom-date-wrap" id="customDateWrap">
+        <input type="date" class="date-input" id="customStart" onchange="onCustomChange()">
+        <span class="date-sep">~</span>
+        <input type="date" class="date-input" id="customEnd" onchange="onCustomChange()">
+      </div>
+      <span class="time-label" id="timeLabel">全部时间</span>
+    </div>
+  </div>
+
+  <!-- ── ② KPI 行 ── -->
+  <div class="card">
+    <div class="kpi-row">
+      <span id="kpiTotal">📸 总打卡 <strong>147</strong> 次</span>
+      <span class="kpi-divider"></span>
+      <span id="kpiUsers">👥 参与游客 <strong>25</strong> 人</span>
+    </div>
+  </div>
+
+  <!-- ── ③ 排行榜 ── -->
+  <div class="card">
+    <div class="rank-section">
+      <div class="rank-header">
+        <h3 class="rank-title">🏆 各院落打卡排行</h3>
+        <button class="rank-toggle" id="rankToggle" onclick="toggleRank()">展开全部 25 个 ➤</button>
+      </div>
+      <div id="rankBody">
+        <div class="rank-row" data-rid="1"><span class="rnum gold">1</span><span class="rname">木府</span><div class="rbar"><div class="rfill" style="width:100%;background:linear-gradient(90deg,#2563eb,#60a5fa)"></div></div><span class="rcount">12 次</span><span class="rpct">8%</span></div>
+        <div class="rank-row" data-rid="2"><span class="rnum silver">2</span><span class="rname">文昌宫</span><div class="rbar"><div class="rfill" style="width:92%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">11 次</span><span class="rpct">7%</span></div>
+        <div class="rank-row" data-rid="3"><span class="rnum silver">3</span><span class="rname">四方街</span><div class="rbar"><div class="rfill" style="width:92%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">11 次</span><span class="rpct">7%</span></div>
+        <div class="rank-row" data-rid="4"><span class="rnum silver">4</span><span class="rname">方国瑜故居</span><div class="rbar"><div class="rfill" style="width:75%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">9 次</span><span class="rpct">6%</span></div>
+        <div class="rank-row" data-rid="5"><span class="rnum silver">5</span><span class="rname">恒裕公</span><div class="rbar"><div class="rfill" style="width:67%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">8 次</span><span class="rpct">5%</span></div>
+        <div class="rank-row" data-rid="6"><span class="rnum silver">6</span><span class="rname">古城画院</span><div class="rbar"><div class="rfill" style="width:67%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">8 次</span><span class="rpct">5%</span></div>
+        <div class="rank-row" data-rid="7"><span class="rnum silver">7</span><span class="rname">忠义坊</span><div class="rbar"><div class="rfill" style="width:58%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">7 次</span><span class="rpct">5%</span></div>
+        <div class="rank-row" data-rid="8"><span class="rnum silver">8</span><span class="rname">大水车</span><div class="rbar"><div class="rfill" style="width:58%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">7 次</span><span class="rpct">5%</span></div>
+        <div class="rank-row" data-rid="9"><span class="rnum silver">9</span><span class="rname">纳西古乐会</span><div class="rbar"><div class="rfill" style="width:58%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">7 次</span><span class="rpct">5%</span></div>
+        <div class="rank-row" data-rid="10"><span class="rnum silver">10</span><span class="rname">万古楼</span><div class="rbar"><div class="rfill" style="width:50%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">6 次</span><span class="rpct">4%</span></div>
+        <div class="rank-row rank-more" data-rid="11"><span class="rnum silver">11</span><span class="rname">白马龙潭寺</span><div class="rbar"><div class="rfill" style="width:50%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">6 次</span><span class="rpct">4%</span></div>
+        <div class="rank-row rank-more" data-rid="12"><span class="rnum silver">12</span><span class="rname">东巴纸坊</span><div class="rbar"><div class="rfill" style="width:50%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">6 次</span><span class="rpct">4%</span></div>
+        <div class="rank-row rank-more" data-rid="13"><span class="rnum silver">13</span><span class="rname">净莲寺</span><div class="rbar"><div class="rfill" style="width:33%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">4 次</span><span class="rpct">3%</span></div>
+        <div class="rank-row rank-more" data-rid="14"><span class="rnum silver">14</span><span class="rname">三眼井</span><div class="rbar"><div class="rfill" style="width:33%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">4 次</span><span class="rpct">3%</span></div>
+        <div class="rank-row rank-more" data-rid="15"><span class="rnum silver">15</span><span class="rname">天地院</span><div class="rbar"><div class="rfill" style="width:33%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">4 次</span><span class="rpct">3%</span></div>
+        <div class="rank-row rank-more" data-rid="16"><span class="rnum silver">16</span><span class="rname">王丕震纪念馆</span><div class="rbar"><div class="rfill" style="width:33%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">4 次</span><span class="rpct">3%</span></div>
+        <div class="rank-row rank-more" data-rid="17"><span class="rnum silver">17</span><span class="rname">周霖故居</span><div class="rbar"><div class="rfill" style="width:25%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">3 次</span><span class="rpct">2%</span></div>
+        <div class="rank-row rank-more" data-rid="18"><span class="rnum silver">18</span><span class="rname">顾彼得旧居</span><div class="rbar"><div class="rfill" style="width:25%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">3 次</span><span class="rpct">2%</span></div>
+        <div class="rank-row rank-more" data-rid="19"><span class="rnum silver">19</span><span class="rname">百岁坊</span><div class="rbar"><div class="rfill" style="width:25%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">3 次</span><span class="rpct">2%</span></div>
+        <div class="rank-row rank-more" data-rid="20"><span class="rnum silver">20</span><span class="rname">银饰坊</span><div class="rbar"><div class="rfill" style="width:25%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">3 次</span><span class="rpct">2%</span></div>
+        <div class="rank-row rank-more" data-rid="21"><span class="rnum silver">21</span><span class="rname">官门口</span><div class="rbar"><div class="rfill" style="width:25%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">3 次</span><span class="rpct">2%</span></div>
+        <div class="rank-row rank-more" data-rid="22"><span class="rnum silver">22</span><span class="rname">纳西人家</span><div class="rbar"><div class="rfill" style="width:25%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">3 次</span><span class="rpct">2%</span></div>
+        <div class="rank-row rank-more" data-rid="23"><span class="rnum silver">23</span><span class="rname">洛克故居</span><div class="rbar"><div class="rfill" style="width:17%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">2 次</span><span class="rpct">1%</span></div>
+        <div class="rank-row rank-more" data-rid="24"><span class="rnum silver">24</span><span class="rname">普贤寺</span><div class="rbar"><div class="rfill" style="width:17%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">2 次</span><span class="rpct">1%</span></div>
+        <div class="rank-row rank-more" data-rid="25"><span class="rnum silver">25</span><span class="rname">和志刚书斋</span><div class="rbar"><div class="rfill" style="width:17%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div><span class="rcount">2 次</span><span class="rpct">1%</span></div>
+      </div>
+      <div id="rankEmpty" style="display:none;text-align:center;padding:32px 0;color:#94a3b8;font-size:13px">暂无打卡数据</div>
+    </div>
+  </div>
+
+  <!-- ── ④ 明细表格 ── -->
+  <div class="card">
+    <div class="table-filter">
+      <div class="search-wrap">
+        <span class="search-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input placeholder="搜索游客..." id="searchInput" oninput="onFilterChange()">
+      </div>
+      <select class="dropdown" id="courtyardSelect" onchange="onFilterChange()">
+        <option value="">全部院落</option>
+        <option>木府</option><option>方国瑜故居</option><option>万古楼</option><option>纳西古乐会</option><option>四方街</option><option>文昌宫</option><option>恒裕公</option><option>王丕震纪念馆</option><option>周霖故居</option><option>顾彼得旧居</option><option>洛克故居</option><option>净莲寺</option><option>普贤寺</option><option>白马龙潭寺</option><option>三眼井</option><option>百岁坊</option><option>天地院</option><option>银饰坊</option><option>东巴纸坊</option><option>和志刚书斋</option><option>古城画院</option><option>忠义坊</option><option>官门口</option><option>大水车</option><option>纳西人家</option>
+      </select>
+      <button class="btn-clear" id="clearBtn" onclick="clearFilters()">✕ 清除筛选</button>
+    </div>
+    <table>
+      <thead><tr><th>院落</th><th>用户</th><th>位置</th><th>打卡时间</th><th>操作</th></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="table-footer">
+      <span class="time-info" id="timeInfo"></span>
+      <span id="totalInfo">共 147 条记录</span>
+    </div>
+  </div>
+
+  <!-- ── ⑤ 分页 ── -->
+  <div class="pagination">
+    <span class="info" id="pageInfo">显示第 1–10 条，共 147 条</span>
+    <div class="controls">
+      <button id="prevBtn" onclick="prevPage()" disabled>上一页</button>
+      <span class="page-num"><strong id="currentPage">1</strong> / <span id="totalPages">15</span></span>
+      <button id="nextBtn" onclick="nextPage()">下一页</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 147 条打卡记录 (weights: 12+9+6+7+11+11+8+4+3+3+2+4+2+6+4+3+4+3+6+2+8+7+3+7+3 = 147)
+const WEIGHTS = [12,9,6,7,11,11,8,4,3,3,2,4,2,6,4,3,4,3,6,2,8,7,3,7,3];
+const NAMES = ["木府","方国瑜故居","万古楼","纳西古乐会","四方街","文昌宫","恒裕公","王丕震纪念馆","周霖故居","顾彼得旧居","洛克故居","净莲寺","普贤寺","白马龙潭寺","三眼井","百岁坊","天地院","银饰坊","东巴纸坊","和志刚书斋","古城画院","忠义坊","官门口","大水车","纳西人家"];
+const ADDRS = ["古城光义街官门口","五一街文治巷42号","狮子山万古楼景区","古城新义街纳西古乐会","古城中心四方街","狮子山文昌宫","五一街文华巷","新华街翠文巷","七一街兴文巷","光义街金星巷","五一街文生巷","狮子山净莲寺","七一街崇仁巷","光义街白马龙潭寺","五一街三眼井","新义街百岁坊","新华街翠文段","七一街银饰坊","七一街八一巷","五一街振兴巷","光义街现文巷","木府前忠义坊","四方街官门口","古城北门大水车广场","五一街文明巷"];
+const USERS = ["张三","李四","王五","赵六","孙七","周八","吴九","郑十","钱一","沈二","陈三","朱四","黄五","林六","何七","马八","高九","罗十","梁一","宋二","唐三","韩四","杨五","许六","曹七"];
+const PAGE_SIZE = 10;
+
+let ALL_DATA = [];
+(() => {
+  let id = 0;
+  for (let ci = 0; ci < NAMES.length; ci++) {
+    for (let j = 0; j < WEIGHTS[ci]; j++) {
+      id++;
+      const user = USERS[(id * 7 + 3) % 25];
+      const month = id <= 55 ? 5 : 6;
+      const day = month === 5 ? 15 + (id % 17) : 1 + ((id - 56) % 28);
+      const hour = 8 + ((id * 3) % 12);
+      const min = (id * 17) % 60;
+      const date = `2026-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")} ${String(hour).padStart(2,"0")}:${String(min).padStart(2,"0")}`;
+      ALL_DATA.push({ id, courtyardName: NAMES[ci], userName: user, address: ADDRS[ci], createdAt: date });
+    }
+  }
+})();
+
+let currentTab = "all";
+let filteredData = [...ALL_DATA];
+let currentSearch = "", currentCourtyard = "";
+let currentPage = 1;
+let rankExpanded = false;
+
+function switchTab(tab) {
+  currentTab = tab;
+  rankExpanded = false;  // ← fix: collapse ranking on switch
+  document.querySelectorAll(".tab").forEach((b,i) => {
+    const tabs = ["all","month","week","today","custom"];
+    b.classList.toggle("active", tabs[i] === tab);
+  });
+  document.getElementById("customDateWrap").classList.toggle("show", tab === "custom");
+
+  const now = new Date();
+  let dateFiltered = [...ALL_DATA];
+
+  if (tab === "month") {
+    const m = now.getMonth(), y = now.getFullYear();
+    dateFiltered = ALL_DATA.filter(r => { const d=new Date(r.createdAt.replace(/\//g,"-")); return d.getMonth()===m && d.getFullYear()===y; });
+    document.getElementById("timeLabel").textContent = `${y}年${m+1}月`;
+  } else if (tab === "week") {
+    const d = now.getDay(), diff = d===0?-6:1-d;
+    const mon = new Date(now); mon.setDate(now.getDate()+diff); mon.setHours(0,0,0,0);
+    const sun = new Date(mon); sun.setDate(mon.getDate()+6); sun.setHours(23,59,59,999);
+    const f = d=>`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")}`;
+    dateFiltered = ALL_DATA.filter(r => { const t=new Date(r.createdAt.replace(/\//g,"-")).getTime(); return t>=mon.getTime()&&t<=sun.getTime(); });
+    document.getElementById("timeLabel").textContent = `本周 (${f(mon)} ~ ${f(sun)})`;
+  } else if (tab === "today") {
+    const td = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tde = new Date(td.getTime()+86400000-1);
+    dateFiltered = ALL_DATA.filter(r => { const t=new Date(r.createdAt.replace(/\//g,"-")).getTime(); return t>=td.getTime()&&t<=tde.getTime(); });
+    document.getElementById("timeLabel").textContent = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,"0")}/${String(now.getDate()).padStart(2,"0")}`;
+  } else if (tab === "custom") {
+    const s=document.getElementById("customStart").value, e=document.getElementById("customEnd").value;
+    if(s||e) dateFiltered = ALL_DATA.filter(r => { const t=new Date(r.createdAt.replace(/\//g,"-")).getTime(); if(s&&t<new Date(s).getTime()) return false; if(e&&t>new Date(e+"T23:59:59").getTime()) return false; return true; });
+    document.getElementById("timeLabel").textContent = `${s||"?"} ~ ${e||"?"}`;
+  } else {
+    document.getElementById("timeLabel").textContent = "全部时间";
+  }
+
+  filteredData = dateFiltered;
+  renderRanking();
+  resetFilters();
+}
+
+function renderRanking() {
+  const stats = {};
+  filteredData.forEach(r => { stats[r.courtyardName] = (stats[r.courtyardName]||0)+1; });
+  const sorted = Object.entries(stats).sort((a,b)=>b[1]-a[1]);
+  const max = sorted[0]?.[1]||1;
+  document.querySelectorAll(".rank-row[data-rid]").forEach(el => {
+    const idx = parseInt(el.dataset.rid)-1;
+    if (idx < sorted.length) {
+      el.style.display = "flex";
+      const [name, count] = sorted[idx];
+      el.querySelector(".rname").textContent = name;
+      el.querySelector(".rfill").style.width = `${(count/max)*100}%`;
+      el.querySelector(".rcount").textContent = `${count} 次`;
+      el.querySelector(".rpct").textContent = `${Math.round(count/filteredData.length*100)}%`;
+      const num = el.querySelector(".rnum");
+      num.className = idx===0?"rnum gold":"rnum silver";
+      num.textContent = idx+1;
+    } else el.style.display = "none";
+  });
+  document.getElementById("rankEmpty").style.display = sorted.length===0?"block":"none";
+  document.getElementById("rankToggle").textContent = "展开全部 25 个 ➤";
+  document.querySelectorAll(".rank-more").forEach(el => el.classList.remove("show"));
+}
+
+function resetFilters() {
+  currentSearch=""; currentCourtyard=""; currentPage=1;
+  document.getElementById("searchInput").value="";
+  document.getElementById("courtyardSelect").value="";
+  document.getElementById("clearBtn").classList.remove("show");
+  renderTable();
+}
+
+function onFilterChange() {
+  currentSearch=document.getElementById("searchInput").value.trim();
+  currentCourtyard=document.getElementById("courtyardSelect").value;
+  document.getElementById("clearBtn").classList.toggle("show", !!(currentSearch||currentCourtyard));
+  currentPage=1;
+  renderTable();
+}
+
+function renderTable() {
+  let data = [...filteredData];
+  if (currentSearch) data = data.filter(r=>r.userName.includes(currentSearch));
+  if (currentCourtyard) data = data.filter(r=>r.courtyardName===currentCourtyard);
+  const tp = Math.max(1, Math.ceil(data.length/PAGE_SIZE));
+  if (currentPage>tp) currentPage=tp;
+  const start=(currentPage-1)*PAGE_SIZE;
+  const page=data.slice(start, start+PAGE_SIZE);
+  const tbody=document.getElementById("tableBody");
+  if (!page.length) {
+    tbody.innerHTML='<tr class="empty-row"><td colspan="5">暂无符合条件的打卡记录</td></tr>';
+  } else {
+    tbody.innerHTML = page.map(r=>`<tr><td class="name">${r.courtyardName}</td><td class="user">${r.userName}</td><td class="meta">${r.address}</td><td class="meta">${r.createdAt}</td><td class="action"><button class="btn-view" onclick="alert('查看记录 ID: ${r.id}')">查看</button></td></tr>`).join("");
+  }
+  document.getElementById("totalInfo").textContent = `共 ${data.length} 条记录`;
+  const ti=document.getElementById("timeInfo");
+  if (currentTab!=="all" && data.length<filteredData.length) {
+    ti.textContent=`时间范围共 ${filteredData.length} 条，筛选后 ${data.length} 条`; ti.classList.add("show");
+  } else ti.classList.remove("show");
+  document.getElementById("totalPages").textContent = tp;
+  document.getElementById("currentPage").textContent = currentPage;
+  document.getElementById("pageInfo").textContent = data.length===0 ? "暂无记录" : `显示第 ${start+1}–${Math.min(start+PAGE_SIZE,data.length)} 条，共 ${data.length} 条`;
+  document.getElementById("prevBtn").disabled = currentPage<=1;
+  document.getElementById("nextBtn").disabled = currentPage>=tp;
+  // Update KPI
+  document.getElementById("kpiTotal").textContent = `📸 总打卡 ${filteredData.length} 次`;
+  const uq = new Set(filteredData.map(r=>r.userName)).size;
+  document.getElementById("kpiUsers").textContent = `👥 参与游客 ${uq} 人`;
+}
+
+function clearFilters() { resetFilters(); }
+function prevPage() { if(currentPage>1){currentPage--;renderTable();} }
+function nextPage() { const tp=Math.ceil(filteredData.length/PAGE_SIZE); if(currentPage<tp){currentPage++;renderTable();} }
+function toggleRank() { rankExpanded=!rankExpanded; document.querySelectorAll(".rank-more").forEach(e=>e.classList.toggle("show",rankExpanded)); document.getElementById("rankToggle").textContent=rankExpanded?"收起（显示前 10）":"展开全部 25 个 ➤"; }
+function onCustomChange() { if(currentTab==="custom") switchTab("custom"); }
+
+switchTab("all");
+</script>
+</body>
+</html>
