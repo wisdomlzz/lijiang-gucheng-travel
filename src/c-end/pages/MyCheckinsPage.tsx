@@ -3,11 +3,13 @@ import { PageHeader } from "./shop/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { MapPin, Clock, CheckCircle } from "lucide-react";
 import { useCheckinStore } from "../../shared/stores/checkin-store";
+import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 export function MyCheckinsPage() {
   const navigate = useNavigate();
   const checkins = useCheckinStore((s) => s.checkins);
   const myCheckins = checkins.filter((c) => c.userId === "user-1");
+  const { visible, hasMore, loadMore } = useLoadMore(myCheckins, 6);
 
   return (
     <div className="min-h-full bg-surface-page pb-6">
@@ -29,46 +31,56 @@ export function MyCheckinsPage() {
             </button>
           </div>
         ) : (
-          myCheckins.map((checkin) => (
-            <div
-              key={checkin.id}
-              className="bg-white rounded-xl overflow-hidden shadow-sm"
-            >
-              <div className="h-36 relative">
-                <ImageWithFallback
-                  src={checkin.photo}
-                  alt={checkin.courtyardName}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-2 right-2">
-                  <span className="text-[10px] px-2 py-1 rounded-full flex items-center gap-1 bg-emerald-50 text-emerald-600">
-                    <CheckCircle size={10} />
-                    已打卡
-                  </span>
+          <>
+            {visible.map((checkin) => (
+              <div
+                key={checkin.id}
+                className="bg-white rounded-xl overflow-hidden shadow-sm"
+              >
+                <div className="h-36 relative">
+                  <ImageWithFallback
+                    src={checkin.photo}
+                    alt={checkin.courtyardName}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 right-2">
+                    <span className="text-[10px] px-2 py-1 rounded-full flex items-center gap-1 bg-emerald-50 text-emerald-600">
+                      <CheckCircle size={10} />
+                      已打卡
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute bottom-3 left-4">
+                    <h3 className="text-white text-[15px] font-semibold">{checkin.courtyardName}</h3>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                <div className="absolute bottom-3 left-4">
-                  <h3 className="text-white text-[15px] font-semibold">{checkin.courtyardName}</h3>
+                <div className="p-3 space-y-2">
+                  <div className="flex items-center gap-2 text-[12px] text-text-tertiary">
+                    <MapPin size={11} />
+                    {checkin.address}
+                  </div>
+                  <div className="flex items-center gap-2 text-[12px] text-text-tertiary">
+                    <Clock size={11} />
+                    {checkin.createdAt}
+                  </div>
+                  <button
+                    onClick={() => navigate(`/c/courtyard/${checkin.courtyardId}`)}
+                    className="w-full mt-2 h-8 rounded-full border border-primary text-primary text-[12px]"
+                  >
+                    查看院落详情
+                  </button>
                 </div>
               </div>
-              <div className="p-3 space-y-2">
-                <div className="flex items-center gap-2 text-[12px] text-text-tertiary">
-                  <MapPin size={11} />
-                  {checkin.address}
-                </div>
-                <div className="flex items-center gap-2 text-[12px] text-text-tertiary">
-                  <Clock size={11} />
-                  {checkin.createdAt}
-                </div>
-                <button
-                  onClick={() => navigate(`/c/courtyard/${checkin.courtyardId}`)}
-                  className="w-full mt-2 h-8 rounded-full border border-primary text-primary text-[12px]"
-                >
-                  查看院落详情
-                </button>
-              </div>
-            </div>
-          ))
+            ))}
+            {hasMore && (
+              <button
+                onClick={loadMore}
+                className="w-full h-10 rounded-full border border-primary text-primary text-[13px]"
+              >
+                加载更多
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

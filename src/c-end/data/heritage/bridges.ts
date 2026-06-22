@@ -12,16 +12,15 @@ export const bridgesData: HeritageItem[] = [
     basicInfo: '双孔石拱桥，玉河水入城分流处',
     photos: [
       'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1567696911989-2e77983f7088?auto=format&fit=crop&w=800&q=70'
     ],
     heritageSubType: '/',
     extra: {
-      bridgeType: '石拱桥',
       material: '石材',
-      holeCount: '2孔',
-      height: '3.7',
-      width: '22.4',
-      lengthNorth: '北13.62',
-      lengthSouth: '南15.24',
+      loadCapacity: '/',
+      bridgeHeight: '3.7',
+      pointWidth: '22.4',
     },
   },
   {
@@ -35,16 +34,18 @@ export const bridgesData: HeritageItem[] = [
     basicInfo: '单孔石拱，古城繁华地段',
     photos: [
       'https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70'
+    ],
+    drawings: [
+      '1、遗产保护/4、古桥\大石桥\大石桥结构图.png'
     ],
     heritageSubType: '/',
     extra: {
-      bridgeType: '石拱桥',
-      material: '石材',
-      holeCount: '单孔',
-      height: '3.2',
-      width: '4.5',
-      lengthNorth: '/',
-      lengthSouth: '/',
+      material: '石材（青石）',
+      loadCapacity: '/',
+      bridgeHeight: '3.2',
+      pointWidth: '4.5',
     },
   },
   {
@@ -58,16 +59,15 @@ export const bridgesData: HeritageItem[] = [
     basicInfo: '单孔石拱，寓意吉祥',
     photos: [
       'https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1567696911989-2e77983f7088?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&q=70'
     ],
     heritageSubType: '/',
     extra: {
-      bridgeType: '石拱桥',
       material: '石材',
-      holeCount: '单孔',
-      height: '2.8',
-      width: '3.8',
-      lengthNorth: '/',
-      lengthSouth: '/',
+      loadCapacity: '/',
+      bridgeHeight: '2.8',
+      pointWidth: '3.8',
     },
   },
   {
@@ -81,16 +81,15 @@ export const bridgesData: HeritageItem[] = [
     basicInfo: '石平桥，古城南门入口',
     photos: [
       'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70'
     ],
     heritageSubType: '/',
     extra: {
-      bridgeType: '石平桥',
-      material: '石材',
-      holeCount: '单孔',
-      height: '2.5',
-      width: '5.2',
-      lengthNorth: '/',
-      lengthSouth: '/',
+      material: '石材（青石）',
+      loadCapacity: '/',
+      bridgeHeight: '2.5',
+      pointWidth: '5.2',
     },
   },
   {
@@ -104,16 +103,14 @@ export const bridgesData: HeritageItem[] = [
     basicInfo: '混凝土结构，1959年建',
     photos: [
       'https://images.unsplash.com/photo-1567696911989-2e77983f7088?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70'
     ],
     heritageSubType: '/',
     extra: {
-      bridgeType: '混凝土桥',
       material: '混凝土',
-      holeCount: '单孔',
-      height: '4.2',
-      width: '24',
-      lengthNorth: '/',
-      lengthSouth: '/',
+      loadCapacity: '城市-B级',
+      bridgeHeight: '4.2',
+      pointWidth: '24',
     },
   },
 ];

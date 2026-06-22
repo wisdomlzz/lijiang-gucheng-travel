@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { Search, Scan, ChevronRight } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { useHomepageConfigStore } from "../../shared/stores/homepage-config-store";
+import { useAnnouncementStore } from "../../shared/mock/announcements";
+import { useLoadMore } from "@/shared/hooks/useLoadMore";
 import { CRMEB_C_URL } from "../../shared/constants";
 
 const recommendRoutes = [
@@ -27,53 +29,11 @@ const recommendRoutes = [
   },
 ];
 
-const activities = [
-  {
-    id: 1,
-    img: "https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?auto=format&fit=crop&w=600&q=70",
-    title: "丽江古城12处直管公房公开招租公告",
-    tag: "便民公告",
-    tagColor: "#3B82F6",
-    time: "04-21",
-    summary: "直管公房拟面向社会公开招租，商户可按公告要求提交资料",
-    link: "/c/info/1",
-  },
-  {
-    id: 2,
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=70",
-    title: "古城水系清淤维护通知",
-    tag: "古城资讯",
-    tagColor: "#0284C7",
-    time: "04-12",
-    summary: "四方街至玉河广场段水系将进行清淤维护，请合理安排游览路线",
-    link: "/c/info/7",
-  },
-  {
-    id: 3,
-    img: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=600&q=70",
-    title: "古城特产对外销售备案申请通道开放",
-    tag: "便民信息",
-    tagColor: "#10B981",
-    time: "04-15",
-    summary: "特产销售备案可线上提交资料，便于商户规范经营",
-    link: "/c/info/6",
-  },
-  {
-    id: 4,
-    img: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=600&q=70",
-    title: "古城游览安全提醒",
-    tag: "公告",
-    tagColor: "#F59E0B",
-    time: "日常",
-    summary: "游览古城请注意人身财产安全，保管好贵重物品",
-    link: "/c/info/4",
-  },
-];
-
 export function HomePage() {
   const navigate = useNavigate();
   const rawBanners = useHomepageConfigStore((s) => s.banners);
   const rawGridItems = useHomepageConfigStore((s) => s.gridItems);
+  const allAnnouncements = useAnnouncementStore((s) => s.announcements);
 
   const banners = useMemo(
     () => rawBanners.filter((b) => b.scene === "home" && b.visible).sort((a, b) => a.order - b.order),
@@ -98,6 +58,40 @@ export function HomePage() {
   const dragStartX = useRef(0);
   const dragActive = useRef(false);
   const gridRef = useRef<HTMLDivElement>(null);
+  const infoListRef = useRef<HTMLDivElement>(null);
+  const [infoFilter, setInfoFilter] = useState<"all" | "公告">("all");
+
+  // 景区综合资讯：全部已发布数据，按时间排序
+  const allSorted = useMemo(
+    () => allAnnouncements
+      .filter((a) => a.status === "published")
+      .sort((a, b) => new Date(b.publishTime).getTime() - new Date(a.publishTime).getTime()),
+    [allAnnouncements],
+  );
+
+  // 根据筛选标签过滤
+  const filteredSorted = useMemo(
+    () => infoFilter === "all" ? allSorted : allSorted.filter(a => a.type === infoFilter),
+    [allSorted, infoFilter],
+  );
+
+  const { visible: infoVisible, hasMore: infoHasMore, loadMore: infoLoadMore, reset: infoReset } = useLoadMore(filteredSorted, 5);
+
+  // 切换筛选标签时重置分页
+  useEffect(() => { infoReset() }, [infoFilter, infoReset]);
+
+  // IntersectionObserver 实现触底加载
+  const infoSentinelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = infoSentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting && infoHasMore) infoLoadMore(); },
+      { rootMargin: "100px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [infoHasMore, infoLoadMore]);
 
   useEffect(() => {
     if (bannerHover || banners.length === 0) return;
@@ -300,36 +294,58 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* 古城资讯与便民信息 */}
-      <div className="mt-5 px-4 pb-4">
-        <div className="flex items-center justify-between mb-3">
+      {/* 景区综合资讯 */}
+      <div className="mt-5 px-4 pb-4" ref={infoListRef}>
+        <div className="flex items-center mb-3">
           <div className="flex items-center gap-1">
             <span className="w-1 h-4 bg-primary rounded-full" />
-            <h3 className="text-[15px] text-text-heading ml-1">古城资讯与便民信息</h3>
+            <h3 className="text-[15px] text-text-heading ml-1">景区综合资讯</h3>
           </div>
-          <button onClick={() => navigate("/c/info")} className="flex items-center text-[12px] text-primary">
-            查看更多 <ChevronRight size={14} />
-          </button>
+        </div>
+
+        {/* 筛选标签 */}
+        <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
+          {(["all", "公告"] as const).map((type) => (
+            <button
+              key={type}
+              onClick={() => setInfoFilter(type)}
+              className={`flex-shrink-0 px-3 py-1 rounded-full text-[12px] ${
+                infoFilter === type
+                  ? "bg-primary text-white"
+                  : "bg-white text-text-secondary border border-gray-200"
+              }`}
+            >
+              {type === "all" ? "全部" : type}
+            </button>
+          ))}
         </div>
 
         <div className="space-y-3">
-          {activities.map((activity) => (
+          {infoVisible.map((ann) => (
             <button
-              key={activity.id}
-              onClick={() => activity.link && navigate(activity.link)}
+              key={ann.id}
+              onClick={() => navigate(`/c/announcement/${ann.id}`)}
               className="w-full bg-white rounded-xl overflow-hidden shadow-sm flex items-center active:scale-[0.99] transition-transform text-left"
             >
               <div className="relative w-24 h-24 flex-shrink-0">
-                <ImageWithFallback src={activity.img} alt={activity.title} className="w-full h-full object-cover" />
-                <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded-full text-[9px] text-white" style={{ backgroundColor: activity.tagColor }}>
-                  {activity.tag}
+                {ann.images.length > 0 ? (
+                  <ImageWithFallback src={ann.images[0]} alt={ann.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                    <span className="text-2xl">📢</span>
+                  </div>
+                )}
+                <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded-full text-[9px] text-white bg-red-500">
+                  公告
                 </div>
               </div>
               <div className="flex-1 p-3 min-w-0">
-                <p className="text-[14px] text-text-heading font-medium line-clamp-1">{activity.title}</p>
-                <p className="text-[11px] text-text-caption mt-1 line-clamp-2">{activity.summary}</p>
+                <p className="text-[14px] text-text-heading font-medium line-clamp-1">{ann.title}</p>
+                <p className="text-[11px] text-text-caption mt-1 line-clamp-2">{ann.content.slice(0, 40)}...</p>
                 <div className="flex items-center justify-between mt-1.5">
-                  <span className="text-[10px] text-text-tertiary">{activity.time}</span>
+                  <span className="text-[10px] text-text-tertiary">
+                    {ann.publishTime ? new Date(ann.publishTime).toLocaleDateString("zh-CN") : ""}
+                  </span>
                   <span className="text-[11px] text-primary flex items-center gap-0.5">
                     查看详情 <ChevronRight size={12} />
                   </span>
@@ -337,6 +353,18 @@ export function HomePage() {
               </div>
             </button>
           ))}
+          {/* 触底哨兵：触发懒加载 */}
+          <div ref={infoSentinelRef} className="h-4" />
+          {infoHasMore && (
+            <div className="text-center py-2 text-[12px] text-text-tertiary">
+              上拉加载更多
+            </div>
+          )}
+          {!infoHasMore && infoVisible.length > 0 && (
+            <div className="text-center py-2 text-[12px] text-text-tertiary">
+              — 已加载全部 —
+            </div>
+          )}
         </div>
       </div>
     </div>

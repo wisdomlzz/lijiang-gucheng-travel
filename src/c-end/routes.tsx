@@ -1,10 +1,11 @@
 import { lazy } from "react"
-import { Navigate, useParams } from "react-router"
+import { useParams } from "react-router"
 import { AppLayout } from "./pages/AppLayout"
+import { RedirectTo } from "../shared/components/RedirectTo"
 
 function ServiceDetailRedirect() {
   const { id } = useParams();
-  return <Navigate to={`/c/orders/${id}`} replace />;
+  return <RedirectTo to={`/c/orders/${id}`} />;
 }
 
 // 懒加载所有页面组件
@@ -49,15 +50,23 @@ const VolunteerActivityDetailPage = lazy(() => import("./pages/VolunteerActivity
 const ComplaintFormPage = lazy(() => import("./pages/ComplaintFormPage").then(m => ({ default: m.ComplaintFormPage })))
 const MyComplaintsPage = lazy(() => import("./pages/MyComplaintsPage").then(m => ({ default: m.MyComplaintsPage })))
 const ComplaintDetailPage = lazy(() => import("./pages/ComplaintDetailPage").then(m => ({ default: m.ComplaintDetailPage })))
+const AnnouncementPage = lazy(() => import("./pages/AnnouncementPage").then(m => ({ default: m.AnnouncementPage })))
+const AnnouncementDetailPage = lazy(() => import("./pages/AnnouncementDetailPage").then(m => ({ default: m.AnnouncementDetailPage })))
 
-// 遗产详情（统一页面）
-const HeritageDetailPage = lazy(() => import("./pages/heritage/HeritageDetailPage").then(m => ({ default: m.HeritageDetailPage })))
+// 遗产详情（按类型分立）
+const RoadDetail = lazy(() => import("./pages/heritage/detail/RoadDetail").then(m => ({ default: m.RoadDetail })))
+const WaterDetail = lazy(() => import("./pages/heritage/detail/WaterDetail").then(m => ({ default: m.WaterDetail })))
+const WellDetail = lazy(() => import("./pages/heritage/detail/WellDetail").then(m => ({ default: m.WellDetail })))
+const BridgeDetail = lazy(() => import("./pages/heritage/detail/BridgeDetail").then(m => ({ default: m.BridgeDetail })))
+const AncientTreeDetail = lazy(() => import("./pages/heritage/detail/AncientTreeDetail").then(m => ({ default: m.AncientTreeDetail })))
+const ProtectedHouseDetail = lazy(() => import("./pages/heritage/detail/ProtectedHouseDetail").then(m => ({ default: m.ProtectedHouseDetail })))
+const HistoricBuildingDetail = lazy(() => import("./pages/heritage/detail/HistoricBuildingDetail").then(m => ({ default: m.HistoricBuildingDetail })))
+const HumanEnvironmentDetail = lazy(() => import("./pages/heritage/detail/HumanEnvironmentDetail").then(m => ({ default: m.HumanEnvironmentDetail })))
 
 export const cRoutes = [
   {
     element: <AppLayout />,
     children: [
-      { index: true, element: <Navigate to="home" replace /> },
       { path: "home", element: <HomePage /> },
       { path: "ai", element: <AIChatPage /> },
       { path: "profile", element: <ProfilePage /> },
@@ -80,7 +89,14 @@ export const cRoutes = [
   { path: "routes/:id/preview", element: <RoutePreviewPage /> },
   { path: "map", element: <MapPage /> },
   { path: "heritage", element: <HeritagePage /> },
-  { path: "heritage/:type/:id", element: <HeritageDetailPage /> },
+  { path: "heritage/road/:id", element: <RoadDetail /> },
+  { path: "heritage/water/:id", element: <WaterDetail /> },
+  { path: "heritage/well/:id", element: <WellDetail /> },
+  { path: "heritage/bridge/:id", element: <BridgeDetail /> },
+  { path: "heritage/ancient-tree/:id", element: <AncientTreeDetail /> },
+  { path: "heritage/protected-house/:id", element: <ProtectedHouseDetail /> },
+  { path: "heritage/historic-building/:id", element: <HistoricBuildingDetail /> },
+  { path: "heritage/human-environment/:id", element: <HumanEnvironmentDetail /> },
   { path: "vr-tour", element: <VRTourPage /> },
   { path: "info", element: <InfoPage /> },
   { path: "info/create", element: <InfoCreatePage /> },
@@ -89,13 +105,15 @@ export const cRoutes = [
   { path: "service-track/:id", element: <ServiceTrackingPage /> },
   { path: "service-detail/:id", element: <ServiceDetailRedirect /> },
   { path: "news", element: <NewsPage /> },
+  { path: "notice", element: <AnnouncementPage /> },
+  { path: "announcement/:id", element: <AnnouncementDetailPage /> },
   { path: "my-posts", element: <MyPostsPage /> },
   { path: "favorites", element: <FavoritesPage /> },
   { path: "courtyards", element: <CulturalCourtyardsPage /> },
   { path: "courtyard/:id", element: <CulturalCourtyardDetailPage /> },
   { path: "courtyard/:id/vr", element: <CulturalCourtyardVRPage /> },
   { path: "my-checkins", element: <MyCheckinsPage /> },
-  { path: "achievements", element: <Navigate to="/c/courtyards" replace /> },
+  { path: "achievements", element: <RedirectTo to="/c/courtyards" /> },
   { path: "parking", element: <ParkingPage /> },
   { path: "volunteer", element: <VolunteerPlaceholderPage /> },
   { path: "volunteer/activities", element: <VolunteerActivitiesPage /> },

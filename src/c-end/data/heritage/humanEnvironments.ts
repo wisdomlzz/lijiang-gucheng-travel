@@ -1,0 +1,67 @@
+import { HeritageItem } from '../../types/heritage';
+
+export const humanEnvironmentsData: HeritageItem[] = [
+  {
+    id: 'culture-1',
+    type: 'human-environment',
+    name: '流官府旧址',
+    area: '大研',
+    location: { lat: 26.876802, lng: 100.238686 },
+    heritageSubType: '人文环境',
+    address: '五一街文治巷72号',
+    description: `清雍正二年（1724年），首任流官知府杨馝主持修建，雍正三年（1725年）落成。占地约20亩，严格遵循中原汉式衙署规制，中轴对称、前衙后邸、左文右武，外围筑土城（周长约1.5公里），内设府衙、县衙、兵营、文庙、武庙、雪山书院等。民国后渐毁，现仅存西侧券门、院内古榆树及部分墙基。`,
+    basicInfo: '中原衙署规制，现存券门和古榆树',
+    photos: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=70'
+    ],
+    drawings: [
+      '1、遗产保护/9、人文环境\流官府\流官府遗址平面图.png'
+    ],
+    extra: {
+      buildingPattern: '府院',
+      heritageElements: '中原汉式衙署规制建筑群',
+    },
+  },
+  {
+    id: 'culture-2',
+    type: 'human-environment',
+    name: '束河古镇四方街',
+    area: '束河',
+    location: { lat: 26.869522, lng: 100.215522 },
+    heritageSubType: '人文环境',
+    address: '束河古镇中心',
+    description: `束河古镇是茶马古道上的重要驿站，其四方街是古镇的集市中心。古镇始建于明代，历经数百年发展，保留了大量纳西族传统建筑和茶马文化遗迹。2005年束河古镇被列为世界文化遗产丽江古城的组成部分。`,
+    basicInfo: '茶马古道遗迹，纳西族传统建筑',
+    photos: [
+      'https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70'
+    ],
+    extra: {
+      buildingPattern: '集市广场',
+    },
+  },
+  {
+    id: 'culture-3',
+    type: 'human-environment',
+    name: '白沙古镇',
+    area: '白沙',
+    location: { lat: 26.859522, lng: 100.205522 },
+    heritageSubType: '人文环境',
+    address: '白沙古镇街区',
+    description: `白沙是纳西族的古都，木氏土司的发源地。作为丽江古城的重要组成部分，白沙保留了纳西族最原始的文化特征。著名景点包括白沙壁画、琉璃殿、大宝积宫等，是研究纳西族历史文化的重要场所。`,
+    basicInfo: '纳西古都，白沙壁画',
+    photos: [
+      'https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1567696911989-2e77983f7088?auto=format&fit=crop&w=800&q=70'
+    ],
+    extra: {
+      buildingPattern: '古镇街区',
+    },
+  },
+];
+
+export default humanEnvironmentsData;

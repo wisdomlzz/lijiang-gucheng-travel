@@ -11,12 +11,12 @@ const tabs: { key: HeritageType | "all" | "nearby"; label: string }[] = [
   { key: "all", label: "全部" },
   { key: "road", label: "道路" },
   { key: "water", label: "水系" },
-  { key: "well", label: "古井" },
+  { key: "well", label: "井/泉" },
   { key: "bridge", label: "古桥" },
-  { key: "tree", label: "古树名木" },
-  { key: "residence", label: "民居" },
-  { key: "publicStructure", label: "公共构建物" },
-  { key: "culturalEnvironment", label: "人文环境" },
+  { key: "ancient-tree", label: "古树" },
+  { key: "protected-house", label: "保护民居" },
+  { key: "historic-building", label: "历史建筑" },
+  { key: "human-environment", label: "人文环境" },
   { key: "nearby", label: "离我最近" },
 ];
 

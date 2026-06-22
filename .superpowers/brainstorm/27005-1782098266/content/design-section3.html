@@ -1,0 +1,113 @@
+<h2>第3块：排行榜组件设计</h2>
+<p class="subtitle">页面的主角——回答"每个院落打卡了多少人"</p>
+
+<div class="section">
+  <h3>榜单本身</h3>
+  <div class="mockup">
+    <div class="mockup-header" style="background:#f8fafc">
+      <span>📊 各院落打卡排行</span>
+      <span style="font-weight:400;font-size:11px;color:#2563eb;cursor:pointer">全部展开</span>
+    </div>
+    <div class="mockup-body" style="padding:12px 16px">
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+        <span style="background:#2563eb;color:white;border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600">1</span>
+        <span style="width:90px;font-weight:500;font-size:13px">木府</span>
+        <div style="flex:1;height:22px;background:#f1f5f9;border-radius:6px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,#2563eb,#60a5fa);width:85%;border-radius:6px;display:flex;align-items:center;padding-left:6px">
+            <span style="color:white;font-size:10px">42次</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+        <span style="background:#64748b;color:white;border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600">2</span>
+        <span style="width:90px;font-weight:500;font-size:13px">方国瑜故居</span>
+        <div style="flex:1;height:22px;background:#f1f5f9;border-radius:6px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,#3b82f6,#93c5fd);width:65%;border-radius:6px;display:flex;align-items:center;padding-left:6px">
+            <span style="color:white;font-size:10px">31次</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+        <span style="background:#94a3b8;color:white;border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600">3</span>
+        <span style="width:90px;font-weight:500;font-size:13px">万古楼</span>
+        <div style="flex:1;height:22px;background:#f1f5f9;border-radius:6px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,#60a5fa,#bfdbfe);width:48%;border-radius:6px;display:flex;align-items:center;padding-left:6px">
+            <span style="color:white;font-size:10px">23次</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+        <span style="color:#94a3b8;width:22px;text-align:center;font-size:12px">4</span>
+        <span style="width:90px;font-size:13px;color:#475569">纳西古乐会</span>
+        <div style="flex:1;height:22px;background:#f1f5f9;border-radius:6px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,#93c5fd,#dbeafe);width:35%;border-radius:6px;display:flex;align-items:center;padding-left:6px">
+            <span style="color:#475569;font-size:10px">15次</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+        <span style="color:#94a3b8;width:22px;text-align:center;font-size:12px">5</span>
+        <span style="width:90px;font-size:13px;color:#475569">雪山书院</span>
+        <div style="flex:1;height:22px;background:#f1f5f9;border-radius:6px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,#bfdbfe,#e0e7ff);width:18%;border-radius:6px;display:flex;align-items:center;padding-left:6px">
+            <span style="color:#475569;font-size:10px">8次</span>
+          </div>
+        </div>
+      </div>
+      <!-- 更多行... -->
+      <div style="font-size:11px;color:#2563eb;cursor:pointer;margin-top:8px">▼ 收起</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>交互行为</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px">
+      <div style="font-weight:600;font-size:13px;margin-bottom:6px">🎯 点击某行</div>
+      <ul style="font-size:12px;color:#475569;padding-left:16px">
+        <li>选中该院落（高亮行背景）</li>
+        <li>下方表格筛选到该院落</li>
+        <li>再次点击取消选中，回到全部</li>
+        <li>支持多选（Ctrl+点击）对比</li>
+      </ul>
+    </div>
+    <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px">
+      <div style="font-weight:600;font-size:13px;margin-bottom:6px">🔽 展开/收起</div>
+      <ul style="font-size:12px;color:#475569;padding-left:16px">
+        <li>默认展示 Top 10 行</li>
+        <li>"展开全部" → 显示所有 22 个院落</li>
+        <li>状态持久化：展开后不自动收拢</li>
+        <li>展开按钮显示 "还有 12 个院落 ▼"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px">
+  <strong style="color:#166534">数据计算逻辑：</strong><br/>
+  <span style="font-size:12px;color:#166534">
+  排行榜数据 = 对 <code>checkins</code> 按 <code>courtyardId</code> 分组聚合 → 计算每个院落的打卡次数 → 按次数降序排列<br/>
+  已打卡的院落一定有数据（至少1次），未打卡的院落不展示在排行榜中<br/>
+  <strong>排行榜只展示有打卡记录的院落</strong>——如果某院落0打卡，它不在榜上（但顶部的"覆盖度"文字行会告诉你 x/22）
+  </span>
+</div>
+
+<div class="section">
+  <div class="options" style="margin-top:12px">
+    <div class="option" data-choice="ok" onclick="toggleSelect(this)">
+      <div class="letter">✓</div>
+      <div class="content">
+        <h3>排行榜 OK</h3>
+        <p>样式 + 交互 + 数据逻辑没问题</p>
+      </div>
+    </div>
+    <div class="option" data-choice="adjust" onclick="toggleSelect(this)">
+      <div class="letter">✎</div>
+      <div class="content">
+        <h3>需要调整</h3>
+        <p>我来说说怎么改</p>
+      </div>
+    </div>
+  </div>
+</div>

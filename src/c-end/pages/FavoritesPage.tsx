@@ -6,6 +6,7 @@ import { useFavoriteStore } from "../../shared/mock";
 import type { FavoriteItem } from "../../shared/mock";
 import { Heart, Trash2, Store, Map, BookOpen } from "lucide-react";
 import { toast } from "sonner";
+import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 type Tab = "all" | "merchant" | "route" | "article";
 
@@ -29,6 +30,7 @@ export function FavoritesPage() {
   const [tab, setTab] = useState<Tab>("all");
 
   const filtered = tab === "all" ? favorites : favorites.filter(f => f.type === tab);
+  const { visible, hasMore, loadMore } = useLoadMore(filtered, 6);
 
   const handleItemClick = (item: FavoriteItem) => {
     if (item.type === "merchant") navigate(`/c/merchant/${item.itemId}`);
@@ -63,39 +65,49 @@ export function FavoritesPage() {
             <p className="text-[13px] text-text-tertiary">暂无收藏</p>
           </div>
         ) : (
-          filtered.map(item => (
-            <div key={item.id} className="bg-white rounded-xl p-3 flex items-center gap-3">
-              <button onClick={() => handleItemClick(item)} className="flex-1 flex items-center gap-3 text-left min-w-0">
-                <div className="w-14 h-14 rounded-lg bg-surface-page flex items-center justify-center flex-shrink-0">
-                  <ImageWithFallback
-                    src={item.img}
-                    alt={item.name}
-                    className="w-full h-full object-cover rounded-lg"
-                    fallback={
-                      <div className="w-full h-full flex items-center justify-center text-text-tertiary">
-                        {typeIcon[item.type]}
-                      </div>
-                    }
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[13px] text-text-body line-clamp-1">{item.name}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] px-1.5 py-0.5 bg-surface-page rounded text-text-tertiary">
-                      {{ merchant: "商家", route: "线路", article: "文章" }[item.type]}
-                    </span>
-                    {item.price && <span className="text-[12px] text-primary">¥{item.price}</span>}
+          <>
+            {visible.map(item => (
+              <div key={item.id} className="bg-white rounded-xl p-3 flex items-center gap-3">
+                <button onClick={() => handleItemClick(item)} className="flex-1 flex items-center gap-3 text-left min-w-0">
+                  <div className="w-14 h-14 rounded-lg bg-surface-page flex items-center justify-center flex-shrink-0">
+                    <ImageWithFallback
+                      src={item.img}
+                      alt={item.name}
+                      className="w-full h-full object-cover rounded-lg"
+                      fallback={
+                        <div className="w-full h-full flex items-center justify-center text-text-tertiary">
+                          {typeIcon[item.type]}
+                        </div>
+                      }
+                    />
                   </div>
-                </div>
-              </button>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] text-text-body line-clamp-1">{item.name}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] px-1.5 py-0.5 bg-surface-page rounded text-text-tertiary">
+                        {{ merchant: "商家", route: "线路", article: "文章" }[item.type]}
+                      </span>
+                      {item.price && <span className="text-[12px] text-primary">¥{item.price}</span>}
+                    </div>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { remove(item.id); toast.success("已取消收藏"); }}
+                  className="p-2 text-text-tertiary hover:text-red-500"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+            {hasMore && (
               <button
-                onClick={() => { remove(item.id); toast.success("已取消收藏"); }}
-                className="p-2 text-text-tertiary hover:text-red-500"
+                onClick={loadMore}
+                className="w-full h-10 rounded-full border border-primary text-primary text-[13px] mt-2"
               >
-                <Trash2 size={16} />
+                加载更多
               </button>
-            </div>
-          ))
+            )}
+          </>
         )}
       </div>
     </div>

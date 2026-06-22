@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useLocation } from "react-router"
 import { useState, useMemo } from "react"
 import { useAuthStore } from "../shared/stores/auth-store"
-import { usePermissionStore } from "../shared/permissions/store"
+import { usePermissionStore } from "../shared/permissions"
 import { useComplaintStore } from "../shared/mock/complaint"
 import { navGroups } from "./nav"
 import {
@@ -154,6 +154,8 @@ export function DesktopLayout() {
                 audit: "操作审计",
                 // 新增功能
                 heritage: "遗产知识",
+                "ai-knowledge": "AI知识库",
+                volunteer: "志愿服务",
 
                 // 内容管理占位页
                 "service-center": "服务中心", policies: "政策法规",

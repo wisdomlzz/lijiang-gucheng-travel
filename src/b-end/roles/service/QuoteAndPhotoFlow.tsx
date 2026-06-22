@@ -261,7 +261,7 @@ export function QuoteAndPhotoFlow({
 
           <div className="mt-5 w-full bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(60,120,200,0.08)] space-y-2">
             <Row label="服务金额" value={`¥${amount}`} />
-            <Row label="收款方式" value="线上预付（资金平台托管）" />
+            <Row label="收款方式" value={order?.pay === "cash" ? "现金收款" : "线上预付（资金平台托管）"} />
             <Row label="订单号" value={order?.id ?? "LJ-S-2026050899"} />
           </div>
 
@@ -277,6 +277,29 @@ export function QuoteAndPhotoFlow({
               >
                 返回订单列表
               </button>
+            ) : order?.pay === "cash" ? (
+              <>
+                <div className="w-full h-12 rounded-2xl bg-gray-100 text-text-tertiary text-[14px] flex items-center justify-center">
+                  等待用户现金支付
+                </div>
+                <button
+                  onClick={() => {
+                    if (order) {
+                      useConvenienceStore.getState().markPaid(order.id, "cash");
+                    }
+                    setStep("photo");
+                  }}
+                  className="w-full h-10 rounded-2xl bg-white border border-[#E5E7EB] text-[12px] text-text-secondary"
+                >
+                  用户已支付，去开始服务
+                </button>
+                <button
+                  onClick={onClose}
+                  className="w-full h-10 rounded-2xl bg-white border border-[#E5E7EB] text-[12px] text-text-secondary"
+                >
+                  返回订单列表
+                </button>
+              </>
             ) : (
               <>
                 <button

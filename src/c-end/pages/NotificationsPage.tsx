@@ -4,6 +4,7 @@ import { Package, Gift, Volume2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "./shop/PageHeader";
 import { useNotificationStore, type NotificationType } from "../../shared/mock";
+import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 // J10: 实时消息推送类型
 type RealtimeNotificationTemplate = {
@@ -58,6 +59,7 @@ export function NotificationsPage() {
   }, [navigate, addNotification]);
 
   const filtered = activeTab === "all" ? notifications : notifications.filter((n) => n.type === activeTab);
+  const { visible, hasMore, loadMore } = useLoadMore(filtered, 10);
   const unreadCount = (type?: NotificationType) => notifications.filter((n) => !n.isRead && (type ? n.type === type : true)).length;
 
   const handleSwipeStart = (id: string, clientX: number) => {
@@ -147,8 +149,9 @@ export function NotificationsPage() {
               <p className="text-[14px] text-text-tertiary">暂无消息</p>
             </div>
           ) : (
-            <div className="p-4 space-y-2">
-              {filtered.map((item) => {
+            <>
+              <div className="p-4 space-y-2">
+                {visible.map((item) => {
                 const config = typeConfig[item.type];
                 const Icon = config.icon;
                 const isOpen = openId === item.id;
@@ -186,7 +189,15 @@ export function NotificationsPage() {
                   </div>
                 );
               })}
-            </div>
+              </div>
+              {hasMore && (
+                <div className="px-4 pb-4">
+                  <button onClick={loadMore} className="w-full py-3 text-[13px] text-primary font-medium">
+                    加载更多
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

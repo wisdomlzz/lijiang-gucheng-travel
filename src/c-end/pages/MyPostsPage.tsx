@@ -3,6 +3,7 @@ import { PageHeader } from "./shop/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { FileText, Eye, Clock, Trash2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
+import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 type Tab = "info";
 
@@ -46,6 +47,7 @@ export function MyPostsPage() {
   const [posts, setPosts] = useState(mockPosts);
 
   const filtered = posts.filter(p => p.type === tab);
+  const { visible, hasMore, loadMore } = useLoadMore(filtered, 6);
 
   const handleDelete = (id: string) => {
     setPosts(prev => prev.filter(p => p.id !== id));
@@ -83,54 +85,64 @@ export function MyPostsPage() {
             <p className="text-[13px] text-text-tertiary">暂无发布内容</p>
           </div>
         ) : (
-          filtered.map(post => {
-            const s = statusMeta[post.status];
-            return (
-              <div key={post.id} className="bg-white rounded-xl p-3">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <FileText size={14} className="text-primary" />
-                    <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${s.bg} ${s.color}`}>
-                      {s.label}
+          <>
+            {visible.map(post => {
+              const s = statusMeta[post.status];
+              return (
+                <div key={post.id} className="bg-white rounded-xl p-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <FileText size={14} className="text-primary" />
+                      <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${s.bg} ${s.color}`}>
+                        {s.label}
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-text-tertiary flex items-center gap-1">
+                      <Clock size={11} /> {post.createdAt}
                     </span>
                   </div>
-                  <span className="text-[11px] text-text-tertiary flex items-center gap-1">
-                    <Clock size={11} /> {post.createdAt}
-                  </span>
-                </div>
 
-                <h3 className="text-[14px] text-text-body font-medium mb-1">{post.title}</h3>
-                <p className="text-[12px] text-text-tertiary line-clamp-2">{post.content}</p>
+                  <h3 className="text-[14px] text-text-body font-medium mb-1">{post.title}</h3>
+                  <p className="text-[12px] text-text-tertiary line-clamp-2">{post.content}</p>
 
-                {post.status === "rejected" && post.rejectReason && (
-                  <div className="mt-2 bg-red-50 rounded-lg px-3 py-2 text-[11px] text-red-600">
-                    拒绝原因：{post.rejectReason}
-                  </div>
-                )}
+                  {post.status === "rejected" && post.rejectReason && (
+                    <div className="mt-2 bg-red-50 rounded-lg px-3 py-2 text-[11px] text-red-600">
+                      拒绝原因：{post.rejectReason}
+                    </div>
+                  )}
 
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="flex items-center gap-3 text-[11px] text-text-tertiary">
-                    {post.status === "published" && (
-                      <>
-                        <span className="flex items-center gap-1"><Eye size={11} /> {post.views}</span>
-                        <span className="flex items-center gap-1">❤️ {post.likes}</span>
-                      </>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    {post.status === "rejected" && (
-                      <button onClick={() => handleResubmit(post.id)} className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary-50 text-primary text-[11px]">
-                        <RotateCcw size={11} /> 重新提交
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3 text-[11px] text-text-tertiary">
+                      {post.status === "published" && (
+                        <>
+                          <span className="flex items-center gap-1"><Eye size={11} /> {post.views}</span>
+                          <span className="flex items-center gap-1">❤️ {post.likes}</span>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      {post.status === "rejected" && (
+                        <button onClick={() => handleResubmit(post.id)} className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary-50 text-primary text-[11px]">
+                          <RotateCcw size={11} /> 重新提交
+                        </button>
+                      )}
+                      <button onClick={() => handleDelete(post.id)} className="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-text-secondary text-[11px]">
+                        <Trash2 size={11} /> 删除
                       </button>
-                    )}
-                    <button onClick={() => handleDelete(post.id)} className="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-text-secondary text-[11px]">
-                      <Trash2 size={11} /> 删除
-                    </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+            {hasMore && (
+              <button
+                onClick={loadMore}
+                className="w-full h-10 rounded-full border border-primary text-primary text-[13px]"
+              >
+                加载更多
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

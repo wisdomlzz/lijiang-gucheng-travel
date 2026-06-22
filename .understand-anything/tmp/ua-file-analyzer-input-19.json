@@ -1,5 +1,0 @@
-{
-  "projectRoot": "/Users/lzz/Desktop/Projects/丽江古城游",
-  "batchFiles": [{"path":".agents/skills/triage/AGENT-BRIEF.md","language":"markdown","sizeLines":168,"fileCategory":"docs"},{"path":".agents/skills/triage/OUT-OF-SCOPE.md","language":"markdown","sizeLines":101,"fileCategory":"docs"},{"path":".agents/skills/triage/SKILL.md","language":"markdown","sizeLines":103,"fileCategory":"docs"}],
-  "batchImportData": {".agents/skills/triage/AGENT-BRIEF.md":[],".agents/skills/triage/OUT-OF-SCOPE.md":[],".agents/skills/triage/SKILL.md":[]}
-}

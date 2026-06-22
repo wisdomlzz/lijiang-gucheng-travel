@@ -1,0 +1,227 @@
+<h2>文化院落打卡记录 —— 页面架构方案</h2>
+<p class="subtitle">核心问题：20+院落时，概览+统计+明细如何组织才合理？三种不同的信息架构设计，请仔细看完再做选择。</p>
+
+<div class="section">
+  <h3>方案 A：仪表盘三层钻取（推荐）</h3>
+  <div class="mockup">
+    <div class="mockup-header">KPI 概览层</div>
+    <div class="mockup-body" style="display:flex;gap:12px;padding:12px">
+      <div style="flex:1;background:#f1f5f9;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#64748b">总打卡次数</div>
+        <div style="font-size:22px;font-weight:700">127</div>
+      </div>
+      <div style="flex:1;background:#f1f5f9;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#64748b">参与游客</div>
+        <div style="font-size:22px;font-weight:700">89</div>
+      </div>
+      <div style="flex:1;background:#f1f5f9;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#64748b">院落总数</div>
+        <div style="font-size:22px;font-weight:700">22</div>
+      </div>
+      <div style="flex:1;background:#f1f5f9;border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#64748b">本周新增</div>
+        <div style="font-size:22px;font-weight:700">32</div>
+      </div>
+    </div>
+  </div>
+  <div style="height:8px"></div>
+  <div class="mockup">
+    <div class="mockup-header">分析层：各院落打卡排行榜</div>
+    <div class="mockup-body" style="padding:12px">
+      <div style="border-bottom:1px solid #e2e8f0;padding:6px 0;display:flex;align-items:center;gap:8px">
+        <span style="background:#2563eb;color:white;border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">1</span>
+        <span style="font-size:13px">木府</span>
+        <div style="flex:1;height:20px;background:#e2e8f0;border-radius:4px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,#2563eb,#3b82f6);width:85%;border-radius:4px;display:flex;align-items:center;padding-left:8px;color:white;font-size:10px">42次</div>
+        </div>
+      </div>
+      <div style="border-bottom:1px solid #e2e8f0;padding:6px 0;display:flex;align-items:center;gap:8px">
+        <span style="background:#94a3b8;color:white;border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">2</span>
+        <span style="font-size:13px">方国瑜故居</span>
+        <div style="flex:1;height:20px;background:#e2e8f0;border-radius:4px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,#2563eb,#3b82f6);width:65%;border-radius:4px;display:flex;align-items:center;padding-left:8px;color:white;font-size:10px">31次</div>
+        </div>
+      </div>
+      <div style="border-bottom:1px solid #e2e8f0;padding:6px 0;display:flex;align-items:center;gap:8px">
+        <span style="background:#94a3b8;color:white;border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">3</span>
+        <span style="font-size:13px">万古楼</span>
+        <div style="flex:1;height:20px;background:#e2e8f0;border-radius:4px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,#2563eb,#3b82f6);width:48%;border-radius:4px;display:flex;align-items:center;padding-left:8px;color:white;font-size:10px">23次</div>
+        </div>
+      </div>
+      <div style="padding:6px 0;display:flex;align-items:center;gap:8px">
+        <span style="background:#e2e8f0;color:#64748b;border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px">⋯</span>
+        <span style="font-size:13px;color:#64748b">展开全部 22 个院落 →</span>
+      </div>
+    </div>
+  </div>
+  <div style="height:8px"></div>
+  <div class="mockup">
+    <div class="mockup-header">明细层：打卡记录 <span class="mock-input" style="font-size:11px;display:inline-block;width:auto">筛选院落...</span></div>
+    <div class="mockup-body" style="padding:12px;font-size:11px;color:#64748b">
+      表格展示每条打卡记录：照片预览 | 院落名 | 游客 | 位置 | 时间 | 查看按钮<br/>
+      点击排行榜中某院落 → 表格自动过滤只显示该院落记录<br/>
+      支持搜索游客、按日期筛选
+    </div>
+  </div>
+  <div style="margin-top:8px;padding:8px 12px;background:#f0f9ff;border-radius:8px;font-size:12px;color:#1e40af">
+    <strong>设计逻辑：</strong>概览(KPI)→分析(榜单)→明细(表格)，三层逐级钻取，每层解决一个核心问题。
+    水平条状图解决横轴标签重叠问题，点击钻取替代散乱的筛选操作。
+    适用于 10-50 个院落规模。
+  </div>
+</div>
+
+<div class="section">
+  <h3>方案 B：卡片网格 + 右侧统计面板</h3>
+  <div class="split">
+    <div class="mockup" style="flex:2">
+      <div class="mockup-header">院落打卡卡片（网格排列）</div>
+      <div class="mockup-body" style="padding:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#2563eb;font-weight:600;margin-bottom:2px">木府</div>
+          <div style="font-size:18px;font-weight:700">42</div>
+          <div style="font-size:9px;color:#94a3b8">打卡次数</div>
+        </div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#2563eb;font-weight:600;margin-bottom:2px">方国瑜故居</div>
+          <div style="font-size:18px;font-weight:700">31</div>
+          <div style="font-size:9px;color:#94a3b8">打卡次数</div>
+        </div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#2563eb;font-weight:600;margin-bottom:2px">万古楼</div>
+          <div style="font-size:18px;font-weight:700">23</div>
+          <div style="font-size:9px;color:#94a3b8">打卡次数</div>
+        </div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;font-weight:600">纳西古乐会</div>
+          <div style="font-size:18px;font-weight:700">15</div>
+          <div style="font-size:9px;color:#94a3b8">打卡次数</div>
+        </div>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:10px;font-weight:600">雪山书院</div>
+          <div style="font-size:18px;font-weight:700">8</div>
+          <div style="font-size:9px;color:#94a3b8">打卡次数</div>
+        </div>
+        <div style="background:#f8fafc;border:1px dashed #d1d5db;border-radius:8px;padding:10px;text-align:center;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:11px">
+          +17 个院落
+        </div>
+      </div>
+    </div>
+    <div class="mockup" style="flex:1">
+      <div class="mockup-header">统计面板</div>
+      <div class="mockup-body" style="padding:10px;font-size:11px">
+        <div style="margin-bottom:8px;padding:8px;background:#f1f5f9;border-radius:6px">
+          <div style="color:#64748b;font-size:10px">总打卡</div>
+          <div style="font-size:20px;font-weight:700">127</div>
+        </div>
+        <div style="margin-bottom:8px;padding:8px;background:#f1f5f9;border-radius:6px">
+          <div style="color:#64748b;font-size:10px">参与游客</div>
+          <div style="font-size:20px;font-weight:700">89</div>
+        </div>
+        <div style="padding:8px;background:#f1f5f9;border-radius:6px">
+          <div style="color:#64748b;font-size:10px">打卡完成率</div>
+          <div style="font-size:20px;font-weight:700">68%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:8px;padding:8px 12px;background:#f0fdf4;border-radius:8px;font-size:12px;color:#166534">
+    <strong>设计逻辑：</strong>每个院落一张统计卡片，一眼扫完全部院落各自的人气。
+    适合院落数量 30 个以内的管理场景，每个院落直接展示打卡量。
+    点击卡片进入该院落的所有打卡明细。
+  </div>
+</div>
+
+<div class="section">
+  <h3>方案 C：完整数据表格 + 多维度图表区</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding:12px">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:11px;color:#64748b">总打卡</div>
+          <div style="font-size:16px;font-weight:700">127</div>
+        </div>
+        <div style="flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:11px;color:#64748b">游客</div>
+          <div style="font-size:16px;font-weight:700">89</div>
+        </div>
+        <div style="flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:11px;color:#64748b">院落</div>
+          <div style="font-size:16px;font-weight:700">22</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="flex:1">
+          <div style="font-size:10px;color:#64748b;margin-bottom:4px">TOP5 排行榜</div>
+          <div style="height:60px;background:#f1f5f9;border-radius:6px;display:flex;align-items:flex-end;padding:4px;gap:4px">
+            <div style="flex:1;height:50px;background:#2563eb;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:38px;background:#3b82f6;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:28px;background:#60a5fa;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:18px;background:#93c5fd;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:12px;background:#bfdbfe;border-radius:4px 4px 0 0;"></div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:#64748b;margin-bottom:4px">近7天趋势</div>
+          <div style="height:60px;background:#f1f5f9;border-radius:6px;display:flex;align-items:flex-end;padding:4px;gap:4px">
+            <div style="flex:1;height:20px;background:#a78bfa;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:35px;background:#a78bfa;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:15px;background:#a78bfa;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:40px;background:#a78bfa;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:28px;background:#a78bfa;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:22px;background:#a78bfa;border-radius:4px 4px 0 0;"></div>
+            <div style="flex:1;height:30px;background:#a78bfa;border-radius:4px 4px 0 0;"></div>
+          </div>
+        </div>
+      </div>
+      <div style="border:1px solid #e2e8f0;border-radius:6px;overflow:hidden">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0">
+            <th style="padding:6px 8px;text-align:left">院落</th>
+            <th style="padding:6px 8px;text-align:left">游客</th>
+            <th style="padding:6px 8px;text-align:left">时间</th>
+            <th style="padding:6px 8px;text-align:left">操作</th>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9">
+            <td style="padding:6px 8px">木府</td><td style="padding:6px 8px">张三</td><td style="padding:6px 8px">05-18 10:30</td><td style="padding:6px 8px"><span style="color:#2563eb">查看</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9">
+            <td style="padding:6px 8px">方国瑜故居</td><td style="padding:6px 8px">李四</td><td style="padding:6px 8px">05-19 14:20</td><td style="padding:6px 8px"><span style="color:#2563eb">查看</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:8px;padding:8px 12px;background:#fffbeb;border-radius:8px;font-size:12px;color:#92400e">
+    <strong>设计逻辑：</strong>传统管理后台模式——简洁统计 + 多个指标图表 + 完整明细表格。
+    兼容性强，运营人员熟悉的 CRUD 操作习惯。但对"各院落打卡分布"这一核心需求的视觉冲击力不如方案A。
+  </div>
+</div>
+
+<div style="margin-top:24px;padding:16px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0">
+  <h3>选择你的方向</h3>
+  <p class="subtitle">点击一个方案选中它，然后告诉我你的选择</p>
+  <div class="options" style="margin-top:12px">
+    <div class="option" data-choice="a" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>仪表盘三层钻取</h3>
+        <p>KPI → 水平排行榜 → 可过滤表格，层级清晰，20+院落不重叠，点击钻取</p>
+      </div>
+    </div>
+    <div class="option" data-choice="b" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>卡片网格 + 侧边统计</h3>
+        <p>每个院落一个统计格，一目了然全部院落的热度分布，点击进明细</p>
+      </div>
+    </div>
+    <div class="option" data-choice="c" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>传统表格 + 图表区</h3>
+        <p>简洁统计条 + 多个小图表 + 完整表格，最接近现有的后台风格</p>
+      </div>
+    </div>
+  </div>
+</div>

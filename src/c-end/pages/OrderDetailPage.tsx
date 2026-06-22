@@ -60,7 +60,7 @@ function CancelConfirmDialog({
   );
 }
 
-const CONVENIENCE_STEP_LABELS = ["已下单", "已指派", "已核价", "已收款", "服务中", "已完成"];
+const CONVENIENCE_STEP_LABELS = ["已下单", "已接单", "已核价", "已收款", "服务中", "待验收", "已完成"];
 
 function getConvenienceSteps(status: string): { label: string; completed: boolean }[] {
   const meta = CONVENIENCE_STATUS_META[status as keyof typeof CONVENIENCE_STATUS_META];
@@ -177,9 +177,28 @@ function ConvenienceOrderDetail({ id, data }: { id: string; data: ConvenienceOrd
     setShowCancelDialog(false);
   };
 
+  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
+  const [showCashConfirm, setShowCashConfirm] = useState(false);
+
   const handlePay = () => {
+    setShowPaymentMethod(true);
+  };
+
+  const handlePayOnline = () => {
     useConvenienceStore.getState().markPaid(id, "online");
     toast.success("支付成功");
+    setShowPaymentMethod(false);
+  };
+
+  const handlePayCash = () => {
+    setShowPaymentMethod(false);
+    setShowCashConfirm(true);
+  };
+
+  const handleConfirmCashPay = () => {
+    useConvenienceStore.getState().markPaid(id, "cash");
+    toast.success("已确认现金支付");
+    setShowCashConfirm(false);
   };
 
   const handleOpenDispute = () => {
@@ -293,6 +312,68 @@ function ConvenienceOrderDetail({ id, data }: { id: string; data: ConvenienceOrd
         avatar={activeStaff?.avatar}
         subtitle={activeStaff?.subtitle || "服务人员"}
       />
+      {/* Payment method selection */}
+      {showPaymentMethod && (
+        <div className="absolute inset-0 bg-black/50 z-50 flex items-end">
+          <div className="bg-white rounded-t-2xl w-full overflow-hidden">
+            <div className="p-4 text-center border-b border-border-light">
+              <p className="text-[15px] text-text-body font-medium">选择支付方式</p>
+            </div>
+            <div className="p-4 space-y-3">
+              <button
+                onClick={handlePayOnline}
+                className="w-full h-12 rounded-xl bg-primary text-white text-[14px] flex items-center justify-center gap-2"
+              >
+                <span className="text-lg">💳</span> 微信支付
+              </button>
+              <button
+                onClick={handlePayCash}
+                className="w-full h-12 rounded-xl bg-[#10B981] text-white text-[14px] flex items-center justify-center gap-2"
+              >
+                <span className="text-lg">💵</span> 现金支付
+              </button>
+            </div>
+            <button
+              onClick={() => setShowPaymentMethod(false)}
+              className="w-full h-12 text-[14px] text-text-secondary border-t border-border-light"
+            >
+              取消
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Cash payment confirmation */}
+      {showCashConfirm && (
+        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden">
+            <div className="p-6 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+                <span className="text-2xl">💵</span>
+              </div>
+              <h3 className="text-[17px] text-text-body font-medium mb-2">
+                确认现金支付？
+              </h3>
+              <p className="text-[14px] text-text-secondary">
+                您将使用现金支付给服务人员，请确认收到服务后再支付
+              </p>
+            </div>
+            <div className="flex border-t border-border-light">
+              <button
+                onClick={() => setShowCashConfirm(false)}
+                className="flex-1 h-12 text-[15px] text-text-secondary border-r border-border-light"
+              >
+                再考虑
+              </button>
+              <button
+                onClick={handleConfirmCashPay}
+                className="flex-1 h-12 text-[15px] text-[#10B981] font-medium"
+              >
+                确认现金支付
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <PageHeader title="订单详情" />
 
       <div className="bg-gradient-to-br from-primary to-primary px-4 py-5">
@@ -300,8 +381,8 @@ function ConvenienceOrderDetail({ id, data }: { id: string; data: ConvenienceOrd
         <p className="text-white/80 text-[12px] mt-1">订单号：{data.id}</p>
       </div>
 
-      <div className="mx-3 mt-3 bg-white rounded-xl p-4">
-        <StatusProgress steps={steps} />
+      <div className="mx-3 mt-3 bg-white rounded-xl p-3">
+        <StatusProgress steps={steps} compact />
       </div>
 
       <div className="mx-3 mt-3 bg-white rounded-xl p-4 space-y-3">

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { PageHeader } from "./shop/PageHeader";
 import { Camera, ChevronDown } from "lucide-react";
+import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 interface ReportRecord {
   id: string;
@@ -132,6 +133,7 @@ export function PhotoRecordsPage() {
     if (statusFilter !== "all" && r.status !== statusFilter) return false;
     return true;
   });
+  const { visible, hasMore, loadMore } = useLoadMore(filtered, 6);
 
   return (
     <div className="min-h-full bg-surface-page flex flex-col">
@@ -166,7 +168,7 @@ export function PhotoRecordsPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filtered.map(record => {
+            {visible.map(record => {
               const s = statusMeta[record.status];
               return (
                 <div
@@ -205,6 +207,11 @@ export function PhotoRecordsPage() {
                 </div>
               );
             })}
+            {hasMore && (
+              <button onClick={loadMore} className="w-full py-3 text-[13px] text-primary font-medium">
+                加载更多
+              </button>
+            )}
           </div>
         )}
       </div>

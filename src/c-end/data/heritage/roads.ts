@@ -24,12 +24,15 @@ export const roadsData: HeritageItem[] = [
 2001年11月20日起，大研镇政府在整顿市场中，把街场摊位全迁移至南门小区市场。场内不准摆摊做买卖，专门作为游客及居民休闲娱乐的场地。2003年上半年，丽江古城管理委员会投资整修四方街街面的五花石，重新铺设面积为1700多平方米。`,
     basicInfo: '五花石路面，街道冲洗习俗',
     photos: [
-      'https://images.unsplash.com/photo-1663609968423-657ff4f0dd5a?auto=format&fit=crop&w=800&q=70',
-      'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1567696911989-2e77983f7088?auto=format&fit=crop&w=800&q=70'
+    ],
+    drawings: [
+      '1、遗产保护/1、道路\四方街\四方街平面图.png'
     ],
     extra: {
       orientation: '方形广场',
-      scale: '东西长76米，南北宽25米，面积为1900平方米',
     },
   },
   {
@@ -40,8 +43,12 @@ export const roadsData: HeritageItem[] = [
     location: { lat: 26.876522, lng: 100.230522 },
     description: '新华街位于古城西侧，是连接四方街与西门市场的主要通道。街道形成于明代，历来是古城重要的商贸区域。街道两旁保留了大量传统商铺，是体验古城商业文化的重要场所。',
     basicInfo: '古城西侧商业街，传统商铺',
-    photos: ['https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70'],
-    extra: { orientation: '东西向', scale: '全长约800米' },
+    photos: [
+      'https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70'
+    ],
+    extra: { orientation: '东西向' },
   },
   {
     id: 'road-3',
@@ -51,8 +58,15 @@ export const roadsData: HeritageItem[] = [
     location: { lat: 26.876022, lng: 100.236522 },
     description: '五一街位于古城东部，是古城内保存较为完整的传统居住街区。街道两旁分布着大量纳西族传统民居，周霖故居、方国瑜故居等文化名人故居均坐落于此。五一街是感受古城居住文化的重要场所。',
     basicInfo: '古城东部居住区，文化名人故居',
-    photos: ['https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70'],
-    extra: { orientation: '南北向', scale: '全长约600米' },
+    photos: [
+      'https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70'
+    ],
+    drawings: [
+      '1、遗产保护/1、道路\五一街\五一街街区图.png'
+    ],
+    extra: { orientation: '南北向' },
   },
   {
     id: 'road-4',
@@ -62,8 +76,11 @@ export const roadsData: HeritageItem[] = [
     location: { lat: 26.875023, lng: 100.234522 },
     description: '木府门前路是连接古城中心至木府的景观通道。该路历史上是木氏土司出行的主要通道，两旁古树参天，石板路面保存完好。1999年木府重建后，该路成为展示纳西族建筑文化的重要走廊。',
     basicInfo: '木氏土司出行要道，景观走廊',
-    photos: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70'],
-    extra: { orientation: '东西向', scale: '全长约200米' },
+    photos: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&q=70'
+    ],
+    extra: { orientation: '东西向' },
   },
 ];
 

@@ -1,9 +1,10 @@
 import { create } from "zustand"
 import type { GridItemConfig, BannerConfig } from "../types"
 
-// 宫格图标：绿勾 / 红叉
+// 宫格图标：绿勾 / 红叉 / 公告通知
 const ICON_DONE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='38' fill='%2322C55E'/%3E%3Cpath d='M24 42l10 10 22-24' stroke='white' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
 const ICON_TODO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='38' fill='%23EF4444'/%3E%3Cpath d='M28 28l24 24M52 28l-24 24' stroke='white' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E";
+const ICON_ANNOUNCEMENT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='38' fill='%232563EB'/%3E%3Cpath d='M30 28l22 8-22 8' stroke='white' stroke-width='3' fill='none' stroke-linejoin='round'/%3E%3Cpath d='M30 44c0 4 3 6 6 6 4 0 6-3 6-6' stroke='white' stroke-width='3' fill='none'/%3E%3Cpath d='M30 28c0-3-3-4-5-2l-4 4c-2 2-2 4 0 6l4 4' stroke='white' stroke-width='3' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E";
 
 const DEFAULT_GRID_ITEMS: GridItemConfig[] = [
   // 第 1 页（order 0-7）
@@ -18,15 +19,16 @@ const DEFAULT_GRID_ITEMS: GridItemConfig[] = [
   // 第 2 页（order 8-15）
   { id: "g12", imageUrl: ICON_TODO, label: "精选路线", route: "/c/routes", page: 2, visible: true, order: 8 },
   { id: "g5", imageUrl: ICON_DONE, label: "遗产知识", route: "/c/heritage", page: 2, visible: true, order: 9 },
-  { id: "g13", imageUrl: ICON_DONE, label: "停车服务", route: "/c/parking", page: 2, visible: true, order: 10 },
-  { id: "g6", imageUrl: ICON_TODO, label: "VR 游览", route: "/c/vr-tour", page: 2, visible: true, order: 11 },
-  { id: "g14", imageUrl: ICON_TODO, label: "便民信息", route: "/c/info", page: 2, visible: true, order: 12 },
-  { id: "g7", imageUrl: ICON_DONE, label: "公房服务", route: "/c/housing", page: 2, visible: true, order: 13 },
-  { id: "g8", imageUrl: ICON_TODO, label: "官方商城", route: "crmeb", page: 2, visible: true, order: 14 },
-  { id: "g16", imageUrl: ICON_DONE, label: "一键投诉", route: "/c/complaint", page: 2, visible: true, order: 15 },
-  // 第 3 页（order 16-17）
-  { id: "g17", imageUrl: ICON_TODO, label: "联票套餐", route: "crmeb", page: 3, visible: true, order: 16 },
-  { id: "g18", imageUrl: ICON_DONE, label: "随手拍", route: "/c/photo-report", page: 3, visible: true, order: 17 },
+  { id: "g19", imageUrl: ICON_ANNOUNCEMENT, label: "公告通知", route: "/c/notice", page: 2, visible: true, order: 10 },
+  { id: "g13", imageUrl: ICON_DONE, label: "停车服务", route: "/c/parking", page: 2, visible: true, order: 11 },
+  { id: "g6", imageUrl: ICON_TODO, label: "VR 游览", route: "/c/vr-tour", page: 2, visible: true, order: 12 },
+  { id: "g14", imageUrl: ICON_TODO, label: "便民信息", route: "/c/info", page: 2, visible: true, order: 13 },
+  { id: "g7", imageUrl: ICON_DONE, label: "公房服务", route: "/c/housing", page: 2, visible: true, order: 14 },
+  { id: "g8", imageUrl: ICON_TODO, label: "官方商城", route: "crmeb", page: 2, visible: true, order: 15 },
+  { id: "g16", imageUrl: ICON_DONE, label: "一键投诉", route: "/c/complaint", page: 2, visible: true, order: 17 },
+  // 第 3 页（order 18-19）
+  { id: "g17", imageUrl: ICON_TODO, label: "联票套餐", route: "crmeb", page: 3, visible: true, order: 18 },
+  { id: "g18", imageUrl: ICON_DONE, label: "随手拍", route: "/c/photo-report", page: 3, visible: true, order: 19 },
 ];
 
 const DEFAULT_BANNERS: BannerConfig[] = [

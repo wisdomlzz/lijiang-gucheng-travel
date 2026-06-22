@@ -1,5 +1,0 @@
-{
-  "projectRoot": "/Users/lzz/Desktop/Projects/丽江古城游",
-  "batchFiles": [{"path":"src/shared/mock/supplier-rating.ts","language":"typescript","sizeLines":83,"fileCategory":"code"},{"path":"vite.config.ts","language":"typescript","sizeLines":71,"fileCategory":"code"}],
-  "batchImportData": {"src/shared/mock/supplier-rating.ts":[],"vite.config.ts":[]}
-}

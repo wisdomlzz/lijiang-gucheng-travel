@@ -7,8 +7,8 @@ import { Phone, Clock, AlertCircle, User, Star } from "lucide-react";
 import { useConvenienceStore } from "../../shared/mock";
 import type { ConvenienceStatus } from "../../shared/types";
 
-const STATUS_STEPS: ConvenienceStatus[] = ["S10", "A20", "A30", "A40", "S48", "S55", "S40"];
-const STEP_LABELS = ["已下单", "已指派", "已接单", "已收款", "服务中", "完工待确认", "已完成"];
+const STATUS_STEPS: ConvenienceStatus[] = ["S10", "A30", "A35", "A38", "A40", "S48", "S55", "S40"];
+const STEP_LABELS = ["已下单", "已接单", "已核价", "协商中", "已收款", "服务中", "待验收", "已完成"];
 
 export function ServiceTrackingPage() {
   const { id } = useParams();
@@ -19,6 +19,8 @@ export function ServiceTrackingPage() {
   const requestCancel = useConvenienceStore((s) => s.requestCancel);
   const [countdown, setCountdown] = useState(15 * 60);
   const [showDisputeForm, setShowDisputeForm] = useState(false);
+  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
+  const [showCashConfirm, setShowCashConfirm] = useState(false);
   const [disputePrice, setDisputePrice] = useState("");
   const [disputeReason, setDisputeReason] = useState("");
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -37,6 +39,7 @@ export function ServiceTrackingPage() {
   // Countdown timer
   useEffect(() => {
     if (order?.status === "A35") {
+      // 15分钟倒计时
       timerRef.current = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 0) {
@@ -46,6 +49,19 @@ export function ServiceTrackingPage() {
           return prev - 1;
         });
       }, 1000);
+    } else if (order?.status === "S55") {
+      // 24小时倒计时（从订单完成时间计算）
+      const completedAt = order.completedAt ? new Date(order.completedAt).getTime() : Date.now();
+      const autoConfirmAt = completedAt + 24 * 60 * 60 * 1000;
+      const tick = () => {
+        const remaining = Math.max(0, Math.floor((autoConfirmAt - Date.now()) / 1000));
+        setCountdown(remaining);
+        if (remaining <= 0 && timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+      };
+      tick();
+      timerRef.current = setInterval(tick, 1000);
     }
     return () => {
       if (timerRef.current) {
@@ -53,7 +69,7 @@ export function ServiceTrackingPage() {
         timerRef.current = null;
       }
     };
-  }, [order?.status]);
+  }, [order?.status, order?.completedAt]);
 
   // Simulate wait time
   useEffect(() => {
@@ -66,6 +82,13 @@ export function ServiceTrackingPage() {
   }, [order?.status]);
 
   const formatCountdown = (seconds: number) => {
+    if (seconds >= 24 * 60 * 60) {
+      // 24小时以上显示 "XX天XX:XX:XX"
+      const days = Math.floor(seconds / (24 * 60 * 60));
+      const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
+      const mins = Math.floor((seconds % (60 * 60)) / 60);
+      return `${days}天${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+    }
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
@@ -78,8 +101,24 @@ export function ServiceTrackingPage() {
   };
 
   const handleConfirmPayment = () => {
+    setShowPaymentMethod(true);
+  };
+
+  const handlePayOnline = () => {
     markPaid(order!.id, "online");
     toast.success("支付成功");
+    setShowPaymentMethod(false);
+  };
+
+  const handlePayCash = () => {
+    setShowPaymentMethod(false);
+    setShowCashConfirm(true);
+  };
+
+  const handleConfirmCashPay = () => {
+    markPaid(order!.id, "cash");
+    toast.success("已确认现金支付");
+    setShowCashConfirm(false);
   };
 
   const handleDisputeSubmit = () => {
@@ -91,6 +130,11 @@ export function ServiceTrackingPage() {
       toast.error("请选择异议原因");
       return;
     }
+    useConvenienceStore.getState().submitPriceDispute(order!.id, {
+      targetPrice: Number(disputePrice),
+      reason: disputeReason,
+      images: disputeImages,
+    });
     toast.info("您的异议已提交，客服将在24小时内联系您");
     setShowDisputeForm(false);
     setDisputePrice("");
@@ -234,7 +278,7 @@ export function ServiceTrackingPage() {
       <div className="px-3 pt-3 space-y-3">
         {/* Status progress bar */}
         <div className="bg-white rounded-2xl p-3">
-          <StatusProgress steps={statusSteps} />
+          <StatusProgress steps={statusSteps} compact />
         </div>
 
         {/* Cancelled order card */}
@@ -420,6 +464,26 @@ export function ServiceTrackingPage() {
           </div>
         )}
 
+        {/* 24-hour countdown — shown in S55 (confirming) state */}
+        {order?.status === "S55" && countdown > 0 && (
+          <div className="bg-white rounded-2xl p-4 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Clock size={18} className="text-primary" />
+              <span className="text-[13px] text-text-secondary">
+                自动确认剩余时间
+              </span>
+            </div>
+
+            <p className="text-[36px] font-mono mt-2 font-medium tracking-wider text-text-heading">
+              {formatCountdown(countdown)}
+            </p>
+
+            <p className="text-[12px] text-text-tertiary mt-1">
+              超时未确认将自动确认服务完成
+            </p>
+          </div>
+        )}
+
         {/* Dispute form */}
         {showDisputeForm && (
           <div className="bg-white rounded-2xl p-4 animate-fade-in-up">
@@ -541,6 +605,70 @@ export function ServiceTrackingPage() {
               >
                 提交异议
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Payment method selection */}
+        {showPaymentMethod && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
+            <div className="bg-white rounded-t-2xl w-full overflow-hidden">
+              <div className="p-4 text-center border-b border-border-light">
+                <p className="text-[15px] text-text-body font-medium">选择支付方式</p>
+              </div>
+              <div className="p-4 space-y-3">
+                <button
+                  onClick={handlePayOnline}
+                  className="w-full h-12 rounded-xl bg-primary text-white text-[14px] flex items-center justify-center gap-2"
+                >
+                  <span className="text-lg">💳</span> 微信支付
+                </button>
+                <button
+                  onClick={handlePayCash}
+                  className="w-full h-12 rounded-xl bg-[#10B981] text-white text-[14px] flex items-center justify-center gap-2"
+                >
+                  <span className="text-lg">💵</span> 现金支付
+                </button>
+              </div>
+              <button
+                onClick={() => setShowPaymentMethod(false)}
+                className="w-full h-12 text-[14px] text-text-secondary border-t border-border-light"
+              >
+                取消
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Cash payment confirmation */}
+        {showCashConfirm && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden">
+              <div className="p-6 text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+                  <span className="text-2xl">💵</span>
+                </div>
+                <h3 className="text-[17px] text-text-body font-medium mb-2">
+                  确认现金支付？
+                </h3>
+                <p className="text-[14px] text-text-secondary">
+                  您将使用现金支付给服务人员，请确认收到服务后再支付
+                </p>
+              </div>
+              <div className="flex border-t border-border-light">
+                <button
+                  onClick={() => setShowCashConfirm(false)}
+                  className="flex-1 h-12 text-[15px] text-text-secondary border-r border-border-light"
+                >
+                  再考虑
+                </button>
+                <button
+                  onClick={handleConfirmCashPay}
+                  className="flex-1 h-12 text-[15px] text-[#10B981] font-medium"
+                >
+                  确认现金支付
+                </button>
+              </div>
             </div>
           </div>
         )}

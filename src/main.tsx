@@ -22,9 +22,10 @@ function ZoomControl() {
   const { scale, setScale } = useZoomStore()
   const isLanding = location.pathname === "/"
   const isDesktop = location.pathname.startsWith("/desktop")
+  const isRequirement = location.pathname === "/requirement"
 
   // Only show on C/B end (phone shell pages)
-  if (isLanding || isDesktop) return null
+  if (isLanding || isDesktop || isRequirement) return null
 
   const zoomIn = () => setScale(Math.min(MAX_SCALE, +(scale + STEP).toFixed(2)))
   const zoomOut = () => setScale(Math.max(MIN_SCALE, +(scale - STEP).toFixed(2)))

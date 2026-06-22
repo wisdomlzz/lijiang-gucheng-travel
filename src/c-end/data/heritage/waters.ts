@@ -12,12 +12,13 @@ export const watersData: HeritageItem[] = [
     photos: [
       'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70',
       'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1583037189850-1921ae7c6c21?auto=format&fit=crop&w=800&q=70'
     ],
-    drawings: ['1、遗产保护\\2、水系\\大研-黑龙潭\\黑龙潭图纸.png'],
+    drawings: [
+      '1、遗产保护/2、水系\大研-黑龙潭\黑龙潭图纸.png'
+    ],
     extra: {
-      waterType: '湖泊',
-      flow: '/',
-      scale: '潭面近5万平方米',
+      flowDirection: '/',
     },
   },
   {
@@ -30,11 +31,14 @@ export const watersData: HeritageItem[] = [
     basicInfo: '主干河，引自黑龙潭水源',
     photos: [
       'https://images.unsplash.com/photo-1583037189850-1921ae7c6c21?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1567696911989-2e77983f7088?auto=format&fit=crop&w=800&q=70'
+    ],
+    drawings: [
+      '1、遗产保护/2、水系\玉河\玉河水系图.png'
     ],
     extra: {
-      waterType: '河流',
-      flow: '南向北',
-      scale: '古城市渠水系',
+      flowDirection: '南向北',
     },
   },
   {
@@ -47,11 +51,11 @@ export const watersData: HeritageItem[] = [
     basicInfo: '古城核心水道，商业繁荣',
     photos: [
       'https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      waterType: '沟渠',
-      flow: '北向南',
-      scale: '/',
+      flowDirection: '北向南',
     },
   },
   {
@@ -64,11 +68,11 @@ export const watersData: HeritageItem[] = [
     basicInfo: '四方街清洗水源，传统民居密集区',
     photos: [
       'https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      waterType: '沟渠',
-      flow: '北向南',
-      scale: '/',
+      flowDirection: '北向南',
     },
   },
   {
@@ -80,12 +84,11 @@ export const watersData: HeritageItem[] = [
     description: `东河为玉河东路支流，主要流经古城东部区域。河岸两侧以住宅为主，环境幽静，水质清澈，两岸保留了大量的古柳树，形成独特的滨水景观。东河是古城居民保存最为完好的水系之一。`,
     basicInfo: '古城东部水系，古柳众多',
     photos: [
-      'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1567696911989-2e77983f7088?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      waterType: '沟渠',
-      flow: '北向南',
-      scale: '/',
+      flowDirection: '北向南',
     },
   },
   {
@@ -97,12 +100,12 @@ export const watersData: HeritageItem[] = [
     description: `白马龙潭与黑龙潭并称为丽江古城"玉泉双璧"。潭水清澈，泉水从地下涌出，形成天然水塘。潭边古木参天，环境清幽，是古城居民休闲游憩的好去处。白马龙潭水源充沛，历史上曾是古城重要的生活用水来源。`,
     basicInfo: '玉泉双璧之一，古木参天',
     photos: [
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      waterType: '潭池',
-      flow: '/',
-      scale: '潭面约2万平方米',
+      flowDirection: '/',
     },
   },
 ];

@@ -3,20 +3,20 @@ import { roadsData } from './roads';
 import { watersData } from './waters';
 import { wellsData } from './wells';
 import { bridgesData } from './bridges';
-import { treesData } from './trees';
-import { residencesData } from './residences';
-import { publicStructuresData } from './publicStructures';
-import { culturalEnvironmentsData } from './culturalEnvironments';
+import { ancientTreesData } from './ancientTrees';
+import { protectedHousesData } from './protectedHouses';
+import { historicBuildingsData } from './historicBuildings';
+import { humanEnvironmentsData } from './humanEnvironments';
 
 export const heritageData: Record<HeritageType, HeritageItem[]> = {
   road: roadsData,
   water: watersData,
   well: wellsData,
   bridge: bridgesData,
-  tree: treesData,
-  residence: residencesData,
-  publicStructure: publicStructuresData,
-  culturalEnvironment: culturalEnvironmentsData,
+  'ancient-tree': ancientTreesData,
+  'protected-house': protectedHousesData,
+  'historic-building': historicBuildingsData,
+  'human-environment': humanEnvironmentsData,
 };
 
 export function getHeritageByType(type: HeritageType): HeritageItem[] {
@@ -48,8 +48,8 @@ export {
   watersData,
   wellsData,
   bridgesData,
-  treesData,
-  residencesData,
-  publicStructuresData,
-  culturalEnvironmentsData,
+  ancientTreesData,
+  protectedHousesData,
+  historicBuildingsData,
+  humanEnvironmentsData,
 };

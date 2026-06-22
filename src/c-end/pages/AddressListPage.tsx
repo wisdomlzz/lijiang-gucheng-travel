@@ -5,6 +5,7 @@ import { PageHeader } from "./shop/PageHeader";
 import { useAddressStore } from "../../shared/mock";
 import { useAuthStore } from "../../shared/stores/auth-store";
 import { toast } from "sonner";
+import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 export function AddressListPage() {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export function AddressListPage() {
   const userId = currentUser?.id ?? "";
   const allAddresses = useAddressStore((s) => s.addresses);
   const addresses = useMemo(() => allAddresses.filter((a) => a.userId === userId), [allAddresses, userId]);
+  const { visible, hasMore, loadMore } = useLoadMore(addresses, 6);
   const { setDefault, remove } = useAddressStore.getState();
 
   return (
@@ -23,9 +25,10 @@ export function AddressListPage() {
           <p className="text-[14px] text-text-tertiary">暂无收货地址</p>
         </div>
       ) : (
-        <div className="p-3 space-y-3">
-          {addresses.map((a) => (
-            <div key={a.id} className="bg-white rounded-xl p-4">
+        <>
+          <div className="p-3 space-y-3">
+            {visible.map((a) => (
+              <div key={a.id} className="bg-white rounded-xl p-4">
               <div className="flex items-center gap-2">
                 <span className="text-[15px] text-text-body">{a.name}</span>
                 <span className="text-[13px] text-text-secondary">
@@ -80,7 +83,15 @@ export function AddressListPage() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+          {hasMore && (
+            <div className="px-3">
+              <button onClick={loadMore} className="w-full py-3 text-[13px] text-primary font-medium">
+                加载更多
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       <div className="fixed left-0 right-0 bottom-0 p-3 bg-gradient-to-t from-surface-page to-transparent pb-[calc(env(safe-area-inset-bottom)+12px)]">

@@ -13,10 +13,11 @@ export const wellsData: HeritageItem[] = [
     basicInfo: '三眼井形制，分饮用、洗菜、洗衣功能',
     photos: [
       'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1536634518009-96cde641b145?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      wellType: '石井',
-      wellCount: '4',
+      eyeCount: '4',
     },
   },
   {
@@ -31,10 +32,11 @@ export const wellsData: HeritageItem[] = [
     basicInfo: '三眼井，早晚呈彩色',
     photos: [
       'https://images.unsplash.com/photo-1571600526867-1b19e35ffe8e?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      wellType: '石井',
-      wellCount: '3',
+      eyeCount: '3',
     },
   },
   {
@@ -49,10 +51,10 @@ export const wellsData: HeritageItem[] = [
     basicInfo: '双眼井，水质极佳',
     photos: [
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      wellType: '石井',
-      wellCount: '2',
+      eyeCount: '2',
     },
   },
   {
@@ -67,10 +69,11 @@ export const wellsData: HeritageItem[] = [
     basicInfo: '三眼井，洗涤专用',
     photos: [
       'https://images.unsplash.com/photo-1518577915332-c2a19ae0e082?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1528161344942-b5523058c97b?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      wellType: '石井',
-      wellCount: '3',
+      eyeCount: '3',
     },
   },
   {
@@ -85,10 +88,11 @@ export const wellsData: HeritageItem[] = [
     basicInfo: '四眼井，玉龙雪山融水',
     photos: [
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1567696911989-2e77983f7088?auto=format&fit=crop&w=800&q=70',
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=70'
     ],
     extra: {
-      wellType: '石井',
-      wellCount: '4',
+      eyeCount: '4',
     },
   },
 ];

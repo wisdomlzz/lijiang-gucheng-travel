@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { User, ChevronRight } from "lucide-react";
 import { PageHeader } from "./shop/PageHeader";
@@ -34,11 +34,15 @@ export function OrderListPage() {
   const navigate = useNavigate();
   const userId = useAuthStore((s) => s.user?.id);
   const [convenienceFilter, setConvenienceFilter] = useState<ConvenienceFilter>("all");
-  const convenienceOrders = useConvenienceStore((s) =>
-    s.orders.filter((o) => !userId || o.userId === userId)
+
+  const convenienceOrders = useConvenienceStore((s) => s.orders);
+  const userOrders = useMemo(
+    () => convenienceOrders.filter((o) => !userId || o.userId === userId),
+    [convenienceOrders, userId]
   );
-  const convenienceFiltered = convenienceOrders.filter((o) =>
-    matchConvenienceFilter(o.status, convenienceFilter)
+  const convenienceFiltered = useMemo(
+    () => userOrders.filter((o) => matchConvenienceFilter(o.status, convenienceFilter)),
+    [userOrders, convenienceFilter]
   );
 
   const searchFn = useCallback(
@@ -47,7 +51,7 @@ export function OrderListPage() {
     [],
   );
   const { query, setQuery, filtered: searched } = useSearch(convenienceFiltered, searchFn);
-  const { visible, hasMore, loadMore, total } = useLoadMore(searched, 10);
+  const { visible, hasMore, loadMore, total } = useLoadMore(searched, 6);
 
   return (
     <div className="bg-surface-page min-h-full">

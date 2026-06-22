@@ -1,10 +1,9 @@
-import { useState } from "react";
 import {
   ChevronRight, MapPin, Bell, MessageSquareWarning,
-  Heart, Edit3, Scan, Camera, Store, Plus,
+  Heart, Edit3, Scan, Camera, Store,
 } from "lucide-react";
 import { useNavigate } from "react-router";
-import { motion } from "motion/react";
+import { useMemo } from "react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import userAvatar from "../imports/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
 import { useConvenienceStore } from "../../shared/mock";
@@ -13,9 +12,11 @@ import { useAuthStore } from "../../shared/stores/auth-store";
 export function ProfilePage() {
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
-  const [showFabMenu, setShowFabMenu] = useState(false);
-  const pendingServiceOrders = useConvenienceStore(
-    (s) => s.orders.filter((o) => o.status !== "S40" && o.status !== "S50").length
+  const userId = useAuthStore((s) => s.user?.id);
+  const allOrders = useConvenienceStore((s) => s.orders);
+  const pendingServiceOrders = useMemo(
+    () => allOrders.filter((o) => !userId || o.userId === userId).filter((o) => o.status !== "S40" && o.status !== "S50").length,
+    [allOrders, userId]
   );
 
   const menu = [
@@ -66,87 +67,88 @@ export function ProfilePage() {
 
       {/* Content area - pulled up onto hero */}
       <div className="relative -mt-14 pb-8">
-        {/* Side-by-side feature cards */}
-        <div className="px-4 grid grid-cols-3 gap-3">
-          <div className="group relative bg-white rounded-2xl p-4 shadow-[0_4px_20px_rgba(59,130,246,0.08)] overflow-hidden">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
-                <Heart size={20} className="text-primary" />
-              </div>
-              <div className="text-[13px] text-text-body font-medium">我的收藏</div>
-              <div className="text-[11px] text-text-tertiary mt-0.5">收藏内容</div>
+        {/* 功能卡片区 */}
+        <div className="px-4">
+          <div className="bg-white rounded-2xl shadow-[0_4px_20px_rgba(59,130,246,0.08)] overflow-hidden">
+            <div className="grid grid-cols-3">
+              <button
+                onClick={() => navigate("/c/favorites")}
+                className="flex flex-col items-center py-4 active:scale-[0.97] transition-transform"
+              >
+                <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
+                  <Heart size={20} className="text-primary" />
+                </div>
+                <div className="text-[13px] text-text-body font-medium">我的收藏</div>
+                <div className="text-[10px] text-text-tertiary mt-0.5">收藏内容</div>
+              </button>
+              <button
+                onClick={() => navigate("/c/my-posts")}
+                className="flex flex-col items-center py-4 border-x border-[#F3F3F3] active:scale-[0.97] transition-transform"
+              >
+                <div className="w-11 h-11 rounded-xl bg-text-heading/10 flex items-center justify-center mb-2">
+                  <Edit3 size={20} className="text-text-heading" />
+                </div>
+                <div className="text-[13px] text-text-body font-medium">我的发布</div>
+                <div className="text-[10px] text-text-tertiary mt-0.5">便民信息</div>
+              </button>
+              <button
+                onClick={() => navigate("/c/photo-records")}
+                className="flex flex-col items-center py-4 active:scale-[0.97] transition-transform"
+              >
+                <div className="w-11 h-11 rounded-xl bg-[#A855F7]/10 flex items-center justify-center mb-2">
+                  <Camera size={20} className="text-[#A855F7]" />
+                </div>
+                <div className="text-[13px] text-text-body font-medium">随手拍</div>
+                <div className="text-[10px] text-text-tertiary mt-0.5">问题上报</div>
+              </button>
             </div>
           </div>
-          <div className="group relative bg-white rounded-2xl p-4 shadow-[0_4px_20px_rgba(30,58,95,0.06)] overflow-hidden">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-11 h-11 rounded-xl bg-text-heading/10 flex items-center justify-center mb-3">
-                <Edit3 size={20} className="text-text-heading" />
-              </div>
-              <div className="text-[13px] text-text-body font-medium">我的发布</div>
-              <div className="text-[11px] text-text-tertiary mt-0.5">便民信息</div>
-            </div>
-          </div>
-          <button
-            onClick={() => navigate("/c/photo-records")}
-            className="group relative bg-white rounded-2xl p-4 shadow-[0_4px_20px_rgba(168,85,247,0.08)] active:scale-[0.97] transition-transform overflow-hidden"
-          >
-            <div className="flex flex-col items-center text-center">
-              <div className="w-11 h-11 rounded-xl bg-[#A855F7]/10 flex items-center justify-center mb-3">
-                <Camera size={20} className="text-[#A855F7]" />
-              </div>
-              <div className="text-[13px] text-text-body font-medium">随手拍</div>
-              <div className="text-[11px] text-text-tertiary mt-0.5">问题上报</div>
-            </div>
-          </button>
         </div>
 
-        <div className="mx-4 mt-3 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden">
-          <div className="w-full flex items-center justify-between px-4 h-[52px]">
+        {/* 订单快捷入口 */}
+        <div className="px-4 mt-3">
+          <button
+            onClick={() => navigate("/c/orders")}
+            className="w-full bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-4 h-[52px] flex items-center justify-between active:scale-[0.98] transition-transform"
+          >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#22C55E15" }}>
                 <span className="text-[16px]">🔧</span>
               </div>
-              <span className="text-[14px] text-text-body">便民服务订单</span>
-              {pendingServiceOrders > 0 && (
-                <span className="text-[11px] text-primary">{pendingServiceOrders} 个进行中</span>
-              )}
+              <div className="flex flex-col items-start">
+                <span className="text-[14px] text-text-body">便民服务订单</span>
+                {pendingServiceOrders > 0 && (
+                  <span className="text-[10px] text-primary">{pendingServiceOrders}单进行中</span>
+                )}
+              </div>
             </div>
-            <div className="flex items-center gap-1 text-[11px] text-text-tertiary">
-              查看全部 <ChevronRight size={14} className="text-[#CCC]" />
-            </div>
-          </div>
+            <ChevronRight size={16} className="text-text-tertiary" />
+          </button>
         </div>
 
-        {/* Menu list */}
-        <div className="mx-4 mt-4 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden">
+        {/* 菜单列表 */}
+        <div className="px-4 mt-4 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden">
           {menu.map((m, i) => {
             const Icon = m.icon;
             return (
-              <motion.div
+              <button
                 key={m.label}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: i * 0.05 }}
+                onClick={() => {
+                  if (m.to) navigate(m.to);
+                }}
+                className={`w-full flex items-center px-4 h-[52px] active:bg-[#FAFAFA] transition-colors ${
+                  i !== menu.length - 1 ? "border-b border-[#F3F3F3]" : ""
+                }`}
               >
-                <button
-                  onClick={() => {
-                    if (m.to) navigate(m.to);
-                  }}
-                  className={`w-full flex items-center px-4 h-[52px] active:bg-[#FAFAFA] transition-colors ${
-                    i !== menu.length - 1 ? "border-b border-[#F3F3F3]" : ""
-                  }`}
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center mr-3"
+                  style={{ backgroundColor: `${m.color}15` }}
                 >
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center mr-3"
-                    style={{ backgroundColor: `${m.color}15` }}
-                  >
-                    <Icon size={16} style={{ color: m.color }} />
-                  </div>
-                  <span className="flex-1 text-left text-[14px] text-text-body">{m.label}</span>
-                  <ChevronRight size={16} className="text-[#CCC]" />
-                </button>
-              </motion.div>
+                  <Icon size={16} style={{ color: m.color }} />
+                </div>
+                <span className="flex-1 text-left text-[14px] text-text-body">{m.label}</span>
+                <ChevronRight size={16} className="text-[#CCC]" />
+              </button>
             );
           })}
         </div>
@@ -184,37 +186,6 @@ export function ProfilePage() {
         </div>
       </div>
 
-      {/* 浮动新增按钮 */}
-      {showFabMenu && (
-        <div className="fixed inset-0 z-50" onClick={() => setShowFabMenu(false)} />
-      )}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-        {showFabMenu && (
-          <>
-            <button
-              onClick={() => { setShowFabMenu(false); navigate("/c/photo-report"); }}
-              className="flex items-center gap-2 px-4 h-11 rounded-full bg-white shadow-lg text-[14px] text-text-body font-medium active:scale-95 transition-transform"
-            >
-              <Camera size={16} className="text-[#A855F7]" />
-              随手拍上报
-            </button>
-            <button
-              onClick={() => { setShowFabMenu(false); navigate("/c/complaint"); }}
-              className="flex items-center gap-2 px-4 h-11 rounded-full bg-white shadow-lg text-[14px] text-text-body font-medium active:scale-95 transition-transform"
-            >
-              <MessageSquareWarning size={16} className="text-[#1E3A5F]" />
-              提交投诉
-            </button>
-          </>
-        )}
-        <button
-          onClick={() => setShowFabMenu(!showFabMenu)}
-          className="w-14 h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center active:scale-95 transition-transform"
-          style={{ boxShadow: "0 4px 20px rgba(37, 99, 235, 0.4)" }}
-        >
-          <Plus size={24} className={`transition-transform ${showFabMenu ? "rotate-45" : ""}`} />
-        </button>
-      </div>
     </div>
   );
 }

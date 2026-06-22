@@ -46,10 +46,15 @@ export function CulturalCourtyardDetailPage() {
 
   const visitRecords = useCheckinStore((s) => s.checkins);
   const addCheckin = useCheckinStore((s) => s.addCheckin);
+  const canCheckin = useCheckinStore((s) => s.canCheckin);
 
   const myVisits = visitRecords.filter((c) => c.userId === "user-1");
   const visitRecord = id ? myVisits.find((c) => c.courtyardId === id) : null;
   const hasVisited = Boolean(visitRecord);
+
+  // 每日打卡校验
+  const checkinEligibility = id ? canCheckin("user-1", id) : { allowed: false };
+  const alreadyCheckedInToday = !checkinEligibility.allowed;
 
   useEffect(() => {
     if (!playerOpen) {
@@ -111,7 +116,15 @@ export function CulturalCourtyardDetailPage() {
   };
 
   const triggerCheckin = () => {
-    if (!courtyard) return;
+    if (!courtyard || !id) return;
+
+    // 每日去重校验
+    const eligibility = canCheckin("user-1", id);
+    if (!eligibility.allowed) {
+      toast.error(eligibility.reason || "今日已打卡");
+      return;
+    }
+
     setCheckinOpen(true);
     setCheckinStatus("loading");
 
@@ -361,18 +374,35 @@ export function CulturalCourtyardDetailPage() {
               院落打卡
             </p>
             <p className="text-[12px] text-text-tertiary mt-1.5 leading-relaxed">
-              {hasVisited
-                ? `已打卡 · ${visitRecord ? new Date(visitRecord.createdAt).toLocaleDateString("zh-CN") : "已完成"}`
-                : "到达院落后，自动验证位置完成打卡。"}
+              {alreadyCheckedInToday
+                ? "今日已打卡，明天再来吧"
+                : hasVisited
+                  ? `已打卡 · ${new Date(visitRecord!.createdAt).toLocaleDateString("zh-CN")}，今日可再次打卡`
+                  : "到达院落后，自动验证位置完成打卡。"}
             </p>
           </div>
-          <div className={`px-2.5 py-1 rounded-full text-[11px] shrink-0 flex items-center gap-1 ${hasVisited ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}>
-            {hasVisited && <CheckCircle2 size={12} />}
-            {hasVisited ? "已打卡" : "未打卡"}
+          <div className={`px-2.5 py-1 rounded-full text-[11px] shrink-0 flex items-center gap-1 ${
+            alreadyCheckedInToday
+              ? "bg-blue-50 text-primary"
+              : hasVisited
+                ? "bg-emerald-50 text-emerald-600"
+                : "bg-amber-50 text-amber-600"
+          }`}>
+            {(hasVisited || alreadyCheckedInToday) && <CheckCircle2 size={12} />}
+            {alreadyCheckedInToday ? "今日已打卡" : hasVisited ? "已打卡" : "未打卡"}
           </div>
         </div>
 
-        {!hasVisited && (
+        {alreadyCheckedInToday ? (
+          <div className="mt-4">
+            <button
+              disabled
+              className="w-full h-12 rounded-full bg-slate-200 text-text-secondary text-[14px] font-medium cursor-not-allowed"
+            >
+              今日已打卡
+            </button>
+          </div>
+        ) : (
           <div className="mt-4">
             <button
               onClick={triggerCheckin}

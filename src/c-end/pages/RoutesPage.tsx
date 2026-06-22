@@ -4,6 +4,7 @@ import { Search, Clock, MapPin } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { useContentManageStore } from "../../shared/stores/content-manage-store";
 import { PageHeader } from "./shop/PageHeader";
+import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 export function RoutesPage() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export function RoutesPage() {
           r.spotNames.some((n) => n.includes(keyword.trim()))
       )
     : guides;
+  const { visible, hasMore, loadMore } = useLoadMore(filtered, 6);
 
   return (
     <div className="min-h-screen bg-surface-page pb-6">
@@ -42,7 +44,7 @@ export function RoutesPage() {
             没有找到相关路线
           </div>
         ) : (
-          filtered.map((r) => (
+          visible.map((r) => (
             <button
               key={r.id}
               onClick={() => navigate(`/c/routes/${r.id}`)}
@@ -82,6 +84,11 @@ export function RoutesPage() {
               </div>
             </button>
           ))
+        )}
+        {hasMore && (
+          <button onClick={loadMore} className="w-full py-3 text-center text-[13px] text-primary">
+            加载更多
+          </button>
         )}
       </div>
     </div>

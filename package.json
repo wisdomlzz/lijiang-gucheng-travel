@@ -28,6 +28,7 @@
     "@radix-ui/react-switch": "1.1.3",
     "@radix-ui/react-tabs": "1.1.3",
     "@radix-ui/react-tooltip": "1.1.8",
+    "@rollup/rollup-darwin-arm64": "^4.61.0",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
@@ -57,5 +58,10 @@
     "tailwindcss": "4.1.12",
     "vite": "6.3.5",
     "vitest": "^4.1.6"
+  },
+  "allowScripts": {
+    "@tailwindcss/oxide@4.1.12": true,
+    "esbuild@0.25.12": true,
+    "fsevents@2.3.3": true
   }
 }

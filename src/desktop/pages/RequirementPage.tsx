@@ -1,13 +1,25 @@
 import { useEffect, useState, useCallback, useMemo } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { BookOpen, ExternalLink, ChevronRight, Download } from "lucide-react"
+import { BookOpen, ExternalLink, ChevronRight, Download, FileText } from "lucide-react"
 
 interface Heading {
   level: number
   text: string
   id: string
 }
+
+interface DocItem {
+  name: string
+  path: string
+  label: string
+  version: string
+}
+
+const DOC_LIST: DocItem[] = [
+  { name: "公告通知", path: "/docs/公告通知功能需求说明.md", label: "公告通知功能需求说明", version: "V1.0" },
+  { name: "V2.1", path: "/docs/requirement.md", label: "综合系统需求说明书", version: "V2.1" },
+]
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^\u4e00-\u9fa5a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
@@ -54,11 +66,12 @@ export function RequirementPage() {
   const [activeId, setActiveId] = useState<string>("")
   const [loading, setLoading] = useState(true)
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+  const [currentDoc, setCurrentDoc] = useState<DocItem>(DOC_LIST[0])
 
   const groups = useMemo(() => groupHeadings(headings), [headings])
 
   useEffect(() => {
-    fetch("/docs/requirement.md")
+    fetch(currentDoc.path)
       .then((r) => r.text())
       .then((text) => {
         setContent(text)
@@ -66,7 +79,7 @@ export function RequirementPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [])
+  }, [currentDoc])
 
   const scrollTo = useCallback((id: string) => {
     const el = document.getElementById(id)
@@ -119,14 +132,14 @@ export function RequirementPage() {
             <BookOpen className="size-4 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-slate-800 leading-tight">需求说明书</h1>
-            <p className="text-[10px] text-slate-400 leading-tight">V2.1 · 丽江古城游综合系统</p>
+            <h1 className="text-sm font-semibold text-slate-800 leading-tight">{currentDoc.label}</h1>
+            <p className="text-[10px] text-slate-400 leading-tight">{currentDoc.version} · 丽江古城游综合系统</p>
           </div>
         </div>
         <div className="flex-1" />
         <div className="flex items-center gap-3">
           <a
-            href="/docs/requirement.md"
+            href={currentDoc.path}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-600 transition-colors shrink-0"
@@ -135,8 +148,8 @@ export function RequirementPage() {
             源文件
           </a>
           <a
-            href="/docs/requirement.md"
-            download="丽江古城游综合系统_V2.1_需求说明书.md"
+            href={currentDoc.path}
+            download={currentDoc.label + ".md"}
             className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-600 transition-colors shrink-0"
           >
             <Download className="size-3.5" />
@@ -146,10 +159,32 @@ export function RequirementPage() {
       </header>
 
       <aside
-        className="fixed left-0 bg-slate-50/50 border-r border-slate-200/60 overflow-y-auto hidden lg:block"
+        className="fixed left-0 bg-slate-50/50 border-r border-slate-200/60 overflow-y-auto hidden lg:flex lg:flex-col"
         style={{ top: HEADER_H, bottom: 0, width: 240 }}
       >
-        <div className="p-4">
+        {/* 文档切换 */}
+        <div className="p-4 pb-2 border-b border-slate-200/50">
+          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-2 px-2">文档</p>
+          <nav className="space-y-0.5">
+            {DOC_LIST.map((doc) => (
+              <button
+                key={doc.name}
+                onClick={() => { setCurrentDoc(doc); setLoading(true) }}
+                className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs transition-all ${
+                  currentDoc.name === doc.name
+                    ? "bg-blue-50 text-blue-600 font-medium"
+                    : "text-slate-500 hover:text-slate-700 hover:bg-slate-100/50"
+                }`}
+              >
+                <FileText className="size-3.5 shrink-0" />
+                <span className="truncate">{doc.name}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* 目录 */}
+        <div className="flex-1 overflow-y-auto p-4">
           <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-4 px-2">
             目录
           </p>
@@ -351,7 +386,7 @@ export function RequirementPage() {
 
           <div className="mt-16 pt-6 border-t border-slate-200/60">
             <p className="text-xs text-slate-400 text-center">
-              丽江古城游综合系统 · V2.1 需求说明书
+              丽江古城游综合系统 · {currentDoc.version} {currentDoc.label}
             </p>
           </div>
         </div>

@@ -1,5 +1,0 @@
-{
-  "projectRoot": "/Users/lzz/Desktop/Projects/丽江古城游",
-  "batchFiles": [{"path":"docs/丽江古城游V2.0完整需求说明书.md","language":"markdown","sizeLines":1415,"fileCategory":"docs"},{"path":"docs/丽江古城游新版完整需求说明书.md","language":"markdown","sizeLines":299,"fileCategory":"docs"},{"path":"docs/便民服务三端收口说明.md","language":"markdown","sizeLines":48,"fileCategory":"docs"},{"path":"docs/商城派单功能独立需求文档.md","language":"markdown","sizeLines":82,"fileCategory":"docs"},{"path":"docs/新旧版本差异对照与业务逻辑说明.md","language":"markdown","sizeLines":234,"fileCategory":"docs"},{"path":"docs/暂缓与删除功能复现说明.md","language":"markdown","sizeLines":143,"fileCategory":"docs"}],
-  "batchImportData": {"docs/丽江古城游V2.0完整需求说明书.md":[],"docs/丽江古城游新版完整需求说明书.md":[],"docs/便民服务三端收口说明.md":[],"docs/商城派单功能独立需求文档.md":[],"docs/新旧版本差异对照与业务逻辑说明.md":[],"docs/暂缓与删除功能复现说明.md":[]}
-}

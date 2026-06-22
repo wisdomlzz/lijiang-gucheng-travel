@@ -1,8 +1,9 @@
-import { useEffect } from "react"
-import { Routes, Route, Navigate } from "react-router"
+import { Suspense, useEffect } from "react"
+import { Routes, Route } from "react-router"
 import { useAuthStore } from "../shared/stores/auth-store"
 import { LoginPageC } from "../shared/components/LoginPageC"
 import { MiniProgramFrame } from "../shared/components/MiniProgramFrame"
+import { RedirectTo } from "../shared/components/RedirectTo"
 import { cRoutes } from "./routes"
 
 export function CApp() {
@@ -23,8 +24,9 @@ export function CApp() {
 
   return (
     <MiniProgramFrame>
+      <Suspense fallback={<div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">加载中...</div>}>
       <Routes>
-        <Route index element={<Navigate to="home" replace />} />
+        <Route index element={<RedirectTo to="/c/home" />} />
         {cRoutes.map((route) => {
           if ("children" in route && route.children) {
             return (
@@ -48,8 +50,9 @@ export function CApp() {
             />
           )
         })}
-        <Route path="*" element={<Navigate to="home" replace />} />
+        <Route path="*" element={<RedirectTo to="/c/home" />} />
       </Routes>
+      </Suspense>
     </MiniProgramFrame>
   )
 }

@@ -1,5 +1,0 @@
-{
-  "projectRoot": "/Users/lzz/Desktop/Projects/丽江古城游",
-  "batchFiles": [{"path":"src/DemoSwitcher.tsx","language":"typescript","sizeLines":132,"fileCategory":"code"},{"path":"src/LandingPage.tsx","language":"typescript","sizeLines":65,"fileCategory":"code"},{"path":"src/main.tsx","language":"typescript","sizeLines":72,"fileCategory":"code"},{"path":"src/shared/stores/zoom-store.ts","language":"typescript","sizeLines":21,"fileCategory":"code"}],
-  "batchImportData": {"src/DemoSwitcher.tsx":[],"src/LandingPage.tsx":[],"src/main.tsx":["src/DemoSwitcher.tsx","src/LandingPage.tsx","src/shared/stores/zoom-store.ts","src/shared/styles/index.css"],"src/shared/stores/zoom-store.ts":[]}
-}

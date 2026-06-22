@@ -2,12 +2,14 @@ import { useNavigate } from "react-router";
 import { useContentManageStore } from "../../shared/stores/content-manage-store";
 import { PageHeader } from "./shop/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { MapPin, Clock, Landmark, CheckCircle2, ChevronRight } from "lucide-react";
+import { MapPin, Clock, Landmark, CheckCircle2, ChevronRight, UserRoundCheck } from "lucide-react";
 import { useCheckinStore } from "../../shared/stores/checkin-store";
+import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 export function CulturalCourtyardsPage() {
   const navigate = useNavigate();
   const courtyards = useContentManageStore((s) => s.courtyards);
+  const { visible, hasMore, loadMore } = useLoadMore(courtyards, 6);
   const checkins = useCheckinStore((s) => s.checkins);
   const visitedIds = new Set(checkins.filter((c) => c.userId === "user-1").map((c) => c.courtyardId));
   const progress = courtyards.length ? Math.round((visitedIds.size / courtyards.length) * 100) : 0;
@@ -16,20 +18,27 @@ export function CulturalCourtyardsPage() {
     <div className="min-h-full bg-surface-page">
       <PageHeader title="文化院落" back="/c/home" />
       <div className="px-3 py-3 space-y-3">
-        <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-          <div>
-            <p className="text-[15px] font-semibold text-text-heading">文化院落打卡</p>
-            <p className="text-[12px] text-text-tertiary mt-1">已打卡 {visitedIds.size}/{courtyards.length} 处院落</p>
+        <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4">
+          <p className="text-[15px] font-semibold text-text-heading">文化院落打卡</p>
+          <div className="mt-2 flex items-center justify-between gap-3">
+            <p className="text-[12px] text-text-tertiary">已打卡 {visitedIds.size}/{courtyards.length} 处院落</p>
+            <span className="text-[11px] text-primary font-medium whitespace-nowrap">{progress}%</span>
           </div>
-          <div className="mt-3 h-1.5 rounded-full bg-slate-100 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-primary"
-              style={{ width: `${progress}%` }}
-            />
+          <div className="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+            <div className="h-full rounded-full bg-primary" style={{ width: `${progress}%` }} />
           </div>
+
+          <button
+            onClick={() => navigate("/c/my-checkins")}
+            className="mt-4 w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary text-white active:opacity-90 transition-all shadow-[0_2px_8px_rgba(37,99,235,0.2)]"
+          >
+            <UserRoundCheck size={18} />
+            <span className="flex-1 text-left text-[14px] font-medium">我的打卡记录</span>
+            <ChevronRight size={16} />
+          </button>
         </div>
 
-        {courtyards.map((c) => {
+        {visible.map((c) => {
           const checked = visitedIds.has(c.id);
           return (
           <div
@@ -88,6 +97,11 @@ export function CulturalCourtyardsPage() {
             </div>
           </div>
         )})}
+        {hasMore && (
+          <button onClick={loadMore} className="w-full py-3 text-center text-[13px] text-primary">
+            加载更多
+          </button>
+        )}
         {courtyards.length === 0 && (
           <div className="text-center py-12 text-text-tertiary">
             <Landmark size={48} className="mx-auto mb-3 opacity-30" />
