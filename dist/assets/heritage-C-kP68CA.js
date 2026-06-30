@@ -1,0 +1,1 @@
+const e={road:{label:"道路",icon:"road"},water:{label:"水系",icon:"droplets"},well:{label:"井/泉",icon:"well"},bridge:{label:"古桥",icon:"bridge"},"ancient-tree":{label:"古树",icon:"tree"},"protected-house":{label:"保护民居",icon:"home"},"historic-building":{label:"历史建筑",icon:"building"},"human-environment":{label:"人文环境",icon:"landmark"}};export{e as h};

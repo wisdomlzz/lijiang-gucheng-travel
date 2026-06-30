@@ -1,0 +1,1 @@
+import{N as r}from"./vendor-radix-Bb9z72AJ.js";import{r as i}from"./vendor-react-pXPKqagJ.js";function o(e){const[t,s]=i.useState(!1);return t?r.jsx("div",{className:`inline-flex items-center justify-center bg-gray-100 text-muted-foreground text-xs ${e.className??""}`,style:e.style,children:"加载失败"}):r.jsx("img",{...e,onError:()=>s(!0)})}export{o as I};

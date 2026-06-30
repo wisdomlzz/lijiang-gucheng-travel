@@ -1,0 +1,1 @@
+import{r as o}from"./vendor-react-pXPKqagJ.js";function f(t,e){const[r,u]=o.useState(""),s=o.useMemo(()=>r.trim()?t.filter(a=>e(a,r.trim())):t,[t,r,e]);return{query:r,setQuery:u,filtered:s}}export{f as u};
