@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "../../../shared/components/ui/button"
 import { Badge } from "../../../shared/components/ui/badge"
 import { PageLayout } from "../../components/common/PageLayout"
-import { useZoneStore } from "../../../shared/mock"
+import { useZoneStore } from "../../../shared/services/zone"
 import { Map, Plus, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 

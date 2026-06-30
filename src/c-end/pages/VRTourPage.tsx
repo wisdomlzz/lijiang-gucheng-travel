@@ -1,5 +1,5 @@
-import vrBgImage from "../../assets/VR.png";
-import { PageHeader } from "./shop/PageHeader";
+import vrBgImage from "../../shared/assets/VR.png";
+import { PageHeader } from "../components/PageHeader";
 
 export function VRTourPage() {
   return (

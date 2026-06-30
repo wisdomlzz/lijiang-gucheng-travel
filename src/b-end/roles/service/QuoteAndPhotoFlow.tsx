@@ -8,7 +8,7 @@ import {
   MapPin,
   Clock,
 } from "lucide-react";
-import { useConvenienceStore } from "../../../shared/mock";
+import { useConvenienceStore } from "../../../shared/services/convenience";
 
 type Step = "quote" | "waiting" | "photo" | "proof" | "result";
 

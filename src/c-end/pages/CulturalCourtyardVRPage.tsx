@@ -1,12 +1,12 @@
 import { useParams, useNavigate } from "react-router";
 import { useState } from "react";
 import { ChevronLeft, Maximize2 } from "lucide-react";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
+import { useContentManageStore } from "../../shared/services/content/guide";
 
 export function CulturalCourtyardVRPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const courtyards = useContentManageStore((s) => s.courtyards);
+  const courtyards = useContentCourtyardStore((s) => s.courtyards);
   const courtyard = courtyards.find((c) => c.id === id);
   const [isFullscreen, setIsFullscreen] = useState(false);
 

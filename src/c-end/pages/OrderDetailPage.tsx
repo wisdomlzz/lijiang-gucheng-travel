@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router";
 import { Phone, Star } from "lucide-react";
 import { toast } from "sonner";
 import { TrustScoreBadge } from "../../shared/components/TrustScoreBadge";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { StatusProgress } from "../components/StatusProgress";
 import { ContactSheet } from "../components/ContactSheet";
-import { useConvenienceStore, useSupplierRatingStore } from "../../shared/mock";
-import { useTrustScoreStore } from "../../shared/mock/trust-score";
+import { useConvenienceStore } from "../../shared/services/convenience"
+import { useTrustScoreStore } from "../../shared/services/trust-score";
 import type { ConvenienceOrder } from "../../shared/types";
 import {
   CONVENIENCE_STATUS_META,
@@ -152,7 +152,7 @@ function ConvenienceOrderDetail({ id, data }: { id: string; data: ConvenienceOrd
       const daysSince = (Date.now() - completedMs) / (1000 * 60 * 60 * 24);
       if (daysSince >= 7) {
         useConvenienceStore.getState().rateOrder(id, 5);
-        useSupplierRatingStore.getState().addRating(resolveConvenienceSupplierId(data), 5);
+        useTrustScoreStore.getState().addSupplierRating(resolveConvenienceSupplierId(data), 5);
         toast.success("服务完成超过7天，系统已自动好评");
       }
     }
@@ -234,7 +234,7 @@ function ConvenienceOrderDetail({ id, data }: { id: string; data: ConvenienceOrd
   const handleSubmitRating = () => {
     if (selectedRating <= 0) return;
     useConvenienceStore.getState().rateOrder(id, selectedRating);
-    useSupplierRatingStore.getState().addRating(resolveConvenienceSupplierId(data), selectedRating);
+    useTrustScoreStore.getState().addSupplierRating(resolveConvenienceSupplierId(data), selectedRating);
     if (data.staffId) {
       useTrustScoreStore.getState().addRatingBonus(data.staffId, staffRating || 5, id);
     }

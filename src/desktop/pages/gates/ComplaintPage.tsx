@@ -9,8 +9,8 @@ import { PaginationBar } from "@/shared/components/ui/data-toolbar";
 import { StatusBadge } from "@/shared/components/ui/status-badge";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { useAuthStore } from "../../../shared/stores/auth-store";
-import { useConvenienceStore } from "../../../shared/mock";
-import { useComplaintStore } from "../../../shared/mock/complaint";
+import { useConvenienceStore } from "../../../shared/services/convenience";
+import { useComplaintStore } from "../../../shared/services/complaint";
 import { usePagination } from "@/shared/hooks/usePagination";
 import {
   Phone, Eye, MapPin, UserRound, Building2, Image as ImageIcon,

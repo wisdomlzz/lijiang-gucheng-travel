@@ -6,12 +6,15 @@ import {
   MessageCircleWarning, Camera, Users, Landmark, ShoppingBag, ParkingCircle, Clock,
 } from "lucide-react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
-import { useConvenienceStore, useComplaintStore } from "../../shared/mock";
+import { useConvenienceStore } from "../../shared/services/convenience"
+import { useComplaintStore } from "../../shared/services/complaint";
 import { PageHeader } from "../components/common/PageHeader";
 import { useAuthStore } from "../../shared/stores/auth-store";
-import { useSupplierStore } from "../../shared/stores/supplier-store";
-import { useCheckinStore } from "../../shared/stores/checkin-store";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
+import { useSupplierStore } from "../../shared/services/supplier";
+import { useCheckinStore } from "../../shared/services/checkin";
+import { useContentMerchantStore } from "../../shared/services/content/merchant"
+import { useContentCourtyardStore } from "../../shared/services/content/courtyard"
+import { useContentPOIStore } from "../../shared/services/content/poi"
 import { useNavigate } from "react-router";
 import { CRMEB_ADMIN_URL } from "../../shared/constants";
 
@@ -22,9 +25,9 @@ export function Workbench() {
   const complaints = useComplaintStore((s) => s.complaints);
   const applications = useSupplierStore((s) => s.applications);
   const checkins = useCheckinStore((s) => s.checkins);
-  const merchants = useContentManageStore((s) => s.merchants);
-  const courtyards = useContentManageStore((s) => s.courtyards);
-  const parkings = useContentManageStore((s) => s.parkings);
+  const merchants = useContentMerchantStore((s) => s.merchants);
+  const courtyards = useContentCourtyardStore((s) => s.courtyards);
+  const parkings = useContentPOIStore((s) => s.parkings);
 
   const pendingDispatch = orders.filter((o) => o.status === "S10" || o.status === "A10" || o.status === "S90").length;
   const priceDisputes = orders.filter((o) => o.status === "A38").length;

@@ -1,7 +1,9 @@
 import { useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../shared/components/ui/card"
 import { PageLayout } from "../../components/common/PageLayout"
-import { useConvenienceStore, useStaffStore, useZoneStore } from "../../../shared/mock"
+import { useConvenienceStore } from "../../../shared/services/convenience"
+import { useStaffStore } from "../../../shared/services/staff"
+import { useZoneStore } from "../../../shared/services/zone"
 import { CheckCircle2, Clock, Users, Map, AlertTriangle } from "lucide-react"
 
 export default function ConvenienceOverviewPage() {

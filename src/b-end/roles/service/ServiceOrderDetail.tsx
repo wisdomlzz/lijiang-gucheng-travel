@@ -7,7 +7,7 @@ import { DetailLayout, InfoRow, SectionCard } from "../../components/shared/Deta
 import { StatusBadge, StatusKind } from "@/shared/components/ui/status-badge";
 import { ConfirmModal, Toast } from "../../components/Sheet";
 import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow";
-import { useConvenienceStore } from "../../../shared/mock";
+import { useConvenienceStore } from "../../../shared/services/convenience";
 import type { ConvenienceStatus } from "../../../shared/types";
 
 export type ServiceState =

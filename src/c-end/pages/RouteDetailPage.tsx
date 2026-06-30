@@ -2,14 +2,14 @@ import { useNavigate, useParams } from "react-router";
 import { ChevronLeft, Clock, MapPin, Route as RouteIcon, Share2, Video } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { toast } from "sonner";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
+import { useContentGuideStore } from "../../shared/services/content/guide"
 import { VideoPlayer } from "../../shared/components/VideoPlayer";
-import routeIllustration from "../imports/image-9.png";
+import routeIllustration from "../assets/image-9.png";
 
 export function RouteDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const guides = useContentManageStore((s) => s.guides);
+  const guides = useContentGuideStore((s) => s.guides);
   const route = guides.find((g) => g.id === id);
 
   if (!route) {

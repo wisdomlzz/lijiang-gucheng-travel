@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { Filter, ChevronRight, MapPin, Wallet } from "lucide-react";
 import { StatusBadge } from "@/shared/components/ui/status-badge";
 import { ServiceOrderDetail, ServiceOrder, ServiceState } from "./ServiceOrderDetail";
-import { useConvenienceStore } from "../../../shared/mock";
+import { useConvenienceStore } from "../../../shared/services/convenience";
 import { useAuthStore } from "../../../shared/stores/auth-store";
 import { useSearch } from "@/shared/hooks/useSearch";
 import { useLoadMore } from "@/shared/hooks/useLoadMore";

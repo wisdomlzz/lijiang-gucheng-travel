@@ -3,12 +3,12 @@ import { useNavigate, useParams } from "react-router";
 import { ChevronLeft, Navigation, Clock, MapPin } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { toast } from "sonner";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
+import { useContentGuideStore } from "../../shared/services/content/guide"
 
 export function RoutePreviewPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const guides = useContentManageStore((s) => s.guides);
+  const guides = useContentGuideStore((s) => s.guides);
   const route = guides.find((g) => g.id === id);
   const [activeIdx, setActiveIdx] = useState(0);
 

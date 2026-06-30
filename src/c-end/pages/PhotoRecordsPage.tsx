@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { Camera, ChevronDown } from "lucide-react";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
 

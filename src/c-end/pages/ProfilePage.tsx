@@ -1,18 +1,22 @@
 import {
   ChevronRight, MapPin, Bell, MessageSquareWarning,
-  Heart, Edit3, Scan, Camera, Store,
+  Heart, Edit3, Scan, Camera, Store, Gift, CalendarCheck, Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useMemo } from "react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import userAvatar from "../imports/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
-import { useConvenienceStore } from "../../shared/mock";
+import userAvatar from "../assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
+import { useConvenienceStore } from "../../shared/services/convenience";
+import { usePointsStore } from "../../shared/services/points";
 import { useAuthStore } from "../../shared/stores/auth-store";
 
 export function ProfilePage() {
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
   const userId = useAuthStore((s) => s.user?.id);
+  const userRole = useAuthStore((s) => s.user?.role);
+  const points = usePointsStore((s) => s.accounts[userId ?? "u_c_001"]?.balance ?? 0);
+  const isMerchant = userRole === "supplier";
   const allOrders = useConvenienceStore((s) => s.orders);
   const pendingServiceOrders = useMemo(
     () => allOrders.filter((o) => !userId || o.userId === userId).filter((o) => o.status !== "S40" && o.status !== "S50").length,
@@ -20,6 +24,10 @@ export function ProfilePage() {
   );
 
   const menu = [
+    { icon: Gift, label: "积分中心", color: "#F59E0B", to: "/c/points" },
+    { icon: CalendarCheck, label: "我的预约", color: "#10B981", to: "/c/my-bookings" },
+    { icon: Sparkles, label: "纳西人打卡", color: "#F43F5E", to: "/c/naxi-checkin" },
+    ...(isMerchant ? [{ icon: Store, label: "我的店铺", color: "#3B82F6", to: "/c/my-shop" }] : []),
     { icon: MapPin, label: "收货地址", color: "#60A5FA", to: "/c/addresses" },
     { icon: Bell, label: "消息通知", color: "#3B82F6", to: "/c/notifications" },
     { icon: MessageSquareWarning, label: "我的投诉", color: "#1E3A5F", to: "/c/my-complaints" },
@@ -67,6 +75,24 @@ export function ProfilePage() {
 
       {/* Content area - pulled up onto hero */}
       <div className="relative -mt-14 pb-8">
+        {/* 积分入口卡 */}
+        <div className="px-4 mb-3">
+          <button onClick={() => navigate("/c/points")} className="w-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl p-4 flex items-center justify-between active:scale-[0.98] transition-transform shadow-[0_4px_16px_rgba(245,158,11,0.25)]">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center">
+                <Gift size={20} className="text-white" />
+              </div>
+              <div className="text-left">
+                <p className="text-white text-[12px] opacity-90">我的积分</p>
+                <p className="text-white text-[22px] font-bold leading-tight">{points}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-white/90 text-[12px]">
+              积分中心 <ChevronRight size={14} />
+            </div>
+          </button>
+        </div>
+
         {/* 功能卡片区 */}
         <div className="px-4">
           <div className="bg-white rounded-2xl shadow-[0_4px_20px_rgba(59,130,246,0.08)] overflow-hidden">

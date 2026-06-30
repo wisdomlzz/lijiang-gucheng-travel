@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { MapPin, ChevronDown, Camera, X } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";

@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { useAIKnowledgeStore } from "../../shared/stores/ai-knowledge-store"
+import { useAIKnowledgeStore } from "../../shared/services/ai-knowledge"
 import { Button } from "../../shared/components/ui/button"
 import { Input } from "../../shared/components/ui/input"
 import { Label } from "../../shared/components/ui/label"

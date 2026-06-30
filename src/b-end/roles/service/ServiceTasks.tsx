@@ -5,7 +5,7 @@ import {
 import { StatusBadge, StatusKind } from "@/shared/components/ui/status-badge";
 import { Toast } from "../../components/Sheet";
 import { ServiceOrderDetail, ServiceOrder, ServiceState } from "./ServiceOrderDetail";
-import { useConvenienceStore } from "../../../shared/mock";
+import { useConvenienceStore } from "../../../shared/services/convenience";
 import { useAuthStore } from "../../../shared/stores/auth-store";
 import { useSearch } from "@/shared/hooks/useSearch";
 import { useLoadMore } from "@/shared/hooks/useLoadMore";

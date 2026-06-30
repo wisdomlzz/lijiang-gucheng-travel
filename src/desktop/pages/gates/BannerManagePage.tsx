@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { useHomepageConfigStore } from "../../../shared/stores/homepage-config-store"
+import { useHomepageConfigStore } from "../../../shared/services/homepage"
 import { PageLayout } from "../../components/common/PageLayout"
 import { Button } from "../../../shared/components/ui/button"
 import { Badge } from "../../../shared/components/ui/badge"

@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { MessageSquare, Clock, CheckCircle, XCircle, ChevronRight } from "lucide-react";
-import { useComplaintStore } from "../../shared/mock/complaint";
+import { useComplaintStore } from "../../shared/services/complaint";
 import { ComplaintStatusLabel } from "../../shared/types";
 import { useSearch } from "../../shared/hooks/useSearch";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";

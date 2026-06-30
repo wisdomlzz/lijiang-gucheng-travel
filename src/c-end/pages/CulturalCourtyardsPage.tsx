@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
-import { PageHeader } from "./shop/PageHeader";
+import { useContentManageStore } from "../../shared/services/content/guide";
+import { PageHeader } from "../components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { MapPin, Clock, Landmark, CheckCircle2, ChevronRight, UserRoundCheck } from "lucide-react";
-import { useCheckinStore } from "../../shared/stores/checkin-store";
+import { useCheckinStore } from "../../shared/services/checkin";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 export function CulturalCourtyardsPage() {
   const navigate = useNavigate();
-  const courtyards = useContentManageStore((s) => s.courtyards);
+  const courtyards = useContentCourtyardStore((s) => s.courtyards);
   const { visible, hasMore, loadMore } = useLoadMore(courtyards, 6);
   const checkins = useCheckinStore((s) => s.checkins);
   const visitedIds = new Set(checkins.filter((c) => c.userId === "user-1").map((c) => c.courtyardId));

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { FileText, Eye, Clock, Trash2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";

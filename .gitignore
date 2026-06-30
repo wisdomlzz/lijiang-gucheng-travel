@@ -4,3 +4,16 @@ dist/
 *.local
 .DS_Store
 *.log
+
+# 工具索引/缓存
+.codegraph/
+.superpowers/
+.understand-anything/
+.agents/
+
+# 根目录构建产物/杂项
+*.zip
+skills-lock.json
+
+# docs 生成物
+docs/「需求新增」*.html

@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { User, ChevronRight } from "lucide-react";
-import { PageHeader } from "./shop/PageHeader";
-import { useConvenienceStore } from "../../shared/mock";
+import { PageHeader } from "../components/PageHeader";
+import { useConvenienceStore } from "../../shared/services/convenience";
 import { useAuthStore } from "../../shared/stores/auth-store";
 import { useSearch } from "../../shared/hooks/useSearch";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";

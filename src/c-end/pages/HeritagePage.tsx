@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { Search, MapPin, Navigation, X } from "lucide-react";
 import { HeritageType, HeritageItem, heritageTypeMeta } from "../types/heritage";

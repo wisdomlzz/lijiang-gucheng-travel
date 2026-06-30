@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Search, Clock, MapPin } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
-import { PageHeader } from "./shop/PageHeader";
+import { useContentGuideStore } from "../../shared/services/content/guide"
+import { PageHeader } from "../components/PageHeader";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 export function RoutesPage() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
-  const guides = useContentManageStore((s) => s.guides);
+  const guides = useContentGuideStore((s) => s.guides);
 
   const filtered = keyword.trim()
     ? guides.filter(

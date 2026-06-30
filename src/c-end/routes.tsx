@@ -28,7 +28,6 @@ const NewsPage = lazy(() => import("./pages/NewsPage").then(m => ({ default: m.N
 const RoutesPage = lazy(() => import("./pages/RoutesPage").then(m => ({ default: m.RoutesPage })))
 const InfoPage = lazy(() => import("./pages/InfoPage").then(m => ({ default: m.InfoPage })))
 const VRTourPage = lazy(() => import("./pages/VRTourPage").then(m => ({ default: m.VRTourPage })))
-const InfoCreatePage = lazy(() => import("./pages/InfoCreatePage").then(m => ({ default: m.InfoCreatePage })))
 const InfoDetailPage = lazy(() => import("./pages/InfoDetailPage").then(m => ({ default: m.InfoDetailPage })))
 const HousingPage = lazy(() => import("./pages/HousingPage").then(m => ({ default: m.HousingPage })))
 const ServiceTrackingPage = lazy(() => import("./pages/ServiceTrackingPage").then(m => ({ default: m.ServiceTrackingPage })))
@@ -41,9 +40,6 @@ const MyCheckinsPage = lazy(() => import("./pages/MyCheckinsPage").then(m => ({ 
 const PhotoRecordsPage = lazy(() => import("./pages/PhotoRecordsPage").then(m => ({ default: m.PhotoRecordsPage })))
 const PhotoReportPage = lazy(() => import("./pages/PhotoReportPage").then(m => ({ default: m.PhotoReportPage })))
 const PhotoRecordsDetailPage = lazy(() => import("./pages/PhotoRecordsDetailPage").then(m => ({ default: m.PhotoRecordsDetailPage })))
-const ParkingPage = lazy(() => import("./pages/ParkingPage").then(m => ({ default: m.ParkingPage })))
-const SupplierEntryPage = lazy(() => import("./pages/SupplierEntryPage").then(m => ({ default: m.SupplierEntryPage })))
-const SupplierStatusPage = lazy(() => import("./pages/SupplierStatusPage").then(m => ({ default: m.SupplierStatusPage })))
 const VolunteerPlaceholderPage = lazy(() => import("./pages/VolunteerPlaceholderPage").then(m => ({ default: m.VolunteerPlaceholderPage })))
 const VolunteerActivitiesPage = lazy(() => import("./pages/VolunteerActivitiesPage").then(m => ({ default: m.VolunteerActivitiesPage })))
 const VolunteerActivityDetailPage = lazy(() => import("./pages/VolunteerActivityDetailPage").then(m => ({ default: m.VolunteerActivityDetailPage })))
@@ -52,6 +48,11 @@ const MyComplaintsPage = lazy(() => import("./pages/MyComplaintsPage").then(m =>
 const ComplaintDetailPage = lazy(() => import("./pages/ComplaintDetailPage").then(m => ({ default: m.ComplaintDetailPage })))
 const AnnouncementPage = lazy(() => import("./pages/AnnouncementPage").then(m => ({ default: m.AnnouncementPage })))
 const AnnouncementDetailPage = lazy(() => import("./pages/AnnouncementDetailPage").then(m => ({ default: m.AnnouncementDetailPage })))
+const PointsCenterPage = lazy(() => import("./pages/PointsCenterPage").then(m => ({ default: m.PointsCenterPage })))
+const NaxiCheckInPage = lazy(() => import("./pages/NaxiCheckInPage").then(m => ({ default: m.NaxiCheckInPage })))
+const CourtyardBookingPage = lazy(() => import("./pages/CourtyardBookingPage").then(m => ({ default: m.CourtyardBookingPage })))
+const MyBookingsPage = lazy(() => import("./pages/MyBookingsPage").then(m => ({ default: m.MyBookingsPage })))
+const MyShopPage = lazy(() => import("./pages/MyShopPage").then(m => ({ default: m.MyShopPage })))
 
 // 遗产详情（按类型分立）
 const RoadDetail = lazy(() => import("./pages/heritage/detail/RoadDetail").then(m => ({ default: m.RoadDetail })))
@@ -99,7 +100,6 @@ export const cRoutes = [
   { path: "heritage/human-environment/:id", element: <HumanEnvironmentDetail /> },
   { path: "vr-tour", element: <VRTourPage /> },
   { path: "info", element: <InfoPage /> },
-  { path: "info/create", element: <InfoCreatePage /> },
   { path: "info/:id", element: <InfoDetailPage /> },
   { path: "housing", element: <HousingPage /> },
   { path: "service-track/:id", element: <ServiceTrackingPage /> },
@@ -114,13 +114,15 @@ export const cRoutes = [
   { path: "courtyard/:id/vr", element: <CulturalCourtyardVRPage /> },
   { path: "my-checkins", element: <MyCheckinsPage /> },
   { path: "achievements", element: <RedirectTo to="/c/courtyards" /> },
-  { path: "parking", element: <ParkingPage /> },
   { path: "volunteer", element: <VolunteerPlaceholderPage /> },
   { path: "volunteer/activities", element: <VolunteerActivitiesPage /> },
   { path: "volunteer/activities/:id", element: <VolunteerActivityDetailPage /> },
   { path: "photo-records", element: <PhotoRecordsPage /> },
   { path: "photo-records/:id", element: <PhotoRecordsDetailPage /> },
   { path: "photo-report", element: <PhotoReportPage /> },
-  { path: "supplier-entry", element: <SupplierEntryPage /> },
-  { path: "supplier-status", element: <SupplierStatusPage /> },
+  { path: "points", element: <PointsCenterPage /> },
+  { path: "naxi-checkin", element: <NaxiCheckInPage /> },
+  { path: "courtyard/:id/booking", element: <CourtyardBookingPage /> },
+  { path: "my-bookings", element: <MyBookingsPage /> },
+  { path: "my-shop", element: <MyShopPage /> },
 ]

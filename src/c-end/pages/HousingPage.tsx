@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { Search, Filter, ChevronLeft, ChevronRight, Play, Pause, MapPin, Home, FileText, Receipt } from "lucide-react";
 
 const realHouses = [

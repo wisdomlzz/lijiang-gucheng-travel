@@ -1,13 +1,14 @@
 import { useState, useRef } from "react";
-import { useAddressStore, useConvenienceStore } from "../../shared/mock";
-import { useServiceConfigStore } from "../../shared/stores/convenience-services-store";
+import { useAddressStore } from "../../shared/services/address"
+import { useConvenienceStore } from "../../shared/services/convenience";
+import { useServiceConfigStore } from "../../shared/services/convenience/services-store";
 import type { ConvenienceService } from "../../shared/types";
 import { useAuthStore } from "../../shared/stores/auth-store";
 import { useNavigate } from "react-router";
 import { X, Upload, MapPin, User, Clock, ChevronRight, Phone, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { StatusProgress } from "../components/StatusProgress";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import type { ConvenienceOrder } from "../../shared/types";
 import { ConvenienceStatusLabel } from "../../shared/types";
 

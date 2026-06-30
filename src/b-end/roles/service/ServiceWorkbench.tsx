@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 import { StatusBadge } from "@/shared/components/ui/status-badge";
 import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow";
-import { useStaffStore, useConvenienceStore } from "../../../shared/mock";
+import { useStaffStore } from "../../../shared/services/staff"
+import { useConvenienceStore } from "../../../shared/services/convenience";
 import { useAuthStore } from "../../../shared/stores/auth-store";
 import type { ConvenienceStatus } from "../../../shared/types";
 

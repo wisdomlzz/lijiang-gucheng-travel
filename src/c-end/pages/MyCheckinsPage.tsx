@@ -1,14 +1,16 @@
 import { useNavigate } from "react-router";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { MapPin, Clock, CheckCircle } from "lucide-react";
-import { useCheckinStore } from "../../shared/stores/checkin-store";
+import { useCheckinStore } from "../../shared/services/checkin";
+import { useContentManageStore } from "../../shared/services/content/guide";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 export function MyCheckinsPage() {
   const navigate = useNavigate();
   const checkins = useCheckinStore((s) => s.checkins);
-  const myCheckins = checkins.filter((c) => c.userId === "user-1");
+  const courtyardIds = new Set(useContentCourtyardStore((s) => s.courtyards).map((c) => c.id));
+  const myCheckins = checkins.filter((c) => c.userId === "user-1" && courtyardIds.has(c.courtyardId));
   const { visible, hasMore, loadMore } = useLoadMore(myCheckins, 6);
 
   return (

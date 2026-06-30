@@ -3,8 +3,8 @@ import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Scan, ChevronRight } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { useHomepageConfigStore } from "../../shared/stores/homepage-config-store";
-import { useAnnouncementStore } from "../../shared/mock/announcements";
+import { useHomepageConfigStore } from "../../shared/services/homepage";
+import { useAnnouncementStore } from "../../shared/services/announcement";
 import { useLoadMore } from "@/shared/hooks/useLoadMore";
 import { CRMEB_C_URL } from "../../shared/constants";
 

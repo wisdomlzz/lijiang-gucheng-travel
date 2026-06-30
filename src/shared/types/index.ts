@@ -327,6 +327,10 @@ export type FavoriteItem = {
 }
 
 // ====== 志愿服务 ======
+export type VolunteerStatus = "pending" | "approved" | "rejected"
+export type VolunteerActivityStatus = "draft" | "pending_review" | "published" | "in_progress" | "ended" | "cancelled"
+export type VolunteerSignUpStatus = "signed_up" | "checked_in" | "checked_out" | "no_show" | "checkout_overdue"
+
 export type Volunteer = {
   id: string
   userId: string
@@ -334,6 +338,10 @@ export type Volunteer = {
   phone: string
   politicalStatus: string
   workUnit: string
+  credentialImages: string[]
+  status: VolunteerStatus
+  reviewNote?: string
+  reviewedAt?: string
   createdAt: string
 }
 
@@ -345,9 +353,12 @@ export type VolunteerActivity = {
   location: string
   startTime: string
   endTime: string
+  enrollStartTime?: string
   signUpDeadline: string
   maxParticipants: number
-  status: "draft" | "published" | "ended"
+  status: VolunteerActivityStatus
+  reviewNote?: string
+  reviewedAt?: string
   createdAt: string
 }
 
@@ -359,7 +370,12 @@ export type VolunteerSignUp = {
   checkInTime?: string
   checkOutTime?: string
   serviceHours?: number
-  status: "signed_up" | "checked_in" | "checked_out"
+  status: VolunteerSignUpStatus
+  isLate?: boolean
+  lateMinutes?: number
+  isManual?: boolean
+  reviewNote?: string
+  resolvedAt?: string
 }
 export type NotificationType = "order" | "activity" | "system"
 

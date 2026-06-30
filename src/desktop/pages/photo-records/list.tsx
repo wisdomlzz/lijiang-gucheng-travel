@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../shared/components/ui/select";
-import { useCheckinStore } from "../../../shared/stores/checkin-store";
+import { useCheckinStore } from "../../../shared/services/checkin";
 import {
   Eye, MapPin, Clock, Search, X, Camera, Users,
   Trophy, CalendarDays,
@@ -197,10 +197,30 @@ export default function PhotoRecordsList() {
             <span className="text-xs font-medium">时间范围</span>
           </div>
           <TabButton value="all" label="全部" />
-          <TabButton value="month" label="本月" />
-          <TabButton value="week" label="本周" />
-          <TabButton value="today" label="本日" />
-          <TabButton value="custom" label="自定义" />
+          <span className="inline-flex items-center gap-1">
+            <TabButton value="month" label="本月" />
+            <span className="group relative inline-flex items-center cursor-help text-[10px] text-text-tertiary -ml-2">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">自然月（1日~月末）</span>
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <TabButton value="week" label="本周" />
+            <span className="group relative inline-flex items-center cursor-help text-[10px] text-text-tertiary -ml-2">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">周一至周日</span>
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <TabButton value="today" label="本日" />
+            <span className="group relative inline-flex items-center cursor-help text-[10px] text-text-tertiary -ml-2">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">当日0点~24点</span>
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <TabButton value="custom" label="自定义" />
+          </span>
 
           {timeRange === "custom" && (
             <div className="flex items-center gap-2 ml-2">
@@ -221,9 +241,6 @@ export default function PhotoRecordsList() {
           )}
 
           <span className="ml-auto text-xs text-text-tertiary">{timeLabel}</span>
-        </div>
-        <div className="text-[10px] text-text-tertiary/60 mt-1">
-          自然月 · 自然周（周一~周日）· 自然日
         </div>
       </div>
 
@@ -261,8 +278,8 @@ export default function PhotoRecordsList() {
               className="text-xs text-primary hover:underline"
             >
               {rankExpanded
-                ? "收起（显示前 5）"
-                : `展开全部 ${courtyardStats.length} 个`}
+                ? "收起"
+                : "展开全部"}
             </button>
           )}
         </div>

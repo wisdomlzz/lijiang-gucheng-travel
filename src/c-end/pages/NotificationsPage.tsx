@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Package, Gift, Volume2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader } from "./shop/PageHeader";
-import { useNotificationStore, type NotificationType } from "../../shared/mock";
+import { PageHeader } from "../components/PageHeader";
+import { useNotificationStore, type NotificationType } from "../../shared/services/notification";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 // J10: 实时消息推送类型

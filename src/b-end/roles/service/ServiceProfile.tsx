@@ -15,8 +15,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAuthStore } from "../../../shared/stores/auth-store";
-import { useConvenienceStore } from "../../../shared/mock";
-import { useTrustScoreStore } from "../../../shared/mock/trust-score";
+import { useConvenienceStore } from "../../../shared/services/convenience";
+import { useTrustScoreStore } from "../../../shared/services/trust-score";
 import { ConfirmModal } from "../../components/Sheet";
 
 export function ServiceProfile() {

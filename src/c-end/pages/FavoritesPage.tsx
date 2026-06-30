@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { useFavoriteStore } from "../../shared/mock";
-import type { FavoriteItem } from "../../shared/mock";
+import { useFavoriteStore } from "../../shared/services/favorite";
+import type { FavoriteItem } from "../../shared/services/favorite";
 import { Heart, Trash2, Store, Map, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";

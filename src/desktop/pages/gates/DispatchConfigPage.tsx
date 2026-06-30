@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../shared/compon
 import { Button } from "../../../shared/components/ui/button"
 import { Badge } from "../../../shared/components/ui/badge"
 import { PageLayout } from "../../components/common/PageLayout"
-import { useStaffStore } from "../../../shared/mock"
-import { useConvenienceStore } from "../../../shared/mock"
+import { useStaffStore } from "../../../shared/services/staff"
+import { useConvenienceStore } from "../../../shared/services/convenience"
 import { ToggleLeft, ToggleRight, RotateCcw } from "lucide-react"
 import { toast } from "sonner"
 

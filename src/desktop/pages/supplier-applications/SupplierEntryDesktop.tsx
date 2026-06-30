@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Building2, User, Phone, MapPin, FileText, AlignLeft, Check } from "lucide-react";
 import { toast } from "sonner";
-import { useSupplierStore } from "../../../shared/stores/supplier-store";
+import { useSupplierStore } from "../../../shared/services/supplier";
 import { ImageUpload } from "../../../shared/components/ui/image-upload";
 
 const BUSINESS_TYPES = ["餐饮", "住宿", "酒吧", "文创", "手工艺", "服装", "其他"];

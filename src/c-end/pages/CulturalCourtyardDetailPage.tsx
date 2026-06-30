@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import {
   ChevronLeft, Share2, MapPin, Phone, Clock, Navigation, Volume2, Eye,
-  X, Play, Pause, CheckCircle2,
+  X, Play, Pause, CheckCircle2, CalendarCheck,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
-import { useCheckinStore } from "../../shared/stores/checkin-store";
+import { useContentManageStore } from "../../shared/services/content/guide";
+import { useCheckinStore } from "../../shared/services/checkin";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { toast } from "sonner";
 
@@ -30,7 +30,7 @@ type CheckinStatus = "loading" | "success" | "outOfRange" | "error";
 export function CulturalCourtyardDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const courtyards = useContentManageStore((s) => s.courtyards);
+  const courtyards = useContentCourtyardStore((s) => s.courtyards);
   const courtyard = courtyards.find((c) => c.id === id);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -252,6 +252,13 @@ export function CulturalCourtyardDetailPage() {
         >
           <Eye size={18} className="text-primary" />
           <span className="text-[13px] text-text-body">VR游览</span>
+        </button>
+        <button
+          onClick={() => navigate(`/c/courtyard/${courtyard.id}/booking`)}
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] active:scale-[0.98] transition-transform"
+        >
+          <CalendarCheck size={18} className="text-emerald-500" />
+          <span className="text-[13px] text-text-body">预约参观</span>
         </button>
         {courtyard.audioGuideUrl && (
           <button

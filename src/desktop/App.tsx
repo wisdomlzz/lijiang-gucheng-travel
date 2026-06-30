@@ -18,8 +18,6 @@ const ZoneManagementPage = lazy(() => import("./pages/gates/ZoneManagementPage")
 const DispatchConfigPage = lazy(() => import("./pages/gates/DispatchConfigPage"))
 const ConvenienceStaffPage = lazy(() => import("./pages/gates/ConvenienceStaffPage"))
 const PriceArbitrationPage = lazy(() => import("./pages/gates/PriceArbitrationPage"))
-const AccountPage = lazy(() => import("./pages/gates/AccountPage"))
-const RolePage = lazy(() => import("./pages/gates/RolePage"))
 const BannerManagePage = lazy(() => import("./pages/gates/BannerManagePage").then(m => ({ default: m.BannerManagePage })))
 const GridSettingsPage = lazy(() => import("./pages/gates/GridSettingsPage").then(m => ({ default: m.GridSettingsPage })))
 const ComplaintPage = lazy(() => import("./pages/gates/ComplaintPage"))
@@ -27,6 +25,10 @@ const PhotoRecordsList = lazy(() => import("./pages/photo-records/list"))
 const PhotoRecordShow = lazy(() => import("./pages/photo-records/show"))
 const VolunteerManagePage = lazy(() => import("./pages/VolunteerManagePage").then(m => ({ default: m.VolunteerManagePage })))
 const AnnouncementManagePage = lazy(() => import("./pages/gates/AnnouncementManagePage").then(m => ({ default: m.AnnouncementManagePage })))
+const PointRulesPage = lazy(() => import("./pages/gates/PointRulesPage").then(m => ({ default: m.PointRulesPage })))
+const SettlementPage = lazy(() => import("./pages/gates/SettlementPage").then(m => ({ default: m.SettlementPage })))
+const MerchantReviewPage = lazy(() => import("./pages/gates/MerchantReviewPage").then(m => ({ default: m.MerchantReviewPage })))
+const FlowWarningPage = lazy(() => import("./pages/gates/FlowWarningPage").then(m => ({ default: m.FlowWarningPage })))
 
 function Loading() {
   return <div className="flex items-center justify-center h-screen">加载中...</div>
@@ -89,9 +91,17 @@ export function DesktopApp() {
           <Route path="photo-records/:id" element={<PhotoRecordShow />} />
           <Route path="volunteer" element={<VolunteerManagePage />} />
 
-          {/* 系统管理 */}
-          <Route path="users" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<AccountPage />} />} />
-          <Route path="role-management" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<RolePage />} />} />
+          {/* 结算管理 */}
+          <Route path="settlement" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<SettlementPage />} />} />
+
+          {/* 内容管理 */}
+          <Route path="point-rules" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<PointRulesPage />} />} />
+
+          {/* 商家管理 */}
+          <Route path="merchant-review" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<MerchantReviewPage />} />} />
+
+          {/* 人流量预警 */}
+          <Route path="flow-warning" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<FlowWarningPage />} />} />
 
           <Route path="*" element={<RedirectTo to="/desktop/workbench" />} />
         </Route>

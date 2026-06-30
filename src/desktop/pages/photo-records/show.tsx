@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router";
 import { PageLayout } from "../../components/common/PageLayout";
 import { Button } from "../../../shared/components/ui/button";
-import { useCheckinStore } from "../../../shared/stores/checkin-store";
+import { useCheckinStore } from "../../../shared/services/checkin";
 import { ArrowLeft, MapPin, Clock, User } from "lucide-react";
 
 export default function PhotoRecordShow() {

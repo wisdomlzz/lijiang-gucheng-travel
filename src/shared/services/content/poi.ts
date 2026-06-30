@@ -1,0 +1,29 @@
+import { create } from "zustand"
+import type { ParkingLot, MapPOI } from "../../types/content-types"
+
+const DEFAULT_PARKINGS: ParkingLot[] = [
+  { id: "p1", name: "古城北门停车场", type: "self_operated", size: "large", totalSpots: 320, availableSpots: 128, rate: "5元/小时", hours: "24小时", distance: "北门入口50m", address: "丽江市古城区北门停车场", lat: 26.8735, lng: 100.2325, createdAt: "2026-04-12 09:20", imageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=400&q=70", contactPhone: "0888-5104455", description: "靠近古城北门入口，适合从玉河广场、大水车方向进入古城的游客停车。", features: ["室内", "充电桩"], status: "open" },
+  { id: "p2", name: "古城南门停车场", type: "self_operated", size: "large", totalSpots: 280, availableSpots: 74, rate: "5元/小时", hours: "06:00-22:00", distance: "南门入口30m", address: "丽江市古城区南门停车场", lat: 26.8650, lng: 100.2370, createdAt: "2026-04-10 14:00", imageUrl: "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=400&q=70", contactPhone: "0888-5104466", description: "靠近古城南门步行入口，车位充足，适合团队客流和自驾游客临停。", features: ["室内"], status: "open" },
+  { id: "p3", name: "白龙广场停车场", type: "third_party", size: "medium", totalSpots: 150, availableSpots: 36, rate: "6元/小时", hours: "08:00-20:00", distance: "步行至四方街5分钟", address: "丽江市古城区白龙广场", lat: 26.8680, lng: 100.2240, createdAt: "2026-04-08 17:30", imageUrl: "https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?auto=format&fit=crop&w=400&q=70", contactPhone: "0888-5104477", description: "第三方合作停车场，步行可达四方街片区，适合短时游览停车。", features: ["室外"], status: "open" },
+  { id: "p4", name: "玉河广场停车场", type: "third_party", size: "small", totalSpots: 60, availableSpots: 0, rate: "8元/小时", hours: "08:00-22:00", distance: "古城中心", address: "丽江市古城区玉河广场", lat: 26.8720, lng: 100.2295, createdAt: "2026-04-06 11:40", imageUrl: "https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?auto=format&fit=crop&w=400&q=70", contactPhone: "0888-5104477", description: "位于古城中心区域，车位较少，建议优先选择外围停车场。", features: [], status: "full" },
+]
+
+const DEFAULT_POIS: MapPOI[] = [
+  { id: "poi1", name: "大水车", category: "scenic_spot", lat: 26.872, lng: 100.232, location: "古城北入口", openTime: "全天开放", phone: "0888-5101122", createdAt: "2026-04-05 09:30", description: "丽江古城标志性景观，位于古城北入口", imageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400", audioCnUrl: "大水车中文语音.mp3", audioEnUrl: "Waterwheel English audio.mp3", status: "active" },
+  { id: "poi2", name: "四方街", category: "scenic_spot", lat: 26.870, lng: 100.230, location: "古城核心区", openTime: "全天开放", phone: "0888-5102233", createdAt: "2026-04-07 15:10", description: "古城中心广场，商贾云集", imageUrl: "https://images.unsplash.com/photo-1552526881-5517a57c17ae?w=400", audioCnUrl: "四方街中文语音.mp3", audioEnUrl: "Sifang Street English audio.mp3", status: "active" },
+  { id: "poi3", name: "木府", category: "scenic_spot", lat: 26.867, lng: 100.228, location: "光义街官门口", openTime: "08:30-17:30", phone: "0888-5103344", createdAt: "2026-04-11 10:00", description: "纳西族土司府邸，古城文化核心", imageUrl: "https://images.unsplash.com/photo-1683825093397-5bbc64e496e6?w=400", audioCnUrl: "木府中文语音.mp3", audioEnUrl: "Mufu English audio.mp3", status: "active" },
+  { id: "poi4", name: "北门停车场", category: "facility", lat: 26.8735, lng: 100.2325, location: "古城北入口旁", openTime: "24小时", phone: "0888-5104455", createdAt: "2026-04-06 08:45", description: "大型停车场，320个车位", status: "active" },
+  { id: "poi5", name: "游客服务中心", category: "service", lat: 26.871, lng: 100.233, location: "玉河广场服务区", openTime: "08:30-22:00", phone: "0888-5105566", createdAt: "2026-04-03 13:20", description: "提供咨询、寄存、轮椅租借等服务", status: "active" },
+]
+
+type State = { parkings: ParkingLot[]; pois: MapPOI[]; addParking: (item: ParkingLot) => void; updateParking: (id: string, fields: Partial<ParkingLot>) => void; deleteParking: (id: string) => void; addPOI: (item: MapPOI) => void; updatePOI: (id: string, fields: Partial<MapPOI>) => void; deletePOI: (id: string) => void }
+
+export const useContentPOIStore = create<State>((set) => ({
+  parkings: DEFAULT_PARKINGS, pois: DEFAULT_POIS,
+  addParking: (item) => set((s) => ({ parkings: [...s.parkings, item] })),
+  updateParking: (id, fields) => set((s) => ({ parkings: s.parkings.map((p) => p.id === id ? { ...p, ...fields } : p) })),
+  deleteParking: (id) => set((s) => ({ parkings: s.parkings.filter((p) => p.id !== id) })),
+  addPOI: (item) => set((s) => ({ pois: [...s.pois, item] })),
+  updatePOI: (id, fields) => set((s) => ({ pois: s.pois.map((p) => p.id === id ? { ...p, ...fields } : p) })),
+  deletePOI: (id) => set((s) => ({ pois: s.pois.filter((p) => p.id !== id) })),
+}))

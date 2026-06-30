@@ -32,6 +32,24 @@ npm run deploy       # 调用 ../scripts/deploy.sh 部署
 
 无 `vitest.config.ts` —— vitest 直接从 `vite.config.ts` 读取配置。
 
+## 关键依赖
+
+| 用途 | 库 |
+| --- | --- |
+| 状态管理 | Zustand（持久化到 localStorage） |
+| UI 基础组件 | Radix UI + shadcn/ui（`src/shared/components/ui/`，含应用封装：`image-upload` / `image-with-fallback` / `bottom-sheet-picker` / `data-toolbar` / `status-badge`） |
+| 图标 | `lucide-react` |
+| 表单 | `react-hook-form` + `zod` |
+| 表格 | `@tanstack/react-table`（`DataTable` 组件封装） |
+| 地图 | `leaflet` |
+| 图表 | `recharts` |
+| 动画 | `motion`（Framer Motion 继任者） |
+| 轮播 | `embla-carousel-react` |
+| Toast | `sonner` |
+| Markdown | `react-markdown` + `remark-gfm` |
+| 日期 | `date-fns` |
+| 样式工具 | `class-variance-authority` + `clsx` + `tailwind-merge` + `tw-animate-css` |
+
 ## 目录结构
 
 ```
@@ -43,7 +61,7 @@ src/
 │   ├── App.tsx             # 登录态守卫 + MiniProgramFrame + 路由
 │   ├── routes.tsx          # 路由表 + lazy 加载的页面（50+ 页面）
 │   ├── pages/              # 按业务域分子目录（convenience / guide / heritage / info / routes / shop / heritate/detail 等）
-│   └── data/ types/ imports/
+│   └── data/ types/ assets/
 ├── b-end/                  # B端：服务人员端（当前只有 service 一种角色）
 │   ├── App.tsx
 │   ├── BLayout.tsx         # 5-Tab 底部导航（工作台 / 任务 / 通知 / 历史 / 我的）
@@ -55,7 +73,7 @@ src/
 │   ├── pages/              # gates / heritage / photo-records / supplier-applications / common / workbench 等
 │   └── components/common/  # CrudRoutes / ProtectedRoute / DataTable / PageLayout / ConfirmDialog 等
 └── shared/                 # 三端共用的基础设施
-    ├── stores/             # Zustand 状态库（auth / zoom / convenience-services / checkin / heritage-manage / supplier / volunteer / content-manage / homepage-config）
+    ├── stores/             # Zustand 状态库（auth / zoom / convenience-services / checkin / heritage-manage / supplier / volunteer / content-manage / homepage-config / ai-knowledge）
     ├── components/         # LoginPageC/B/Desktop + MiniProgramFrame + VideoPlayer + TrustScoreBadge
     │   └── ui/             # 基于 Radix UI 的基础组件（button / dialog / form / table / sheet / sidebar / carousel ...）
     ├── mock/               # 模拟后端：每个域一个 store + 通用 engine
@@ -93,7 +111,7 @@ src/
 ### 4. 模拟后端与状态机（`src/shared/mock/`）
 
 每个域独立一个文件，导出 `useXxxStore()`：
-`addresses / announcement / complaint / convenience / favorites / notifications / reviews / staff / supplier-rating / trust-score / zones / seed / seed-factory`
+`addresses / announcements / complaint / convenience / favorites / notifications / staff / supplier-rating / trust-score / zones / seed / seed-factory`
 
 - 通用机制在 `engine.ts`：
   - `createMachine(config)` —— 状态机：`states[]` + `transitions[{from, to, on?}]` + `timeouts[{from, afterMs, to, on?}]`
@@ -107,6 +125,7 @@ src/
   - **C** = 投诉（C10 已提交、C40 已处理、CR 已驳回）
 - 便民服务分两类：**点对点**（送货、行李搬运）vs **片区型**（垃圾清运、送水、布草配送），在 `types/index.ts` 中通过 `POINT_TO_POINT_TYPES` / `ZONE_BASED_TYPES` 区分
 - 种子数据：`seed.ts` 中的 `seedConvenienceOrders` 必须覆盖所有状态码，由 `validate-seeds.ts` 在 `npm run verify:seeds` 时强制检查
+- 新增状态码时需同步更新三处：`types/index.ts`（状态常量）→ `seed-factory.ts`（`ALL_CONVENIENCE_STATUSES` 列表）→ `seed.ts`（种子数据覆盖）
 
 ### 5. 权限系统（`src/shared/permissions/index.ts`）
 
@@ -159,7 +178,7 @@ C 端详情页用 `OrderTrackingStepper` 展示进度条，B 端用 `OrderStatus
 ## 数据与图片
 
 - 占位图大量使用 `images.unsplash.com`，搜索时按 `lijiang` / 古城 / 风景筛选
-- AI 头像等本地静态资源在 `src/c-end/imports/`
+- AI 头像等本地静态资源在 `src/c-end/assets/`
 - 头像等通过 `import img from "./xxx.png"` 直接打包，无需单独 public 引用
 
 ## 重要注意事项
@@ -172,11 +191,31 @@ C 端详情页用 `OrderTrackingStepper` 展示进度条，B 端用 `OrderStatus
 - 模拟后端的定时流转（A10→A20 自动派单等）通过 `startTimeout()` 管理，内存中运行；刷新页面会重置所有定时器。
 - CI/CD：GitHub Actions 通过 `opencode` 工作流（`.github/workflows/opencode.yml`）响应 `/oc` 或 `/opencode` 注释，使用讯飞星火 Astron Code 模型。
 
+## Demo 登录账号（`src/shared/types/seed-users.ts`）
+
+| 角色 | 姓名 | 手机号 | 可进端 |
+| --- | --- | --- | --- |
+| 游客 | 张小游 | 13800001001 | C |
+| 供应商 | 古城文创·王老板 | 13900002001 | C / B / Desktop |
+| 便民服务人员 | 李师傅 | 13900002004 | B |
+| 平台管理员 | 平台管理员 | 18800003001 | B / Desktop |
+
+登录页输入手机号即可（无密码校验，纯 Demo）。
+
 ## 相关文档
 
 - `DESIGN.md` —— 完整设计系统（颜色 / 字体 / 圆角 / 阴影 / 组件 token / 反模式）
-- `docs/丽江古城游V2.0完整需求说明书.md` —— V2.0 完整需求
-- `docs/丽江古城游新版完整需求说明书.md` —— 新版需求补充
-- `docs/商城派单功能独立需求文档.md` —— 商城 + 派单独立需求
-- `docs/暂缓与删除功能复现说明.md` —— 暂缓 / 删除功能说明
-- `docs/superpowers/plans/` —— 阶段性计划（功能完整度、Miniprogram 差距分析）
+- `docs/requirements/` —— 原始需求文件
+  - `active/` —— 正在推进的新需求
+  - `archived/` —— 已归档的完结需求
+- `docs/specs/` —— 设计方案文档
+- `docs/plans/` —— 实现计划
+- `docs/notes/` —— 杂项说明（业务逻辑、差异对照等）
+
+## 主题变量双轨制
+
+`src/shared/styles/theme.css` 中存在两套颜色体系：
+1. **shadcn/ui 系统变量**（`--background` / `--foreground` / `--primary` 等）—— 供 shadcn 组件内部使用，颜色偏 Slate 灰蓝系
+2. **App 语义变量**（`--text-heading: #1E3A5F` / `--text-body: #333333` / `--text-secondary: #666666` / `--text-tertiary: #999999` 等）—— 供业务页面直接使用，颜色更偏中性灰
+
+两套体系不冲突但数值不同，新增页面时优先使用 App 语义变量。`.dark` 模式也已定义（`theme.css` 中 `.dark` 选择器）。

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
+import { useContentManageStore } from "../../shared/services/content/guide";
+import { useFlowWarningStore, LEVEL_META } from "../../shared/services/flow-warning";
 import {
   Search,
   X,
@@ -115,7 +116,11 @@ export function MapPage() {
     );
   }, []);
 
-  const parkings = useContentManageStore((s) => s.parkings);
+  const parkings = useContentPOIStore((s) => s.parkings);
+  const warningAreas = useFlowWarningStore((s) => s.areas);
+  const getAreaLevel = useFlowWarningStore((s) => s.getAreaLevel);
+  const [showWarning, setShowWarning] = useState(false);
+  const warningAreas2 = warningAreas; // alias to avoid unused
 
   const current = categories.find((c) => c.key === activeCat)!;
   const visiblePins = pins.filter((p) => p.category === activeCat);
@@ -143,6 +148,45 @@ export function MapPage() {
   return (
     <div className="min-h-full bg-surface-page flex flex-col">
       <PageHeader title="导览地图" back="/c/home" />
+
+      {/* 人流量预警浮层（第⑤业务链 C 端联动）*/}
+      <div className="px-3 pt-2">
+        <button onClick={() => setShowWarning(!showWarning)} className="w-full bg-white rounded-xl p-3 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-2">
+            {(() => {
+              const worst = warningAreas2.reduce((max, a) => {
+                const order = { green: 0, yellow: 1, orange: 2, red: 3 } as const
+                return order[getAreaLevel(a.id)] > order[getAreaLevel(max.id)] ? a : max
+              }, warningAreas2[0])
+              const meta = LEVEL_META[getAreaLevel(worst.id)]
+              return (
+                <>
+                  <span className={`w-2.5 h-2.5 rounded-full ${meta.bg.replace("bg-", "bg-").replace("-100", "-500")}`} />
+                  <span className="text-[13px] font-medium text-text-heading">实时人流</span>
+                  <span className={`text-[12px] ${meta.color}`}>{worst.name} {meta.label}</span>
+                </>
+              )
+            })()}
+          </div>
+          <span className="text-[12px] text-primary">{showWarning ? "收起" : "查看全部"}</span>
+        </button>
+        {showWarning && (
+          <div className="mt-2 bg-white rounded-xl p-3 grid grid-cols-3 gap-2">
+            {warningAreas2.map((a) => {
+              const level = getAreaLevel(a.id)
+              const meta = LEVEL_META[level]
+              const pct = Math.round((a.current / a.capacity) * 100)
+              return (
+                <div key={a.id} className={`rounded-lg p-2 ${meta.bg}`}>
+                  <p className="text-[11px] font-medium text-text-heading truncate">{a.name}</p>
+                  <p className={`text-[14px] font-bold ${meta.color}`}>{pct}%</p>
+                  <p className={`text-[10px] ${meta.color}`}>{meta.label}</p>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
       <div className="px-3 py-2 bg-white">
         <div className="flex items-center gap-2 bg-[#F5EFE2] rounded-full h-9 px-3">

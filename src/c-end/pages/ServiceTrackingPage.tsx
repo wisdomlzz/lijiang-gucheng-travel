@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
-import { PageHeader } from "./shop/PageHeader";
+import { PageHeader } from "../components/PageHeader";
 import { StatusProgress } from "../components/StatusProgress";
 import { toast } from "sonner";
 import { Phone, Clock, AlertCircle, User, Star } from "lucide-react";
-import { useConvenienceStore } from "../../shared/mock";
+import { useConvenienceStore } from "../../shared/services/convenience";
 import type { ConvenienceStatus } from "../../shared/types";
 
 const STATUS_STEPS: ConvenienceStatus[] = ["S10", "A30", "A35", "A38", "A40", "S48", "S55", "S40"];

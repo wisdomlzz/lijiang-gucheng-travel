@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, MapPin, ChevronRight, ChevronLeft, Star, Navigation } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { PageHeader } from "./shop/PageHeader";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
-import { getMerchantCategoryLabel, normalizeMerchantCategory } from "../../shared/content-config";
+import { PageHeader } from "../components/PageHeader";
+import { useContentManageStore } from "../../shared/services/content/guide";
+import { getMerchantCategoryLabel, normalizeMerchantCategory } from "../../shared/constants/content-config";
 import { useSearch } from "../../shared/hooks/useSearch";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
@@ -50,7 +50,7 @@ export function MerchantListPage() {
   const [sortBy, setSortBy] = useState<"distance" | "rating">("distance");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [pageSize, setPageSize] = useState(10);
-  const storeMerchants = useContentManageStore((s) => s.merchants);
+  const storeMerchants = useContentMerchantStore((s) => s.merchants);
 
   // 获取用户位置
   useEffect(() => {

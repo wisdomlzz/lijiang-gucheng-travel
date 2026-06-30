@@ -1,12 +1,12 @@
 import { useNavigate, useParams } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
+import { useContentManageStore } from "../../shared/services/content/guide";
 
 export function InfoDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const news = useContentManageStore((s) => s.news);
+  const news = useContentNewsStore((s) => s.news);
   const item = news.find((i) => i.id === id);
 
   if (!item) {

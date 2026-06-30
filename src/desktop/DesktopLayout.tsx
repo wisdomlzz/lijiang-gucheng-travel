@@ -2,7 +2,7 @@ import { Outlet, useNavigate, useLocation } from "react-router"
 import { useState, useMemo } from "react"
 import { useAuthStore } from "../shared/stores/auth-store"
 import { usePermissionStore } from "../shared/permissions"
-import { useComplaintStore } from "../shared/mock/complaint"
+import { useComplaintStore } from "../shared/services/complaint"
 import { navGroups } from "./nav"
 import {
   Search, Bell, Maximize2, Smartphone, LogOut, X,
@@ -150,7 +150,7 @@ export function DesktopLayout() {
                 banner: "Banner管理", "grid-settings": "首页宫格管理",
                 // 系统管理
                 users: "账号管理", "role-management": "角色管理",
-                complaints: "投诉管理", "data-analysis": "访问统计",
+                complaints: "投诉管理",
                 audit: "操作审计",
                 // 新增功能
                 heritage: "遗产知识",
@@ -164,10 +164,11 @@ export function DesktopLayout() {
                 "cultural-journal": "文化期刊", "image-library": "图片标识共享库",
                 videos: "古城视频", "featured-routes": "精选线路",
                 "recommended-routes": "推荐线路",
-                // 系统管理占位页
-                "company-profile": "公司概况",
-                "website-management": "网站管理",
-                "merchant-review": "商家审核",
+                // 新增模块
+                settlement: "结算管理",
+                "point-rules": "积分规则配置",
+                "merchant-review": "商家信息审核",
+                "flow-warning": "人流量预警",
               };
               const key = location.pathname.replace("/desktop/", "").split("/")[0];
               return labelMap[key] || key;

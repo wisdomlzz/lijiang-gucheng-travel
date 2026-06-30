@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { useNavigate } from "react-router";
-import aiAvatar from "../imports/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
+import aiAvatar from "../assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
 import { CRMEB_C_URL } from "../../shared/constants";
 
 /* ─────────────────────────────────────────────

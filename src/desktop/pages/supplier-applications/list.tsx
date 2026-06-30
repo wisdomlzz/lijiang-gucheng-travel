@@ -6,7 +6,7 @@ import { Button } from "../../../shared/components/ui/button";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from "../../../shared/components/ui/dialog";
-import { useSupplierStore } from "../../../shared/stores/supplier-store";
+import { useSupplierStore } from "../../../shared/services/supplier";
 import type { SupplierApplication } from "../../../shared/types";
 import { StatusBadge } from "@/shared/components/ui/status-badge";
 import { Building2, Phone, Clock } from "lucide-react";

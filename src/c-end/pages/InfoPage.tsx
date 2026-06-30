@@ -2,8 +2,8 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { Plus } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { PageHeader } from "./shop/PageHeader";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
+import { PageHeader } from "../components/PageHeader";
+import { useContentManageStore } from "../../shared/services/content/guide";
 import type { NewsCategory } from "../../shared/types/content-types";
 import { useSearch } from "../../shared/hooks/useSearch";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
@@ -14,7 +14,7 @@ export function InfoPage() {
   const navigate = useNavigate();
   const [active, setActive] = useState<NewsCategory>("公房公告");
   const [pageSize, setPageSize] = useState(10);
-  const news = useContentManageStore((s) => s.news);
+  const news = useContentNewsStore((s) => s.news);
 
   const categoryList = news.filter((i) => i.category === active);
 

@@ -6,10 +6,10 @@ import {
 import { useNavigate, useParams } from "react-router";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { toast } from "sonner";
-import { useContentManageStore } from "../../shared/stores/content-manage-store";
-import { useFavoriteStore } from "../../shared/mock";
+import { useContentManageStore } from "../../shared/services/content/guide";
+import { useFavoriteStore } from "../../shared/services/favorite";
 import { useAuthStore } from "../../shared/stores/auth-store";
-import { getMerchantCategoryLabel } from "../../shared/content-config";
+import { getMerchantCategoryLabel } from "../../shared/constants/content-config";
 
 function getBusinessStatus(hours: string): { label: string; color: string; bg: string } {
   if (!hours || hours === "全天" || hours === "24小时") {
@@ -50,7 +50,7 @@ export function MerchantDetailPage() {
   const navigate = useNavigate();
   const [previewCert, setPreviewCert] = useState<any | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const merchant = useContentManageStore((s) => s.merchants.find((m) => m.id === id));
+  const merchant = useContentMerchantStore((s) => s.merchants.find((m) => m.id === id));
 
   const user = useAuthStore((s) => s.user);
   const userId = user?.id ?? "u_c_001";
