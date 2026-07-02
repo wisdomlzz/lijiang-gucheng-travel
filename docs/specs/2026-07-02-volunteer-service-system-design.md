@@ -1,12 +1,14 @@
 # 志愿服务模块系统设计
 
-## 概述
+**版本**：V2.0
+**更新**：2026-07-02
+**状态**：需求评审中
 
-丽江古城游 V2.0 的志愿服务模块，覆盖志愿者认证、活动管理、报名签到、异常处理全流程。支持单天/多天活动模式，每日独立签到签退。
+---
 
-## 数据模型
+## 1. 数据模型
 
-### Volunteer（认证信息）
+### 1.1 Volunteer（认证信息）
 
 ```
 pending → approved
@@ -14,22 +16,30 @@ pending → approved
 rejected → (重新提交) → pending
 ```
 
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| id | string | 是 | 志愿者ID（注册时 = userId） |
+| userId | string | 是 | 关联用户账号 |
+| name | string | 是 | 姓名 |
+| phone | string | 是 | 电话 |
+| politicalStatus | string | 是 | 政治面貌：中共党员/共青团员/群众/其他 |
+| workUnit | string | 是 | 工作单位 |
+| credentialImages | string[] | 是 | 资质图片URL列表 |
+| status | VolunteerStatus | 是 | pending / approved / rejected |
+| reviewNote | string? | 否 | 最近审核意见 |
+| reviewHistory | VolunteerReviewRecord[]? | 否 | 审核记录历史 |
+| reviewedAt | string? | 否 | 最近审核时间 |
+| createdAt | string | 是 | 创建时间 |
+
+**VolunteerReviewRecord：**
+
 | 字段 | 类型 | 说明 |
 |---|---|---|
-| id | string | |
-| userId | string | 关联 auth 用户 |
-| name | string | |
-| phone | string | |
-| politicalStatus | string | 中共党员/共青团员/群众/其他 |
-| workUnit | string | |
-| credentialImages | string[] | 资质图片URL |
-| status | "pending" \| "approved" \| "rejected" | |
-| reviewNote | string? | 最近一次审核意见 |
-| reviewHistory | VolunteerReviewRecord[]? | 完整审核记录 |
-| reviewedAt | string? | 最近审核时间 |
-| createdAt | string | |
+| action | "approved" \| "rejected" \| "resubmitted" | 审核动作 |
+| note | string? | 审核意见 |
+| reviewedAt | string | 审核时间 |
 
-### VolunteerActivity（活动）
+### 1.2 VolunteerActivity（活动）
 
 ```
 draft → published → in_progress → ended
@@ -37,41 +47,37 @@ draft → published → in_progress → ended
 cancelled cancelled  cancelled
 ```
 
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| id | string | |
-| title | string | |
-| description | string | |
-| images | string[] | |
-| location | string | 文本地址 |
-| locationLat | number? | 纬度（待加入） |
-| locationLng | number? | 经度（待加入） |
-| startTime | string | 活动首日开始时刻（datetime） |
-| endTime | string | 活动末日结束时刻（datetime） |
-| timeMode | "multi" | 固定为多天模式，单天兼容 |
-| dailyStartTime | string | 每日开始时间 "HH:mm" |
-| dailyEndTime | string | 每日结束时间 "HH:mm" |
-| enrollStartTime | string? | 报名开始时间（空=发布即报名） |
-| signUpDeadline | string | 报名截止时间 |
-| maxParticipants | number | |
-| status | VolunteerActivityStatus | |
-| createdAt | string | |
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| id | string | 是 | |
+| title | string | 是 | 活动名称 |
+| description | string | 是 | 活动描述 |
+| images | string[] | 否 | 活动图片 |
+| location | string | 是 | 活动地点 |
+| startTime | string | 是 | 首日日期(datetime) |
+| endTime | string | 是 | 末日日期(datetime) |
+| timeMode | "multi" | 是 | 固定多天模式，兼容单天 |
+| dailyStartTime | string | 是 | 每日开始时间 "HH:mm" |
+| dailyEndTime | string | 是 | 每日结束时间 "HH:mm" |
+| enrollStartTime | string? | 否 | 报名开始日期 |
+| signUpDeadline | string | 是 | 报名截止日期 |
+| maxParticipants | number | 是 | 人数上限 |
+| status | VolunteerActivityStatus | 是 | 见生命周期 |
+| createdAt | string | 是 | |
 
 > 单天活动：startTime 和 endTime 在同一天，dailyStartTime/dailyEndTime 为当天时段
 > 多天活动：startTime/endTime 跨越 N 天，每天使用 dailyStartTime/dailyEndTime
 
-### VolunteerSignUp（纯报名登记）
+### 1.3 VolunteerSignUp（报名记录）
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | id | string | |
-| volunteerId | string | |
-| activityId | string | |
-| signUpTime | string | |
+| volunteerId | string | 关联志愿者 |
+| activityId | string | 关联活动 |
+| signUpTime | string | 报名时间 |
 
-> 签到/签退/时长数据全部在 VolunteerDailyRecord 中
-
-### VolunteerDailyRecord（每日签到记录）
+### 1.4 VolunteerDailyRecord（每日签到记录）
 
 ```
 pending → checked_in → checked_out ✅ 终态
@@ -79,235 +85,157 @@ pending → checked_in → checked_out ✅ 终态
  no_show   checkout_overdue ⚠️ 异常
 ```
 
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| id | string | |
-| signUpId | string | 关联报名ID |
-| volunteerId | string | |
-| activityId | string | |
-| date | string | YYYY-MM-DD |
-| dayStartTime | string | 该天活动开始时刻（完整datetime） |
-| dayEndTime | string | 该天活动结束时刻（完整datetime） |
-| checkInTime | string? | |
-| checkOutTime | string? | |
-| serviceHours | number? | 精确到0.1h |
-| status | VolunteerDailyStatus | 见上 |
-| isLate | boolean? | 迟到标记 |
-| lateMinutes | number? | 迟到分钟数 |
-| isManual | boolean? | 管理员补录标记 |
-| reviewNote | string? | 管理员补录备注 |
-| resolvedAt | string? | 补录时间 |
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| id | string | 是 | |
+| signUpId | string | 是 | 关联报名 |
+| volunteerId | string | 是 | 关联志愿者 |
+| activityId | string | 是 | 关联活动 |
+| date | string | 是 | 日期 YYYY-MM-DD |
+| dayStartTime | string | 是 | 当天活动开始时刻 |
+| dayEndTime | string | 是 | 当天活动结束时刻 |
+| checkInTime | string? | 否 | 签到时间 |
+| checkOutTime | string? | 否 | 签退时间 |
+| serviceHours | number? | 否 | 服务时长(0.1h精度) |
+| status | VolunteerDailyStatus | 是 | 见流转图 |
+| isLate | boolean? | 否 | 迟到标记 |
+| lateMinutes | number? | 否 | 迟到分钟数 |
+| isManual | boolean? | 否 | 管理员补录标记 |
+| reviewNote | string? | 否 | 补录备注 |
+| resolvedAt | string? | 否 | 补录时间 |
 
-## 用户旅程
+---
 
-### C端（游客端小程序 390x844）
+## 2. 业务规则
 
-**1. 注册认证**
-```
-首页宫格 → /c/volunteer
-  ├─ 未注册 → 填写表单（姓名/电话/政治面貌/工作单位/资质图片）→ 提交 → 待审核
-  ├─ 待审核 → 展示审核中状态 + 演示通过按钮
-  ├─ 已驳回 → 展示驳回原因 + 重新上传
-  └─ 已通过 → 重定向到 /c/volunteer/activities
-```
-
-**2. 活动浏览与报名**
-```
-/c/volunteer/activities
-  ├─ 顶部统计条（累计小时/参与场次/积分）← 仅已认证志愿者显示
-  ├─ 搜索栏
-  ├─ 活动卡片列表（published + in_progress）
-  │   └─ 已报名活动显示状态标签
-  └─ 浮动按钮"我的活动" → 底部面板（按操作优先级排序）
-      ├─ 待签退 > 待签到 > 进行中 > 已完成 > 异常 > 已取消
-      └─ 每项显示摘要状态 + 进度
-```
-
-**3. 活动详情**
-```
-/c/volunteer/activities/:id
-  ├─ 图片轮播
-  ├─ 活动信息（标题/地点/时间/报名进度）
-  ├─ 签到记录列表
-  │   ├─ 每行：日期+时段 | 签到时间 | 签退时间 | 状态标签
-  │   └─ 可操作行：蓝色左侧指示条 + 光环边框高亮
-  └─ 底部操作区
-      ├─ 未报名 → 检测时间冲突 → 弹窗二次确认 → 报名
-      ├─ 已报名全pending → 取消报名按钮
-      ├─ 签到窗口内 → 签到按钮
-      ├─ 已签到 → 签退按钮
-      ├─ 已结束 + 异常 → 联系管理员提示
-      ├─ 全部完成 → 已完成展示+总时长
-      └─ 活动已取消 → 灰色提示
-```
-
-### 桌面端（管理后台 240px侧边栏）
-
-**1. 志愿者管理**
-```
-标签页 volunteers
-├─ 搜索 + 政治面貌/状态筛选
-├─ 列表（排序：待审核 > 已驳回 > 已通过）
-└─ 详情 → 基础信息 / 资质图片 / 审核记录 / 审核操作
-```
-
-**2. 活动管理**
-```
-标签页 activities
-├─ 搜索 + 状态筛选
-├─ 列表（排序：进行中 > 已发布 > 草稿 > 已结束(异常优先) > 已取消）
-│   └─ 操作：详情 / 编辑 / 发布 / 取消活动(确认弹窗) / 强制结束 / 删除
-├─ 创建弹窗：标题/描述/地点/开始时间/结束时间/每日开始/每日结束/报名起止/人数上限
-├─ 详情
-│   ├─ 统计卡片（报名/签到/异常/时长）
-│   ├─ 报名签到明细表（每条日记录一行，显示签到/签退/时长）
-│   ├─ 补录弹窗（填写签到时间+签退时间，自动计算时长）
-│   ├─ 补录备注行
-│   └─ 导出 Excel 按钮
-└─ 编辑弹窗
-```
-
-**3. ProfilePage（我的）**
-```
-仅已认证志愿者显示：
-🏅 志愿服务 · 累计 Xh · 参与 X 场 · 志愿积分 +X
-点击 → /c/volunteer/activities
-```
-
-## 业务规则
-
-### 签到规则
+### 2.1 签到规则
 
 | 场景 | 结果 |
 |---|---|
-| 签到在活动开始前 >30min | ❌ 拒绝 |
-| 签到在开始前 ≤30min | ✅ 正常签到 |
-| 签到在开始后 ≤30min | ✅ 正常签到 |
-| 签到在开始后 >30min | ✅ 签到 + 标记迟到 minutes |
-| 签到在活动结束后 | ❌ 拒绝 |
+| 签到时间 < 活动开始前30分钟 | ❌ 拒绝 |
+| 活动开始前30分钟 ≤ 签到时间 ≤ 活动开始后30分钟 | ✅ 正常签到 |
+| 签到时间 > 活动开始后30分钟 | ✅ 签到 + 标记迟到minutes |
+| 签到时间 > 活动结束时间 | ❌ 拒绝 |
 
-### 服务时长计算
+### 2.2 服务时长计算
 
 ```
-服务时长 = min(签退时间 - 签到时间, 当天时段总时长)
-         → 向下取整 0.1h 精度
+原始时长 = 签退时间 - 签到时间
+服务时长 = min(原始时长, 当天时段总时长)
+         → 四舍五入到 0.1h
          → 最低 0.5h
 ```
 
-### 每日结算
+### 2.3 每日自动结算
 
-- 每 `dayEndTime` 到达时触发 `settleActivity(activityId)`
+每天 `dayEndTime` 到达时触发：
 - `pending` → `no_show`
 - `checked_in` → `checkout_overdue`
 
-### 管理员补录
+### 2.4 管理员补录
 
-管理员填写：
-- 签到时间（datetime，默认 = dayStartTime）
-- 签退时间（datetime，默认 = dayEndTime）
+参数：
+- 签到时间（datetime，默认 dayStartTime）
+- 签退时间（datetime，默认 dayEndTime）
 - 补录备注（必填）
 
-系统自动：
-- 裁剪时间到 [dayStartTime, dayEndTime] 区间内
-- 计算服务时长 = min(签退-签到, 当天时长)
+处理：
+- 签到/签退时间裁剪到 [dayStartTime, dayEndTime]
+- 自动计算服务时长（同 2.2）
 - 状态 → `checked_out`，标记 `isManual=true`
-- 发放对应积分
 
-### 取消报名
+### 2.5 取消报名
 
-- 仅当所有日记录状态均为 `pending` 时可取消
-- 已有 `checked_in`/`checked_out` 记录 → 拒绝取消
-- 取消后：删除报名记录 + 对应日记录 + 释放名额
+- 条件：所有日记录状态均为 `pending`
+- 操作：删除报名记录 + 所有日记录 + 释放名额
 
-### 取消活动
+### 2.6 取消活动
 
-- 任何状态（非草稿/已取消/已结束）均可取消
-- 取消后保留所有报名记录
-- 取消弹窗提示："已有 X 人报名，取消后报名记录将被保留"
-- C端：已报名用户看到"活动已被管理员取消"
+- 任何状态均可取消
+- 保留所有报名记录
+- 弹窗确认：提示报名人数
 
-### 时间冲突检测
+### 2.7 时间冲突检测
 
-- 报名前检测与已报名未结束活动的 `startTime~endTime` 重叠
-- 有重叠 → 弹窗提示冲突活动名称 + "确认报名后请自行协调时间安排"
+- 报名前检测与已有报名活动的时间重叠
+- 检测到重叠时弹窗提示
 - 不阻止报名，由用户自决
 
-## 状态转换表
+---
 
-### 活动转换
+## 3. 定时器系统
 
-| 从 | 动作 | 到 | 条件 |
-|---|---|---|---|
-| draft | publish | published | 必填字段完整 |
-| draft | publish | published 后签名 | 自动创建并发布（桌面端"创建并发布"） |
-| draft | cancel | cancelled | |
-| published | cancel | cancelled | 保留报名记录 |
-| in_progress | forceEnd | ended | |
-| in_progress | (endTime到达) | ended | endTimer触发 + settleActivity |
-| any | (dayEndTime到达) | — | 每日结算触发 settleActivity |
-
-### 日记录转换
-
-| 从 | 动作 | 到 | 条件 |
-|---|---|---|---|
-| pending | checkIn | checked_in | 签到窗口内 |
-| checked_in | checkOut | checked_out | 时长自动计算 |
-| checked_in | (dayEnd到达) | checkout_overdue | 每日结算 |
-| pending | (dayEnd到达) | no_show | 每日结算 |
-| no_show | resolve | checked_out | 管理员补录 |
-| checkout_overdue | resolve | checked_out | 管理员补录 |
-
-## 定时器系统
-
-复用 `src/shared/mock/engine.ts` 的 `setTimer`/`clearTimer` 模式：
-
-| Key | 触发时机 | 动作 |
+| 定时器 | 触发条件 | 执行动作 |
 |---|---|---|
-| `vol:act:{id}:start` | act.startTime | published → in_progress |
-| `vol:act:{id}:end` | act.endTime | in_progress → ended + settleActivity |
-| `vol:act:{id}:day:{date}` | 每日 dayEndTime | settleActivity（多天活动） |
+| 活动开始 | 到达 `startTime` | `published` → `in_progress` |
+| 活动结束 | 到达 `endTime` | `in_progress` → `ended` + 结算 |
+| 每日结算 | 每天到达 `dayEndTime` | 结算当天日记录 |
 
-## 积分关联
+---
 
-- 签退时调用 `usePointsStore.transact(userId, "volunteer_service", ...)` 发放积分
-- 规则：每个服务小时 2 积分，上限 100/天
-- ProfilePage 和活动列表页展示志愿积分汇总
+## 4. 状态汇总
 
-## 种子数据策略
+### 4.1 志愿者状态
 
-13 位志愿者 + 11 个活动，覆盖以下状态组合：
+| 状态 | 说明 |
+|---|---|
+| pending | 待审核 |
+| approved | 已通过 |
+| rejected | 已驳回 |
 
-**志愿者状态**
-- 待审核：2 人（新注册、不同类型）
-- 已驳回：1 人（有驳回原因、资质重提场景）
-- 已通过：10 人（含不同政治面貌、工作单位）
+### 4.2 活动状态
 
-**活动状态覆盖**
-- 进行中（1 个）：正在服务的志愿者分布为 checked_out + checked_in + pending
-- 已发布可报名（3 个）：名额未满/已满/多天
-- 草稿（1 个）：未发布多天活动
-- 已结束有异常（2 个）：no_show + checkout_overdue 混合；多天混合场景
-- 已结束全部正常（2 个）：全部签退
-- 已取消（1 个）：无人报名
+| 状态 | 说明 |
+|---|---|
+| draft | 草稿 |
+| published | 已发布 |
+| in_progress | 进行中 |
+| ended | 已结束 |
+| cancelled | 已取消 |
 
-**日记录覆盖**
-- 签到/签退正常
-- 迟到签到
-- 已签到未签退
-- 未签到（缺席）
-- 多天活动：部分完成 + 部分异常 + 全部完成
+### 4.3 签到状态
 
-## 文件结构
+| 状态 | 说明 | 终态 |
+|---|---|---|
+| pending | 待签到 | 否 |
+| checked_in | 已签到 | 否 |
+| checked_out | 已签退 | 是 ✅ |
+| no_show | 未参与 | 是 ⚠️ |
+| checkout_overdue | 待补签退 | 是 ⚠️ |
 
-```
-src/
-├── c-end/pages/
-│   ├── VolunteerPlaceholderPage.tsx    # 注册/审核态展示
-│   ├── VolunteerActivitiesPage.tsx     # 活动列表+底部面板
-│   └── VolunteerActivityDetailPage.tsx # 详情+签到列表+操作
-├── desktop/pages/
-│   └── VolunteerManagePage.tsx         # 桌面端管理（志愿者+活动）
-└── shared/services/volunteer/
-    ├── index.ts                        # 导出
-    └── store.ts                        # 状态+种子数据+定时器
-```
+### 4.4 活动汇总状态
+
+| 状态 | 说明 | 适用场景 |
+|---|---|---|
+| checked_in | 已签到 | 有任一天为已签到 |
+| checked_out | 已签退 | 全部天次已签退 |
+| pending | 待签到 | 全部天次待签到 / 多天部分完成 |
+| no_show | 未参与 | 有异常记录 |
+| cancelled | 已取消 | 活动被取消 |
+
+---
+
+## 5. 状态转换表
+
+### 5.1 活动转换
+
+| 当前状态 | 动作 | 目标状态 | 条件/说明 |
+|---|---|---|---|
+| draft | 发布 | published | 必填字段完整 |
+| draft | 取消 | cancelled | |
+| published | 取消 | cancelled | 保留报名记录 |
+| in_progress | 结束 | ended | 触发结算 |
+| in_progress | 取消 | cancelled | 保留报名记录 |
+| published | 自动 | in_progress | startTime到达 |
+| in_progress | 自动 | ended | endTime到达 |
+
+### 5.2 日记录转换
+
+| 当前状态 | 动作 | 目标状态 | 条件/说明 |
+|---|---|---|---|
+| pending | 签到 | checked_in | 签到窗口内 |
+| checked_in | 签退 | checked_out | 自动计算时长 |
+| checked_in | 自动 | checkout_overdue | dayEndTime到达 |
+| pending | 自动 | no_show | dayEndTime到达 |
+| no_show | 补录 | checked_out | 管理员操作 |
+| checkout_overdue | 补录 | checked_out | 管理员操作 |

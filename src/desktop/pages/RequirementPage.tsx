@@ -17,7 +17,7 @@ interface DocItem {
 }
 
 const DOC_LIST: DocItem[] = [
-  { name: "志愿服务", path: "/docs/志愿服务功能需求说明.md", label: "志愿服务功能需求说明", version: "V1.0 · 2026-06-30" },
+  { name: "志愿服务", path: "/docs/志愿服务功能需求说明.md", label: "志愿服务功能需求说明", version: "V2.0 · 2026-07-02" },
   { name: "综合系统", path: "/docs/requirement.md", label: "综合系统需求说明书", version: "V2.2 · 2026-05-28" },
 ]
 

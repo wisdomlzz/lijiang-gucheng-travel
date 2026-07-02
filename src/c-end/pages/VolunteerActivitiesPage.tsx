@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react"
 import { useNavigate } from "react-router"
 import {
   Heart, MapPin, ChevronRight, Calendar, ArrowRight, AlertCircle, RefreshCw,
-  Clock, Search, Sparkles, CheckCircle2, AlertTriangle, X, List,
+  Clock, Search, Sparkles, CheckCircle2, AlertTriangle, X, XCircle,
 } from "lucide-react"
 import { PageHeader } from "../components/PageHeader"
 import { useVolunteerStore } from "../../shared/services/volunteer"
@@ -35,9 +35,11 @@ function fmtDate(d: string) {
 const STATUS_META: Record<string, { label: string; bg: string; fg: string; dot: string }> = {
   signed_up:        { label: "已报名",   bg: "#DBEAFE", fg: "#2563EB", dot: "#2563EB" },
   checked_in:       { label: "已签到",   bg: "#D1FAE5", fg: "#059669", dot: "#059669" },
-  checked_out:      { label: "已完成",   bg: "#F1F5F9", fg: "#64748B", dot: "#94A3B8" },
-  no_show:          { label: "缺席",     bg: "#FEE2E2", fg: "#DC2626", dot: "#DC2626" },
-  checkout_overdue: { label: "待处理",   bg: "#FEF3C7", fg: "#D97706", dot: "#D97706" },
+  checked_out:      { label: "已签退",   bg: "#F1F5F9", fg: "#64748B", dot: "#94A3B8" },
+  no_show:          { label: "未参与",   bg: "#FEF3C7", fg: "#B45309", dot: "#D97706" },
+  checkout_overdue: { label: "待补签退", bg: "#FEF3C7", fg: "#D97706", dot: "#D97706" },
+  pending:          { label: "待签到",   bg: "#DBEAFE", fg: "#2563EB", dot: "#2563EB" },
+  cancelled:        { label: "已取消",   bg: "#F1F5F9", fg: "#94A3B8", dot: "#CBD5E1" },
 }
 
 function StatusDot({ status }: { status: string }) {
@@ -59,8 +61,8 @@ function StatusBadge({ status, compact }: { status: string; compact?: boolean })
 
 // ── Discover Activity Card ──
 
-function DiscoverCard({ act, count, mySignUp, onClick, index }: {
-  act: any; count: number; mySignUp: any; onClick: () => void; index: number
+function DiscoverCard({ act, count, mySignUp, myDailyStatus, myTotalHours, onClick, index }: {
+  act: any; count: number; mySignUp: any; myDailyStatus?: string; myTotalHours?: number; onClick: () => void; index: number
 }) {
   const now = new Date()
   const full = count >= act.maxParticipants
@@ -69,6 +71,42 @@ function DiscoverCard({ act, count, mySignUp, onClick, index }: {
   const progress = act.maxParticipants > 0 ? count / act.maxParticipants : 1
 
   const alreadySigned = !!mySignUp
+
+  // ── Badge（右上角 · 你与活动的关系）──
+  const badgeInfo = alreadySigned
+    ? { label: "已报名", bg: "#DBEAFE", fg: "#2563EB" }
+    : act.status === "cancelled"
+    ? { label: "已取消", bg: "#F1F5F9", fg: "#94A3B8" }
+    : act.status === "ended"
+    ? { label: "已结束", bg: "#F1F5F9", fg: "#94A3B8" }
+    : { label: "报名中", bg: "#D1FAE5", fg: "#059669" }
+
+  // ── Footer text（底部 · 操作引导）──
+  let footer: { text: string; color: string } | null = null
+
+  if (alreadySigned) {
+    if (myDailyStatus === "checked_in") {
+      footer = { text: "签退", color: "#D97706" }
+    } else if (myDailyStatus === "pending") {
+      const start = new Date(act.startTime)
+      const windowOpen = now >= new Date(start.getTime() - 30 * 60000)
+      if (windowOpen && act.status !== "ended") {
+        footer = { text: "签到", color: "#2563EB" }
+      } else {
+        footer = { text: "等待活动开始", color: "#2563EB" }
+      }
+    } else if (myDailyStatus === "checkout_overdue") {
+      footer = { text: "联系管理员", color: "#DC2626" }
+    } else if (myDailyStatus === "checked_out") {
+      footer = { text: `已完成 · ${myTotalHours || 0}h`, color: "#64748B" }
+    }
+    // no_show → 无底部文字
+  } else if (act.status !== "cancelled" && act.status !== "ended") {
+    if (enrollNotStarted) footer = { text: "报名未开启", color: "#D97706" }
+    else if (full) footer = { text: `名额已满 (${count}/${act.maxParticipants})`, color: "#DC2626" }
+    else if (deadlinePassed) footer = { text: "报名已截止", color: "#94A3B8" }
+    else footer = { text: "立即报名", color: "#059669" }
+  }
 
   return (
     <motion.button
@@ -83,10 +121,11 @@ function DiscoverCard({ act, count, mySignUp, onClick, index }: {
         {/* Title row */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <h3 className="text-[14px] font-medium text-slate-800 leading-snug flex-1 min-w-0">
-            {alreadySigned && <span className="inline-block size-1.5 rounded-full bg-primary align-middle mr-1.5" />}
             {act.title}
           </h3>
-          {alreadySigned && <StatusBadge status={mySignUp.status} compact />}
+          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0" style={{ background: badgeInfo.bg, color: badgeInfo.fg }}>
+            {badgeInfo.label}
+          </span>
         </div>
 
         {/* Description */}
@@ -102,39 +141,31 @@ function DiscoverCard({ act, count, mySignUp, onClick, index }: {
 
         {/* Capacity bar */}
         <div>
-          <div className="flex items-center justify-between text-[10px] mb-1">
-            <span className="text-slate-300">报名</span>
-            <span className="font-medium" style={{ color: full ? "#DC2626" : "#059669" }}>{count}/{act.maxParticipants}</span>
+            <div className="flex items-center justify-between text-[10px] mb-1">
+              <span className="text-slate-300">报名</span>
+              <span className="font-medium" style={{ color: full ? "#DC2626" : "#059669" }}>{count}/{act.maxParticipants}</span>
+            </div>
+            <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(progress * 100, 100)}%` }}
+                transition={{ duration: 0.6, delay: index * 0.06 }}
+                className="h-full rounded-full"
+                style={{ background: full ? "#DC2626" : progress > 0.8 ? "#F59E0B" : "#059669" }}
+              />
+            </div>
           </div>
-          <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.min(progress * 100, 100)}%` }}
-              transition={{ duration: 0.6, delay: index * 0.06 }}
-              className="h-full rounded-full"
-              style={{ background: full ? "#DC2626" : progress > 0.8 ? "#F59E0B" : "#059669" }}
-            />
-          </div>
-        </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-slate-50">
-          {alreadySigned ? (
-            <span className="text-[11px] font-medium text-primary">已报名</span>
-          ) : enrollNotStarted ? (
-            <span className="text-[11px] font-medium" style={{ color: "#D97706" }}>报名未开启</span>
-          ) : full ? (
-            <span className="text-[11px] font-medium" style={{ color: "#DC2626" }}>名额已满</span>
-          ) : deadlinePassed ? (
-            <span className="text-[11px] font-medium" style={{ color: "#94A3B8" }}>报名已截止</span>
-          ) : (
-            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
-              <Heart size={11} className="fill-emerald-500" />
-              立即报名
+        {footer && (
+          <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-slate-50">
+            <span className="text-[11px] font-medium" style={{ color: footer.color }}>
+              {footer.text === "立即报名" && <Heart size={11} className="inline fill-emerald-500 mr-1 -mt-0.5" />}
+              {footer.text}
             </span>
-          )}
-          <ChevronRight size={13} className="text-slate-300" />
-        </div>
+            <ChevronRight size={13} className="text-slate-300" />
+          </div>
+        )}
       </div>
     </motion.button>
   )
@@ -150,6 +181,24 @@ function ActivityBottomSheet({
   onClose: () => void
   onItemClick: (id: string) => void
 }) {
+  // 三级排序：需操作(0) > 等待中(1) > 已结束/取消(2)
+  const sortedItems = useMemo(() => {
+    return [...items].sort((a, b) => {
+      const pri = (item: any) => {
+        const now = new Date()
+        const started = now >= new Date(item.startTime)
+        const ended = now > new Date(item.endTime)
+        const s = item.summaryStatus
+        if (s === "cancelled") return 2
+        if (ended) return 2
+        if (s === "checked_out") return 1
+        if (s === "no_show" || s === "checkout_overdue") return 1
+        if (s === "pending" && !started) return 1
+        return 0 // checked_in 或 pending 已开始 = 需操作
+      }
+      return pri(a) - pri(b)
+    })
+  }, [items])
   // handle: spring animation
   const sheetRef = useRef<HTMLDivElement>(null)
   const startY = useRef(0)
@@ -209,12 +258,12 @@ function ActivityBottomSheet({
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerUp}
             className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-[0_-4px_24px_rgba(0,0,0,0.08)] max-h-[70vh] flex flex-col"
-            style={{ touchAction: "none" }}
           >
             {/* Handle */}
             <div
               onPointerDown={handlePointerDown}
               className="flex items-center justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing shrink-0"
+              style={{ touchAction: "none" }}
             >
               <div className="w-9 h-1 rounded-full bg-slate-200" />
             </div>
@@ -223,7 +272,7 @@ function ActivityBottomSheet({
             <div className="flex items-center justify-between px-5 pb-3 shrink-0">
               <div className="flex items-center gap-2">
                 <div className="size-5 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <List size={12} className="text-primary" />
+                  <Heart size={12} className="text-primary" />
                 </div>
                 <span className="text-[15px] font-semibold text-slate-800">我的活动</span>
                 <span className="text-[11px] text-slate-400 bg-slate-100 rounded-full px-2 py-0.5">{items.length}</span>
@@ -235,7 +284,7 @@ function ActivityBottomSheet({
 
             {/* List */}
             <div className="flex-1 overflow-y-auto px-5 pb-6 space-y-2.5">
-              {items.length === 0 ? (
+              {sortedItems.length === 0 ? (
                 <div className="text-center py-10">
                   <div className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-3">
                     <Sparkles size={18} className="text-slate-300" />
@@ -243,13 +292,13 @@ function ActivityBottomSheet({
                   <p className="text-[13px] text-slate-400">暂未报名活动</p>
                 </div>
               ) : (
-                items.map((item, i) => {
-                  const m = STATUS_META[item.signUp.status] || { bg: "#F1F5F9", fg: "#64748B" }
+                sortedItems.map((item, i) => {
+                  const m = STATUS_META[item.summaryStatus] || { bg: "#F1F5F9", fg: "#64748B" }
                   const now = new Date()
                   const started = now >= new Date(item.startTime)
                   const ended = now > new Date(item.endTime)
-                  const canCheckIn = started && !ended && item.signUp.status === "signed_up"
-                  const canCheckOut = started && !ended && item.signUp.status === "checked_in"
+                  const canCheckIn = started && !ended && item.summaryStatus === "pending"
+                  const canCheckOut = started && !ended && item.summaryStatus === "checked_in"
 
                   return (
                     <motion.button
@@ -267,7 +316,7 @@ function ActivityBottomSheet({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2 mb-1">
                             <h4 className="text-[13px] font-medium text-slate-800 truncate">{item.title}</h4>
-                            <StatusBadge status={item.signUp.status} compact />
+                            <StatusBadge status={item.summaryStatus} compact />
                           </div>
                           <div className="flex items-center gap-2 text-[11px] text-slate-400">
                             <span className="inline-flex items-center gap-1"><MapPin size={10} />{item.location}</span>
@@ -290,20 +339,25 @@ function ActivityBottomSheet({
                               <ArrowRight size={13} className="ml-auto" />
                             </div>
                           )}
-                          {item.signUp.status === "checked_out" && (
+                          {item.summaryStatus === "checked_out" && (
                             <div className="mt-2 text-[11px] text-slate-400 flex items-center gap-1.5">
                               <CheckCircle2 size={12} />
-                              已完成 · {item.signUp.serviceHours ?? 0}h
+                              {item.totalCount > 1 ? `已完成 ${item.doneCount}/${item.totalCount} 天` : "已完成"} · {item.totalHours ?? 0}h
                             </div>
                           )}
-                          {item.signUp.status === "no_show" && (
-                            <div className="mt-2 flex items-center gap-1.5 text-[11px] text-red-500">
-                              <AlertCircle size={12} />未签到
+                          {item.summaryStatus === "cancelled" && (
+                            <div className="mt-2 text-[11px] text-slate-400 flex items-center gap-1.5">
+                              <XCircle size={12} />活动已取消
                             </div>
                           )}
-                          {item.signUp.status === "checkout_overdue" && (
+                          {item.summaryStatus === "no_show" && (
                             <div className="mt-2 flex items-center gap-1.5 text-[11px] text-amber-600">
-                              <AlertTriangle size={12} />未签退
+                              <AlertCircle size={12} />未参与
+                            </div>
+                          )}
+                          {item.summaryStatus === "checkout_overdue" && (
+                            <div className="mt-2 flex items-center gap-1.5 text-[11px] text-amber-600">
+                              <AlertTriangle size={12} />待补签退
                             </div>
                           )}
                         </div>
@@ -326,17 +380,15 @@ function FAB({ count, onClick }: { count: number; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-6 right-5 z-30 h-11 rounded-2xl bg-white shadow-[0_2px_16px_rgba(0,0,0,0.12)] flex items-center gap-2 pl-4 pr-3.5 active:scale-[0.95] transition-all hover:shadow-[0_4px_20px_rgba(0,0,0,0.16)]"
+      className="fixed bottom-5 right-4 z-30 flex items-center gap-2 h-11 pl-4 pr-3 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700 text-white shadow-[0_4px_20px_rgba(0,0,0,0.18)] active:scale-[0.95] transition-all hover:shadow-[0_6px_24px_rgba(0,0,0,0.24)]"
     >
-      <span className="text-[13px] font-medium text-slate-700">我的活动</span>
-      <div className="relative flex items-center">
-        <List size={16} className="text-slate-400" />
-        {count > 0 && (
-          <span className="absolute -top-2 -right-2 size-4.5 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center shadow-sm shadow-primary/30 min-w-[18px] px-1">
-            {count > 9 ? "9+" : count}
-          </span>
-        )}
-      </div>
+      <Heart size={15} className="text-amber-300" />
+      <span className="text-[13px] font-medium">我的活动</span>
+      {count > 0 && (
+        <span className="ml-0.5 min-w-[20px] h-5 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center px-1.5">
+          {count > 9 ? "9+" : count}
+        </span>
+      )}
     </button>
   )
 }
@@ -347,6 +399,7 @@ export function VolunteerActivitiesPage() {
   const navigate = useNavigate()
   const activities = useVolunteerStore((s) => s.activities)
   const signUps = useVolunteerStore((s) => s.signUps)
+  const dailyRecords = useVolunteerStore((s) => s.dailyRecords)
   const getSignUpCount = useVolunteerStore((s) => s.getSignUpCount)
   const getByUserId = useVolunteerStore((s) => s.getByUserId)
   const user = useAuthStore((s) => s.user)
@@ -360,9 +413,8 @@ export function VolunteerActivitiesPage() {
     if (sessionStorage.getItem(BS_SESSION_KEY)) return
 
     const mySignUps = signUps.filter((s) => s.volunteerId === volunteer.id)
-    const hasActive = mySignUps.some((s) => {
-      const act = activities.find((a) => a.id === s.activityId)
-      return act && (s.status === "signed_up" || s.status === "checked_in")
+    const hasActive = mySignUps.some((su) => {
+      return dailyRecords.some((d) => d.signUpId === su.id && (d.status === "pending" || d.status === "checked_in"))
     })
 
     if (hasActive) setBsOpen(true)
@@ -375,7 +427,7 @@ export function VolunteerActivitiesPage() {
 
   const now = new Date()
   const visibleActivities = useMemo(() =>
-    activities.filter((a) => a.status === "published" || a.status === "in_progress"),
+    activities.filter((a) => a.status !== "draft"),
   [activities])
 
   // signed-up activities for bottom sheet
@@ -385,9 +437,33 @@ export function VolunteerActivitiesPage() {
     return my.map((su) => {
       const act = activities.find((a) => a.id === su.activityId)
       if (!act) return null
-      return { ...act, signUp: su }
+      // 从日记录汇总状态
+      const drs = dailyRecords.filter(d => d.signUpId === su.id)
+      // 已取消的活动直接显示取消状态
+      if (act.status === "cancelled") {
+        return { ...act, signUp: su, summaryStatus: "cancelled", doneCount: 0, totalCount: drs.length, totalHours: 0 }
+      }
+      const hasCheckedIn = drs.some(d => d.status === "checked_in")
+      const allCheckedOut = drs.length > 0 && drs.every(d => d.status === "checked_out")
+      const hasAbnormal = drs.some(d => d.status === "no_show" || d.status === "checkout_overdue")
+      // 优先级：可操作(checked_in) > 已完成(checked_out) > 有异常 > 待签到
+      const summaryStatus = hasCheckedIn ? "checked_in" : allCheckedOut ? "checked_out" : hasAbnormal ? "no_show" : "pending"
+      const doneCount = drs.filter(d => d.status === "checked_out").length
+      const totalCount = drs.length
+      const totalHours = drs.reduce((sum, d) => sum + (d.serviceHours || 0), 0)
+      return { ...act, signUp: su, summaryStatus, doneCount, totalCount, totalHours }
     }).filter(Boolean)
-  }, [volunteer, signUps, activities])
+  }, [volunteer, signUps, activities, dailyRecords])
+
+  // ── Volunteer summary stats ──
+  const volStats = useMemo(() => {
+    if (!volunteer) return null
+    const mySignUps = signUps.filter((s) => s.volunteerId === volunteer.id)
+    const myRecords = dailyRecords.filter((d) => mySignUps.some((su) => su.id === d.signUpId))
+    const totalHours = Math.round(myRecords.reduce((sum, d) => sum + (d.serviceHours || 0), 0) * 10) / 10
+    const activityCount = mySignUps.length
+    return { totalHours, activityCount }
+  }, [volunteer, signUps, dailyRecords])
 
   // discover list
   const searchFn = useCallback(
@@ -444,6 +520,21 @@ export function VolunteerActivitiesPage() {
           </div>
         )}
 
+        {/* Volunteer stats */}
+        {volStats && (
+          <div className="rounded-xl bg-white border border-slate-100 px-4 py-2.5 flex items-center gap-4 shadow-[0_1px_6px_rgba(0,0,0,0.03)]">
+            <div className="flex items-center gap-1.5 text-[12px]">
+              <span className="text-slate-400">累计</span>
+              <span className="font-semibold text-emerald-600">{volStats.totalHours}h</span>
+            </div>
+            <div className="w-px h-4 bg-slate-100" />
+            <div className="flex items-center gap-1.5 text-[12px]">
+              <span className="text-slate-400">参与</span>
+              <span className="font-semibold text-primary">{volStats.activityCount} 场</span>
+            </div>
+          </div>
+        )}
+
         {/* Search */}
         <div className="relative">
           <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" />
@@ -471,12 +562,27 @@ export function VolunteerActivitiesPage() {
               {visible.map((act, i) => {
                 const count = getSignUpCount(act.id)
                 const mySignUp = volunteer ? signUps.find((s) => s.volunteerId === volunteer.id && s.activityId === act.id) : undefined
+                // 取该报名最近一条需要操作的日记录状态
+                const myDailyStatus = mySignUp
+                  ? (() => {
+                      const drs = dailyRecords.filter(d => d.signUpId === mySignUp.id).sort((a, b) => a.date.localeCompare(b.date))
+                      // 优先：checked_in > pending > 其他
+                      return drs.find(d => d.status === "checked_in")?.status
+                        || drs.find(d => d.status === "pending")?.status
+                        || drs[drs.length - 1]?.status
+                    })()
+                  : undefined
+                const myTotalHours = mySignUp
+                  ? dailyRecords.filter(d => d.signUpId === mySignUp.id).reduce((s, d) => s + (d.serviceHours || 0), 0)
+                  : 0
                 return (
                   <DiscoverCard
                     key={act.id}
                     act={act}
                     count={count}
                     mySignUp={mySignUp}
+                    myDailyStatus={myDailyStatus}
+                    myTotalHours={myTotalHours}
                     onClick={() => navigate(`/c/volunteer/activities/${act.id}`)}
                     index={i}
                   />

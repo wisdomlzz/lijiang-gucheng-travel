@@ -328,8 +328,17 @@ export type FavoriteItem = {
 
 // ====== 志愿服务 ======
 export type VolunteerStatus = "pending" | "approved" | "rejected"
-export type VolunteerActivityStatus = "draft" | "pending_review" | "published" | "in_progress" | "ended" | "cancelled"
+export type VolunteerActivityStatus = "draft" | "published" | "in_progress" | "ended" | "cancelled"
 export type VolunteerSignUpStatus = "signed_up" | "checked_in" | "checked_out" | "no_show" | "checkout_overdue"
+
+/** 每日签到状态（一条报名 → N 条日记录，N = 活动天数） */
+export type VolunteerDailyStatus = "pending" | "checked_in" | "checked_out" | "no_show" | "checkout_overdue"
+
+export type VolunteerReviewRecord = {
+  action: "approved" | "rejected" | "resubmitted"
+  note?: string
+  reviewedAt: string
+}
 
 export type Volunteer = {
   id: string
@@ -341,36 +350,54 @@ export type Volunteer = {
   credentialImages: string[]
   status: VolunteerStatus
   reviewNote?: string
+  reviewHistory?: VolunteerReviewRecord[]
   reviewedAt?: string
   createdAt: string
 }
 
+/** 活动时间模式：
+ *  single  — 单天：startTime~endTime 即活动起止（如 7月1日 09:00~12:00）
+ *  multi   — 多天：startTime/endTime 为首尾日期，dailyStartTime/dailyEndTime 为每日固定时段（如 7月1日~3日，每天14:00~17:00）
+ */
 export type VolunteerActivity = {
   id: string
   title: string
   description: string
   images: string[]
   location: string
-  startTime: string
-  endTime: string
+  startTime: string          // 单天=活动开始 / 多天=首日开始时刻
+  endTime: string            // 单天=活动结束 / 多天=末日结束时刻
+  timeMode: "single" | "multi"
+  dailyStartTime?: string    // 多天模式：每日开始时间 "HH:mm"
+  dailyEndTime?: string      // 多天模式：每日结束时间 "HH:mm"
   enrollStartTime?: string
   signUpDeadline: string
   maxParticipants: number
   status: VolunteerActivityStatus
-  reviewNote?: string
-  reviewedAt?: string
   createdAt: string
 }
 
+/** 报名记录 —— 纯报名，不再包含签到/签退信息 */
 export type VolunteerSignUp = {
   id: string
   volunteerId: string
   activityId: string
   signUpTime: string
+}
+
+/** 每日签到记录 —— 报名后按活动天数生成，每天独立签到/签退 */
+export type VolunteerDailyRecord = {
+  id: string
+  signUpId: string
+  volunteerId: string
+  activityId: string
+  date: string               // "YYYY-MM-DD" 该天日期
+  dayStartTime: string       // 该天活动开始时刻（完整 datetime）
+  dayEndTime: string         // 该天活动结束时刻（完整 datetime）
   checkInTime?: string
   checkOutTime?: string
   serviceHours?: number
-  status: VolunteerSignUpStatus
+  status: VolunteerDailyStatus
   isLate?: boolean
   lateMinutes?: number
   isManual?: boolean

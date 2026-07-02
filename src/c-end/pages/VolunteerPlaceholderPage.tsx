@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from "motion/react"
 
 const POLITICAL_OPTIONS = ["中共党员", "共青团员", "群众", "其他"]
 const MAX_CREDENTIAL_IMAGES = 5
-const MAX_FILE_SIZE_MB = 5
 
 // ── Credential Image Upload ──
 
@@ -55,7 +54,7 @@ function CredentialUpload({ images, onAdd, onRemove }: {
               </div>
               <p className="text-[13px] font-medium text-amber-700">上传资质图片</p>
               <p className="text-[11px] text-amber-400">
-                支持 JPG/PNG，单张 ≤{MAX_FILE_SIZE_MB}MB，最多 {MAX_CREDENTIAL_IMAGES} 张
+                最多 {MAX_CREDENTIAL_IMAGES} 张
                 <span className="mx-1.5 text-amber-300">·</span>
                 <span className="text-amber-500">已选 {images.length}/{MAX_CREDENTIAL_IMAGES}</span>
               </p>
@@ -145,7 +144,14 @@ export function VolunteerPlaceholderPage() {
 
   const handleSubmit = () => {
     if (!userId) { toast.error("请先登录"); return }
-    const res = register(userId, name || "游客", phone || "13800000000", politicalStatus || "群众", workUnit || "自由职业", credentialImages || [])
+    // 校验所有必填字段
+    if (!name.trim()) { toast.error("请填写姓名"); return }
+    if (!phone.trim()) { toast.error("请填写电话"); return }
+    if (!/^1\d{10}$/.test(phone.trim())) { toast.error("请填写正确的11位手机号"); return }
+    if (!politicalStatus) { toast.error("请选择政治面貌"); return }
+    if (!workUnit.trim()) { toast.error("请填写工作单位"); return }
+    if (credentialImages.length === 0) { toast.error("请上传资质图片"); return }
+    const res = register(userId, name.trim(), phone.trim(), politicalStatus, workUnit.trim(), credentialImages)
     if (res.ok) toast.success(res.msg); else toast.error(res.msg)
   }
 

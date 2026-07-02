@@ -126,7 +126,7 @@ export function HomePage() {
             <ImageWithFallback
               src={banners[bannerIdx].imageUrl}
               alt="banner"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </motion.div>
         </AnimatePresence>

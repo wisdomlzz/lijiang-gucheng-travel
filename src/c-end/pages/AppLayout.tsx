@@ -1,14 +1,13 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
-import { Home, ShoppingBag, User, LayoutGrid } from "lucide-react";
+import { Home, ShoppingBag, User, LayoutGrid, Store } from "lucide-react";
 import { motion } from "motion/react";
 import aiAvatar from "../assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
-import { CRMEB_C_URL } from "../../shared/constants";
 
 const tabs = [
   { key: "/c/home", label: "首页", icon: Home },
-  { key: "/c/services", label: "一键服务", icon: LayoutGrid },
+  { key: "/c/visitor-services", label: "游客服务", icon: LayoutGrid },
   { key: "/c/ai", label: "AI咨询", icon: null, isCenter: true },
-  { key: "crmeb", label: "商城", icon: ShoppingBag, external: true },
+  { key: "/c/merchant-services", label: "商户服务", icon: Store },
   { key: "/c/profile", label: "我的", icon: User },
 ];
 
@@ -67,17 +66,10 @@ export function AppLayout() {
             }
 
             const Icon = tab.icon!;
-            const isExternal = (tab as any).external;
             return (
               <button
                 key={tab.key}
-                onClick={() => {
-                  if (isExternal) {
-                    window.open(CRMEB_C_URL, "_blank")
-                  } else {
-                    navigate(tab.key)
-                  }
-                }}
+                onClick={() => navigate(tab.key)}
                 className="flex flex-col items-center justify-center pt-1.5 flex-1 active:scale-95 transition-transform relative"
               >
                 <motion.div

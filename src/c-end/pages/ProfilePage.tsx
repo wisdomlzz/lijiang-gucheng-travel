@@ -9,6 +9,7 @@ import userAvatar from "../assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
 import { useConvenienceStore } from "../../shared/services/convenience";
 import { usePointsStore } from "../../shared/services/points";
 import { useAuthStore } from "../../shared/stores/auth-store";
+import { useVolunteerStore } from "../../shared/services/volunteer";
 
 export function ProfilePage() {
   const navigate = useNavigate();
@@ -22,6 +23,19 @@ export function ProfilePage() {
     () => allOrders.filter((o) => !userId || o.userId === userId).filter((o) => o.status !== "S40" && o.status !== "S50").length,
     [allOrders, userId]
   );
+
+  // ── Volunteer stats ──
+  const volunteer = useVolunteerStore((s) => userId ? s.getByUserId(userId) : undefined)
+  const allSignUps = useVolunteerStore((s) => s.signUps)
+  const allDailyRecords = useVolunteerStore((s) => s.dailyRecords)
+  const volStats = useMemo(() => {
+    if (!volunteer || volunteer.status !== "approved") return null
+    const mySignUps = allSignUps.filter((s) => s.volunteerId === volunteer.id)
+    const myRecords = allDailyRecords.filter((d) => mySignUps.some((su) => su.id === d.signUpId))
+    const totalHours = Math.round(myRecords.reduce((sum, d) => sum + (d.serviceHours || 0), 0) * 10) / 10
+    const activityCount = mySignUps.length
+    return { totalHours, activityCount }
+  }, [volunteer, allSignUps, allDailyRecords])
 
   const menu = [
     { icon: Gift, label: "积分中心", color: "#F59E0B", to: "/c/points" },
@@ -92,6 +106,27 @@ export function ProfilePage() {
             </div>
           </button>
         </div>
+
+        {/* 志愿服务统计（仅已认证志愿者显示） */}
+        {volStats && (
+          <button onClick={() => navigate("/c/volunteer/activities")}
+            className="px-4 mb-3 block w-full">
+            <div className="bg-white rounded-2xl border border-slate-100 px-4 py-3 flex items-center justify-between active:scale-[0.98] transition-transform shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+              <div className="flex items-center gap-3">
+                <div className="size-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center">
+                  <Heart size={16} className="text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="text-[13px] font-medium text-slate-800">志愿服务</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    累计 {volStats.totalHours}h · 参与 {volStats.activityCount} 场
+                  </p>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-slate-300" />
+            </div>
+          </button>
+        )}
 
         {/* 功能卡片区 */}
         <div className="px-4">

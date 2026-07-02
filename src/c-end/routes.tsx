@@ -53,6 +53,8 @@ const NaxiCheckInPage = lazy(() => import("./pages/NaxiCheckInPage").then(m => (
 const CourtyardBookingPage = lazy(() => import("./pages/CourtyardBookingPage").then(m => ({ default: m.CourtyardBookingPage })))
 const MyBookingsPage = lazy(() => import("./pages/MyBookingsPage").then(m => ({ default: m.MyBookingsPage })))
 const MyShopPage = lazy(() => import("./pages/MyShopPage").then(m => ({ default: m.MyShopPage })))
+const VisitorServicesPage = lazy(() => import("./pages/VisitorServicesPage").then(m => ({ default: m.VisitorServicesPage })))
+const MerchantServicesPage = lazy(() => import("./pages/MerchantServicesPage").then(m => ({ default: m.MerchantServicesPage })))
 
 // 遗产详情（按类型分立）
 const RoadDetail = lazy(() => import("./pages/heritage/detail/RoadDetail").then(m => ({ default: m.RoadDetail })))
@@ -72,6 +74,8 @@ export const cRoutes = [
       { path: "ai", element: <AIChatPage /> },
       { path: "profile", element: <ProfilePage /> },
       { path: "services", element: <ServicesPage /> },
+      { path: "visitor-services", element: <VisitorServicesPage /> },
+      { path: "merchant-services", element: <MerchantServicesPage /> },
     ],
   },
   { path: "orders", element: <OrderListPage /> },
