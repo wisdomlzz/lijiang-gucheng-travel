@@ -6,7 +6,7 @@ import {
   MessageCircleWarning, Camera, Users, Landmark, ShoppingBag, ParkingCircle, Clock,
 } from "lucide-react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
-import { useConvenienceStore } from "../../shared/services/convenience"
+import { useConvenienceStore } from "../../features/convenience/store"
 import { useComplaintStore } from "../../shared/services/complaint";
 import { PageHeader } from "../components/common/PageHeader";
 import { useAuthStore } from "../../shared/stores/auth-store";
@@ -30,8 +30,7 @@ export function Workbench() {
   const parkings = useContentPOIStore((s) => s.parkings);
 
   const pendingDispatch = orders.filter((o) => o.status === "S10" || o.status === "A10" || o.status === "S90").length;
-  const priceDisputes = orders.filter((o) => o.status === "A38").length;
-  const cancelPending = orders.filter((o) => o.status === "R80").length;
+  const cancelPending = orders.filter((o) => o.cancelRequested).length;
   const activeOrders = orders.filter((o) => ["A20", "A30", "A35", "A40", "S48", "S55"].includes(o.status)).length;
   const completedOrders = orders.filter((o) => o.status === "S40").length;
   const complaintTodo = complaints.filter((c) => c.status === "C10").length;
@@ -46,7 +45,6 @@ export function Workbench() {
 
   const todoItems = [
     { label: "便民服务派单处理", count: pendingDispatch, target: "convenience", urgent: pendingDispatch > 0, note: "仅便民服务，不含商城派单" },
-    { label: "价格争议仲裁", count: priceDisputes, target: "price-arbitration", urgent: priceDisputes > 0, note: "处理游客与服务人员报价争议" },
     { label: "取消申请审核", count: cancelPending, target: "convenience", urgent: cancelPending > 0, note: "便民服务取消审批" },
     { label: "投诉管理", count: complaintTodo, target: "complaints", urgent: complaintTodo > 0, note: "受理、处理、完结投诉" },
     { label: "供应商入驻审核", count: supplierPending, target: "supplier-applications", urgent: supplierPending > 0, note: "审核资质，后续进商城后台" },

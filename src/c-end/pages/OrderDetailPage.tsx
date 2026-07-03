@@ -6,14 +6,14 @@ import { TrustScoreBadge } from "../../shared/components/TrustScoreBadge";
 import { PageHeader } from "../components/PageHeader";
 import { StatusProgress } from "../components/StatusProgress";
 import { ContactSheet } from "../components/ContactSheet";
-import { useConvenienceStore } from "../../shared/services/convenience"
+import { useConvenienceStore } from "../../features/convenience/store"
 import { useTrustScoreStore } from "../../shared/services/trust-score";
 import type { ConvenienceOrder } from "../../shared/types";
 import {
   CONVENIENCE_STATUS_META,
   getConvenienceActions,
-  resolveStaff,
-} from "../../shared/orders";
+} from "../../features/convenience/shared/convenience-meta"
+import { resolveStaff } from "../../shared/orders/staff"
 
 function CancelConfirmDialog({
   open,
@@ -144,7 +144,7 @@ function ConvenienceOrderDetail({ id, data }: { id: string; data: ConvenienceOrd
   const hasContact = actions.includes("contact");
   const hasConfirm = actions.includes("confirm_complete");
   const needsPayment = data.status === "A35";
-  const isCancelPending = data.status === "R80";
+  const isCancelPending = data.cancelRequested;
 
   useEffect(() => {
     if (data.status === "S40" && !data.rating && data.completedAt) {

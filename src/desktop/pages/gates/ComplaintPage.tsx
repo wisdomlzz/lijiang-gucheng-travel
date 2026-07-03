@@ -9,7 +9,7 @@ import { PaginationBar } from "@/shared/components/ui/data-toolbar";
 import { StatusBadge } from "@/shared/components/ui/status-badge";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { useAuthStore } from "../../../shared/stores/auth-store";
-import { useConvenienceStore } from "../../../shared/services/convenience";
+import { useConvenienceStore } from "../../../features/convenience/store";
 import { useComplaintStore } from "../../../shared/services/complaint";
 import { usePagination } from "@/shared/hooks/usePagination";
 import {
@@ -50,7 +50,7 @@ export default function ComplaintPage() {
   const [rejectReason, setRejectReason] = useState("");
 
   const user = useAuthStore((s) => s.user);
-  const isSuperAdmin = user?.role === "platform_admin";
+  const isSuperAdmin = user?.roles?.includes("platform_admin") ?? false;
   const complaints = useComplaintStore((s) => s.complaints);
   const orders = useConvenienceStore((s) => s.orders);
   const complaintPhone = useComplaintStore((s) => s.complaintPhone);

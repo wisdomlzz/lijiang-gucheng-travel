@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { useMemo } from "react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import userAvatar from "../assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
-import { useConvenienceStore } from "../../shared/services/convenience";
+import { useConvenienceStore } from "../../features/convenience/store";
 import { usePointsStore } from "../../shared/services/points";
 import { useAuthStore } from "../../shared/stores/auth-store";
 import { useVolunteerStore } from "../../shared/services/volunteer";
@@ -15,9 +15,9 @@ export function ProfilePage() {
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
   const userId = useAuthStore((s) => s.user?.id);
-  const userRole = useAuthStore((s) => s.user?.role);
+  const userRole = useAuthStore((s) => s.user?.roles?.[0]);
   const points = usePointsStore((s) => s.accounts[userId ?? "u_c_001"]?.balance ?? 0);
-  const isMerchant = userRole === "supplier";
+  const isMerchant = useAuthStore((s) => s.user?.roles?.includes("supplier") ?? false);
   const allOrders = useConvenienceStore((s) => s.orders);
   const pendingServiceOrders = useMemo(
     () => allOrders.filter((o) => !userId || o.userId === userId).filter((o) => o.status !== "S40" && o.status !== "S50").length,

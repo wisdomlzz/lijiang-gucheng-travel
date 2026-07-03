@@ -2,15 +2,15 @@ import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { User, ChevronRight } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
-import { useConvenienceStore } from "../../shared/services/convenience";
+import { useConvenienceStore } from "../../features/convenience/store";
 import { useAuthStore } from "../../shared/stores/auth-store";
 import { useSearch } from "../../shared/hooks/useSearch";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
 import {
   CONVENIENCE_STATUS_META,
   matchConvenienceFilter,
-  resolveStaff,
-} from "../../shared/orders";
+} from "../../features/convenience/shared/convenience-meta"
+import { resolveStaff } from "../../shared/orders/staff"
 
 type ConvenienceFilter = "all" | "pending" | "completed" | "cancelled";
 
