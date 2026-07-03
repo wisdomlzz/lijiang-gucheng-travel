@@ -3,25 +3,16 @@ import {
   Phone, MapPin, Wallet, Camera, Clock, AlertTriangle, User,
   CheckCircle2, AlertCircle,
 } from "lucide-react";
-import { DetailLayout, InfoRow, SectionCard } from "../../components/shared/DetailLayout";
-import { StatusBadge, StatusKind } from "@/shared/components/ui/status-badge";
-import { ConfirmModal, Toast } from "../../components/Sheet";
+import { DetailLayout, InfoRow, SectionCard } from "../components/DetailLayout";
+import { StatusBadge } from "@/shared/components/ui/status-badge";
+import { ConfirmModal, Toast } from "../components/Sheet";
 import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow";
-import { useConvenienceStore } from "../../../shared/services/convenience";
-import type { ConvenienceStatus } from "../../../shared/types";
+import { useConvenienceStore } from "../../store";
+import type { ConvenienceStatus } from "../../../../shared/types";
+import type { BServiceState } from "../../shared/service-state";
+import { convToBState, B_SERVICE_STATE_META, B_SERVICE_STAGES, B_STATE_TRANSITIONS } from "../../shared/service-state";
 
-export type ServiceState =
-  | "pending"      // 待接单 (A10/A20)
-  | "accepted"     // 已接单 (A30)
-  | "quoted"       // 已核价，待用户支付 (A35)
-  | "paid"         // 已收款 (A40)
-  | "negotiating"  // 协商中 (A38)
-  | "serving"      // 服务中 (S48)
-  | "confirming"   // 待确认 (S55)
-  | "done"         // 已完成 (S40)
-  | "cancelled"    // 已取消 (S50)
-  | "cancelReview" // 取消待审批 (R80)
-  | "manual";      // 待人工处理 (S90)
+export type ServiceState = BServiceState
 
 export type ServiceOrder = {
   id: string;
@@ -44,59 +35,11 @@ export type ServiceOrder = {
   pricingMode?: "postQuote" | "fixed";
 };
 
-const STATE_META: Record<ServiceState, { kind: StatusKind; label: string }> = {
-  pending: { kind: "pending", label: "待接单" },
-  accepted: { kind: "active", label: "已接单" },
-  quoted: { kind: "prepay", label: "待用户支付" },
-  paid: { kind: "active", label: "已收款" },
-  negotiating: { kind: "review", label: "协商中" },
-  serving: { kind: "active", label: "服务中" },
-  confirming: { kind: "review", label: "待确认" },
-  done: { kind: "done", label: "已完成" },
-  cancelled: { kind: "closed", label: "已取消" },
-  cancelReview: { kind: "review", label: "取消待审批" },
-  manual: { kind: "manual", label: "待人工处理" },
-};
+const STATE_META = B_SERVICE_STATE_META
+const CONV_STAGES = B_SERVICE_STAGES
 
-// Stages for convenience (postQuote)
-const CONV_STAGES: { key: ServiceState; label: string }[] = [
-  { key: "accepted", label: "已接单" },
-  { key: "quoted", label: "已核价" },
-  { key: "paid", label: "已收款" },
-  { key: "serving", label: "服务中" },
-  { key: "confirming", label: "待确认" },
-  { key: "done", label: "已完成" },
-];
-
-function convStatusToServiceState(status?: ConvenienceStatus): ServiceState | null {
-  switch (status) {
-    case "S10":
-    case "A10":
-    case "A20":
-      return "pending";
-    case "A30":
-      return "accepted";
-    case "A35":
-      return "quoted";
-    case "A38":
-      return "negotiating";
-    case "A40":
-      return "paid";
-    case "S48":
-      return "serving";
-    case "S55":
-      return "confirming";
-    case "S40":
-      return "done";
-    case "S50":
-      return "cancelled";
-    case "R80":
-      return "cancelReview";
-    case "S90":
-      return "manual";
-    default:
-      return null;
-  }
+function convStatusToServiceState(status?: ConvenienceStatus): BServiceState | null {
+  return status ? convToBState(status) : null
 }
 
 export function ServiceOrderDetail({
@@ -142,19 +85,7 @@ export function ServiceOrderDetail({
     toastTimerRef.current = setTimeout(() => setToast(""), 1600);
   };
 
-  const VALID_TRANSITIONS: Record<ServiceState, ServiceState[]> = {
-    pending: ["accepted"],
-    accepted: ["quoted"],
-    quoted: ["paid", "negotiating"],
-    paid: ["serving"],
-    serving: ["confirming"],
-    confirming: ["done"],
-    cancelReview: ["cancelled", "serving"],
-    manual: ["done"],
-    negotiating: [],
-    done: [],
-    cancelled: [],
-  };
+  const VALID_TRANSITIONS = B_STATE_TRANSITIONS;
 
   const change = (next: ServiceState, msg: string) => {
     const allowed = VALID_TRANSITIONS[cur] ?? [];
@@ -168,7 +99,7 @@ export function ServiceOrderDetail({
     } else if (next === "serving") {
       useConvenienceStore.getState().startService(order.id);
     } else if (next === "cancelled") {
-      useConvenienceStore.getState().approveCancel(order.id);
+      useConvenienceStore.getState().approveCancelRequest(order.id);
     }
     // Only notify parent if store actually applied the transition
     const updatedOrder = useConvenienceStore.getState().orders.find(item => item.id === order.id);
@@ -180,11 +111,7 @@ export function ServiceOrderDetail({
   };
 
   const banner =
-    cur === "cancelReview" ? {
-      bg: "#FFF4E5", fg: "#9A3412",
-      icon: <AlertTriangle className="size-4" />,
-      text: "用户申请取消订单，等待审批中",
-    } : cur === "manual" ? {
+    cur === "manual" ? {
       bg: "#FEE2E2", fg: "#9F1239",
       icon: <AlertCircle className="size-4" />,
       text: "异常订单，请联系客服处理",
@@ -251,31 +178,6 @@ export function ServiceOrderDetail({
         return (
           <div className="w-full h-11 rounded-2xl bg-gray-100 text-text-tertiary text-[14px] flex items-center justify-center">
             等待用户确认完成
-          </div>
-        );
-
-      case "negotiating":
-        return (
-          <div className="space-y-2">
-            <div className="w-full h-11 rounded-2xl bg-gray-100 text-text-tertiary text-[14px] flex items-center justify-center">
-              价格协商中，等待平台裁决
-            </div>
-            <button onClick={() => showToast("已联系客服介入")}
-              className="w-full h-11 rounded-2xl text-white text-[14px] font-medium"
-              style={{ background: "#F59E0B", boxShadow: "0 4px 12px rgba(245,158,11,0.32)" }}>
-              联系客服
-            </button>
-          </div>
-        );
-
-      case "cancelReview":
-        return (
-          <div className="flex gap-2">
-            <button onClick={() => setConfirm("reject-cancel")}
-              className="flex-1 h-11 rounded-2xl bg-white border border-[#E5E7EB] text-text-secondary text-[14px]">拒绝取消</button>
-            <button onClick={() => setConfirm("approve-cancel")}
-              className="flex-1 h-11 rounded-2xl text-white text-[14px] font-medium"
-              style={{ background: "#F59E0B", boxShadow: "0 4px 12px rgba(245,158,11,0.32)" }}>同意取消</button>
           </div>
         );
 
@@ -443,14 +345,19 @@ export function ServiceOrderDetail({
         cancel="再想想" confirm="同意取消"
         onConfirm={() => change("cancelled", "订单已取消")} />
       <ConfirmModal open={confirm === "reject-cancel"} onClose={() => setConfirm(null)}
-        title={cur === "cancelReview" ? "拒绝取消申请？" : "等待客服裁决？"}
-        desc={cur === "cancelReview" ? "拒绝后订单将继续服务流程。" : "协商超时将转入人工处理。"}
-        cancel="取消" confirm={cur === "cancelReview" ? "拒绝" : "等待"}
-        onConfirm={() => change("serving", cur === "cancelReview" ? "已拒绝取消" : "已转客服裁决")} />
+        title="拒绝取消申请？"
+        desc="拒绝后订单将继续服务流程。"
+        cancel="取消" confirm="拒绝"
+        onConfirm={() => { useConvenienceStore.getState().rejectCancelRequest(order.id); showToast("已拒绝取消"); setConfirm(null); }} />
       <ConfirmModal open={confirm === "manual-resolve"} onClose={() => setConfirm(null)}
         title="标记为已处理？" desc="确认已与客服沟通完毕并完成线下结算。" tint="#9F1239"
         cancel="取消" confirm="标记已处理"
         onConfirm={() => change("done", "已标记处理")} />
+      <ConfirmModal open={confirm === "reject-pending"} onClose={() => setConfirm(null)}
+        title="已收到取消申请"
+        desc="该订单用户申请了取消，如需处理请前往桌面端。"
+        cancel="知道了" confirm="知道了"
+        onConfirm={() => setConfirm(null)} />
 
       <QuoteAndPhotoFlow
         open={flow !== null}

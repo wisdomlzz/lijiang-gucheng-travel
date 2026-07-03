@@ -1,12 +1,13 @@
 import { useState, useMemo, useCallback } from "react";
 import { Filter, ChevronRight, MapPin, Wallet } from "lucide-react";
 import { StatusBadge } from "@/shared/components/ui/status-badge";
-import { ServiceOrderDetail, ServiceOrder, ServiceState } from "./ServiceOrderDetail";
-import { useConvenienceStore } from "../../../shared/services/convenience";
-import { useAuthStore } from "../../../shared/stores/auth-store";
+import { ServiceOrderDetail, ServiceOrder } from "./ServiceOrderDetail";
+import { useConvenienceStore } from "../../store";
+import { useAuthStore } from "../../../../platform/auth";
 import { useSearch } from "@/shared/hooks/useSearch";
 import { useLoadMore } from "@/shared/hooks/useLoadMore";
-import type { ConvenienceOrder, ConvenienceStatus } from "../../../shared/types";
+import type { ConvenienceOrder } from "../../../../shared/types";
+import { convToBState } from "../../shared/service-state";
 
 const TABS = ["全部", "已完成", "已取消"] as const;
 
@@ -24,27 +25,8 @@ const SERVICE_COLORS: Record<string, string> = {
   "应急医疗": "#DC2626",
 };
 
-function convStatusToServiceState(status: ConvenienceStatus): ServiceState {
-  switch (status) {
-    case "S10": return "pending";
-    case "A10": return "pending";
-    case "A20": return "pending";
-    case "A30": return "accepted";
-    case "A35": return "quoted";
-    case "A38": return "negotiating";
-    case "A40": return "paid";
-    case "S48": return "serving";
-    case "S55": return "confirming";
-    case "S40": return "done";
-    case "S50": return "cancelled";
-    case "R80": return "cancelReview";
-    case "S90": return "manual";
-    default: return "pending";
-  }
-}
-
 function mapConv(o: ConvenienceOrder): ServiceOrder {
-  const state = convStatusToServiceState(o.status);
+  const state = convToBState(o.status);
   return {
     id: o.id,
     state,
@@ -58,7 +40,7 @@ function mapConv(o: ConvenienceOrder): ServiceOrder {
     amount: o.priceQuote ? `¥${o.priceQuote}` : undefined,
     pay: o.payMethod,
     note: o.note,
-    cancelReason: o.status === "R80" ? "用户申请取消" : undefined,
+    cancelReason: o.cancelRequested ? "用户申请取消" : undefined,
     images: o.images,
     paymentProof: o.paymentProof,
     completionPhotos: o.completionPhotos,

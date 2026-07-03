@@ -14,10 +14,10 @@ import {
   LogOut,
   AlertCircle,
 } from "lucide-react";
-import { useAuthStore } from "../../../shared/stores/auth-store";
-import { useConvenienceStore } from "../../../shared/services/convenience";
-import { useTrustScoreStore } from "../../../shared/services/trust-score";
-import { ConfirmModal } from "../../components/Sheet";
+import { useAuthStore } from "../../../../platform/auth";
+import { useConvenienceStore } from "../../store";
+import { useTrustScoreStore } from "../../../../shared/services/trust-score";
+import { ConfirmModal } from "../components/Sheet";
 
 export function ServiceProfile() {
   const [logoutConfirm, setLogoutConfirm] = useState(false);

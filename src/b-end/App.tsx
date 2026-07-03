@@ -2,7 +2,7 @@ import { Suspense, useEffect } from "react"
 import { Routes, Route } from "react-router"
 import { useAuthStore } from "../shared/stores/auth-store"
 import { LoginPageB } from "../shared/components/LoginPageB"
-import { ServiceApp } from "./roles/service/App"
+import { ServiceApp } from "../features/convenience/b-end/pages/App"
 import { RedirectTo } from "../shared/components/RedirectTo"
 
 export function BApp() {

@@ -11,10 +11,10 @@ import {
 } from "lucide-react";
 import { StatusBadge } from "@/shared/components/ui/status-badge";
 import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow";
-import { useStaffStore } from "../../../shared/services/staff"
-import { useConvenienceStore } from "../../../shared/services/convenience";
-import { useAuthStore } from "../../../shared/stores/auth-store";
-import type { ConvenienceStatus } from "../../../shared/types";
+import { useStaffStore } from "../../store/staff-store"
+import { useConvenienceStore } from "../../store";
+import { useAuthStore } from "../../../../platform/auth";
+import type { ConvenienceStatus } from "../../../../shared/types";
 
 type WorkStatus = "online" | "busy" | "rest" | "offline";
 
@@ -76,7 +76,7 @@ export function ServiceWorkbench() {
   const monthCount = staffOrders.filter((o) => o.createdAt.startsWith(monthStr)).length;
 
   // Active orders (in-progress)
-  const activeConvStatuses: ConvenienceStatus[] = ["A20", "A30", "A35", "A38", "A40", "S48", "S55"];
+  const activeConvStatuses: ConvenienceStatus[] = ["A20", "A30", "A35", "A40", "S48", "S55"];
   const activeOrders = staffOrders.filter((o) => activeConvStatuses.includes(o.status));
   const assignedCount = staffOrders.filter((o) => o.status === "A20").length;
 
@@ -90,7 +90,7 @@ export function ServiceWorkbench() {
 
   const activeOrderLabel = (status: ConvenienceStatus) => {
     const labels: Record<string, string> = {
-      A20: "已指派", A30: "已接单", A35: "待用户支付", A38: "协商中",
+      A20: "已指派", A30: "已接单", A35: "待用户支付",
       A40: "已收款", S48: "服务中", S55: "待确认",
     };
     return labels[status] ?? "进行中";
@@ -98,7 +98,6 @@ export function ServiceWorkbench() {
 
   const activeOrderKind = (status: ConvenienceStatus) => {
     if (status === "S55") return "review" as const;
-    if (status === "A38") return "review" as const;
     if (status === "A35") return "prepay" as const;
     return "active" as const;
   };

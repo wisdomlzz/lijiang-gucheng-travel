@@ -2,14 +2,15 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Phone, MapPin, ChevronRight, AlertTriangle, Wallet, CheckCircle2,
 } from "lucide-react";
-import { StatusBadge, StatusKind } from "@/shared/components/ui/status-badge";
-import { Toast } from "../../components/Sheet";
-import { ServiceOrderDetail, ServiceOrder, ServiceState } from "./ServiceOrderDetail";
-import { useConvenienceStore } from "../../../shared/services/convenience";
-import { useAuthStore } from "../../../shared/stores/auth-store";
+import { StatusBadge } from "@/shared/components/ui/status-badge";
+import { Toast } from "../components/Sheet";
+import { ServiceOrderDetail, ServiceOrder } from "./ServiceOrderDetail";
+import { useConvenienceStore } from "../../store";
+import { useAuthStore } from "../../../../platform/auth";
 import { useSearch } from "@/shared/hooks/useSearch";
 import { useLoadMore } from "@/shared/hooks/useLoadMore";
-import type { ConvenienceOrder, ConvenienceStatus } from "../../../shared/types";
+import type { ConvenienceOrder } from "../../../../shared/types";
+import { convToBState, B_SERVICE_STATE_META } from "../../shared/service-state";
 
 const TABS = ["已指派", "进行中", "已完成", "已取消"] as const;
 
@@ -20,25 +21,8 @@ const SERVICE_COLORS: Record<string, string> = {
   "布草配送": "#7C3AED",
   "应急医疗": "#DC2626",
 };
-function convStatusToServiceState(status: ConvenienceStatus): ServiceState {
-  switch (status) {
-    case "S10": case "A10": case "A20": return "pending";
-    case "A30": return "accepted";
-    case "A35": return "quoted";
-    case "A38": return "negotiating";
-    case "A40": return "paid";
-    case "S48": return "serving";
-    case "S55": return "confirming";
-    case "S40": return "done";
-    case "S50": return "cancelled";
-    case "R80": return "cancelReview";
-    case "S90": return "manual";
-    default: return "pending";
-  }
-}
-
 function mapConv(o: ConvenienceOrder, idx: number): ServiceOrder {
-  const state = convStatusToServiceState(o.status);
+  const state = convToBState(o.status);
   return {
     id: o.id, state,
     type: o.serviceType,
@@ -54,18 +38,7 @@ function mapConv(o: ConvenienceOrder, idx: number): ServiceOrder {
   };
 }
 
-const stateMeta: Record<ServiceState, { kind: StatusKind; label: string }> = {
-  pending: { kind: "pending", label: "已指派" },
-  accepted: { kind: "active", label: "已接单" },
-  quoted: { kind: "prepay", label: "待用户支付" },
-  paid: { kind: "active", label: "已收款" },
-  serving: { kind: "active", label: "服务中" },
-  confirming: { kind: "review", label: "待确认" },
-  done: { kind: "done", label: "已完成" },
-  cancelled: { kind: "closed", label: "已取消" },
-  cancelReview: { kind: "review", label: "取消待审批" },
-  manual: { kind: "manual", label: "待人工处理" },
-};
+const stateMeta = B_SERVICE_STATE_META;
 
 export function ServiceTasks() {
   const [tab, setTab] = useState<(typeof TABS)[number]>("已指派");
@@ -101,7 +74,7 @@ export function ServiceTasks() {
   const urgent = counter <= 60;
   const tabFiltered = orders.filter((o) =>
     tab === "已指派" ? o.state === "pending"
-    : tab === "进行中" ? (o.state !== "pending" && o.state !== "done" && o.state !== "cancelled" && o.state !== "cancelReview" && o.state !== "manual")
+    : tab === "进行中" ? (o.state !== "pending" && o.state !== "done" && o.state !== "cancelled" && o.state !== "manual")
     : tab === "已完成" ? o.state === "done"
     : o.state === "cancelled"
   );
@@ -111,7 +84,8 @@ export function ServiceTasks() {
     done: orders.filter((o) => o.state === "done").length,
     cancelled: orders.filter((o) => o.state === "cancelled").length,
   };
-  const cancelReviewCount = orders.filter((o) => o.state === "cancelReview").length;
+  const cancelRequestedOrders = convOrders.filter((o) => o.cancelRequested);
+  const cancelReviewCount = cancelRequestedOrders.length;
   const manualCount = orders.filter((o) => o.state === "manual").length;
 
   const searchFn = useCallback((item: ServiceOrder, query: string) => {
@@ -156,7 +130,7 @@ export function ServiceTasks() {
             </button>
           )}
           {cancelReviewCount > 0 && (
-            <button onClick={() => { const t = orders.find((o) => o.state === "cancelReview"); if (t) setOpenId(t.id); }}
+            <button onClick={() => { const t = orders.find((o) => cancelRequestedOrders.some((c) => c.id === o.id)); if (t) setOpenId(t.id); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left bg-amber-50">
               <AlertTriangle className="size-4 shrink-0 text-amber-800" />
               <span className="text-[12px] flex-1 text-amber-800">{cancelReviewCount} 个取消待审批</span>
@@ -286,10 +260,9 @@ export function ServiceTasks() {
           if (conv) {
             if (next === "accepted" && conv.status === "A20") convStore.acceptOrder(id);
             if (next === "paid" && conv.status === "A35") convStore.markPaid(id, conv.payMethod ?? "online");
-            if (next === "paid" && conv.status === "A38") convStore.resolvePriceDispute(id, "override", conv.priceQuote);
             if (next === "serving" && conv.status === "A40") convStore.startService(id);
-            if (next === "cancelled" && conv.status === "R80") convStore.approveCancel(id);
-            if (next === "serving" && conv.status === "R80") convStore.rejectCancel(id);
+            if (next === "cancelled" && conv.cancelRequested) convStore.approveCancelRequest(id);
+            if (next === "serving" && conv.cancelRequested) convStore.rejectCancelRequest(id);
             if (next === "done" && conv.status === "S90") convStore.forceCancel(id);
             return;
           }

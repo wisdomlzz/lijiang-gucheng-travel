@@ -1,13 +1,13 @@
 import { Suspense } from "react"
 import { Routes, Route } from "react-router"
-import { BLayout } from "../../BLayout"
+import { BLayout } from "../../../../b-end/BLayout"
 import { ServiceWorkbench } from "./ServiceWorkbench"
 import { ServiceTasks } from "./ServiceTasks"
 import { ServiceHistory } from "./ServiceHistory"
 import { ServiceProfile } from "./ServiceProfile"
 import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow"
 import { BNotificationsPage } from "./BNotificationsPage"
-import { RedirectTo } from "../../../shared/components/RedirectTo"
+import { RedirectTo } from "../../../../shared/components/RedirectTo"
 
 export function ServiceApp() {
   return (
