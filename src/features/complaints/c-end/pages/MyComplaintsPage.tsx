@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../../../../c-end/components/PageHeader";
 import { MessageSquare, Clock, CheckCircle, XCircle, ChevronRight } from "lucide-react";
-import { useComplaintStore } from "../../shared/services/complaint";
-import { ComplaintStatusLabel } from "../../shared/types";
-import { useSearch } from "../../shared/hooks/useSearch";
-import { useLoadMore } from "../../shared/hooks/useLoadMore";
+import { useComplaintStore } from "../../store";
+import { ComplaintStatusLabel } from "../../../../shared/types";
+import { useSearch } from "../../../../shared/hooks/useSearch";
+import { useLoadMore } from "../../../../shared/hooks/useLoadMore";
 
 const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
   C10: { label: "已提交", icon: Clock, color: "text-amber-500", bg: "bg-amber-50" },

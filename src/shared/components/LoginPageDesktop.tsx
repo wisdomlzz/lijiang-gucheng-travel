@@ -6,8 +6,8 @@ import { seedUsers } from "../types/seed-users"
 import { Shield, Store, ChevronRight, User, Smartphone, Eye, EyeOff } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../constants"
 
-const ADMIN_USER = seedUsers.find((u) => u.role === "platform_admin")!
-const SUPPLIER_USER = seedUsers.find((u) => u.role === "supplier" && u.platform.includes("desktop"))!
+const ADMIN_USER = seedUsers.find((u) => u.roles.includes("platform_admin"))!
+const SUPPLIER_USER = seedUsers.find((u) => u.roles.includes("supplier") && u.platform.includes("desktop"))!
 
 const HERO_IMG = "https://images.unsplash.com/photo-1663609968423-657ff4f0dd5a?auto=format&fit=crop&w=1200&q=70"
 
@@ -44,7 +44,7 @@ export function LoginPageDesktop() {
   const navigate = useNavigate()
 
   const doLogin = (u: typeof ADMIN_USER) => {
-    if (u.role === "supplier") {
+    if (u.roles.includes("supplier")) {
       window.open(CRMEB_ADMIN_URL, "_blank")
       return
     }

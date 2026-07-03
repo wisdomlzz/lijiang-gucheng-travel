@@ -1,23 +1,22 @@
 // ====== 便民服务状态码（S/A 系列） ======
+// 生产精简：去除 A38（协商中）和 R80（取消审批中），合并为订单标记位
 export type ConvenienceStatus =
   | "S10"  // 已下单
   | "A10"  // 待派单
   | "A20"  // 已指派
   | "A30"  // 已接单
   | "A35"  // 已核价
-  | "A38"  // 协商中
   | "A40"  // 已收款
   | "S48"  // 服务中
   | "S55"  // 完工待确认
   | "S40"  // 已完成
   | "S50"  // 已取消
-  | "R80"  // 取消审批中
   | "S90"  // 待人工处理
 
 export const ConvenienceStatusLabel: Record<ConvenienceStatus, string> = {
   S10: "已下单", A10: "待派单", A20: "已指派", A30: "已接单", A35: "已核价",
-  A38: "协商中", A40: "已收款", S48: "服务中", S55: "完工待确认", S40: "已完成",
-  S50: "已取消", R80: "取消审批中", S90: "待人工处理",
+  A40: "已收款", S48: "服务中", S55: "完工待确认", S40: "已完成",
+  S50: "已取消", S90: "待人工处理",
 }
 
 // ====== 投诉状态码 ======
@@ -44,7 +43,8 @@ export type User = {
   phone: string
   avatar?: string
   platform: Platform[]
-  role: UnifiedRole
+  /** 角色是叠加的：一个用户可以同时是 tourist + supplier + volunteer */
+  roles: UnifiedRole[]
   staffType?: ServiceType
   supplierId?: string
   staffId?: string
@@ -117,17 +117,11 @@ export type ConvenienceOrder = {
   rating?: number
   ratedAt?: string
   completedAt?: string
-  priceDispute?: {
-    targetPrice?: number
-    reason?: string
-    images?: string[]
-    submittedAt?: string
-  }
+  // 取消申请标记（代替 R80 独立状态）
+  cancelRequested?: boolean
   // 派单用坐标
   lat?: number
   lng?: number
-  // 取消审批驳回恢复用：记录取消发起时的状态
-  previousStatus?: ConvenienceStatus
   arbitrationRemark?: string
 }
 

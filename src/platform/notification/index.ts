@@ -1,1 +1,2 @@
-export { useNotificationStore } from "../../shared/services/notification"
+export { useNotificationStore } from "./store"
+export type { NotificationType, Notification } from "./store"

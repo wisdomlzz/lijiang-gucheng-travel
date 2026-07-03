@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { Complaint as ComplaintType, ComplaintStatus } from "../types"
+import type { Complaint as ComplaintType, ComplaintStatus } from "../../../shared/types"
 
 type ComplaintState = {
   complaints: ComplaintType[]
@@ -26,4 +26,4 @@ export const useComplaintStore = create<ComplaintState>((set, get) => ({
   reject: (id, reason) => set((s) => ({ complaints: s.complaints.map((c) => c.id === id ? { ...c, status: "CR" as ComplaintStatus, result: reason, handledAt: new Date().toLocaleString("zh-CN") } : c) })),
 }))
 
-export type { ComplaintType as Complaint } from "../types"
+export type { ComplaintType as Complaint } from "../../../shared/types"

@@ -2,7 +2,7 @@ import { Outlet, useNavigate, useLocation } from "react-router"
 import { useState, useMemo } from "react"
 import { useAuthStore } from "../shared/stores/auth-store"
 import { usePermissionStore } from "../shared/permissions"
-import { useComplaintStore } from "../shared/services/complaint"
+import { useComplaintStore } from "../features/complaints/store"
 import { navGroups } from "./nav"
 import {
   Search, Bell, Maximize2, Smartphone, LogOut, X,
@@ -39,7 +39,7 @@ export function DesktopLayout() {
     platform_admin: "role_admin",
     supplier: "role_supplier",
   }
-  const roleId = roleMap[user?.role ?? ""] ?? "role_supplier"
+  const roleId = user?.roles?.includes("platform_admin") ? roleMap.platform_admin : roleMap.supplier
   const activeRole = roles.find((r) => r.roleId === roleId)
   const rolePerms = activeRole?.permissionCodes ?? []
 
@@ -127,7 +127,7 @@ export function DesktopLayout() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-text-heading truncate">{user?.name}</p>
-              <p className="text-[10px] text-text-tertiary">{user?.role === "platform_admin" ? "平台管理员" : "运营人员"}</p>
+              <p className="text-[10px] text-text-tertiary">{user?.roles?.includes("platform_admin") ? "平台管理员" : "运营人员"}</p>
             </div>
           </div>
         </div>
@@ -196,7 +196,7 @@ export function DesktopLayout() {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuLabel>{user?.role === "platform_admin" ? "平台管理员" : "运营人员"}</DropdownMenuLabel>
+              <DropdownMenuLabel>{user?.roles?.includes("platform_admin") ? "平台管理员" : "运营人员"}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={() => { switchPlatform("c"); navigate("/c") }}>
                 <Smartphone className="size-4 mr-2" /> 切换至游客端

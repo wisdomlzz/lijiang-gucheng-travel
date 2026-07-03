@@ -28,13 +28,11 @@ const ORDER_STATUS_MAP: Record<string, { kind: StatusKind; label: string }> = {
   A20: { kind: "pending", label: "已指派" },
   A30: { kind: "active", label: "已接单" },
   A35: { kind: "prepay", label: "已核价" },
-  A38: { kind: "review", label: "协商中" },
   A40: { kind: "active", label: "已收款" },
   S48: { kind: "active", label: "服务中" },
   S55: { kind: "review", label: "完工待确认" },
   S40: { kind: "done", label: "已完成" },
   S50: { kind: "closed", label: "已取消" },
-  R80: { kind: "review", label: "取消审批中" },
   S90: { kind: "manual", label: "待人工处理" },
 };
 

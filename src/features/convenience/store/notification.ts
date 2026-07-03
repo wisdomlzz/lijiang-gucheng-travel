@@ -1,4 +1,4 @@
-import { useNotificationStore } from "../../../../platform/notification"
+import { useNotificationStore } from "../../../platform/notification"
 
 /**
  * Create a convenience order notification and push to the in-memory store.

@@ -2,8 +2,8 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router";
 import { ChevronLeft, Camera, X, Phone, ChevronDown } from "lucide-react";
-import { useComplaintStore } from "../../shared/services/complaint";
-import { BottomSheetPicker } from "../../shared/components/ui/bottom-sheet-picker";
+import { useComplaintStore } from "../../store";
+import { BottomSheetPicker } from "../../../../shared/components/ui/bottom-sheet-picker";
 import { toast } from "sonner";
 
 const reporterTypes = ["工作人员", "本地居民", "游客"] as const;

@@ -20,7 +20,7 @@ const ConvenienceStaffPage = lazy(() => import("../features/convenience/desktop/
 const PriceArbitrationPage = lazy(() => import("../features/convenience/desktop/pages/PriceArbitrationPage"))
 const BannerManagePage = lazy(() => import("./pages/gates/BannerManagePage").then(m => ({ default: m.BannerManagePage })))
 const GridSettingsPage = lazy(() => import("./pages/gates/GridSettingsPage").then(m => ({ default: m.GridSettingsPage })))
-const ComplaintPage = lazy(() => import("./pages/gates/ComplaintPage"))
+const ComplaintPage = lazy(() => import("../features/complaints/desktop/pages/ComplaintPage"))
 const PhotoRecordsList = lazy(() => import("./pages/photo-records/list"))
 const PhotoRecordShow = lazy(() => import("./pages/photo-records/show"))
 const VolunteerManagePage = lazy(() => import("./pages/VolunteerManagePage").then(m => ({ default: m.VolunteerManagePage })))

@@ -14,208 +14,198 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `/` | LandingPage 入口选择器 | —— | `src/LandingPage.tsx` |
 | `/requirement` | 需求文档展示页 | —— | `src/desktop/pages/RequirementPage` |
 
-根入口在 `src/main.tsx`，所有端都用 `react.lazy` 拆包，按 `vendor-*` 手动分包（见 `vite.config.ts` 中的 `manualChunks`）。
+根入口 `src/main.tsx`，所有端用 `react.lazy` 拆包 + `vite.config.ts` 中 `manualChunks` 手动分包。
+
+**架构模式**：Feature-First Architecture。业务功能按垂直切片收拢在 `features/` 目录下。平台基础设施（auth、UI 组件）在 `platform/`。纯工具在 `shared/`。三个端目录（`c-end/` / `b-end/` / `desktop/`）只保留路由外壳。
+
+---
 
 ## 常用命令
 
 ```bash
-npm run dev          # 启动 Vite 开发服务器
-npm run build        # 生产构建（dist/）
-npm run preview      # 预览构建产物
-npm run verify:seeds # 校验便民服务种子数据状态码覆盖（src/shared/mock/validate-seeds.ts）
-npm run verify:flow  # 运行业务流测试（vitest，当前为占位，verification/tests/ 尚不存在）
-npm run verify:all   # 运行全部 vitest 测试（读取 vite.config.ts）
-npm run deploy       # 调用 ../scripts/deploy.sh 部署
+npm run dev                # 启动 Vite 开发服务器
+npm run build              # 生产构建（dist/）
+npm run preview            # 预览构建产物
+npm run verify:seeds       # 校验便民服务种子数据状态码覆盖（无实际 seed 文件时会跳过）
+npm run verify:all         # 运行全部 vitest 测试
+npm run deploy             # 调用 ../scripts/deploy.sh 部署（本地可能不存在）
 ```
 
-路径别名：`@/*` → `src/*`（在 `tsconfig.json` 和 `vite.config.ts` 中同步配置）。
+路径别名：`@/*` → `src/*`（`tsconfig.json` + `vite.config.ts` 同步）。
+无 `vitest.config.ts` —— vitest 直接读 `vite.config.ts`。
 
-无 `vitest.config.ts` —— vitest 直接从 `vite.config.ts` 读取配置。
-
-## 关键依赖
-
-| 用途 | 库 |
-| --- | --- |
-| 状态管理 | Zustand（持久化到 localStorage） |
-| UI 基础组件 | Radix UI + shadcn/ui（`src/shared/components/ui/`，含应用封装：`image-upload` / `image-with-fallback` / `bottom-sheet-picker` / `data-toolbar` / `status-badge`） |
-| 图标 | `lucide-react` |
-| 表单 | `react-hook-form` + `zod` |
-| 表格 | `@tanstack/react-table`（`DataTable` 组件封装） |
-| 地图 | `leaflet` |
-| 图表 | `recharts` |
-| 动画 | `motion`（Framer Motion 继任者） |
-| 轮播 | `embla-carousel-react` |
-| Toast | `sonner` |
-| Markdown | `react-markdown` + `remark-gfm` |
-| 日期 | `date-fns` |
-| 样式工具 | `class-variance-authority` + `clsx` + `tailwind-merge` + `tw-animate-css` |
+---
 
 ## 目录结构
 
 ```
 src/
-├── main.tsx                # 根路由 + DemoSwitcher + 缩放控件
-├── LandingPage.tsx         # 三个端的入口卡片
-├── DemoSwitcher.tsx        # 悬浮可拖拽的三端切换按钮（位置写 localStorage）
-├── c-end/                  # C端：游客端
-│   ├── App.tsx             # 登录态守卫 + MiniProgramFrame + 路由
-│   ├── routes.tsx          # 路由表 + lazy 加载的页面（50+ 页面）
-│   ├── pages/              # 按业务域分子目录（convenience / guide / heritage / info / routes / shop / heritate/detail 等）
-│   └── data/ types/ assets/
-├── b-end/                  # B端：服务人员端（当前只有 service 一种角色）
-│   ├── App.tsx
-│   ├── BLayout.tsx         # 5-Tab 底部导航（工作台 / 任务 / 通知 / 历史 / 我的）
-│   └── roles/service/      # 子应用：workbench / tasks / notifications / history / profile
-├── desktop/                # 桌面端管理后台
-│   ├── App.tsx             # ProtectedRoute 权限守卫
-│   ├── DesktopLayout.tsx   # 240px 侧边栏 + 顶栏 + 内容区
-│   ├── nav.ts              # 侧边栏分组定义（含 permissionCode）
-│   ├── pages/              # gates / heritage / photo-records / supplier-applications / common / workbench 等
-│   └── components/common/  # CrudRoutes / ProtectedRoute / DataTable / PageLayout / ConfirmDialog 等
-└── shared/                 # 三端共用的基础设施
-    ├── stores/             # Zustand 状态库（auth / zoom / convenience-services / checkin / heritage-manage / supplier / volunteer / content-manage / homepage-config / ai-knowledge）
-    ├── components/         # LoginPageC/B/Desktop + MiniProgramFrame + VideoPlayer + TrustScoreBadge
-    │   └── ui/             # 基于 Radix UI 的基础组件（button / dialog / form / table / sheet / sidebar / carousel ...）
-    ├── mock/               # 模拟后端：每个域一个 store + 通用 engine
-    ├── types/              # 全局类型 + 状态码常量 + 用户/角色定义
-    ├── permissions/        # 角色权限系统（仅两个角色：role_admin 通配符 `*`，role_supplier 有限权限）
-    ├── orders/             # 便民服务状态元数据（CONVENIENCE_STATUS_META + Filter/Action helpers）
-    ├── styles/             # tailwind.css / theme.css / globals.css / fonts.css
-    ├── hooks/              # useLoadMore / usePagination / useSearch
-    ├── constants/          # 占位图 URL 常量
-    └── utils/              # geo.ts
+├── features/                ← ★ 业务功能垂直切片
+│   └── convenience/         ← 便民服务（样板房，已完整搬迁）
+│       ├── c-end/pages/      ← C端页面
+│       ├── b-end/pages/      ← B端页面
+│       ├── b-end/components/ ← B端共享组件
+│       ├── desktop/pages/    ← 桌面端页面
+│       ├── store/            ← 状态管理（store + 过渡表 + 派单 + 定时器 + 种子）
+│       │   ├── store.ts       （瘦 zustand store，委托给子模块）
+│       │   ├── transitions.ts （状态机过渡表）
+│       │   ├── dispatch.ts    （派单引擎 + 距离计算）
+│       │   ├── timers.ts      （定时器管理）
+│       │   ├── seed.ts        （种子数据）
+│       │   ├── notification.ts（通知推送封装）
+│       │   ├── staff-store.ts （服务人员数据）
+│       │   ├── zone-store.ts  （片区配置）
+│       │   ├── settlement-store.ts（结算管理）
+│       │   └── services-store.ts（服务配置）
+│       └── shared/           （跨端共享的类型、元数据、状态映射）
+│
+├── platform/               ← ★ 平台基础设施
+│   ├── auth/                （re-export useAuthStore）
+│   ├── notification/        （re-export useNotificationStore）
+│   └── ui/                  （re-export shadcn 组件）
+│
+├── shared/                 ← ★ 纯工具 + 未搬迁的 service
+│   ├── components/
+│   │   └── ui/              （shadcn/Radix UI 基础组件）
+│   ├── services/            （21 个 store，待逐功能搬迁到 features/）
+│   ├── types/               （全局类型 User / Platform / 状态码）
+│   ├── permissions/         （角色权限：role_admin / role_supplier）
+│   ├── hooks/               （useLoadMore / usePagination / useSearch）
+│   ├── styles/              （tailwind.css / theme.css / globals.css）
+│   └── constants/           （URL 常量等）
+│
+├── c-end/                  ← 路由入口（App.tsx + routes.tsx，无业务代码）
+├── b-end/                  ← 路由入口（App.tsx + BLayout.tsx）
+├── desktop/                ← 路由入口（App.tsx + DesktopLayout + nav.ts）
+│   └── components/common/  （CrudRoutes / ProtectedRoute / DataTable / PageLayout...）
+├── LandingPage.tsx
+└── DemoSwitcher.tsx
 ```
+
+### 搬迁状态
+
+目前已搬迁便民服务（`features/convenience/`）。其余 21 个服务 store 仍在 `shared/services/` 中（volunteer / complaint / checkin / heritage / ai-chat / housing / content 等），可按同样模式逐步逐功能搬迁到 `features/<name>/`。规则：
+
+- **Feature** 可 import **platform/** 和 **shared/** ✅
+- **Feature 之间不能互相 import** ❌（真需要共享 → 抽到 platform/）
+- **platform/ 不能 import features/** ❌
+
+---
 
 ## 关键架构概念
 
-### 1. 三端共享 Auth（`src/shared/stores/auth-store.ts`）
+### 1. 三端共享 Auth（`src/shared/stores/auth-store.ts` / `src/platform/auth/`）
 
 - Zustand store 持久化到 `localStorage`（key: `lijiang-demo-auth`）
-- `user.platform: Platform[]` 决定一个账号能进哪几个端
-- `currentPlatform: "c" | "b" | "desktop"` 决定当前展示的端
-- `switchPlatform()` 切换端但不重置登录态
-- 三个 `App.tsx` 都在 `useEffect` 里检查是否需要自动 `switchPlatform`
+- `user.roles: UnifiedRole[]` —— **角色是叠加的**，同一用户可以是 `["tourist", "supplier"]`
+- `user.platform: Platform[]` —— 决定一个账号能进哪几个端
+- `currentPlatform: "c" | "b" | "desktop"` —— 当前展示的端
+- `switchPlatform()` 切换端不重置登录态
+- 三个 `App.tsx` 在 `useEffect` 里检查是否需要自动 `switchPlatform`
 
-### 2. 手机壳 `MiniProgramFrame`（`src/shared/components/MiniProgramFrame.tsx`）
+### 2. 用户账号（`src/shared/types/seed-users.ts`）
+
+| 姓名 | 手机号 | 角色 | 可进端 | 说明 |
+|------|--------|------|--------|------|
+| 张小游 | 13800001001 | `tourist` | C | 纯游客 |
+| 张老板 | 13800001002 | `tourist+supplier` | C/B/Desktop | **叠加角色**，客栈老板 |
+| 李师傅 | 13900002004 | `service` | B | 便民服务人员 |
+| 管理员 | 18800003001 | `platform_admin` | B/Desktop | 平台管理 |
+
+登录页输入手机号即可（无密码校验，纯 Demo）。
+
+### 3. 手机壳 `MiniProgramFrame`（`src/shared/components/MiniProgramFrame.tsx`）
 
 - 固定 390×844 视口，居中显示，外层可缩放（`useZoomStore`）
-- 顶部状态栏带"切换端"小按钮（`SwitchCamera` 图标）
-- C/B 端的所有页面都被它包住，桌面端不用
+- 顶部状态栏带"切换端"小按钮
+- C/B 端所有页面被它包住，桌面端不用
 
-### 3. DemoSwitcher（`src/DemoSwitcher.tsx`）
+### 4. DemoSwitcher（`src/DemoSwitcher.tsx`）
 
-- 全局悬浮按钮，可拖拽，位置写 `localStorage: demo-switcher-pos`
+- 全局悬浮可拖拽按钮，位置写 `localStorage: demo-switcher-pos`
 - 点击展开三端切换菜单 + 需求文档入口
 - 根路由已全局挂载；LandingPage 上自动隐藏
 
-### 4. 模拟后端与状态机（`src/shared/mock/`）
+### 5. 便民服务状态机
 
-每个域独立一个文件，导出 `useXxxStore()`：
-`addresses / announcements / complaint / convenience / favorites / notifications / staff / supplier-rating / trust-score / zones / seed / seed-factory`
+所有端通过 `features/convenience/store/store.ts` 共享同一份状态。
 
-- 通用机制在 `engine.ts`：
-  - `createMachine(config)` —— 状态机：`states[]` + `transitions[{from, to, on?}]` + `timeouts[{from, afterMs, to, on?}]`
-  - 返回 `{ canTransition(from, to, action?), next(from, action?), timeoutMap, config }`
-  - `subscribeDomain(key)` / `notifyDomain(key)` —— 跨域事件总线
-  - `startTimeout()` / `stopTimeout()` / `clearAllTimeouts()` —— 模拟后端的定时流转（常用于 A10→A20 自动派单等）
-- 状态码采用 S/A/R/C 前缀（`src/shared/types/index.ts`）：
-  - **S** = 终态（S10 已下单、S40 已完成、S50 已取消、S55 完工待确认、S90 待人工处理）
-  - **A** = 进行中（A10 待派单、A20 已指派、A30 已接单、A35 已核价、A38 协商中、A40 已收款、S48 服务中）
-  - **R** = 异常审批（R80 取消审批中）
-  - **C** = 投诉（C10 已提交、C40 已处理、CR 已驳回）
-- 便民服务分两类：**点对点**（送货、行李搬运）vs **片区型**（垃圾清运、送水、布草配送），在 `types/index.ts` 中通过 `POINT_TO_POINT_TYPES` / `ZONE_BASED_TYPES` 区分
-- 种子数据：`seed.ts` 中的 `seedConvenienceOrders` 必须覆盖所有状态码，由 `validate-seeds.ts` 在 `npm run verify:seeds` 时强制检查
-- 新增状态码时需同步更新三处：`types/index.ts`（状态常量）→ `seed-factory.ts`（`ALL_CONVENIENCE_STATUSES` 列表）→ `seed.ts`（种子数据覆盖）
+状态码采用 S/A/C 前缀（`src/shared/types/index.ts`）：
+- **S** = 终态：S10（已下单）、S40（已完成）、S50（已取消）、S55（完工待确认）、S90（待人工处理）
+- **A** = 进行中：A10（待派单）、A20（已指派）、A30（已接单）、A35（已核价）、A40（已收款）、S48（服务中）
+- **C** = 投诉：C10（已提交）、C40（已处理）、CR（已驳回）
 
-### 5. 权限系统（`src/shared/permissions/index.ts`）
+取消申请采用 `cancelRequested` 布尔标记（原 R80 独立状态码已移除）。价格协商走线下电话沟通（原 A38 独立状态码已移除）。
 
-- 仅两个角色：`role_admin`（`"*"` 通配符表示超管）和 `role_supplier`（有限权限：`mall.admin.open` / `mall.supplier.view` / `dashboard.view`）
-- `usePermissionStore` 提供 `hasPermission(roleId, actionCode)`
-- 桌面端 `nav.ts` 每个菜单项可声明 `permissionCode`；`DesktopLayout` 过滤 `roleId === "role_admin"` 时全部可见，否则按 `code.startsWith(moduleCode + ".")` 匹配
-- 路由级守卫用 `desktop/components/common/ProtectedRoute`，传 `isAllowed={isSuperAdmin}`
+服务分两类：
+- **点对点**: 送货服务、行李搬运（按距离派单）
+- **片区型**: 垃圾清运、送水、布草配送（按 zoneIds 严格匹配派单）
 
-### 6. 路由约定
+派单引擎在 `features/convenience/store/dispatch.ts`，使用 Haversine 距离排序 + zone 过滤。
 
-- 桌面端用嵌套路由（`<Route element={<DesktopLayout />}>` 包所有子页），新增 CRUD 页面推荐使用 `CrudRoutes` 组件：`<CrudRoutes list={<ListPage />} create={<CreatePage />} show={<DetailPage />} edit={<EditPage />} />`
-- C 端 `c-end/routes.tsx` 把 50+ 路由 + `lazy()` 集中维护；`cRoutes` 数组中带 `children` 的项表示使用 `AppLayout`（底部 Tab 栏），其余独立页面
-- B 端在 `roles/service/` 下还有子应用，URL 形式 `/b/service/<sub-route>`
+### 6. 权限系统（`src/shared/permissions/index.ts`）
 
-### 7. 桌面端通用组件模式（`src/desktop/components/common/`）
+- 仅两个角色：`role_admin`（`"*"` 通配符超管）和 `role_supplier`
+- 桌面端 `nav.ts` 菜单项可声明 `permissionCode`；`DesktopLayout` 过滤
+- 路由级守卫用 `desktop/components/common/ProtectedRoute`
+
+### 7. 路由约定
+
+- 桌面端用嵌套路由（`<Route element={<DesktopLayout />}>`），CRUD 推荐用 `CrudRoutes` 组件
+- C 端 `c-end/routes.tsx` 集中维护 50+ 路由；`cRoutes` 中带 `children` 表示用 `AppLayout`（底部 Tab 栏）
+- B 端通过 BLayout 底部 5-Tab 导航（工作台 / 任务 / 通知 / 历史 / 我的）
+
+### 8. 桌面端通用组件（`src/desktop/components/common/`）
 
 - **`CrudRoutes`** —— 快速生成 index / new / :id / :id/edit 嵌套路由
 - **`ProtectedRoute`** —— `isAllowed` 控制路由级访问
 - **`PageLayout`** —— 带标题 + 描述的标准页面布局
-- **`PageHeader`** —— 操作栏（搜索 + 新增按钮等）
-- **`DataTable`** —— 基于 `@tanstack/react-table` 的通用表格
-- **`ConfirmDialog`** —— 确认弹窗，内置 loading 状态
-- **`FormPage`** —— 标准表单页布局
+- **`DataTable`** —— 基于 `@tanstack/react-table`
+- **`ConfirmDialog`** —— 确认弹窗，内置 loading
 
-### 8. 便民服务订单状态元数据（`src/shared/orders/`）
-
-所有端共用同一套状态定义和工具函数：
-
-- `CONVENIENCE_STATUS_META` —— 每个状态的 label / color / bg / stepIndex / actions
-- `getConvenienceActions(status)` —— 当前状态可用操作（cancel / contact / confirm_complete）
-- `matchConvenienceFilter(status, filter)` —— 按 all / pending / completed / cancelled 过滤
-
-C 端详情页用 `OrderTrackingStepper` 展示进度条，B 端用 `OrderStatusBadge` 展示标签。
+---
 
 ## 设计系统
 
-完整规范在 **`DESIGN.md`**（根目录），必读。重点：
+完整规范在 **`DESIGN.md`**。要点：
 
-- **单一品牌色**：丽江蓝 `#2563EB`（`primary`），所有主 CTA / 链接 / 选中态都用它
-- **字体**：PingFang SC（中文）+ Inter（数字/英文，`-0.01em` 微调）
-- **圆角语言**：卡片 16px / 按钮 12px / 输入框 12px / pill `9999px`（**全 UI 无直角**）
-- **触摸目标**：主按钮 48×48（WCAG AAA），移动端可点击元素 ≥ 44px
-- **阴影三层**：Level 1 卡片 `0 2px 12px rgba(0,0,0,0.04)` / Level 2 主按钮蓝色投影 / Level 3 微信绿专用
-- **文字颜色**：ink `#1E293B` / body `#334155` / muted `#64748B` / muted-soft `#94A3B8`（**禁止纯黑 `#000`**）
+- **品牌色**：丽江蓝 `#2563EB`（`primary`），全部主 CTA 用它
+- **字体**：PingFang SC（中文）+ Inter（数字）
+- **圆角语言**：全 UI 无直角（卡片 16px / 按钮 12px / pill 9999px）
+- **文字颜色**：ink `#1E293B` / body `#334155` / muted `#64748B` / muted-soft `#94A3B8`（禁止纯黑）
 - **移动端优先视口**：390×844
-- 三个端用同一套 Tailwind CSS 变量（`src/shared/styles/theme.css`），可在任何端复用同一组件
+- **Tailwind CSS v4**：无 `tailwind.config.js`，变量在 `src/shared/styles/theme.css` 的 `@theme` 指令或 CSS 自定义属性定义
 
-**Tailwind CSS v4 注意**：本项目使用 Tailwind CSS v4，通过 `@tailwindcss/vite` 插件集成。**不存在 `tailwind.config.js`** —— 主题变量通过 `theme.css` 中的 `@theme` 指令或 CSS 自定义属性定义。
+`theme.css` 中存在两套颜色体系不冲突但数值不同：
+1. shadcn/ui 系统变量（`--background` / `--primary`）—— 灰蓝系
+2. App 语义变量（`--text-heading` / `--text-body` 等）—— 中性灰，业务页面优先使用
+
+---
 
 ## 数据与图片
 
 - 占位图大量使用 `images.unsplash.com`，搜索时按 `lijiang` / 古城 / 风景筛选
-- AI 头像等本地静态资源在 `src/c-end/assets/`
-- 头像等通过 `import img from "./xxx.png"` 直接打包，无需单独 public 引用
+- 静态资源在 `src/c-end/assets/`
+- 头像等通过 `import img from "./xxx.png"` 直接打包
+
+---
 
 ## 重要注意事项
 
-- `package.json` 中的 `verify:flow` 引用 `verification/tests/business-flow.spec.ts`——**该目录尚未创建**。新增 vitest 业务测试时应放在该路径下。
-- `npm run deploy` 调用的是**父级目录**的 `../scripts/deploy.sh`（仓库根之上），本地可能不存在。
-- 修改任何 `seed.ts` 状态码覆盖后必须跑 `npm run verify:seeds`。
-- 新增桌面端菜单项时，记得在 `nav.ts` 加 `permissionCode`，并确认角色权限已声明（`shared/permissions/index.ts`）。
-- `useAuthStore` 持久化到 localStorage，跨端登录态会被保留；调试时清除 `lijiang-demo-auth` 即可重置。
-- 模拟后端的定时流转（A10→A20 自动派单等）通过 `startTimeout()` 管理，内存中运行；刷新页面会重置所有定时器。
-- CI/CD：GitHub Actions 通过 `opencode` 工作流（`.github/workflows/opencode.yml`）响应 `/oc` 或 `/opencode` 注释，使用讯飞星火 Astron Code 模型。
+- `package.json` 中 `verify:flow` 引用的 `verification/tests/business-flow.spec.ts` **尚未创建**。新增 vitest 测试应放在该路径下。
+- `npm run deploy` 调用父级目录的 `../scripts/deploy.sh`，本地可能不存在。
+- 模拟后端定时流转（A10→A20 自动派单等）在内存中运行；刷新页面会重置所有定时器。定时器管理在 `features/convenience/store/timers.ts`。
+- `useAuthStore` 持久化到 localStorage（key: `lijiang-demo-auth`），调试时清除即可重置。
+- 便民服务种子数据在 `features/convenience/store/seed.ts`，每个状态码 1 条。修改后建议验证各状态展示正常。
+- 新增桌面端菜单时同步更新 `desktop/nav.ts` 和 `desktop/App.tsx`。
+- 新增功能遵循 feature-first 模式：在 `features/` 下新建目录，不要在 `c-end/pages/` 直接加页面。
+- CI/CD：GitHub Actions（`.github/workflows/opencode.yml`）响应 `/oc` / `/opencode` 注释。
 
-## Demo 登录账号（`src/shared/types/seed-users.ts`）
-
-| 角色 | 姓名 | 手机号 | 可进端 |
-| --- | --- | --- | --- |
-| 游客 | 张小游 | 13800001001 | C |
-| 供应商 | 古城文创·王老板 | 13900002001 | C / B / Desktop |
-| 便民服务人员 | 李师傅 | 13900002004 | B |
-| 平台管理员 | 平台管理员 | 18800003001 | B / Desktop |
-
-登录页输入手机号即可（无密码校验，纯 Demo）。
+---
 
 ## 相关文档
 
-- `DESIGN.md` —— 完整设计系统（颜色 / 字体 / 圆角 / 阴影 / 组件 token / 反模式）
-- `docs/requirements/` —— 原始需求文件
-  - `active/` —— 正在推进的新需求
-  - `archived/` —— 已归档的完结需求
-- `docs/specs/` —— 设计方案文档
-- `docs/plans/` —— 实现计划
-- `docs/notes/` —— 杂项说明（业务逻辑、差异对照等）
-
-## 主题变量双轨制
-
-`src/shared/styles/theme.css` 中存在两套颜色体系：
-1. **shadcn/ui 系统变量**（`--background` / `--foreground` / `--primary` 等）—— 供 shadcn 组件内部使用，颜色偏 Slate 灰蓝系
-2. **App 语义变量**（`--text-heading: #1E3A5F` / `--text-body: #333333` / `--text-secondary: #666666` / `--text-tertiary: #999999` 等）—— 供业务页面直接使用，颜色更偏中性灰
-
-两套体系不冲突但数值不同，新增页面时优先使用 App 语义变量。`.dark` 模式也已定义（`theme.css` 中 `.dark` 选择器）。
+- `DESIGN.md` —— 设计系统
+- `docs/notes/` —— 业务逻辑说明（便民服务流程等）
+- `docs/superpowers/specs/` —— 设计方案文档
+- `docs/superpowers/plans/` —— 实施计划

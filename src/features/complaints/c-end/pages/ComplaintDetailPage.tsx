@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { PageHeader } from "../components/PageHeader";
-import { useComplaintStore } from "../../shared/services/complaint";
+import { PageHeader } from "../../../../c-end/components/PageHeader";
+import { useComplaintStore } from "../../store";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { MapPin, Clock, CheckCircle, XCircle, Phone, FileText, RotateCcw, X } from "lucide-react";
 import { toast } from "sonner";

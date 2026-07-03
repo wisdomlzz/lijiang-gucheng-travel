@@ -28,7 +28,7 @@ export const navGroups: NavGroup[] = [
       { key: "zones", label: "片区管理", icon: Map, permissionCode: "convenience" },
       { key: "dispatch-config", label: "派单配置", icon: SlidersHorizontal, permissionCode: "convenience" },
       { key: "convenience-staff", label: "服务人员", icon: Users, permissionCode: "convenience" },
-      { key: "price-arbitration", label: "价格仲裁", icon: Scale, badge: 2, permissionCode: "convenience" },
+      { key: "price-arbitration", label: "取消审批", icon: Scale, badge: 2, permissionCode: "convenience" },
     ],
   },
   {

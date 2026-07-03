@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
-import type { NotificationType, Notification } from "../types"
+import type { NotificationType, Notification } from "../../shared/types"
 
 type NotificationState = {
   notifications: Notification[]
@@ -33,4 +33,4 @@ export const useNotificationStore = create<NotificationState>()(
   )
 )
 
-export type { NotificationType, Notification } from "../types"
+export type { NotificationType, Notification } from "../../shared/types"

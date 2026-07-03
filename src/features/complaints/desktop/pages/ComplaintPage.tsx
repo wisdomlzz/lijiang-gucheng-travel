@@ -1,16 +1,16 @@
 import { useMemo, useState } from "react";
-import { Card, CardContent } from "../../../shared/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table";
-import { Button } from "../../../shared/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../shared/components/ui/dialog";
-import { Input } from "../../../shared/components/ui/input";
-import { PageLayout } from "../../components/common/PageLayout";
+import { Card, CardContent } from "../../../../shared/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../shared/components/ui/table";
+import { Button } from "../../../../shared/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../shared/components/ui/dialog";
+import { Input } from "../../../../shared/components/ui/input";
+import { PageLayout } from "../../../../desktop/components/common/PageLayout";
 import { PaginationBar } from "@/shared/components/ui/data-toolbar";
 import { StatusBadge } from "@/shared/components/ui/status-badge";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { useAuthStore } from "../../../shared/stores/auth-store";
-import { useConvenienceStore } from "../../../features/convenience/store";
-import { useComplaintStore } from "../../../shared/services/complaint";
+import { useAuthStore } from "../../../../platform/auth";
+import { useConvenienceStore } from "../../../../features/convenience/store";
+import { useComplaintStore } from "../../store";
 import { usePagination } from "@/shared/hooks/usePagination";
 import {
   Phone, Eye, MapPin, UserRound, Building2, Image as ImageIcon,
@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "motion/react";
-import type { Complaint, ComplaintStatus } from "../../../shared/types";
+import type { Complaint, ComplaintStatus } from "../../../../shared/types";
 
 type ComplaintWithOrder = Complaint & { order?: any };
 

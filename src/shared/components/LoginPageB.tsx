@@ -28,19 +28,19 @@ export function LoginPageB() {
 
   const confirmWechatUser = (user: User) => {
     login(user, "b")
-    navigate(`/b/${getRolePath(user.role)}`)
+    navigate(`/b/${getRolePath(user.roles[0] ?? "service")}`)
   }
 
   const handlePasswordLogin = () => {
     if (!phone) return
-    const user = seedUsers.find((u) => u.platform.includes("b") && u.role === "service" && u.phone === phone)
+    const user = seedUsers.find((u) => u.platform.includes("b") && u.roles.includes("service") && u.phone === phone)
     if (user) {
       login(user, "b")
-      navigate(`/b/${getRolePath(user.role)}`)
+      navigate(`/b/${getRolePath(user.roles[0] ?? "service")}`)
     }
   }
 
-  const bUsers = seedUsers.filter((u) => u.platform.includes("b") && u.role === "service")
+  const bUsers = seedUsers.filter((u) => u.platform.includes("b") && u.roles.includes("service"))
 
   // WeChat auth — role selection screen
   if (showWechatAuth) {
