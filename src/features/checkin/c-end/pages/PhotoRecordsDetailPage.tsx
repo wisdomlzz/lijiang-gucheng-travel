@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../../../../c-end/components/PageHeader";
 import { useNavigate } from "react-router";
 
 interface ReportRecord {

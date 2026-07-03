@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../shared/components/ui/select";
-import { useCheckinStore } from "../../../shared/services/checkin";
+import { useCheckinStore } from "../../../features/checkin/store";
 import {
   Eye, MapPin, Clock, Search, X, Camera, Users,
   Trophy, CalendarDays,

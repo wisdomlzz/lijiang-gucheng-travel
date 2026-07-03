@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../../../../c-end/components/PageHeader";
 import { Camera, ChevronDown } from "lucide-react";
-import { useLoadMore } from "../../shared/hooks/useLoadMore";
+import { useLoadMore } from "../../../../shared/hooks/useLoadMore";
 
 interface ReportRecord {
   id: string;

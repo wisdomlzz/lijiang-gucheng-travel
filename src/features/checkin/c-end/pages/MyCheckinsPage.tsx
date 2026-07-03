@@ -2,9 +2,9 @@ import { useNavigate } from "react-router";
 import { PageHeader } from "../../../../c-end/components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { MapPin, Clock, CheckCircle } from "lucide-react";
-import { useCheckinStore } from "../../shared/services/checkin";
-import { useContentManageStore } from "../../shared/services/content/guide";
-import { useLoadMore } from "../../shared/hooks/useLoadMore";
+import { useCheckinStore } from "../../store";
+import { useContentCourtyardStore } from "../../../../shared/services/content/courtyard";
+import { useLoadMore } from "../../../../shared/hooks/useLoadMore";
 
 export function MyCheckinsPage() {
   const navigate = useNavigate();

@@ -23,7 +23,7 @@ const GridSettingsPage = lazy(() => import("./pages/gates/GridSettingsPage").the
 const ComplaintPage = lazy(() => import("../features/complaints/desktop/pages/ComplaintPage"))
 const PhotoRecordsList = lazy(() => import("./pages/photo-records/list"))
 const PhotoRecordShow = lazy(() => import("./pages/photo-records/show"))
-const VolunteerManagePage = lazy(() => import("./pages/VolunteerManagePage").then(m => ({ default: m.VolunteerManagePage })))
+const VolunteerManagePage = lazy(() => import("../features/volunteer/desktop/pages/VolunteerManagePage").then(m => ({ default: m.VolunteerManagePage })))
 const AnnouncementManagePage = lazy(() => import("./pages/gates/AnnouncementManagePage").then(m => ({ default: m.AnnouncementManagePage })))
 const PointRulesPage = lazy(() => import("./pages/gates/PointRulesPage").then(m => ({ default: m.PointRulesPage })))
 const SettlementPage = lazy(() => import("../features/convenience/desktop/pages/SettlementPage").then(m => ({ default: m.SettlementPage })))
