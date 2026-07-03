@@ -1,24 +1,25 @@
 import { useState, useRef } from "react";
-import { useAddressStore } from "../../shared/services/address"
-import { useConvenienceStore } from "../../shared/services/convenience";
-import { useServiceConfigStore } from "../../shared/services/convenience/services-store";
-import type { ConvenienceService } from "../../shared/types";
-import { useAuthStore } from "../../shared/stores/auth-store";
+import { useAddressStore } from "../../../../shared/services/address"
+import { useConvenienceStore } from "../../store";
+import { useServiceConfigStore } from "../../store/services-store";
+import type { ConvenienceService } from "../../../../shared/types";
+import { useAuthStore } from "../../../../platform/auth";
 import { useNavigate } from "react-router";
 import { X, Upload, MapPin, User, Clock, ChevronRight, Phone, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { StatusProgress } from "../components/StatusProgress";
 import { PageHeader } from "../components/PageHeader";
-import type { ConvenienceOrder } from "../../shared/types";
-import { ConvenienceStatusLabel, isPointToPoint } from "../../shared/types";
+import type { ConvenienceOrder } from "../../../../shared/types";
+import { ConvenienceStatusLabel } from "../../../../shared/types";
+import { isPointToPoint } from "../../shared/types";
 
 const CONVENIENCE_STEP_LABELS = ["已下单", "已派单", "已核价", "已付款", "服务中", "已完成"];
 
 function getConvenienceStepIndex(status: string): number {
   const map: Record<string, number> = {
-    "S10": 0, "A20": 0,
-    "A30": 1,
-    "A35": 2, "A38": 2,
+    "S10": 0,
+    "A20": 1, "A30": 1,
+    "A35": 2,
     "A40": 3,
     "S48": 4, "S55": 4,
     "S40": 5,
@@ -475,7 +476,7 @@ export function ServicesPage() {
   const orders = useConvenienceStore((s) => s.orders);
   const user = useAuthStore((s) => s.user);
   const allServices = useServiceConfigStore((s) => s.services);
-  const isMerchant = user?.role === "supplier";
+  const isMerchant = user?.roles?.includes("supplier") ?? false;
   const services = isMerchant ? allServices : allServices.filter((s) => isPointToPoint(s.name));
   const recentOrder = (() => {
     const userOrders = user ? orders.filter((o) => o.userId === user.id && o.status !== "S50") : orders.filter((o) => o.status !== "S50");
@@ -512,7 +513,7 @@ export function ServicesPage() {
                 <div className={`absolute top-2 left-2 ${service.tagColor} text-white text-[11px] px-2 py-1 rounded-full`}>
                   {service.tag}
                 </div>
-                <div className="absolute top-[60px] left-[123px] bg-white/90 h-[31px] w-[34px] rounded-full flex items-center justify-center text-[18px]">
+                <div className="absolute bottom-2 right-2 bg-white/90 size-[34px] rounded-full flex items-center justify-center text-[18px]">
                   {service.emoji}
                 </div>
               </div>

@@ -4,11 +4,11 @@ import { PageHeader } from "../components/PageHeader";
 import { StatusProgress } from "../components/StatusProgress";
 import { toast } from "sonner";
 import { Phone, Clock, AlertCircle, User, Star } from "lucide-react";
-import { useConvenienceStore } from "../../shared/services/convenience";
-import type { ConvenienceStatus } from "../../shared/types";
+import { useConvenienceStore } from "../../store";
+import type { ConvenienceStatus } from "../../../../shared/types";
 
-const STATUS_STEPS: ConvenienceStatus[] = ["S10", "A30", "A35", "A38", "A40", "S48", "S55", "S40"];
-const STEP_LABELS = ["已下单", "已接单", "已核价", "协商中", "已收款", "服务中", "待验收", "已完成"];
+const STATUS_STEPS: ConvenienceStatus[] = ["S10", "A30", "A35", "A40", "S48", "S55", "S40"];
+const STEP_LABELS = ["已下单", "已接单", "已核价", "已收款", "服务中", "待验收", "已完成"];
 
 export function ServiceTrackingPage() {
   const { id } = useParams();
@@ -18,15 +18,12 @@ export function ServiceTrackingPage() {
   const completeService = useConvenienceStore((s) => s.completeService);
   const requestCancel = useConvenienceStore((s) => s.requestCancel);
   const [countdown, setCountdown] = useState(15 * 60);
-  const [showDisputeForm, setShowDisputeForm] = useState(false);
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
   const [showCashConfirm, setShowCashConfirm] = useState(false);
-  const [disputePrice, setDisputePrice] = useState("");
-  const [disputeReason, setDisputeReason] = useState("");
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [disputeImages, setDisputeImages] = useState<string[]>([]);
   const [waitTime, setWaitTime] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showRating, setShowRating] = useState(false);
+  const [rating, setRating] = useState(0);
 
   const statusSteps = useMemo(() => {
     const stateIdx = STATUS_STEPS.indexOf(order?.status ?? "S10");
@@ -121,34 +118,17 @@ export function ServiceTrackingPage() {
     setShowCashConfirm(false);
   };
 
-  const handleDisputeSubmit = () => {
-    if (!disputePrice.trim()) {
-      toast.error("请输入期望价格");
-      return;
-    }
-    if (!disputeReason) {
-      toast.error("请选择异议原因");
-      return;
-    }
-    useConvenienceStore.getState().submitPriceDispute(order!.id, {
-      targetPrice: Number(disputePrice),
-      reason: disputeReason,
-      images: disputeImages,
-    });
-    toast.info("您的异议已提交，客服将在24小时内联系您");
-    setShowDisputeForm(false);
-    setDisputePrice("");
-    setDisputeReason("");
-    setDisputeImages([]);
-  };
-
   const handleCancelOrder = () => {
-    requestCancel(order!.id);
-    toast("订单已取消");
+    useConvenienceStore.getState().requestCancel(order!.id);
+    if (order?.status === "S10" || order?.status === "A10") {
+      toast("订单已取消");
+    } else {
+      toast.info("取消申请已提交，等待管理员审批");
+    }
   };
 
   const handleApplyCancel = () => {
-    requestCancel(order!.id);
+    useConvenienceStore.getState().requestCancel(order!.id);
     toast.info("取消申请已提交，等待审批");
   };
 
@@ -157,7 +137,14 @@ export function ServiceTrackingPage() {
   };
 
   const handleReview = () => {
-    if (order) navigate(`/c/orders/${order.id}`);
+    if (order) setShowRating(true);
+  };
+
+  const handleSubmitRating = (stars: number) => {
+    if (!order) return;
+    useConvenienceStore.getState().rateOrder(order.id, stars);
+    setShowRating(false);
+    toast.success("评价成功");
   };
 
   // --- Bottom action bar ---
@@ -247,7 +234,7 @@ export function ServiceTrackingPage() {
         </div>
       );
     }
-    if (["S50", "R80"].includes(status)) {
+    if (["S50"].includes(status)) {
       return (
         <button
           onClick={() => navigate(`/c/orders/${order?.id ?? "cancelled"}`)}
@@ -260,7 +247,7 @@ export function ServiceTrackingPage() {
     return null;
   };
 
-  const showStaffCard = order?.status && !["S10", "A10", "S50", "R80"].includes(order.status);
+  const showStaffCard = order?.status && !["S10", "A10", "S50"].includes(order.status) && order.status !== "S50";
 
   if (!order) {
     return (
@@ -282,13 +269,13 @@ export function ServiceTrackingPage() {
         </div>
 
         {/* Cancelled order card */}
-        {(order?.status === "S50" || order?.status === "R80") && (
+        {(order?.status === "S50" || order?.cancelRequested) && (
           <div className="bg-white rounded-2xl p-6 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-              <span className="text-[28px] text-gray-400">!</span>
+              <span className="text-[28px] text-gray-400">{order?.status === "S50" ? "!" : "⏳"}</span>
             </div>
             <p className="text-[15px] text-gray-500 font-medium">
-              订单已取消
+              {order?.status === "S50" ? "订单已取消" : "取消申请已提交，等待审批"}
             </p>
             <p className="text-[13px] text-gray-400 mt-2">
               如有疑问请联系客服
@@ -427,10 +414,10 @@ export function ServiceTrackingPage() {
                 确认支付
               </button>
               <button
-                onClick={() => setShowDisputeForm(true)}
+                onClick={handleApplyCancel}
                 className="w-full h-11 rounded-full border border-border-light text-text-body text-[14px] bg-white active:bg-surface-page transition-colors"
               >
-                价格有异议
+                申请取消
               </button>
             </div>
           </div>
@@ -484,127 +471,46 @@ export function ServiceTrackingPage() {
           </div>
         )}
 
-        {/* Dispute form */}
-        {showDisputeForm && (
-          <div className="bg-white rounded-2xl p-4 animate-fade-in-up">
-            <p className="text-[15px] text-text-heading font-medium mb-4">
-              价格异议
-            </p>
-
-            {/* Expected price input */}
-            <div className="mb-3">
-              <label className="text-[13px] text-text-secondary block mb-1">
-                期望价格
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-text-tertiary">
-                  ¥
-                </span>
-                <input
-                  type="number"
-                  value={disputePrice}
-                  onChange={(e) => setDisputePrice(e.target.value)}
-                  placeholder="请输入您期望的价格"
-                  className="w-full h-10 pl-8 pr-3 rounded-lg bg-surface-page text-[14px] text-text-body outline-none placeholder:text-text-tertiary"
-                />
-              </div>
-            </div>
-
-            {/* Dispute reason select */}
-            <div className="mb-4">
-              <label className="text-[13px] text-text-secondary block mb-1">
-                异议原因
-              </label>
-              <select
-                value={disputeReason}
-                onChange={(e) => setDisputeReason(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg bg-surface-page text-[14px] text-text-body outline-none appearance-none"
-              >
-                <option value="">请选择异议原因</option>
-                <option value="price_too_high">价格远超预期</option>
-                <option value="gap_too_large">与参考价差距大</option>
-                <option value="other">其他</option>
-              </select>
-            </div>
-
-            {/* Photo upload */}
-            <div className="mb-4">
-              <label className="text-[13px] text-text-secondary block mb-1">
-                现场照片
-                <span className="text-text-tertiary ml-1">选填，最多3张</span>
-              </label>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={(e) => {
-                  const files = e.target.files;
-                  if (!files) return;
-                  const remaining = 3 - disputeImages.length;
-                  const toRead = Array.from(files).slice(0, remaining);
-                  toRead.forEach((file) => {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                      if (ev.target?.result) {
-                        setDisputeImages((prev) => [...prev, ev.target.result as string]);
-                      }
-                    };
-                    reader.readAsDataURL(file);
-                  });
-                  e.target.value = "";
-                }}
-              />
-              <div className="flex gap-2 mt-2 flex-wrap">
-                {disputeImages.map((img, idx) => (
-                  <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden">
-                    <img
-                      src={img}
-                      alt={`现场照片${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+        {/* Rating dialog */}
+        {showRating && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden p-6">
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-primary-50 flex items-center justify-center">
+                  <Star size={24} className="text-primary" />
+                </div>
+                <h3 className="text-[17px] text-text-body font-medium mb-2">评价服务</h3>
+                <p className="text-[14px] text-text-secondary mb-4">请对本次服务进行评分</p>
+                <div className="flex justify-center gap-2 mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
                     <button
-                      type="button"
-                      onClick={() => setDisputeImages((prev) => prev.filter((_, i) => i !== idx))}
-                      className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/40 text-white text-[11px] flex items-center justify-center"
+                      key={star}
+                      onClick={() => setRating(star)}
+                      className="p-1 transition-transform active:scale-110"
                     >
-                      ×
+                      <Star
+                        size={32}
+                        className={star <= rating ? "fill-[#F59E0B] text-[#F59E0B]" : "text-gray-300"}
+                      />
                     </button>
-                  </div>
-                ))}
-                {disputeImages.length < 3 && (
+                  ))}
+                </div>
+                <div className="flex gap-3">
                   <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-20 h-20 rounded-lg border border-dashed border-border-light flex flex-col items-center justify-center text-text-tertiary text-[11px] gap-1"
+                    onClick={() => { setShowRating(false); setRating(0); }}
+                    className="flex-1 h-11 rounded-full border border-border-light text-text-body text-[14px]"
                   >
-                    <span className="text-[18px] leading-none">+</span>
-                    <span>上传</span>
+                    取消
                   </button>
-                )}
+                  <button
+                    onClick={() => handleSubmitRating(rating)}
+                    disabled={rating === 0}
+                    className="flex-1 h-11 rounded-full bg-primary text-white text-[14px] disabled:opacity-50"
+                  >
+                    提交评价
+                  </button>
+                </div>
               </div>
-            </div>
-
-            {/* Form buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDisputeForm(false);
-                  setDisputePrice("");
-                  setDisputeReason("");
-                  setDisputeImages([]);
-                }}
-                className="flex-1 h-11 rounded-full border border-border-light text-text-body text-[14px] bg-white active:bg-surface-page transition-colors"
-              >
-                取消
-              </button>
-              <button
-                onClick={handleDisputeSubmit}
-                className="flex-1 h-11 rounded-full bg-primary text-white text-[14px] active:opacity-90 transition-opacity"
-              >
-                提交异议
-              </button>
             </div>
           </div>
         )}

@@ -1,9 +1,9 @@
 import { useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../shared/components/ui/card"
-import { PageLayout } from "../../components/common/PageLayout"
-import { useConvenienceStore } from "../../../shared/services/convenience"
-import { useStaffStore } from "../../../shared/services/staff"
-import { useZoneStore } from "../../../shared/services/zone"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../../shared/components/ui/card"
+import { PageLayout } from "../../../../desktop/components/common/PageLayout"
+import { useConvenienceStore } from "../../store"
+import { useStaffStore } from "../../store"
+import { useZoneStore } from "../../store"
 import { CheckCircle2, Clock, Users, Map, AlertTriangle } from "lucide-react"
 
 export default function ConvenienceOverviewPage() {
@@ -16,11 +16,11 @@ export default function ConvenienceOverviewPage() {
     const completed = orders.filter((o) => o.status === "S40").length
     const pending = orders.filter((o) => o.status === "S10" || o.status === "A10" || o.status === "S90").length
     const inService = orders.filter((o) => o.status === "S48" || o.status === "S55").length
-    const priceDisputes = orders.filter((o) => o.status === "A38").length
+    const cancelRequests = orders.filter((o) => o.cancelRequested).length
     const onlineStaff = staff.filter((s) => s.status === "online").length
     const busyStaff = staff.filter((s) => s.status === "busy").length
     const completionRate = totalOrders > 0 ? Math.round((completed / totalOrders) * 100) : 0
-    return { totalOrders, completed, pending, inService, priceDisputes, onlineStaff, busyStaff, completionRate, totalZones: zones.length }
+    return { totalOrders, completed, pending, inService, cancelRequests, onlineStaff, busyStaff, completionRate, totalZones: zones.length }
   }, [orders, staff, zones])
 
   return (
@@ -60,12 +60,12 @@ export default function ConvenienceOverviewPage() {
           </div>
           <div className="text-xs text-muted-foreground mt-1">个服务片区</div>
         </CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm">价格仲裁</CardTitle></CardHeader><CardContent>
+        <Card><CardHeader><CardTitle className="text-sm">取消申请</CardTitle></CardHeader><CardContent>
           <div className="flex items-center gap-2">
             <AlertTriangle className="size-5 text-rose-500" />
-            <span className="text-3xl font-semibold">{stats.priceDisputes}</span>
+            <span className="text-3xl font-semibold">{stats.cancelRequests}</span>
           </div>
-          <div className="text-xs text-muted-foreground mt-1">笔待处理价格争议</div>
+          <div className="text-xs text-muted-foreground mt-1">笔待处理取消申请</div>
         </CardContent></Card>
       </div>
     </PageLayout>

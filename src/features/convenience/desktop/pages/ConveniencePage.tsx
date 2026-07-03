@@ -1,27 +1,27 @@
 import { useMemo, useState } from "react"
-import { Card, CardContent } from "../../../shared/components/ui/card"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../shared/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
-import { Button } from "../../../shared/components/ui/button"
-import { Badge } from "../../../shared/components/ui/badge"
-import { Input } from "../../../shared/components/ui/input"
-import { PageLayout } from "../../components/common/PageLayout"
+import { Card, CardContent } from "../../../../shared/components/ui/card"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../../shared/components/ui/tabs"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../shared/components/ui/table"
+import { Button } from "../../../../shared/components/ui/button"
+import { Badge } from "../../../../shared/components/ui/badge"
+import { Input } from "../../../../shared/components/ui/input"
+import { PageLayout } from "../../../../desktop/components/common/PageLayout"
 import { StatusBadge } from "@/shared/components/ui/status-badge"
-import { useConvenienceStore } from "../../../shared/services/convenience"
-import { useStaffStore } from "../../../shared/services/staff"
-import { useZoneStore } from "../../../shared/services/zone"
+import { useConvenienceStore } from "../../store"
+import { useStaffStore } from "../../store"
+import { useZoneStore } from "../../store"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
-} from "../../../shared/components/ui/dialog"
+} from "../../../../shared/components/ui/dialog"
 import {
   AlertTriangle, CheckCircle2, Clock, Users, Truck, Package, Trash2,
   Droplets, Shirt, RefreshCw, Play, XCircle, Search,
 } from "lucide-react"
 import { toast } from "sonner"
-import type { DispatchLogEntry, StaffItem, ConvenienceServiceType } from "../../../shared/types"
-import { ALL_CONVENIENCE_TYPES, isPointToPoint } from "../../../shared/types"
+import type { StaffItem, ConvenienceServiceType } from "../../../../shared/types"
+import { ALL_CONVENIENCE_TYPES, isPointToPoint } from "../../../../shared/types"
 
 const SERVICE_ICONS: Record<string, any> = {
   "送货服务": Package,
@@ -39,6 +39,8 @@ export default function ConveniencePage() {
   const zones = useZoneStore((s) => s.zones)
   const autoDispatchOrder = useConvenienceStore((s) => s.autoDispatchOrder)
   const manualDispatch = useConvenienceStore((s) => s.manualDispatch)
+  const approveCancelRequest = useConvenienceStore((s) => s.approveCancelRequest)
+  const rejectCancelRequest = useConvenienceStore((s) => s.rejectCancelRequest)
 
   const [activeTab, setActiveTab] = useState("overview")
   const [manualDialogOpen, setManualDialogOpen] = useState(false)
@@ -50,7 +52,7 @@ export default function ConveniencePage() {
   const stats = useMemo(() => {
     const total = orders.length
     const pending = orders.filter((o) => o.status === "S10" || o.status === "A10").length
-    const inProgress = orders.filter((o) => ["A20", "A30", "A35", "A38", "A40", "S48", "S55"].includes(o.status)).length
+    const inProgress = orders.filter((o) => ["A20", "A30", "A35", "A40", "S48", "S55"].includes(o.status)).length
     const completed = orders.filter((o) => o.status === "S40").length
     const manualIntervention = orders.filter((o) => o.status === "S90").length
     return { total, pending, inProgress, completed, manualIntervention }
@@ -67,7 +69,7 @@ export default function ConveniencePage() {
         type,
         total: typeOrders.length,
         pending: typeOrders.filter((o) => o.status === "S10" || o.status === "A10").length,
-        inProgress: typeOrders.filter((o) => ["A20", "A30", "A35", "A38", "A40", "S48", "S55"].includes(o.status)).length,
+        inProgress: typeOrders.filter((o) => ["A20", "A30", "A35", "A40", "S48", "S55"].includes(o.status)).length,
         completed: typeOrders.filter((o) => o.status === "S40").length,
         onlineStaff: onlineStaff.length,
         totalStaff: staffList.filter((s) => s.serviceTypes?.includes(type)).length,
@@ -79,6 +81,12 @@ export default function ConveniencePage() {
   // ---- orders pending manual dispatch ----
   const manualPendingOrders = useMemo(
     () => orders.filter((o) => o.status === "S10" || o.status === "A10" || o.status === "S90"),
+    [orders]
+  )
+
+  // ---- cancel requests ----
+  const cancelRequestOrders = useMemo(
+    () => orders.filter((o) => o.cancelRequested),
     [orders]
   )
 
@@ -98,6 +106,16 @@ export default function ConveniencePage() {
   const handleAutoRetry = (orderId: string) => {
     autoDispatchOrder(orderId)
     toast.success("已重新尝试自动派单")
+  }
+
+  const handleApproveCancel = (orderId: string) => {
+    approveCancelRequest(orderId)
+    toast.success("已同意取消")
+  }
+
+  const handleRejectCancel = (orderId: string) => {
+    rejectCancelRequest(orderId)
+    toast.success("已拒绝取消")
   }
 
   // ---- zone-based dispatch candidates for manual dialog ----
@@ -340,6 +358,49 @@ export default function ConveniencePage() {
                   />
                 </div>
               </>
+            )}
+          </Card>
+
+          {/* 取消申请 */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <AlertTriangle className="size-4 text-amber-500" /> 取消申请
+              </h3>
+              <span className="text-xs text-muted-foreground">{cancelRequestOrders.length} 单</span>
+            </div>
+            {cancelRequestOrders.length === 0 ? (
+              <div className="text-sm text-muted-foreground py-4 text-center flex items-center justify-center gap-2">
+                <CheckCircle2 className="size-4 text-emerald-500" /> 暂无取消申请
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>订单号</TableHead>
+                    <TableHead>服务类型</TableHead>
+                    <TableHead>当前状态</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {cancelRequestOrders.map((o) => (
+                    <TableRow key={o.id}>
+                      <TableCell className="font-mono text-xs">{o.id}</TableCell>
+                      <TableCell>{o.serviceType}</TableCell>
+                      <TableCell><Badge className="bg-amber-100 text-amber-700">等待审批</Badge></TableCell>
+                      <TableCell className="text-right space-x-1">
+                        <Button size="sm" variant="outline" className="text-emerald-600 border-emerald-200" onClick={() => handleApproveCancel(o.id)}>
+                          <CheckCircle2 className="size-3 mr-1" />同意
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-rose-600 border-rose-200" onClick={() => handleRejectCancel(o.id)}>
+                          <XCircle className="size-3 mr-1" />拒绝
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
           </Card>
         </TabsContent>

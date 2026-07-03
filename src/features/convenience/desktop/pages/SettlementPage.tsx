@@ -1,14 +1,14 @@
 import { useState, useMemo } from "react"
-import { PageLayout } from "../../components/common/PageLayout"
-import { Button } from "../../../shared/components/ui/button"
-import { Badge } from "../../../shared/components/ui/badge"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../shared/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
-import { ConfirmDialog } from "../../components/common/ConfirmDialog"
+import { PageLayout } from "../../../../desktop/components/common/PageLayout"
+import { Button } from "../../../../shared/components/ui/button"
+import { Badge } from "../../../../shared/components/ui/badge"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../../shared/components/ui/tabs"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../shared/components/ui/table"
+import { ConfirmDialog } from "../../../../desktop/components/common/ConfirmDialog"
 import { Wallet, TrendingUp, Banknote, Smartphone, Users, Clock } from "lucide-react"
 import { toast } from "sonner"
-import { useSettlementStore, type WithdrawalRequest } from "../../../shared/services/settlement"
-import { useStaffStore } from "../../../shared/services/staff"
+import { useSettlementStore, type WithdrawalRequest } from "../../store"
+import { useStaffStore } from "../../store"
 
 export function SettlementPage() {
   const incomes = useSettlementStore((s) => s.incomes)
