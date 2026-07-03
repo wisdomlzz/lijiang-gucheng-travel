@@ -7,7 +7,7 @@ import { PageHeader } from "../components/PageHeader";
 import { StatusProgress } from "../components/StatusProgress";
 import { ContactSheet } from "../components/ContactSheet";
 import { useConvenienceStore } from "../../features/convenience/store"
-import { useTrustScoreStore } from "../../shared/services/trust-score";
+import { useTrustScoreStore } from "../../features/trust-score/store";
 import type { ConvenienceOrder } from "../../shared/types";
 import {
   CONVENIENCE_STATUS_META,

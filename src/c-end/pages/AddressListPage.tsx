@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
-import { useAddressStore } from "../../shared/services/address";
+import { useAddressStore } from "../../features/address/store";
 import { useAuthStore } from "../../shared/stores/auth-store";
 import { toast } from "sonner";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";

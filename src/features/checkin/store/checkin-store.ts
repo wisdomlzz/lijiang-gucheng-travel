@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import type { Checkin } from "../../../shared/types"
-import { usePointsStore } from "../../../shared/services/points"
+import { usePointsStore } from "../../points/store"
 
 // 25 个文化院落按权重生成约 90 条打卡记录
 const COURTYARDS = [

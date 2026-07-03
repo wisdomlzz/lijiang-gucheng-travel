@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "../components/PageHeader"
-import { useBookingStore } from "../../shared/services/booking"
+import { useBookingStore } from "../../features/booking/store"
 import { useAuthStore } from "../../shared/stores/auth-store"
 import { Calendar, Clock, Users, QrCode, CheckCircle2, XCircle } from "lucide-react"
 

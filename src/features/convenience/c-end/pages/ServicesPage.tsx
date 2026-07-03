@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useAddressStore } from "../../../../shared/services/address"
+import { useAddressStore } from "../../../address/store"
 import { useConvenienceStore } from "../../store";
 import { useServiceConfigStore } from "../../store/services-store";
 import type { ConvenienceService } from "../../../../shared/types";

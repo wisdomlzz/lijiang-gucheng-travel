@@ -10,7 +10,7 @@ import { useConvenienceStore } from "../../features/convenience/store"
 import { useComplaintStore } from "../../features/complaints/store";
 import { PageHeader } from "../components/common/PageHeader";
 import { useAuthStore } from "../../shared/stores/auth-store";
-import { useSupplierStore } from "../../shared/services/supplier";
+import { useSupplierStore } from "../../features/supplier/store";
 import { useCheckinStore } from "../../features/checkin/store";
 import { useContentMerchantStore } from "../../features/content/store/merchant-store"
 import { useContentCourtyardStore } from "../../features/content/store/courtyard-store"

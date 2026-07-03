@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { useParams, useNavigate } from "react-router"
 import { ChevronLeft } from "lucide-react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
-import { useAnnouncementStore } from "@/shared/services/announcement"
+import { useAnnouncementStore } from "../../features/announcement/store"
 
 /* ────────── 图片轮播组件 ────────── */
 function ImageCarousel({ images, title }: { images: string[]; title: string }) {

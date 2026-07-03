@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../../../../platform/auth";
 import { useConvenienceStore } from "../../store";
-import { useTrustScoreStore } from "../../../../shared/services/trust-score";
+import { useTrustScoreStore } from "../../../trust-score/store";
 import { ConfirmModal } from "../components/Sheet";
 
 export function ServiceProfile() {

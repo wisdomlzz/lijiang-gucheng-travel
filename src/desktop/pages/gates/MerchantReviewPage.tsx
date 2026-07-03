@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Textarea } from "../../../shared/components/ui/textarea"
 import { Store, Check, X } from "lucide-react"
 import { toast } from "sonner"
-import { useMerchantReviewStore, type MerchantChangeRequest } from "../../../shared/services/merchant-review"
+import { useMerchantReviewStore, type MerchantChangeRequest } from "../../../features/merchant-review/store"
 
 export function MerchantReviewPage() {
   const requests = useMerchantReviewStore((s) => s.requests)

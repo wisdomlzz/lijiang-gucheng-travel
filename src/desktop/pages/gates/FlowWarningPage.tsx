@@ -8,7 +8,7 @@ import { Input } from "../../../shared/components/ui/input"
 import { Switch } from "../../../shared/components/ui/switch"
 import { AlertTriangle, Activity, Settings2, RefreshCw, CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
-import { useFlowWarningStore, LEVEL_META, type WarningLevel } from "../../../shared/services/flow-warning"
+import { useFlowWarningStore, LEVEL_META, type WarningLevel } from "../../../features/flow-warning/store"
 
 export function FlowWarningPage() {
   const areas = useFlowWarningStore((s) => s.areas)

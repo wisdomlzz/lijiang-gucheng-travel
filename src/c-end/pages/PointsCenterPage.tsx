@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "../components/PageHeader"
-import { usePointsStore } from "../../shared/services/points"
+import { usePointsStore } from "../../features/points/store"
 import { useAuthStore } from "../../shared/stores/auth-store"
 import { Gift, TrendingUp, TrendingDown, ShoppingBag, ExternalLink, Sparkles } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../../shared/constants"

@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { toast } from "sonner";
 import { useContentMerchantStore } from "../../features/content/store/merchant-store";
-import { useFavoriteStore } from "../../shared/services/favorite";
+import { useFavoriteStore } from "../../features/favorite/store";
 import { useAuthStore } from "../../shared/stores/auth-store";
 import { getMerchantCategoryLabel } from "../../shared/constants/content-config";
 

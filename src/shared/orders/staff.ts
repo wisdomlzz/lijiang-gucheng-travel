@@ -1,5 +1,5 @@
 import { seedUsers } from "../types/seed-users"
-import { useTrustScoreStore } from "../services/trust-score"
+import { useTrustScoreStore } from "../../features/trust-score/store"
 
 export interface StaffInfo {
   id: string
