@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { Plus } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { PageHeader } from "../components/PageHeader";
-import { useContentManageStore } from "../../shared/services/content/guide";
+import { useContentNewsStore } from "../../features/content/store/news-store"
 import type { NewsCategory } from "../../shared/types/content-types";
 import { useSearch } from "../../shared/hooks/useSearch";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";

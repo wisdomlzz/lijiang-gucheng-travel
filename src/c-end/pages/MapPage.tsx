@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { useContentManageStore } from "../../shared/services/content/guide";
+import { useContentPOIStore } from "../../features/content/store/poi-store"
+import { useContentGuideStore } from "../../features/content/store/guide-store"
 import { useFlowWarningStore, LEVEL_META } from "../../shared/services/flow-warning";
 import {
   Search,

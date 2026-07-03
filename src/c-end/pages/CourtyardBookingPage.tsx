@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate, useParams } from "react-router"
 import { PageHeader } from "../components/PageHeader"
-import { useContentCourtyardStore } from "../../shared/services/content/courtyard"
+import { useContentCourtyardStore } from "../../features/content/store/courtyard-store"
 import { useBookingStore, BOOKING_SLOTS } from "../../shared/services/booking"
 import { useAuthStore } from "../../shared/stores/auth-store"
 import { Calendar, Clock, Users, QrCode, CheckCircle2 } from "lucide-react"

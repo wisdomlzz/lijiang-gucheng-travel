@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router";
-import { useContentManageStore } from "../../shared/services/content/guide";
+import { useContentCourtyardStore } from "../../features/content/store/courtyard-store"
+import { useContentGuideStore } from "../../features/content/store/guide-store"
 import { PageHeader } from "../components/PageHeader";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { MapPin, Clock, Landmark, CheckCircle2, ChevronRight, UserRoundCheck } from "lucide-react";
-import { useCheckinStore } from "../../shared/services/checkin";
+import { useCheckinStore } from "../../features/checkin/store";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";
 
 export function CulturalCourtyardsPage() {

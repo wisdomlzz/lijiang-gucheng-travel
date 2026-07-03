@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { PageHeader } from "../components/PageHeader";
 import { useContentMerchantStore } from "../../features/content/store/merchant-store";
-import { useContentGuideStore } from "../../features/content/store/guide-store";
 import { getMerchantCategoryLabel, normalizeMerchantCategory } from "../../shared/constants/content-config";
 import { useSearch } from "../../shared/hooks/useSearch";
 import { useLoadMore } from "../../shared/hooks/useLoadMore";

@@ -11,10 +11,10 @@ import { useComplaintStore } from "../../features/complaints/store";
 import { PageHeader } from "../components/common/PageHeader";
 import { useAuthStore } from "../../shared/stores/auth-store";
 import { useSupplierStore } from "../../shared/services/supplier";
-import { useCheckinStore } from "../../shared/services/checkin";
-import { useContentMerchantStore } from "../../shared/services/content/merchant"
-import { useContentCourtyardStore } from "../../shared/services/content/courtyard"
-import { useContentPOIStore } from "../../shared/services/content/poi"
+import { useCheckinStore } from "../../features/checkin/store";
+import { useContentMerchantStore } from "../../features/content/store/merchant-store"
+import { useContentCourtyardStore } from "../../features/content/store/courtyard-store"
+import { useContentPOIStore } from "../../features/content/store/poi-store"
 import { useNavigate } from "react-router";
 import { CRMEB_ADMIN_URL } from "../../shared/constants";
 

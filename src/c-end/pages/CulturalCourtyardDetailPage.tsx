@@ -4,8 +4,9 @@ import {
   X, Play, Pause, CheckCircle2, CalendarCheck,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
-import { useContentManageStore } from "../../shared/services/content/guide";
-import { useCheckinStore } from "../../shared/services/checkin";
+import { useContentCourtyardStore } from "../../features/content/store/courtyard-store"
+import { useContentGuideStore } from "../../features/content/store/guide-store"
+import { useCheckinStore } from "../../features/checkin/store";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { toast } from "sonner";
 

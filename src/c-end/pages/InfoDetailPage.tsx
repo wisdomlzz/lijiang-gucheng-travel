@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { useContentManageStore } from "../../shared/services/content/guide";
+import { useContentNewsStore } from "../../features/content/store/news-store"
 
 export function InfoDetailPage() {
   const { id } = useParams();

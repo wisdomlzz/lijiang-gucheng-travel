@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router";
 import { useState } from "react";
 import { ChevronLeft, Maximize2 } from "lucide-react";
-import { useContentManageStore } from "../../shared/services/content/guide";
+import { useContentCourtyardStore } from "../../features/content/store/courtyard-store"
 
 export function CulturalCourtyardVRPage() {
   const { id } = useParams<{ id: string }>();

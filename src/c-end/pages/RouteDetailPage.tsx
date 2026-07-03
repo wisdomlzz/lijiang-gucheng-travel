@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router";
 import { ChevronLeft, Clock, MapPin, Route as RouteIcon, Share2, Video } from "lucide-react";
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
 import { toast } from "sonner";
-import { useContentGuideStore } from "../../shared/services/content/guide"
+import { useContentGuideStore } from "../../features/content/store/guide-store"
 import { VideoPlayer } from "../../shared/components/VideoPlayer";
 import routeIllustration from "../assets/image-9.png";
 

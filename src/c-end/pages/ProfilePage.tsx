@@ -9,7 +9,7 @@ import userAvatar from "../assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png";
 import { useConvenienceStore } from "../../features/convenience/store";
 import { usePointsStore } from "../../shared/services/points";
 import { useAuthStore } from "../../shared/stores/auth-store";
-import { useVolunteerStore } from "../../shared/services/volunteer";
+import { useVolunteerStore } from "../../features/volunteer/store";
 
 export function ProfilePage() {
   const navigate = useNavigate();
