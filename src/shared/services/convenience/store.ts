@@ -46,13 +46,8 @@ function pickStaff(orderServiceType: string): { id: string; name: string; phone:
 const SEED: ConvenienceOrder[] = [
   // S10 - 已下单
   { id: "CO20260511005", userId: "u_c_001", serviceType: "送货服务", address: "五一街文治巷88号", images: ["https://images.unsplash.com/photo-1606166325683-e6deb697d301?w=400"], note: "一箱饮料，约15kg", preferredTime: "尽快", status: "S10", createdAt: "2026-05-11 15:30", lat: 26.878, lng: 100.239 },
-  { id: "CO20260512001", userId: "u_c_001", serviceType: "送货服务", address: "新华街黄山下段45号", images: ["https://images.unsplash.com/photo-1606166325683-e6deb697d301?w=400"], note: "米面粮油，约20kg", preferredTime: "上午", status: "S10", createdAt: "2026-05-12 08:00", lat: 26.875, lng: 100.233 },
-  { id: "CO20260512006", userId: "u_c_001", serviceType: "布草配送", address: "茶马古道客栈·五一街", images: ["https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=400"], note: "布草配送，20套", preferredTime: "14:00", status: "S10", createdAt: "2026-05-12 09:00", lat: 26.880, lng: 100.240 },
   // A10 - 待派单
   { id: "CO20260511006", userId: "u_c_001", serviceType: "建筑垃圾清运", address: "新华街翠文段22号", images: ["https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400"], note: "装修废料，约8袋", preferredTime: "14:00", status: "A10", createdAt: "2026-05-11 14:00", lat: 26.875, lng: 100.232 },
-  { id: "CO20260512004", userId: "u_c_001", serviceType: "生活垃圾清运", address: "五一街文治巷", images: ["https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400"], note: "约2袋", preferredTime: "09:00", status: "A10", createdAt: "2026-05-12 08:30", lat: 26.879, lng: 100.238 },
-  { id: "CO20260512005", userId: "u_c_001", serviceType: "布草配送", address: "御客栈·总店", images: ["https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=400"], note: "更换床单被套，共15套", preferredTime: "尽快", status: "A10", createdAt: "2026-05-12 06:00", lat: 26.876, lng: 100.238 },
-  { id: "CO20260512003", userId: "u_c_001", serviceType: "建筑垃圾清运", address: "民主路68号工地", images: ["https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400"], note: "装修垃圾约15袋", preferredTime: "上午", status: "S10", createdAt: "2026-05-12 07:00", lat: 26.863, lng: 100.226 },
   // A20 - 已指派
   { id: "CO20260511001", userId: "u_c_001", serviceType: "行李搬运", address: "古城南门入口处", addressTo: "五一街兴仁巷12号", images: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400"], note: "两个28寸行李箱", preferredTime: "尽快", status: "A20", createdAt: "2026-05-11 09:12", staffId: "s1", staffName: "李师傅", staffPhone: "139****6666", lat: 26.868, lng: 100.234 },
   // A30 - 已接单
@@ -69,8 +64,6 @@ const SEED: ConvenienceOrder[] = [
   { id: "CO20260509000", userId: "u_c_001", serviceType: "行李搬运", address: "古城北门 → 四方街", images: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400"], note: "3个行李箱，需要推车", preferredTime: "尽快", status: "S55", priceQuote: 80, refPrice: 70, payMethod: "online", createdAt: "2026-05-09 10:00", staffId: "s1", staffName: "李师傅", staffPhone: "139****6666", completionPhotos: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400"], lat: 26.872, lng: 100.230 },
   // S40 - 已完成
   { id: "CO20260509001", userId: "u_c_001", serviceType: "行李搬运", address: "古城东门 → 七一街", images: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400"], note: "", preferredTime: "上午", status: "S40", priceQuote: 60, refPrice: 50, payMethod: "online", createdAt: "2026-05-09 08:42", completedAt: "2026-05-09T12:00:00.000Z", staffId: "s1", staffName: "李师傅", lat: 26.870, lng: 100.237 },
-  { id: "CO20260507002", userId: "u_c_001", serviceType: "生活垃圾清运", address: "光义街·茶马客栈", images: ["https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400"], note: "约3袋生活垃圾", preferredTime: "下午", status: "S40", priceQuote: 45, refPrice: 30, payMethod: "cash", createdAt: "2026-05-07 16:12", completedAt: "2026-05-07T18:00:00.000Z", staffId: "s6", staffName: "张环卫", lat: 26.874, lng: 100.233 },
-  { id: "CO20260508001", userId: "u_c_001", serviceType: "送水服务", address: "御客栈·三号院", images: ["https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=400"], note: "2桶矿泉水", preferredTime: "尽快", status: "S40", priceQuote: 40, refPrice: 35, payMethod: "cash", createdAt: "2026-05-08 07:30", completedAt: "2026-05-08T10:00:00.000Z", staffId: "s8", lat: 26.879, lng: 100.238 },
   // S50 - 已取消
   { id: "CO20260507003", userId: "u_c_001", serviceType: "行李搬运", address: "古城南门 → 七一街", images: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400"], note: "改约时间", preferredTime: "上午", status: "S50", createdAt: "2026-05-07 10:25", staffId: "s1", lat: 26.868, lng: 100.234 },
   // R80 - 取消审批中
