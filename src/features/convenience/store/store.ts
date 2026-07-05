@@ -6,6 +6,7 @@ import { setTimer, clearTimer } from "./timers"
 import { SEED_ORDERS } from "./seed"
 import { notifyConvenience } from "./notification"
 import { useSettlementStore } from "./settlement-store"
+import { usePointsStore } from "@/features/points/store"
 
 // ---- Store types ----
 type ConvenienceState = {
@@ -231,6 +232,7 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
       })
     }
     notify(o, "订单已完成", "服务已完成，欢迎评价", `/c/orders/${orderId}`)
+    usePointsStore.getState().transact(o.userId, "mall_purchase", orderId)
   },
 
   rateOrder: (orderId, rating) =>
