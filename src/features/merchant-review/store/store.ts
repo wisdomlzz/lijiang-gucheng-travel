@@ -1,8 +1,10 @@
 import { create } from "zustand"
+import { useContentMerchantStore } from "../../content/store/merchant-store"
 
 // ============================================================
 // 商家信息审核 —— 商户自助提交店铺变更 + PC 审核
 // 商家入驻闭环：入驻审核(已有 supplier) → 我的店铺 → 信息变更 → 此处审核
+// 审核通过后自动更新 merchant-store 中对应商家数据
 // ============================================================
 
 export interface MerchantChangeRequest {
@@ -22,8 +24,9 @@ type MerchantReviewState = {
   requests: MerchantChangeRequest[]
   getPending: () => MerchantChangeRequest[]
   getBySupplier: (supplierId: string) => MerchantChangeRequest[]
-  // 商户提交变更（C端我的店铺调用——跨域联动入口）
+  /** 商户提交变更（C端我的店铺调用） */
   submitChange: (input: Omit<MerchantChangeRequest, "id" | "status" | "submittedAt">) => void
+  /** 审核通过：更新请求状态 + 将变更应用到 merchant-store */
   approve: (id: string, reviewer: string) => void
   reject: (id: string, reviewer: string, reason: string) => void
 }
@@ -58,6 +61,31 @@ export const useMerchantReviewStore = create<MerchantReviewState>((set, get) => 
   getPending: () => get().requests.filter((r) => r.status === "pending"),
   getBySupplier: (supplierId) => get().requests.filter((r) => r.supplierId === supplierId),
   submitChange: (input) => set((s) => ({ requests: [{ ...input, id: `mcr${Date.now()}`, status: "pending", submittedAt: new Date().toLocaleString("zh-CN") }, ...s.requests] })),
-  approve: (id, reviewer) => set((s) => ({ requests: s.requests.map((r) => r.id === id ? { ...r, status: "approved", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer } : r) })),
-  reject: (id, reviewer, reason) => set((s) => ({ requests: s.requests.map((r) => r.id === id ? { ...r, status: "rejected", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer, rejectReason: reason } : r) })),
+
+  approve: (id, reviewer) => {
+    const req = get().requests.find((r) => r.id === id)
+    if (!req) return
+
+    // 1. 更新请求状态
+    set((s) => ({
+      requests: s.requests.map((r) =>
+        r.id === id ? { ...r, status: "approved", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer } : r
+      ),
+    }))
+
+    // 2. 将变更应用到 merchant-store
+    const merchantStore = useContentMerchantStore.getState()
+    const merchant = merchantStore.merchants.find((m) => m.name === req.merchantName)
+    if (merchant) {
+      const updates: Record<string, string> = {}
+      req.fields.forEach((f) => { updates[f.field] = f.newValue })
+      merchantStore.updateMerchant(merchant.id, updates)
+    }
+  },
+
+  reject: (id, reviewer, reason) => set((s) => ({
+    requests: s.requests.map((r) =>
+      r.id === id ? { ...r, status: "rejected", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer, rejectReason: reason } : r
+    ),
+  })),
 }))
