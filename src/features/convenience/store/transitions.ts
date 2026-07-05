@@ -10,10 +10,10 @@ export function transition(from: ConvenienceStatus, action: string): Convenience
     A10: { assign: "A20", cancel: "S50", autoFail: "S90" },
     A20: { accept: "A30", reject: "A10" },
     A30: { quote: "A35", payTimeout: "S90" },
-    A35: { pay: "A40", payTimeout: "S90" },
+    A35: { pay: "A40", payTimeout: "S90", approveQuote: "A40", rejectQuote: "A30" },
     A40: { startService: "S48" },
     S48: { complete: "S55" },
-    S55: { confirm: "S40", autoConfirm: "S40" },
+    S55: { confirm: "S40", autoConfirm: "S40", confirmPayment: "S40" },
     S90: { reDispatch: "A10", forceCancel: "S50" },
   }
   return table[from]?.[action] ?? null

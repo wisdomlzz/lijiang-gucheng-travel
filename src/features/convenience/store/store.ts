@@ -23,7 +23,6 @@ type ConvenienceState = {
 
   // Lifecycle
   createOrder: (order: ConvenienceOrder) => void
-  dispatchOrder: (orderId: string) => void
   autoDispatchOrder: (orderId: string) => void
   assignToStaff: (orderId: string) => void
   manualDispatch: (orderId: string, staffId: string) => void
@@ -43,6 +42,12 @@ type ConvenienceState = {
   reDispatch: (orderId: string) => void
 
   uploadPaymentProof: (orderId: string, url: string) => void
+
+  // Admin review actions
+  approvePriceQuote: (orderId: string) => void
+  rejectPriceQuote: (orderId: string) => void
+  confirmPaymentProof: (orderId: string) => void
+  rejectPaymentProof: (orderId: string) => void
 }
 
 // ---- Helpers (pure, not exported) ----
@@ -81,15 +86,14 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
       `您的${newOrder.serviceType}订单已提交，正在为您安排服务人员`,
       `/c/orders/${newOrder.id}`
     )
-    setTimeout(() => get().dispatchOrder(newOrder.id), 500)
+    // 全自动派单：改变状态 + 分配服务人员
+    setTimeout(() => get().autoDispatchOrder(newOrder.id), 500)
   },
 
   dispatchOrder: (orderId) => {
-    const order = get().orders.find((o) => o.id === orderId)
-    if (!order) return
-    const next = transition(order.status, "dispatch")
-    if (!next) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { status: next }) }))
+    const o = get().orders.find((x) => x.id === orderId)
+    if (!o) return
+    get().autoDispatchOrder(orderId)
   },
 
   assignToStaff: (orderId) => {
@@ -122,6 +126,11 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
   autoDispatchOrder: (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o) return
+    // 已进入待分配状态（A10），直接走分配流程
+    if (o.status === "A10") {
+      get().assignToStaff(orderId)
+      return
+    }
     const next = transition(o.status, "dispatch")
     if (!next) return
     set((s) => ({ orders: updateOrder(s.orders, orderId, { status: next }) }))
@@ -279,4 +288,64 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
   },
 
   uploadPaymentProof: (orderId, url) => set((s) => ({ orders: updateOrder(s.orders, orderId, { paymentProof: url }) })),
+
+  // ---- Admin review actions ----
+  approvePriceQuote: (orderId) => {
+    const o = get().orders.find((x) => x.id === orderId)
+    if (!o) return
+    const next = transition(o.status, "approveQuote")
+    if (!next) return
+    set((s) => ({
+      orders: updateOrder(s.orders, orderId, { status: next, payMethod: "online" }),
+    }))
+    notify(o, "报价审核通过", `${o.serviceType}订单报价已审核通过，服务继续`, `/c/orders/${orderId}`)
+  },
+
+  rejectPriceQuote: (orderId) => {
+    const o = get().orders.find((x) => x.id === orderId)
+    if (!o) return
+    const next = transition(o.status, "rejectQuote")
+    if (!next) return
+    set((s) => ({
+      orders: updateOrder(s.orders, orderId, { status: next, priceQuote: undefined }),
+    }))
+    notify(o, "报价审核驳回", `${o.serviceType}订单报价被驳回，请重新报价`, `/b/service/tasks`)
+  },
+
+  confirmPaymentProof: (orderId) => {
+    const o = get().orders.find((x) => x.id === orderId)
+    if (!o) return
+    // 如果在服务中（S48），先完成服务再确认
+    if (o.status === "S48") {
+      const next = transition("S48", "complete")
+      if (!next) return
+      set((s) => ({ orders: updateOrder(s.orders, orderId, { status: next }) }))
+    }
+    const next = transition(o.status === "S48" ? "S55" : o.status, "confirmPayment")
+    if (!next) return
+    set((s) => ({
+      orders: updateOrder(s.orders, orderId, { status: next, completedAt: new Date().toISOString() }),
+    }))
+    // 记录收入
+    if (o.priceQuote && o.staffId) {
+      useSettlementStore.getState().recordIncome({
+        orderId: o.id,
+        staffId: o.staffId,
+        staffName: o.staffName ?? "",
+        serviceType: String(o.serviceType),
+        amount: o.priceQuote,
+        payMethod: o.payMethod ?? "online",
+      })
+    }
+    notify(o, "付款凭证已确认", `${o.serviceType}订单收款确认，订单已完成`, `/c/orders/${orderId}`)
+  },
+
+  rejectPaymentProof: (orderId) => {
+    const o = get().orders.find((x) => x.id === orderId)
+    if (!o) return
+    set((s) => ({
+      orders: updateOrder(s.orders, orderId, { paymentProof: undefined }),
+    }))
+    notify(o, "付款凭证驳回", `${o.serviceType}订单付款凭证被驳回，请重新上传`, `/b/service/tasks`)
+  },
 }))

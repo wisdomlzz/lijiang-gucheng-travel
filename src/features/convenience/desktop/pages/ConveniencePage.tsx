@@ -50,6 +50,12 @@ export default function ConveniencePage() {
   const manualDispatch = useConvenienceStore((s) => s.manualDispatch)
   const approveCancelRequest = useConvenienceStore((s) => s.approveCancelRequest)
   const rejectCancelRequest = useConvenienceStore((s) => s.rejectCancelRequest)
+  const approvePriceQuote = useConvenienceStore((s) => s.approvePriceQuote)
+  const rejectPriceQuote = useConvenienceStore((s) => s.rejectPriceQuote)
+  const confirmPaymentProof = useConvenienceStore((s) => s.confirmPaymentProof)
+  const rejectPaymentProof = useConvenienceStore((s) => s.rejectPaymentProof)
+  const reDispatch = useConvenienceStore((s) => s.reDispatch)
+  const forceCancel = useConvenienceStore((s) => s.forceCancel)
 
   const [activeTab, setActiveTab] = useState<TabKey>("all")
   const [searchQuery, setSearchQuery] = useState("")
@@ -133,19 +139,33 @@ export default function ConveniencePage() {
   }
 
   const handleApprovePrice = (orderId: string) => {
-    toast.success("报价已通过")
+    approvePriceQuote(orderId)
+    toast.success("报价已通过，订单继续流转")
   }
 
   const handleRejectPrice = (orderId: string) => {
-    toast.success("报价已驳回")
+    rejectPriceQuote(orderId)
+    toast.success("报价已驳回，将重新报价")
   }
 
   const handleApprovePayment = (orderId: string) => {
-    toast.success("付款凭证已确认")
+    confirmPaymentProof(orderId)
+    toast.success("付款凭证已确认，订单已完成")
   }
 
   const handleRejectPayment = (orderId: string) => {
-    toast.success("付款凭证已驳回")
+    rejectPaymentProof(orderId)
+    toast.success("付款凭证已驳回，请重新上传")
+  }
+
+  const handleResolvePendingReview = (orderId: string, status: string) => {
+    if (status === "S90") {
+      reDispatch(orderId)
+      toast.success("已重新派单")
+    } else {
+      autoDispatchOrder(orderId)
+      toast.success("审核通过，已重新派单")
+    }
   }
 
   // Manual dispatch candidates
@@ -309,11 +329,11 @@ export default function ConveniencePage() {
                   <TableCell className="text-right">
                     <div className="flex gap-1 justify-end">
                       <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
-                        onClick={() => { handleAutoRetry(o.id); toast.success("审核通过，已重新派单") }}>
+                        onClick={() => handleResolvePendingReview(o.id, o.status)}>
                         <CheckCircle2 className="size-3 mr-1" /> 通过
                       </Button>
                       <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
-                        onClick={() => toast.success("已驳回该订单")}>
+                        onClick={() => { forceCancel(o.id); toast.success("已驳回该订单") }}>
                         <XCircle className="size-3 mr-1" /> 驳回
                       </Button>
                     </div>
