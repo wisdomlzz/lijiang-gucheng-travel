@@ -3,6 +3,7 @@ import { useNavigate } from "react-router"
 import { Package, Gift, Volume2, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { EmptyState } from "@/shared/components/mobile/EmptyState"
 import { useNotificationStore, type NotificationType } from "@/platform/notification"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 
@@ -150,12 +151,7 @@ export function NotificationsPage() {
 
         <div className="flex-1 overflow-y-auto" onClick={() => setOpenId(null)}>
           {filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24">
-              <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mb-3">
-                <Volume2 size={28} className="text-primary" />
-              </div>
-              <p className="text-[14px] text-text-tertiary">暂无消息</p>
-            </div>
+              <EmptyState title="暂无消息" />
           ) : (
             <>
               <div className="p-4 space-y-2">

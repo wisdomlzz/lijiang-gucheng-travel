@@ -5,6 +5,7 @@ import { LoginPageC } from "../shared/components/LoginPageC"
 import { MiniProgramFrame } from "../shared/components/MiniProgramFrame"
 import { RedirectTo } from "../shared/components/RedirectTo"
 import { ErrorBoundary } from "../shared/components/ErrorBoundary"
+import { PageSkeleton } from "../shared/components/mobile/Skeleton"
 import { cRoutes } from "./routes"
 
 export function CApp() {
@@ -26,13 +27,7 @@ export function CApp() {
   return (
     <MiniProgramFrame>
       <ErrorBoundary>
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">
-              加载中...
-            </div>
-          }
-        >
+        <Suspense fallback={<PageSkeleton />}>
           <Routes>
             <Route index element={<RedirectTo to="/c/home" />} />
             {cRoutes.map((route) => {

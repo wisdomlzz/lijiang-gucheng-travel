@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { EmptyState } from "@/shared/components/mobile/EmptyState"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { FileText, Eye, Clock, Trash2, RotateCcw } from "lucide-react"
 import { toast } from "sonner"
@@ -89,10 +90,7 @@ export function MyPostsPage() {
       {/* List */}
       <div className="px-3 pb-6 space-y-2">
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center py-20">
-            <FileText size={40} className="text-text-tertiary mb-3" />
-            <p className="text-[13px] text-text-tertiary">暂无发布内容</p>
-          </div>
+          <EmptyState title="暂无发布内容" />
         ) : (
           <>
             {visible.map((post) => {

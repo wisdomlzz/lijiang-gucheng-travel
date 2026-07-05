@@ -5,6 +5,7 @@ import { LoginPageB } from "../shared/components/LoginPageB"
 import { ServiceApp } from "../features/convenience/b-end/pages/App"
 import { RedirectTo } from "../shared/components/RedirectTo"
 import { ErrorBoundary } from "../shared/components/ErrorBoundary"
+import { PageSkeleton } from "../shared/components/mobile/Skeleton"
 
 export function BApp() {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
@@ -24,13 +25,7 @@ export function BApp() {
 
   return (
     <ErrorBoundary>
-      <Suspense
-        fallback={
-          <div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">
-            加载中...
-          </div>
-        }
-      >
+      <Suspense fallback={<PageSkeleton />}>
         <Routes>
           <Route index element={<RedirectTo to="/b/service/workbench" />} />
           <Route path="service/*" element={<ServiceApp />} />

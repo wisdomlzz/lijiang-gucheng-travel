@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { EmptyState } from "@/shared/components/mobile/EmptyState"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { useFavoriteStore } from "@/features/favorite/store"
 import type { FavoriteItem } from "@/features/favorite/store"
-import { Heart, Trash2, Store, Map, BookOpen } from "lucide-react"
+import { Trash2, Store, Map, BookOpen } from "lucide-react"
 import { toast } from "sonner"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 
@@ -61,8 +62,7 @@ export function FavoritesPage() {
       <div className="px-3 pb-6 space-y-2">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center py-20">
-            <Heart size={40} className="text-text-tertiary mb-3" />
-            <p className="text-[13px] text-text-tertiary">暂无收藏</p>
+            <EmptyState title="暂无收藏" description="去首页发现感兴趣的内容吧" />
           </div>
         ) : (
           <>

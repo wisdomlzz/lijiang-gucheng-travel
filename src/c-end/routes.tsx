@@ -220,6 +220,11 @@ const HousingPage = lazy(() =>
   import("../features/housing/c-end/pages/HousingPage").then((m) => ({ default: m.HousingPage }))
 )
 
+// ── 懒加载：搜索结果 ──
+const SearchResultsPage = lazy(() =>
+  import("../features/homepage/c-end/pages/SearchResultsPage").then((m) => ({ default: m.SearchResultsPage }))
+)
+
 type CRoute =
   | { path: string; element: ReactNode }
   | { element: ReactNode; children: { path?: string; index?: boolean; element: ReactNode }[] }
@@ -246,6 +251,7 @@ export const cRoutes: CRoute[] = [
   { path: "complaint/:id", element: <ComplaintDetailPage /> },
   { path: "merchants", element: <MerchantListPage /> },
   { path: "merchant/:id", element: <MerchantDetailPage /> },
+  { path: "search", element: <SearchResultsPage /> },
   { path: "routes", element: <RoutesPage /> },
   { path: "routes/:id", element: <RouteDetailPage /> },
   { path: "routes/:id/preview", element: <RoutePreviewPage /> },

@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { EmptyState } from "@/shared/components/mobile/EmptyState"
 import { useBookingStore } from "@/features/booking/store"
 import { useAuthStore } from "@/platform/auth"
 import { Calendar, Clock, Users, QrCode, CheckCircle2, XCircle } from "lucide-react"
@@ -26,16 +27,7 @@ export function MyBookingsPage() {
 
       <div className="px-3 py-4 space-y-3">
         {bookings.length === 0 ? (
-          <div className="flex flex-col items-center py-20 text-text-tertiary">
-            <Calendar size={32} className="opacity-30 mb-3" />
-            <p className="text-[14px]">暂无预约记录</p>
-            <button
-              onClick={() => navigate("/c/courtyards")}
-              className="mt-4 px-6 h-9 rounded-full bg-primary text-white text-[13px]"
-            >
-              去预约
-            </button>
-          </div>
+          <EmptyState title="暂无预约记录" action={{ label: "去逛逛", onClick: () => navigate("/c/courtyards") }} />
         ) : (
           bookings.map((b) => {
             const meta = STATUS_META[b.status]

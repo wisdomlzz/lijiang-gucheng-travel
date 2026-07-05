@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router"
 import { User, ChevronRight } from "lucide-react"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { EmptyState } from "@/shared/components/mobile/EmptyState"
 import { useConvenienceStore } from "@/features/convenience/store"
 import { useAuthStore } from "@/platform/auth"
 import { useSearch } from "@/shared/hooks/useSearch"
@@ -78,15 +79,7 @@ export function OrderListPage() {
         </div>
 
         {total === 0 && (
-          <div className="py-16 text-center">
-            <p className="text-text-tertiary text-[13px]">暂无相关便民服务订单</p>
-            <button
-              onClick={() => navigate("/c/services")}
-              className="mt-4 h-9 px-5 rounded-full bg-primary text-white text-[13px]"
-            >
-              去下单
-            </button>
-          </div>
+          <EmptyState title="暂无便民服务订单" action={{ label: "去下单", onClick: () => navigate("/c/services") }} />
         )}
 
         {visible.map((o) => {

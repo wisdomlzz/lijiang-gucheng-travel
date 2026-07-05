@@ -55,6 +55,7 @@ export function HomePage() {
   const [bannerIdx, setBannerIdx] = useState(0)
   const [gridPage, setGridPage] = useState(0)
   const [bannerHover, setBannerHover] = useState(false)
+  const [searchKeyword, setSearchKeyword] = useState("")
   const dragStartX = useRef(0)
   const dragActive = useRef(false)
   const gridRef = useRef<HTMLDivElement>(null)
@@ -173,10 +174,21 @@ export function HomePage() {
         <div className="absolute -bottom-5 left-4 right-4">
           <div className="flex items-center gap-2 bg-white rounded-full h-[44px] pl-4 pr-2 shadow-elevated focus-within:ring-2 focus-within:ring-sky-light/40 transition-all">
             <Search size={16} className="text-text-caption" />
-            <input
-              className="flex-1 text-[13px] text-text-heading bg-transparent outline-none placeholder:text-text-caption"
-              placeholder="请输入"
-            />
+            <form
+              className="flex-1"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const q = searchKeyword.trim()
+                if (q) navigate(`/c/search?q=${encodeURIComponent(q)}`)
+              }}
+            >
+              <input
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="w-full text-[13px] text-text-heading bg-transparent outline-none placeholder:text-text-caption"
+                placeholder="搜索商家、路线、资讯"
+              />
+            </form>
             <button className="w-8 h-8 rounded-lg border border-border-light flex items-center justify-center text-sky-deep active:scale-95 transition-transform">
               <ScanLine size={16} />
             </button>

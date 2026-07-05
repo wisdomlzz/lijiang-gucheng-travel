@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
-import { MessageSquare, Clock, CheckCircle, XCircle, ChevronRight } from "lucide-react"
+import { EmptyState } from "@/shared/components/mobile/EmptyState"
+import { Clock, CheckCircle, XCircle, ChevronRight } from "lucide-react"
 import { useComplaintStore } from "../../store"
 import { ComplaintStatusLabel } from "../../../../shared/types"
 import { useSearch } from "../../../../shared/hooks/useSearch"
@@ -44,19 +45,7 @@ export function MyComplaintsPage() {
 
       <div className="px-3 py-4 space-y-3">
         {myComplaints.length === 0 ? (
-          <div className="flex flex-col items-center py-20 text-text-tertiary">
-            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-              <MessageSquare size={24} className="opacity-30" />
-            </div>
-            <p className="text-[14px]">暂无投诉记录</p>
-            <p className="text-[12px] mt-1">遇到问题可在此提交投诉</p>
-            <button
-              onClick={() => navigate("/c/complaint")}
-              className="mt-4 px-6 h-9 rounded-full bg-primary text-white text-[13px]"
-            >
-              提交投诉
-            </button>
-          </div>
+          <EmptyState title="暂无投诉记录" description="遇到问题可在此提交投诉" action={{ label: "提交投诉", onClick: () => navigate("/c/complaints/new") }} />
         ) : (
           <>
             <div className="flex gap-2 overflow-x-auto pb-2">
@@ -83,7 +72,7 @@ export function MyComplaintsPage() {
             </div>
 
             {total === 0 ? (
-              <div className="text-center py-12 text-[13px] text-text-tertiary">该分类下暂无投诉</div>
+              <EmptyState title="该分类下暂无投诉" />
             ) : (
               visible.map((c) => {
                 const cfg = STATUS_CONFIG[c.status] || STATUS_CONFIG.C10
