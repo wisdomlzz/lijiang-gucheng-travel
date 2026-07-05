@@ -1,9 +1,10 @@
 import { Suspense, useEffect } from "react"
 import { Routes, Route } from "react-router"
-import { useAuthStore } from "../shared/stores/auth-store"
+import { useAuthStore } from "@/platform/auth"
 import { LoginPageB } from "../shared/components/LoginPageB"
 import { ServiceApp } from "../features/convenience/b-end/pages/App"
 import { RedirectTo } from "../shared/components/RedirectTo"
+import { ErrorBoundary } from "../shared/components/ErrorBoundary"
 
 export function BApp() {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
@@ -22,6 +23,7 @@ export function BApp() {
   }
 
   return (
+    <ErrorBoundary>
     <Suspense fallback={<div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">加载中...</div>}>
     <Routes>
       <Route index element={<RedirectTo to="/b/service/workbench" />} />
@@ -29,5 +31,6 @@ export function BApp() {
       <Route path="*" element={<RedirectTo to="/b/service/workbench" />} />
     </Routes>
     </Suspense>
+    </ErrorBoundary>
   )
 }
