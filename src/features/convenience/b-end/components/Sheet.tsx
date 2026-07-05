@@ -75,7 +75,7 @@ export function ConfirmModal({
         <div className="mt-4 flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 h-10 rounded-2xl bg-white border border-[#E5E7EB] text-text-secondary text-[13px]"
+            className="flex-1 h-10 rounded-2xl bg-white border border-slate-200 text-text-secondary text-[13px]"
           >
             {cancel}
           </button>

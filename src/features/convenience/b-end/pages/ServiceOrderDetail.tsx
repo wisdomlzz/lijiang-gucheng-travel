@@ -122,7 +122,7 @@ export function ServiceOrderDetail({
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="flex-1 h-11 rounded-2xl bg-white border border-[#E5E7EB] text-text-secondary text-[14px]"
+              className="flex-1 h-11 rounded-2xl bg-white border border-slate-200 text-text-secondary text-[14px]"
             >
               暂不接单
             </button>

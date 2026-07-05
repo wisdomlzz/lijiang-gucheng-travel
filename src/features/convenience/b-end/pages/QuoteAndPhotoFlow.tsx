@@ -257,13 +257,13 @@ export function QuoteAndPhotoFlow({
                     }
                     setStep("photo")
                   }}
-                  className="w-full h-10 rounded-2xl bg-white border border-[#E5E7EB] text-[12px] text-text-secondary"
+                  className="w-full h-10 rounded-2xl bg-white border border-slate-200 text-[12px] text-text-secondary"
                 >
                   用户已支付，去开始服务
                 </button>
                 <button
                   onClick={onClose}
-                  className="w-full h-10 rounded-2xl bg-white border border-[#E5E7EB] text-[12px] text-text-secondary"
+                  className="w-full h-10 rounded-2xl bg-white border border-slate-200 text-[12px] text-text-secondary"
                 >
                   返回订单列表
                 </button>
@@ -287,7 +287,7 @@ export function QuoteAndPhotoFlow({
                 </button>
                 <button
                   onClick={onClose}
-                  className="w-full h-10 rounded-2xl bg-white border border-[#E5E7EB] text-[12px] text-text-secondary"
+                  className="w-full h-10 rounded-2xl bg-white border border-slate-200 text-[12px] text-text-secondary"
                 >
                   返回订单列表
                 </button>
