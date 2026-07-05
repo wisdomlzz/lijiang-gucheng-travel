@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { Card, CardContent } from "../../../../shared/components/ui/card"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../../shared/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "../../../../shared/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../shared/components/ui/table"
 import { Button } from "../../../../shared/components/ui/button"
 import { Badge } from "../../../../shared/components/ui/badge"
@@ -25,30 +25,12 @@ import {
   Search,
   RefreshCw,
   XCircle,
-  Clock,
-  Play,
-  Package,
-  Truck,
-  Trash2,
-  Droplets,
-  Shirt,
   Eye,
   Ban,
-  DollarSign,
   Image as ImageIcon,
 } from "lucide-react"
 import { toast } from "sonner"
 import type { ConvenienceServiceType, ConvenienceOrder } from "../../../../shared/types"
-import { ALL_CONVENIENCE_TYPES } from "../../../../shared/types"
-
-const SERVICE_ICONS: Record<string, any> = {
-  送货服务: Package,
-  行李搬运: Truck,
-  建筑垃圾清运: Trash2,
-  生活垃圾清运: Trash2,
-  送水服务: Droplets,
-  布草配送: Shirt,
-}
 
 // ====== Tab label config ======
 type TabKey = "all" | "pending-review" | "cancel-approval" | "price-review" | "payment-proof"
