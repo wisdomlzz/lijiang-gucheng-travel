@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { usePointsStore } from "@/features/points/store"
+import { useNotificationStore } from "@/platform/notification"
 import type {
   Volunteer,
   VolunteerActivity,
@@ -894,6 +895,12 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
           : x
       ),
     }))
+    useNotificationStore.getState().addNotification({
+      type: "system",
+      title: "志愿者审核通过",
+      summary: "您已通过志愿者审核，欢迎参与古城志愿服务。",
+      targetUrl: "/c/volunteer",
+    })
     return { ok: true, msg: "审核通过" }
   },
 
@@ -917,6 +924,12 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
           : x
       ),
     }))
+    useNotificationStore.getState().addNotification({
+      type: "system",
+      title: "志愿者审核未通过",
+      summary: `您的志愿者申请未通过。原因：${reason}。`,
+      targetUrl: "/c/volunteer",
+    })
     return { ok: true, msg: "已驳回" }
   },
 
@@ -1001,6 +1014,12 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
       return { ok: false, msg: "请填写完整信息后再发布" }
     set((s) => ({ activities: s.activities.map((a) => (a.id === activityId ? { ...a, status: next } : a)) }))
     registerActTimers(activityId)
+    useNotificationStore.getState().addNotification({
+      type: "system",
+      title: "新志愿活动发布",
+      summary: `活动「${act.title}」已开放报名，欢迎参与。`,
+      targetUrl: "/c/volunteer/activities",
+    })
     return { ok: true, msg: "活动已发布" }
   },
 
@@ -1015,6 +1034,12 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
         a.id === activityId ? { ...a, status: next as VolunteerActivityStatus } : a
       ),
     }))
+    useNotificationStore.getState().addNotification({
+      type: "system",
+      title: "志愿活动已取消",
+      summary: `活动「${act.title}」已取消，请关注其他活动。`,
+      targetUrl: "/c/volunteer/activities",
+    })
     return { ok: true, msg: "活动已取消" }
   },
 
