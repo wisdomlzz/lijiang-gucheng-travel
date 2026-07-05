@@ -251,19 +251,19 @@ export function ServiceOrderDetail({
                       className="size-7 rounded-full flex items-center justify-center text-[11px] font-medium transition"
                       style={{
                         background: passed ? "#F59E0B" : "#F1F5F9",
-                        color: passed ? "white" : "#94A3B8",
+                        color: passed ? "white" : "var(--text-tertiary)",
                         boxShadow: active ? "0 0 0 4px rgba(245,158,11,0.18)" : "none",
                       }}
                     >
                       {passed ? <CheckCircle2 className="size-4" /> : i + 1}
                     </div>
-                    <div className="mt-1 text-[10px]" style={{ color: passed ? "#F59E0B" : "#94A3B8" }}>
+                    <div className="mt-1 text-[10px]" style={{ color: passed ? "#F59E0B" : "var(--text-tertiary)" }}>
                       {s.label}
                     </div>
                     {i < stages.length - 1 && (
                       <div
                         className="absolute top-[14px] left-[60%] right-[-40%] h-0.5"
-                        style={{ background: i < stageIndex ? "#F59E0B" : "#E5E7EB" }}
+                        style={{ background: i < stageIndex ? "#F59E0B" : "var(--surface-strong)" }}
                       />
                     )}
                   </div>

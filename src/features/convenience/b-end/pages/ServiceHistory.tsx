@@ -206,7 +206,7 @@ export function ServiceHistory() {
                       className="text-[10px] px-1.5 py-0.5 rounded-md"
                       style={{
                         background: h.pay === "online" ? "#EDE9FE" : "#F1F5F9",
-                        color: h.pay === "online" ? "#7C3AED" : "#64748B",
+                        color: h.pay === "online" ? "#7C3AED" : "var(--text-tertiary)",
                       }}
                     >
                       {h.pay === "online" ? "线上已收款" : "现金已收款"}

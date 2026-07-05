@@ -22,7 +22,7 @@ export function Sheet({
       >
         <style>{`@keyframes sheetUp { from { transform: translateY(100%) } to { transform: translateY(0) } }`}</style>
         <div className="flex items-center justify-between px-5 pt-3 pb-1 shrink-0">
-          <div className="w-8 h-1 rounded-full bg-[#E5E7EB] mx-auto absolute left-1/2 -translate-x-1/2 top-2" />
+          <div className="w-8 h-1 rounded-full bg-surface-strong mx-auto absolute left-1/2 -translate-x-1/2 top-2" />
           <h3 className="text-[15px] text-text-heading mt-2">{title}</h3>
           <button onClick={onClose} className="size-8 rounded-full hover:bg-black/5 flex items-center justify-center">
             <X className="size-4 text-text-tertiary" />

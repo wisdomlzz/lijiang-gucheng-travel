@@ -184,7 +184,7 @@ export function QuoteAndPhotoFlow({
               确认报价 · ¥{amount || "0"}
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-1 px-3 pb-6 bg-[#F8FAFC] -mx-4">
+          <div className="grid grid-cols-3 gap-1 px-3 pb-6 bg-surface-page -mx-4">
             {["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "del"].map((k, i) => (
               <button
                 key={i}
@@ -318,7 +318,7 @@ export function QuoteAndPhotoFlow({
                   className="aspect-square rounded-2xl overflow-hidden relative border-2 border-dashed"
                   style={{
                     borderColor: filled ? "#F59E0B" : "#D6E8F8",
-                    background: filled ? "linear-gradient(135deg,#FCD9A8,#F59E0B)" : "#F8FAFC",
+                    background: filled ? "linear-gradient(135deg,#FCD9A8,#F59E0B)" : "var(--surface-page)",
                   }}
                 >
                   {filled ? (
@@ -390,7 +390,7 @@ export function QuoteAndPhotoFlow({
                   className="aspect-square rounded-2xl overflow-hidden relative border-2 border-dashed"
                   style={{
                     borderColor: filled ? "#10B981" : "#D6E8F8",
-                    background: filled ? "linear-gradient(135deg,#A7F3D0,#10B981)" : "#F8FAFC",
+                    background: filled ? "linear-gradient(135deg,#A7F3D0,#10B981)" : "var(--surface-page)",
                   }}
                 >
                   {filled ? (
