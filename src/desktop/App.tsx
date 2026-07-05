@@ -19,7 +19,6 @@ const ConveniencePage = lazy(() => import("../features/convenience/desktop/pages
 const ZoneManagementPage = lazy(() => import("../features/convenience/desktop/pages/ZoneManagementPage"))
 const DispatchConfigPage = lazy(() => import("../features/convenience/desktop/pages/DispatchConfigPage"))
 const ConvenienceStaffPage = lazy(() => import("../features/convenience/desktop/pages/ConvenienceStaffPage"))
-const PriceArbitrationPage = lazy(() => import("../features/convenience/desktop/pages/PriceArbitrationPage"))
 const BannerManagePage = lazy(() =>
   import("./pages/gates/BannerManagePage").then((m) => ({ default: m.BannerManagePage }))
 )
@@ -32,9 +31,6 @@ const PhotoRecordShow = lazy(() => import("./pages/photo-records/show"))
 const VolunteerManagePage = lazy(() =>
   import("../features/volunteer/desktop/pages/VolunteerManagePage").then((m) => ({ default: m.VolunteerManagePage }))
 )
-const AnnouncementManagePage = lazy(() =>
-  import("./pages/gates/AnnouncementManagePage").then((m) => ({ default: m.AnnouncementManagePage }))
-)
 const PointRulesPage = lazy(() => import("./pages/gates/PointRulesPage").then((m) => ({ default: m.PointRulesPage })))
 const SettlementPage = lazy(() =>
   import("../features/convenience/desktop/pages/SettlementPage").then((m) => ({ default: m.SettlementPage }))
@@ -42,8 +38,11 @@ const SettlementPage = lazy(() =>
 const MerchantReviewPage = lazy(() =>
   import("./pages/gates/MerchantReviewPage").then((m) => ({ default: m.MerchantReviewPage }))
 )
-const FlowWarningPage = lazy(() =>
-  import("./pages/gates/FlowWarningPage").then((m) => ({ default: m.FlowWarningPage }))
+const ReviewManagementPage = lazy(() =>
+  import("../features/convenience/desktop/pages/ReviewManagementPage").then((m) => ({ default: m.ReviewManagementPage }))
+)
+const TrustScoreConfigPage = lazy(() =>
+  import("../features/trust-score/desktop/pages/TrustScoreConfigPage").then((m) => ({ default: m.TrustScoreConfigPage }))
 )
 
 function Loading() {
@@ -87,14 +86,29 @@ export function DesktopApp() {
           <Route index element={<RedirectTo to="/desktop/workbench" />} />
           <Route path="workbench" element={<Workbench />} />
 
-          {/* 便民服务管理 */}
+          {/* ===== 运营管理 ===== */}
+          <Route path="banner" element={<BannerManagePage />} />
+          <Route path="grid-settings" element={<GridSettingsPage />} />
+          <Route path="photo-records" element={<PhotoRecordsList />} />
+          <Route path="photo-records/:id" element={<PhotoRecordShow />} />
+          <Route path="point-rules" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<PointRulesPage />} />} />
+          <Route path="complaints" element={<ComplaintPage />} />
+          <Route path="volunteer" element={<VolunteerManagePage />} />
+
+          {/* ===== 商户与供应商管理 ===== */}
+          <Route path="merchant-review" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<MerchantReviewPage />} />} />
+          <Route path="supplier-applications">
+            {CrudRoutes({ list: <SupplierApplicationsList />, show: <SupplierApplicationsShow /> })}
+          </Route>
+
+          {/* ===== 便民服务 ===== */}
           <Route
             path="convenience-overview"
             element={<ProtectedRoute isAllowed={isSuperAdmin} element={<ConvenienceOverviewPage />} />}
           />
           <Route
-            path="convenience"
-            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<ConveniencePage />} />}
+            path="convenience-staff"
+            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<ConvenienceStaffPage />} />}
           />
           <Route path="zones" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<ZoneManagementPage />} />} />
           <Route
@@ -102,47 +116,22 @@ export function DesktopApp() {
             element={<ProtectedRoute isAllowed={isSuperAdmin} element={<DispatchConfigPage />} />}
           />
           <Route
-            path="convenience-staff"
-            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<ConvenienceStaffPage />} />}
+            path="convenience"
+            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<ConveniencePage />} />}
           />
           <Route
-            path="price-arbitration"
-            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<PriceArbitrationPage />} />}
+            path="settlement"
+            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<SettlementPage />} />}
+          />
+          <Route
+            path="review-management"
+            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<ReviewManagementPage />} />}
           />
 
-          {/* 商城管理后台 */}
-          <Route path="supplier-applications">
-            {CrudRoutes({ list: <SupplierApplicationsList />, show: <SupplierApplicationsShow /> })}
-          </Route>
-
-          {/* 运营管理 */}
-          <Route path="banner" element={<BannerManagePage />} />
-          <Route path="grid-settings" element={<GridSettingsPage />} />
-          <Route path="announcements" element={<AnnouncementManagePage />} />
-          <Route path="complaints" element={<ComplaintPage />} />
-          <Route path="photo-records" element={<PhotoRecordsList />} />
-          <Route path="photo-records/:id" element={<PhotoRecordShow />} />
-          <Route path="volunteer" element={<VolunteerManagePage />} />
-
-          {/* 结算管理 */}
-          <Route path="settlement" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<SettlementPage />} />} />
-
-          {/* 内容管理 */}
+          {/* ===== 诚信管理 ===== */}
           <Route
-            path="point-rules"
-            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<PointRulesPage />} />}
-          />
-
-          {/* 商家管理 */}
-          <Route
-            path="merchant-review"
-            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<MerchantReviewPage />} />}
-          />
-
-          {/* 人流量预警 */}
-          <Route
-            path="flow-warning"
-            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<FlowWarningPage />} />}
+            path="trust-score-config"
+            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<TrustScoreConfigPage />} />}
           />
 
           <Route path="*" element={<RedirectTo to="/desktop/workbench" />} />

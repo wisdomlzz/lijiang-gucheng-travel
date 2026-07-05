@@ -151,11 +151,11 @@ export function DesktopLayout() {
               const labelMap: Record<string, string> = {
                 workbench: "平台运营工作台",
                 "convenience-overview": "服务概览",
-                convenience: "派单列表",
+                convenience: "订单管理",
                 zones: "片区管理",
                 "dispatch-config": "派单配置",
-                "convenience-staff": "服务人员",
-                "price-arbitration": "价格仲裁",
+                "convenience-staff": "人员管理",
+                "review-management": "评价管理",
                 "supplier-applications": "供应商入驻审核",
                 // 内容管理
                 "scenic-news": "景区资讯",
@@ -188,8 +188,8 @@ export function DesktopLayout() {
                 // 新增模块
                 settlement: "结算管理",
                 "point-rules": "积分规则配置",
-                "merchant-review": "商家信息审核",
-                "flow-warning": "人流量预警",
+                "merchant-review": "古城商户审核",
+                "trust-score-config": "诚信评分配置",
               }
               const key = location.pathname.replace("/desktop/", "").split("/")[0]
               return labelMap[key] || key

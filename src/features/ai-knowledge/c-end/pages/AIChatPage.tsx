@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react"
-import { Trash2, Send, Clock, MapPin, Star } from "lucide-react"
+import { Trash2, Send, Clock, MapPin, Star, Route, UtensilsCrossed, CalendarDays, Ticket, Headphones } from "lucide-react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { useNavigate } from "react-router"
-import aiAvatar from "@/c-end/assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png"
+import aiAvatar from "@/c-end/assets/ai-avatar-new.png"
 import { CRMEB_C_URL } from "@/shared/constants"
 
 /* ─────────────────────────────────────────────
@@ -47,7 +47,13 @@ interface Message {
 /* ─────────────────────────────────────────────
    Constants
 ──────────────────────────────────────────── */
-const QUICK_SUGGESTIONS = ["线路推荐", "美食推荐", "活动咨询", "票务咨询", "讲解预约"]
+const QUICK_SUGGESTIONS = [
+  { label: "线路推荐", icon: Route },
+  { label: "美食推荐", icon: UtensilsCrossed },
+  { label: "活动咨询", icon: CalendarDays },
+  { label: "票务咨询", icon: Ticket },
+  { label: "讲解预约", icon: Headphones },
+]
 
 const ROUTE_CARDS: RouteCard[] = [
   {
@@ -227,13 +233,22 @@ function getMockResponse(input: string): {
 /* ─────────────────────────────────────────────
    Sub-components
 ──────────────────────────────────────────── */
+function AIAvatar({ size = 36, className = "" }: { size?: number; className?: string }) {
+  return (
+    <div
+      className={`relative rounded-full overflow-hidden flex-shrink-0 shadow-[0_2px_8px_rgba(37,99,235,0.18)] ${className}`}
+      style={{ width: size, height: size }}
+    >
+      <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
+    </div>
+  )
+}
+
 function ThinkingBubble() {
   return (
-    <div className="flex items-end gap-2 mb-4">
-      <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-sm">
-        <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
-      </div>
-      <div className="bg-white rounded-[16px] rounded-bl-[4px] px-4 py-3 shadow-[0_2px_10px_rgba(59,130,246,0.08)] border border-primary-50">
+    <div className="flex items-end gap-2 mb-3">
+      <AIAvatar size={32} />
+      <div className="bg-white rounded-[18px] rounded-bl-[5px] px-4 py-3 shadow-[0_2px_12px_rgba(45,99,192,0.08)] border border-[#DBE5F3]">
         <div className="flex gap-1.5 items-center h-5">
           {[0, 1, 2].map((i) => (
             <span
@@ -253,24 +268,26 @@ function RouteCardItem({ card }: { card: RouteCard }) {
   return (
     <div
       onClick={() => navigate(`/c/routes/${card.id}`)}
-      className="bg-white rounded-[8px] overflow-hidden shadow-sm mb-2 last:mb-0 active:opacity-80"
+      className="bg-white rounded-[14px] overflow-hidden shadow-[0_2px_10px_rgba(45,99,192,0.07)] mb-2.5 last:mb-0 active:scale-[0.98] transition-transform border border-[#DBE5F3]"
     >
       <div className="h-[120px] w-full overflow-hidden">
         <ImageWithFallback src={card.image} alt={card.name} className="w-full h-full object-cover" />
       </div>
       <div className="p-3">
-        <div className="text-[14px] text-text-body mb-2">{card.name}</div>
-        <div className="flex gap-1.5 mb-3">
-          <div className="flex items-center gap-1 bg-surface-page rounded-full px-2 py-0.5">
+        <div className="text-[14px] text-text-body mb-2 font-medium">{card.name}</div>
+        <div className="flex gap-1.5 mb-2.5">
+          <div className="flex items-center gap-1 bg-[#EFF6FF] rounded-full px-2 py-0.5">
             <MapPin size={10} className="text-primary" />
-            <span className="text-[11px] text-text-secondary">{card.spots}个景点</span>
+            <span className="text-[11px] text-[#1E40AF]">{card.spots}个景点</span>
           </div>
-          <div className="flex items-center gap-1 bg-surface-page rounded-full px-2 py-0.5">
+          <div className="flex items-center gap-1 bg-[#EFF6FF] rounded-full px-2 py-0.5">
             <Clock size={10} className="text-primary" />
-            <span className="text-[11px] text-text-secondary">{card.duration}</span>
+            <span className="text-[11px] text-[#1E40AF]">{card.duration}</span>
           </div>
         </div>
-        <button className="text-primary text-[13px]">查看详情 →</button>
+        <button className="text-primary text-[12px] font-medium flex items-center gap-0.5">
+          查看详情 <span className="text-[10px]">→</span>
+        </button>
       </div>
     </div>
   )
@@ -281,25 +298,25 @@ function MerchantCardItem({ card }: { card: MerchantCard }) {
   return (
     <div
       onClick={() => navigate(`/c/merchant/${card.id}`)}
-      className="bg-white rounded-[8px] overflow-hidden shadow-sm mb-2 last:mb-0 active:opacity-80"
+      className="bg-white rounded-[14px] overflow-hidden shadow-[0_2px_10px_rgba(45,99,192,0.07)] mb-2.5 last:mb-0 active:scale-[0.98] transition-transform border border-[#DBE5F3]"
     >
       <div className="h-[100px] w-full overflow-hidden">
         <ImageWithFallback src={card.image} alt={card.name} className="w-full h-full object-cover" />
       </div>
       <div className="p-3">
-        <div className="text-[14px] text-text-body mb-1.5">{card.name}</div>
+        <div className="text-[14px] text-text-body mb-1.5 font-medium">{card.name}</div>
         <div className="flex items-center gap-2 mb-2">
           <div className="flex items-center gap-1 bg-[#FFF9E6] rounded-full px-2 py-0.5">
             <Star size={10} className="text-[#F59E0B] fill-current" />
             <span className="text-[11px] text-text-body font-medium">{card.rating}</span>
           </div>
-          <div className="flex items-center gap-1 bg-surface-page rounded-full px-2 py-0.5">
+          <div className="flex items-center gap-1 bg-[#EFF6FF] rounded-full px-2 py-0.5">
             <MapPin size={10} className="text-primary" />
-            <span className="text-[11px] text-text-secondary">{card.distance}</span>
+            <span className="text-[11px] text-[#1E40AF]">{card.distance}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[12px] text-text-secondary bg-[#F5F5F5] px-2 py-0.5 rounded">{card.tag}</span>
+          <span className="text-[11px] text-[#7A93AE] bg-[#F5F7FA] px-2 py-0.5 rounded-full">{card.tag}</span>
         </div>
       </div>
     </div>
@@ -310,16 +327,16 @@ function ProductCardItem({ card }: { card: ProductCard }) {
   return (
     <div
       onClick={() => window.open(CRMEB_C_URL, "_blank")}
-      className="bg-white rounded-[8px] overflow-hidden shadow-sm mb-2 last:mb-0 active:opacity-80"
+      className="bg-white rounded-[14px] overflow-hidden shadow-[0_2px_10px_rgba(45,99,192,0.07)] mb-2.5 last:mb-0 active:scale-[0.98] transition-transform border border-[#DBE5F3]"
     >
       <div className="h-[100px] w-full overflow-hidden">
         <ImageWithFallback src={card.image} alt={card.name} className="w-full h-full object-cover" />
       </div>
       <div className="p-3">
-        <div className="text-[14px] text-text-body mb-1.5">{card.name}</div>
+        <div className="text-[14px] text-text-body mb-1.5 font-medium">{card.name}</div>
         <div className="flex items-center gap-2">
           <span className="text-[15px] text-primary font-semibold">{card.price}</span>
-          <span className="text-[11px] text-text-tertiary bg-[#F5F5F5] px-2 py-0.5 rounded ml-auto">{card.tag}</span>
+          <span className="text-[11px] text-[#7A93AE] bg-[#F5F7FA] px-2 py-0.5 rounded-full ml-auto">{card.tag}</span>
         </div>
       </div>
     </div>
@@ -350,14 +367,12 @@ function AIBubble({ message }: { message: Message }) {
   const showCursor = !message.isThinking && message.displayText.length < message.text.length
 
   return (
-    <div className="flex items-end gap-2 mb-4">
-      <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-sm">
-        <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
-      </div>
+    <div className="flex items-end gap-2 mb-3">
+      <AIAvatar size={32} />
 
       <div className="flex-1 max-w-[280px]">
-        <div className="bg-white rounded-[16px] rounded-bl-[4px] px-3.5 py-[10px] shadow-[0_2px_10px_rgba(59,130,246,0.08)] border border-primary-50 border-l-2 border-primary-100">
-          <div className="text-[14px] text-text-body leading-relaxed">
+        <div className="bg-white rounded-[18px] rounded-bl-[5px] px-3.5 py-[11px] shadow-[0_2px_12px_rgba(45,99,192,0.08)] border border-[#DBE5F3]">
+          <div className="text-[14px] text-text-body leading-[1.6]">
             {renderText(message.displayText)}
             {showCursor && (
               <span className="inline-block w-[2px] h-[14px] bg-primary ml-0.5 animate-pulse align-text-bottom" />
@@ -382,9 +397,51 @@ function AIBubble({ message }: { message: Message }) {
 
 function UserBubble({ message }: { message: Message }) {
   return (
-    <div className="flex justify-end mb-4">
-      <div className="max-w-[280px] bg-gradient-to-br from-[#2563EB] to-[#3B82F6] text-white rounded-[16px] rounded-br-[4px] px-3.5 py-[10px] shadow-[0_3px_10px_rgba(59,130,246,0.25)] text-[14px] leading-relaxed">
+    <div className="flex justify-end mb-3">
+      <div className="max-w-[280px] bg-gradient-to-br from-[#2563EB] to-[#3B82F6] text-white rounded-[18px] rounded-br-[5px] px-3.5 py-[11px] shadow-[0_3px_12px_rgba(37,99,235,0.22)] text-[14px] leading-[1.6]">
         {message.text}
+      </div>
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────
+   Welcome card (shown when only welcome msg)
+──────────────────────────────────────────── */
+function WelcomeCard({ onPick }: { onPick: (s: string) => void }) {
+  return (
+    <div className="mb-4">
+      {/* Greeting bubble */}
+      <div className="flex items-end gap-2 mb-3">
+        <AIAvatar size={32} />
+        <div className="flex-1 max-w-[300px]">
+          <div className="bg-white rounded-[18px] rounded-bl-[5px] px-4 py-3 shadow-[0_2px_12px_rgba(45,99,192,0.08)] border border-[#DBE5F3]">
+            <div className="text-[14px] text-text-body leading-[1.6]">
+              您好！我是您的<strong className="font-semibold">丽江古城旅游助手</strong> 🎋
+              <br />
+              无论是游线路、美食、票务还是讲解，都可以问我～
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick action grid */}
+      <div className="grid grid-cols-2 gap-2.5 pl-[42px]">
+        {QUICK_SUGGESTIONS.map((s) => {
+          const Icon = s.icon
+          return (
+            <button
+              key={s.label}
+              onClick={() => onPick(s.label)}
+              className="flex items-center gap-2.5 bg-white rounded-[14px] px-3 py-2.5 border border-[#DBE5F3] shadow-[0_2px_8px_rgba(45,99,192,0.06)] active:scale-[0.97] transition-transform"
+            >
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#3B82F6] flex items-center justify-center flex-shrink-0 shadow-sm">
+                <Icon size={16} className="text-white" />
+              </div>
+              <span className="text-[13px] text-text-body font-medium">{s.label}</span>
+            </button>
+          )
+        })}
       </div>
     </div>
   )
@@ -577,62 +634,84 @@ export function AIChatPage() {
   }
 
   const canSend = input.trim().length > 0
+  const isWelcomeState = messages.length === 1 && messages[0].id.startsWith("welcome")
 
   return (
     <div
-      className="fixed inset-x-0 top-0 z-20 flex flex-col bg-gradient-to-b from-surface-page via-[#DBEAFE] to-[#BFDBFE]"
-      style={{ bottom: "60px" }}
+      className="fixed inset-x-0 top-0 z-20 flex flex-col"
+      style={{
+        bottom: "60px",
+        background: "linear-gradient(180deg, #6C93D4 0%, #A5BEE8 8%, #E5EFFE 16%, #F0F6FF 30%, #F5F9FF 100%)",
+      }}
     >
       {/* Top Bar */}
-      <div className="flex items-center h-[48px] bg-white/90 backdrop-blur border-b border-[#BFDBFE] px-4 flex-shrink-0 z-10 relative">
-        <div className="flex-1" />
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5">
-          <span className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
-            <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
-          </span>
-          <h1 className="text-[16px] text-text-body">AI 旅游助手</h1>
-        </div>
-        <div className="flex items-center gap-3 ml-auto">
-          <button
-            onClick={() => setShowClearConfirm(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F5F5F5] transition-colors"
-          >
-            <Trash2 size={18} className="text-text-secondary" />
-          </button>
+      <div className="relative flex-shrink-0 z-10">
+        <div
+          className="flex items-center h-[52px] px-4"
+          style={{
+            background: "linear-gradient(180deg, #2D63C0 0%, #3D6FC5 40%, #4A78C8 70%, #6C93D4 100%)",
+          }}
+        >
+          <div className="flex-1" />
+          <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center leading-tight">
+            <h1 className="text-[16px] text-white font-semibold tracking-tight">AI 旅游助手</h1>
+            <span className="text-[10px] text-white/75 flex items-center gap-1 mt-0.5">
+              <span className="w-1 h-1 rounded-full bg-[#7EEFC7]" />
+              在线为您服务
+            </span>
+          </div>
+          <div className="flex items-center gap-2 ml-auto">
+            <button
+              onClick={() => setShowClearConfirm(true)}
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/15 transition-colors active:scale-90"
+            >
+              <Trash2 size={17} className="text-white" />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Chat Area */}
       <div ref={chatRef} className="flex-1 overflow-y-auto px-4 pt-4 pb-2" style={{ overscrollBehavior: "contain" }}>
-        {messages.map((msg) => {
-          if (msg.role === "user") {
-            return <UserBubble key={msg.id} message={msg} />
-          }
-          if (msg.isThinking) {
-            return <ThinkingBubble key={msg.id} />
-          }
-          return <AIBubble key={msg.id} message={msg} />
-        })}
+        {isWelcomeState ? (
+          <WelcomeCard onPick={handleSuggestion} />
+        ) : (
+          messages.map((msg) => {
+            if (msg.role === "user") {
+              return <UserBubble key={msg.id} message={msg} />
+            }
+            if (msg.isThinking) {
+              return <ThinkingBubble key={msg.id} />
+            }
+            return <AIBubble key={msg.id} message={msg} />
+          })
+        )}
         <div className="h-4" />
       </div>
 
-      {/* Quick Suggestions */}
-      <div className="px-4 pt-2 pb-0 flex-shrink-0">
-        <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2">
-          {QUICK_SUGGESTIONS.map((s) => (
-            <button
-              key={s}
-              onClick={() => handleSuggestion(s)}
-              className="flex-shrink-0 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur border border-[#BFDBFE] text-[13px] text-[#1E40AF] active:bg-[#DBEAFE] transition-colors shadow-sm"
-            >
-              {s}
-            </button>
-          ))}
+      {/* Quick Suggestions (only when not in welcome state) */}
+      {!isWelcomeState && (
+        <div className="px-4 pt-1 pb-0 flex-shrink-0">
+          <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2">
+            {QUICK_SUGGESTIONS.map((s) => {
+              const Icon = s.icon
+              return (
+                <button
+                  key={s.label}
+                  onClick={() => handleSuggestion(s.label)}
+                  className="flex-shrink-0 flex items-center gap-1.5 pl-2.5 pr-3.5 py-1.5 rounded-full bg-white border border-[#DBE5F3] text-[13px] text-[#1E40AF] active:bg-[#EFF6FF] transition-colors shadow-[0_1px_4px_rgba(45,99,192,0.05)]"
+                >
+                  <Icon size={13} className="text-primary" />
+                  {s.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Bottom Input Bar */}
-      <div className="flex-shrink-0 bg-white border-t border-[#BFDBFE] px-3 py-2 flex items-end gap-2">
+      <div className="flex-shrink-0 bg-white border-t border-[#DBE5F3] px-3 py-2 flex items-end gap-2">
         <textarea
           ref={textareaRef}
           value={input}
@@ -640,20 +719,20 @@ export function AIChatPage() {
           onKeyDown={handleKeyDown}
           placeholder="向 AI 助手提问..."
           rows={1}
-          className="flex-1 bg-surface-page rounded-[20px] px-4 py-2 text-[14px] text-text-body placeholder-[#BDBDBD] resize-none outline-none leading-[20px] focus:bg-white focus:ring-2 focus:ring-primary-light transition-all"
+          className="flex-1 bg-[#F5F7FA] rounded-[20px] px-4 py-2 text-[14px] text-text-body placeholder-[#BDBDBD] resize-none outline-none leading-[20px] focus:bg-white focus:ring-2 focus:ring-primary/30 transition-all"
           style={{ minHeight: "36px", maxHeight: "96px" }}
         />
 
         <button
           onClick={handleSend}
           disabled={!canSend}
-          className="w-9 h-9 flex items-center justify-center rounded-full flex-shrink-0 transition-all"
+          className="w-9 h-9 flex items-center justify-center rounded-full flex-shrink-0 transition-all active:scale-90"
           style={{
-            background: canSend ? "linear-gradient(135deg, #2563EB, #3B82F6)" : "#F0F0F0",
-            boxShadow: canSend ? "0 3px 10px rgba(59,130,246,0.3)" : "none",
+            background: canSend ? "linear-gradient(135deg, #2563EB, #3B82F6)" : "#E8EDF3",
+            boxShadow: canSend ? "0 3px 10px rgba(37,99,235,0.3)" : "none",
           }}
         >
-          <Send size={17} className={canSend ? "text-white" : "text-[#CCCCCC]"} />
+          <Send size={17} className={canSend ? "text-white" : "text-[#BDBDBD]"} />
         </button>
       </div>
 

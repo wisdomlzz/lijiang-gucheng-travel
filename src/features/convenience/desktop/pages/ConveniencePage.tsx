@@ -5,13 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "../../../../shared/components/ui/button"
 import { Badge } from "../../../../shared/components/ui/badge"
 import { Input } from "../../../../shared/components/ui/input"
-import { PageLayout } from "../../../../desktop/components/common/PageLayout"
-import { StatusBadge } from "@/shared/components/ui/status-badge"
-import { useConvenienceStore } from "../../store"
-import { useStaffStore } from "../../store"
-import { useZoneStore } from "../../store"
-import { usePagination } from "@/shared/hooks/usePagination"
-import { PaginationBar } from "@/shared/components/ui/data-toolbar"
+import { Textarea } from "../../../../shared/components/ui/textarea"
 import {
   Dialog,
   DialogContent,
@@ -20,24 +14,32 @@ import {
   DialogFooter,
   DialogDescription,
 } from "../../../../shared/components/ui/dialog"
+import { PageLayout } from "../../../../desktop/components/common/PageLayout"
+import { StatusBadge } from "@/shared/components/ui/status-badge"
+import { useConvenienceStore, useStaffStore } from "../../store"
+import { usePagination } from "@/shared/hooks/usePagination"
+import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import {
   AlertTriangle,
   CheckCircle2,
+  Search,
+  RefreshCw,
+  XCircle,
   Clock,
-  Users,
-  Truck,
+  Play,
   Package,
+  Truck,
   Trash2,
   Droplets,
   Shirt,
-  RefreshCw,
-  Play,
-  XCircle,
-  Search,
+  Eye,
+  Ban,
+  DollarSign,
+  Image as ImageIcon,
 } from "lucide-react"
 import { toast } from "sonner"
-import type { StaffItem, ConvenienceServiceType } from "../../../../shared/types"
-import { ALL_CONVENIENCE_TYPES, isPointToPoint } from "../../../../shared/types"
+import type { ConvenienceServiceType, ConvenienceOrder } from "../../../../shared/types"
+import { ALL_CONVENIENCE_TYPES } from "../../../../shared/types"
 
 const SERVICE_ICONS: Record<string, any> = {
   送货服务: Package,
@@ -48,59 +50,74 @@ const SERVICE_ICONS: Record<string, any> = {
   布草配送: Shirt,
 }
 
+// ====== Tab label config ======
+type TabKey = "all" | "pending-review" | "cancel-approval" | "price-review" | "payment-proof"
+const TABS: { key: TabKey; label: string }[] = [
+  { key: "all", label: "全部订单" },
+  { key: "pending-review", label: "待审核" },
+  { key: "cancel-approval", label: "取消审批" },
+  { key: "price-review", label: "报价审核" },
+  { key: "payment-proof", label: "付款凭证" },
+]
+
 export default function ConveniencePage() {
   const orders = useConvenienceStore((s) => s.orders)
   const staffList = useStaffStore((s) => s.staff)
   const dispatchLog = useConvenienceStore((s) => s.dispatchLog)
-  const zones = useZoneStore((s) => s.zones)
   const autoDispatchOrder = useConvenienceStore((s) => s.autoDispatchOrder)
   const manualDispatch = useConvenienceStore((s) => s.manualDispatch)
   const approveCancelRequest = useConvenienceStore((s) => s.approveCancelRequest)
   const rejectCancelRequest = useConvenienceStore((s) => s.rejectCancelRequest)
 
-  const [activeTab, setActiveTab] = useState("overview")
+  const [activeTab, setActiveTab] = useState<TabKey>("all")
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Manual dispatch
   const [manualDialogOpen, setManualDialogOpen] = useState(false)
   const [manualTarget, setManualTarget] = useState<string | null>(null)
-  const [dispatchSearch, setDispatchSearch] = useState("")
   const [staffSearch, setStaffSearch] = useState("")
 
-  // ---- stats ----
-  const stats = useMemo(() => {
-    const total = orders.length
-    const pending = orders.filter((o) => o.status === "S10" || o.status === "A10").length
-    const inProgress = orders.filter((o) => ["A20", "A30", "A35", "A40", "S48", "S55"].includes(o.status)).length
-    const completed = orders.filter((o) => o.status === "S40").length
-    const manualIntervention = orders.filter((o) => o.status === "S90").length
-    return { total, pending, inProgress, completed, manualIntervention }
-  }, [orders])
+  // Cancel approve/reject reason dialog
+  const [rejectDialogId, setRejectDialogId] = useState<string | null>(null)
+  const [rejectReason, setRejectReason] = useState("")
+  const [detailOrderId, setDetailOrderId] = useState<string | null>(null)
 
-  // ---- service type breakdown ----
-  const serviceBreakdown = useMemo(() => {
-    return ALL_CONVENIENCE_TYPES.map((type) => {
-      const typeOrders = orders.filter((o) => o.serviceType === type)
-      const onlineStaff = staffList.filter((s) => s.enabled && s.status === "online" && s.serviceTypes?.includes(type))
-      return {
-        type,
-        total: typeOrders.length,
-        pending: typeOrders.filter((o) => o.status === "S10" || o.status === "A10").length,
-        inProgress: typeOrders.filter((o) => ["A20", "A30", "A35", "A40", "S48", "S55"].includes(o.status)).length,
-        completed: typeOrders.filter((o) => o.status === "S40").length,
-        onlineStaff: onlineStaff.length,
-        totalStaff: staffList.filter((s) => s.serviceTypes?.includes(type)).length,
-        dispatchMode: isPointToPoint(type) ? "点对点" : "片区式",
-      }
-    })
-  }, [orders, staffList])
-
-  // ---- orders pending manual dispatch ----
-  const manualPendingOrders = useMemo(
-    () => orders.filter((o) => o.status === "S10" || o.status === "A10" || o.status === "S90"),
-    [orders]
-  )
-
-  // ---- cancel requests ----
+  // ---- Derived data ----
+  const allOrders = orders
+  const pendingReviewOrders = useMemo(() => orders.filter((o) => o.status === "S90" || o.status === "S10" || o.status === "A10"), [orders])
   const cancelRequestOrders = useMemo(() => orders.filter((o) => o.cancelRequested), [orders])
+  const priceReviewOrders = useMemo(() => orders.filter((o) => o.status === "A35" && !o.cancelRequested), [orders])
+  const paymentProofOrders = useMemo(() => orders.filter((o) => o.paymentProof && o.status !== "S40" && o.status !== "S50"), [orders])
 
+  const getActiveOrders = (): ConvenienceOrder[] => {
+    switch (activeTab) {
+      case "pending-review": return pendingReviewOrders
+      case "cancel-approval": return cancelRequestOrders
+      case "price-review": return priceReviewOrders
+      case "payment-proof": return paymentProofOrders
+      default: return allOrders
+    }
+  }
+
+  const filteredOrders = useMemo(() => {
+    let list = getActiveOrders()
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      list = list.filter(
+        (o) =>
+          o.id.toLowerCase().includes(q) ||
+          (o.serviceType as string).toLowerCase().includes(q) ||
+          (o.address || "").toLowerCase().includes(q) ||
+          (o.staffName || "").toLowerCase().includes(q)
+      )
+    }
+    return list
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orders, searchQuery, activeTab])
+
+  const pagination = usePagination(filteredOrders, 10)
+
+  // ---- Handlers ----
   const handleManualDispatch = (orderId: string) => {
     setManualTarget(orderId)
     setManualDialogOpen(true)
@@ -112,6 +129,7 @@ export default function ConveniencePage() {
     toast.success("已手动派单")
     setManualDialogOpen(false)
     setManualTarget(null)
+    setStaffSearch("")
   }
 
   const handleAutoRetry = (orderId: string) => {
@@ -124,12 +142,31 @@ export default function ConveniencePage() {
     toast.success("已同意取消")
   }
 
-  const handleRejectCancel = (orderId: string) => {
-    rejectCancelRequest(orderId)
-    toast.success("已拒绝取消")
+  const handleRejectCancel = () => {
+    if (!rejectDialogId) return
+    rejectCancelRequest(rejectDialogId)
+    toast.success(rejectReason ? `已拒绝取消（原因：${rejectReason}）` : "已拒绝取消")
+    setRejectDialogId(null)
+    setRejectReason("")
   }
 
-  // ---- zone-based dispatch candidates for manual dialog ----
+  const handleApprovePrice = (orderId: string) => {
+    toast.success("报价已通过")
+  }
+
+  const handleRejectPrice = (orderId: string) => {
+    toast.success("报价已驳回")
+  }
+
+  const handleApprovePayment = (orderId: string) => {
+    toast.success("付款凭证已确认")
+  }
+
+  const handleRejectPayment = (orderId: string) => {
+    toast.success("付款凭证已驳回")
+  }
+
+  // Manual dispatch candidates
   const manualCandidates = useMemo(() => {
     if (!manualTarget) return []
     const order = orders.find((o) => o.id === manualTarget)
@@ -139,412 +176,384 @@ export default function ConveniencePage() {
     )
   }, [manualTarget, orders, staffList])
 
-  // ---- dispatch search ----
-  const filteredManualPending = useMemo(() => {
-    if (!dispatchSearch.trim()) return manualPendingOrders
-    const q = dispatchSearch.trim().toLowerCase()
-    return manualPendingOrders.filter(
-      (o) =>
-        o.id.toLowerCase().includes(q) ||
-        (o.serviceType as string).toLowerCase().includes(q) ||
-        (o.address || "").toLowerCase().includes(q)
-    )
-  }, [manualPendingOrders, dispatchSearch])
-
-  // ---- pagination ----
-  const dispatchLogPagination = usePagination(dispatchLog, 10)
-  const pendingPagination = usePagination(filteredManualPending, 10)
-
-  // ---- manual dialog staff search ----
   const filteredCandidates = useMemo(() => {
     if (!staffSearch.trim()) return manualCandidates
     const q = staffSearch.trim().toLowerCase()
     return manualCandidates.filter((s) => s.name.toLowerCase().includes(q) || s.phone.includes(q))
   }, [manualCandidates, staffSearch])
 
-  // ---- render convenience staff tab ----
-  const convenienceStaff = useMemo(
-    () => staffList.filter((s) => s.serviceTypes && s.serviceTypes.length > 0),
-    [staffList]
+  // ---- Filter chips per tab ----
+  const TabFilters = () => (
+    <div className="relative w-56">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+      <Input
+        placeholder="搜索订单号、地址、人员..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="pl-9 h-9 text-sm"
+      />
+    </div>
   )
 
+  // ---- Count badges for tabs ----
+  const tabBadge = (key: TabKey): number | undefined => {
+    switch (key) {
+      case "pending-review": return pendingReviewOrders.length || undefined
+      case "cancel-approval": return cancelRequestOrders.length || undefined
+      case "price-review": return priceReviewOrders.length || undefined
+      case "payment-proof": return paymentProofOrders.length || undefined
+      default: return undefined
+    }
+  }
+
+  const detailOrder = detailOrderId ? orders.find((o) => o.id === detailOrderId) : null
+
   return (
-    <PageLayout title="便民服务管理" description="服务运营监控 · 自动派单 · 片区管理 · 服务人员">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="overview">服务概览</TabsTrigger>
-          <TabsTrigger value="dispatch">
-            派单管理
-            {stats.pending + stats.manualIntervention > 0 && (
-              <Badge className="ml-2 bg-amber-500 text-white">{stats.pending + stats.manualIntervention}</Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="zones">片区管理</TabsTrigger>
-          <TabsTrigger value="staff">服务人员</TabsTrigger>
-        </TabsList>
+    <PageLayout title="订单管理" description="便民服务订单全生命周期管理">
+      {/* Tab 导航 + 筛选 */}
+      <div className="flex items-center justify-between mb-4">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabKey)}>
+          <TabsList>
+            {TABS.map((tab) => (
+              <TabsTrigger key={tab.key} value={tab.key} className="relative">
+                {tab.label}
+                {tabBadge(tab.key) && (
+                  <Badge className="ml-1.5 bg-amber-500 text-white text-[10px] px-1.5 py-0">
+                    {tabBadge(tab.key)}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        <TabFilters />
+      </div>
 
-        {/* ===================== TAB: 服务概览 ===================== */}
-        <TabsContent value="overview" className="space-y-6">
-          {/* 顶部统计 */}
-          <div className="grid grid-cols-5 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-amber-600">{stats.pending}</div>
-                <div className="text-xs text-muted-foreground mt-1">待派单</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
-                <div className="text-xs text-muted-foreground mt-1">进行中</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-emerald-600">{stats.completed}</div>
-                <div className="text-xs text-muted-foreground mt-1">今日完成</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-rose-600">{stats.manualIntervention}</div>
-                <div className="text-xs text-muted-foreground mt-1">人工干预</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-slate-700">{stats.total}</div>
-                <div className="text-xs text-muted-foreground mt-1">总订单</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* 服务类型矩阵 */}
-          <div className="grid grid-cols-3 gap-4">
-            {serviceBreakdown.map((svc) => {
-              const Icon = SERVICE_ICONS[svc.type] || Package
-              return (
-                <Card key={svc.type}>
-                  <CardContent className="p-5 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Icon className="size-5 text-primary" />
-                        <span className="font-medium text-sm">{svc.type}</span>
-                      </div>
-                      <Badge variant="outline" className="text-[10px]">
-                        {svc.dispatchMode}
-                      </Badge>
+      {/* ===== Tab 1: 全部订单 ===== */}
+      {activeTab === "all" && (
+        <Card className="p-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>订单号</TableHead>
+                <TableHead>服务类型</TableHead>
+                <TableHead>地址</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>服务人员</TableHead>
+                <TableHead>金额</TableHead>
+                <TableHead>时间</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pagination.paginatedItems.map((o) => (
+                <TableRow key={o.id}>
+                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
+                  <TableCell>{o.serviceType}</TableCell>
+                  <TableCell className="max-w-[180px] truncate">{o.address}</TableCell>
+                  <TableCell><StatusBadge status={o.status} kind="order" /></TableCell>
+                  <TableCell>{o.staffName || "-"}</TableCell>
+                  <TableCell>{o.priceQuote ? `¥${o.priceQuote}` : "-"}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{o.createdAt}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-1 justify-end">
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setDetailOrderId(o.id)} title="详情">
+                        <Eye className="size-3.5" />
+                      </Button>
+                      {(o.status === "S10" || o.status === "A10" || o.status === "S90") && (
+                        <>
+                          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleManualDispatch(o.id)}>
+                            派单
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => handleAutoRetry(o.id)} title="重试">
+                            <RefreshCw className="size-3.5" />
+                          </Button>
+                        </>
+                      )}
                     </div>
-                    <div className="grid grid-cols-4 gap-2 text-center text-xs">
-                      <div>
-                        <div className="font-semibold text-amber-600">{svc.pending}</div>
-                        <div className="text-muted-foreground">待派</div>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-blue-600">{svc.inProgress}</div>
-                        <div className="text-muted-foreground">进行中</div>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-emerald-600">{svc.completed}</div>
-                        <div className="text-muted-foreground">已完成</div>
-                      </div>
-                      <div>
-                        <div className="font-semibold">
-                          {svc.onlineStaff}/{svc.totalStaff}
-                        </div>
-                        <div className="text-muted-foreground">在线</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        </TabsContent>
-
-        {/* ===================== TAB: 派单管理 ===================== */}
-        <TabsContent value="dispatch" className="space-y-4">
-          {/* Search bar */}
-          <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              placeholder="搜索订单号、服务类型、地址..."
-              value={dispatchSearch}
-              onChange={(e) => setDispatchSearch(e.target.value)}
-              className="pl-9 h-9 text-sm"
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredOrders.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                    {searchQuery.trim() ? "无匹配订单" : "暂无订单"}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="mt-3 border-t pt-3">
+            <PaginationBar
+              page={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.setCurrentPage}
+              pageSize={10}
+              onPageSizeChange={() => {}}
+              total={pagination.total}
             />
           </div>
+        </Card>
+      )}
 
-          {/* 派单流水 */}
-          <Card className="p-4">
-            <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-              <RefreshCw className="size-4" /> 派单流水
-            </h3>
-            {dispatchLog.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-4 text-center">暂无派单记录</div>
-            ) : (
-              <>
-                <div className="space-y-1.5 max-h-64 overflow-y-auto">
-                  {dispatchLogPagination.paginatedItems.map((log, i) => (
-                    <div
-                      key={`${dispatchLogPagination.currentPage}-${i}`}
-                      className="flex items-center gap-2 text-xs py-1.5 px-2 rounded bg-slate-50"
-                    >
-                      {log.type === "auto_success" ? (
-                        <CheckCircle2 className="size-3.5 text-emerald-500 shrink-0" />
-                      ) : log.type === "retry" ? (
-                        <Clock className="size-3.5 text-amber-500 shrink-0" />
-                      ) : log.type === "manual" ? (
-                        <Play className="size-3.5 text-blue-500 shrink-0" />
-                      ) : (
-                        <AlertTriangle className="size-3.5 text-rose-500 shrink-0" />
-                      )}
-                      <span className="text-muted-foreground font-mono">{log.orderId}</span>
-                      {log.staffName && <span>→ {log.staffName}</span>}
-                      {log.reason && <span className="text-muted-foreground">({log.reason})</span>}
-                      <span className="ml-auto text-muted-foreground">
-                        {new Date(log.timestamp).toLocaleTimeString()}
-                      </span>
+      {/* ===== Tab 2: 待审核 ===== */}
+      {activeTab === "pending-review" && (
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <AlertTriangle className="size-4 text-amber-500" />
+            <span className="text-sm text-muted-foreground">以下订单需要管理员审核处理</span>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>订单号</TableHead>
+                <TableHead>服务类型</TableHead>
+                <TableHead>地址</TableHead>
+                <TableHead>当前状态</TableHead>
+                <TableHead>原因</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pagination.paginatedItems.map((o) => (
+                <TableRow key={o.id}>
+                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
+                  <TableCell>{o.serviceType}</TableCell>
+                  <TableCell className="max-w-[200px] truncate">{o.address}</TableCell>
+                  <TableCell><StatusBadge status={o.status} kind="order" /></TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {o.status === "S90" ? "需人工干预" : o.status === "S10" ? "待派单" : "待处理"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-1 justify-end">
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
+                        onClick={() => { handleAutoRetry(o.id); toast.success("审核通过，已重新派单") }}>
+                        <CheckCircle2 className="size-3 mr-1" /> 通过
+                      </Button>
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
+                        onClick={() => toast.success("已驳回该订单")}>
+                        <XCircle className="size-3 mr-1" /> 驳回
+                      </Button>
                     </div>
-                  ))}
-                </div>
-                <div className="mt-3 border-t pt-3">
-                  <PaginationBar
-                    page={dispatchLogPagination.currentPage}
-                    totalPages={dispatchLogPagination.totalPages}
-                    onPageChange={dispatchLogPagination.setCurrentPage}
-                    pageSize={10}
-                    onPageSizeChange={() => {}}
-                    total={dispatchLogPagination.total}
-                  />
-                </div>
-              </>
-            )}
-          </Card>
-
-          {/* 待人工处理 */}
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <AlertTriangle className="size-4 text-amber-500" /> 待人工处理
-              </h3>
-              <span className="text-xs text-muted-foreground">{filteredManualPending.length} 单</span>
-            </div>
-            {filteredManualPending.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-4 text-center flex items-center justify-center gap-2">
-                <CheckCircle2 className="size-4 text-emerald-500" />{" "}
-                {dispatchSearch.trim() ? "无匹配订单" : "所有订单均正常流转"}
-              </div>
-            ) : (
-              <>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>订单号</TableHead>
-                      <TableHead>服务类型</TableHead>
-                      <TableHead>地址</TableHead>
-                      <TableHead>状态</TableHead>
-                      <TableHead className="text-right">操作</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pendingPagination.paginatedItems.map((o) => {
-                      const isS90 = o.status === "S90"
-                      return (
-                        <TableRow key={o.id} className={isS90 ? "bg-rose-50/50" : "bg-amber-50/50"}>
-                          <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                          <TableCell>{o.serviceType}</TableCell>
-                          <TableCell className="max-w-[200px] truncate">{o.address}</TableCell>
-                          <TableCell>
-                            <StatusBadge status={o.status} kind="order" />
-                          </TableCell>
-                          <TableCell className="text-right space-x-1">
-                            <Button size="sm" variant="outline" onClick={() => handleManualDispatch(o.id)}>
-                              手动派单
-                            </Button>
-                            <Button size="sm" variant="ghost" onClick={() => handleAutoRetry(o.id)}>
-                              <RefreshCw className="size-3" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-                <div className="mt-3 border-t pt-3">
-                  <PaginationBar
-                    page={pendingPagination.currentPage}
-                    totalPages={pendingPagination.totalPages}
-                    onPageChange={pendingPagination.setCurrentPage}
-                    pageSize={10}
-                    onPageSizeChange={() => {}}
-                    total={pendingPagination.total}
-                  />
-                </div>
-              </>
-            )}
-          </Card>
-
-          {/* 取消申请 */}
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <AlertTriangle className="size-4 text-amber-500" /> 取消申请
-              </h3>
-              <span className="text-xs text-muted-foreground">{cancelRequestOrders.length} 单</span>
-            </div>
-            {cancelRequestOrders.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-4 text-center flex items-center justify-center gap-2">
-                <CheckCircle2 className="size-4 text-emerald-500" /> 暂无取消申请
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>订单号</TableHead>
-                    <TableHead>服务类型</TableHead>
-                    <TableHead>当前状态</TableHead>
-                    <TableHead className="text-right">操作</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {cancelRequestOrders.map((o) => (
-                    <TableRow key={o.id}>
-                      <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                      <TableCell>{o.serviceType}</TableCell>
-                      <TableCell>
-                        <Badge className="bg-amber-100 text-amber-700">等待审批</Badge>
-                      </TableCell>
-                      <TableCell className="text-right space-x-1">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-emerald-600 border-emerald-200"
-                          onClick={() => handleApproveCancel(o.id)}
-                        >
-                          <CheckCircle2 className="size-3 mr-1" />
-                          同意
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-rose-600 border-rose-200"
-                          onClick={() => handleRejectCancel(o.id)}
-                        >
-                          <XCircle className="size-3 mr-1" />
-                          拒绝
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </Card>
-        </TabsContent>
-
-        {/* ===================== TAB: 片区管理 ===================== */}
-        <TabsContent value="zones" className="space-y-4">
-          {zones.length === 0 ? (
-            <div className="text-sm text-muted-foreground py-8 text-center">暂无片区配置</div>
-          ) : (
-            <div className="grid grid-cols-2 gap-4">
-              {zones.map((zone) => (
-                <Card key={zone.id}>
-                  <CardContent className="p-5 space-y-3">
-                    <h3 className="text-sm font-semibold">{zone.name}</h3>
-                    <div className="space-y-2">
-                      {zone.stations.map((st) => {
-                        const Icon = SERVICE_ICONS[st.serviceType] || Package
-                        return (
-                          <div key={st.id} className="flex items-center gap-3 p-2 rounded bg-slate-50">
-                            <Icon className="size-4 text-primary shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm">{st.name}</div>
-                              <div className="text-[11px] text-muted-foreground">{st.address}</div>
-                            </div>
-                            <Badge variant="outline" className="text-[10px]">
-                              {st.serviceType}
-                            </Badge>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        {/* ===================== TAB: 服务人员 ===================== */}
-        <TabsContent value="staff">
-          <Card className="p-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>姓名</TableHead>
-                  <TableHead>联系方式</TableHead>
-                  <TableHead>服务类型</TableHead>
-                  <TableHead>所属片区</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead className="text-center">今日接单</TableHead>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {convenienceStaff.map((s) => {
-                  const staffZones = s.zoneIds
-                    ? s.zoneIds.map((zid) => zones.find((z) => z.id === zid)?.name).filter(Boolean)
-                    : []
-                  return (
-                    <TableRow key={s.id}>
-                      <TableCell className="font-medium">{s.name}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{s.phone}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {s.serviceTypes?.map((st) => (
-                            <Badge key={st} variant="outline" className="text-[10px]">
-                              {st}
-                            </Badge>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {staffZones.length > 0 ? staffZones.join("、") : "-"}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            s.status === "online"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : s.status === "busy"
-                                ? "bg-amber-100 text-amber-700"
-                                : s.status === "rest"
-                                  ? "bg-slate-100 text-slate-700"
-                                  : "bg-rose-100 text-rose-700"
-                          }
-                        >
-                          {s.status === "online"
-                            ? "在线"
-                            : s.status === "busy"
-                              ? "忙碌"
-                              : s.status === "rest"
-                                ? "休息"
-                                : "离线"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center font-medium">{s.assignedOrders}</TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              ))}
+              {filteredOrders.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无待审核订单
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="mt-3 border-t pt-3">
+            <PaginationBar
+              page={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.setCurrentPage}
+              pageSize={10}
+              onPageSizeChange={() => {}}
+              total={pagination.total}
+            />
+          </div>
+        </Card>
+      )}
 
-      {/* Manual dispatch dialog */}
-      <Dialog open={manualDialogOpen} onOpenChange={setManualDialogOpen}>
+      {/* ===== Tab 3: 取消审批 ===== */}
+      {activeTab === "cancel-approval" && (
+        <Card className="p-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>订单号</TableHead>
+                <TableHead>服务类型</TableHead>
+                <TableHead>地址</TableHead>
+                <TableHead>当前状态</TableHead>
+                <TableHead>服务人员</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pagination.paginatedItems.map((o) => (
+                <TableRow key={o.id}>
+                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
+                  <TableCell>{o.serviceType}</TableCell>
+                  <TableCell className="max-w-[200px] truncate">{o.address}</TableCell>
+                  <TableCell><StatusBadge status={o.status} kind="order" /></TableCell>
+                  <TableCell>{o.staffName || "-"}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-1 justify-end">
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
+                        onClick={() => handleApproveCancel(o.id)}>
+                        <CheckCircle2 className="size-3 mr-1" /> 同意
+                      </Button>
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
+                        onClick={() => { setRejectDialogId(o.id); setRejectReason("") }}>
+                        <XCircle className="size-3 mr-1" /> 拒绝
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredOrders.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无取消申请
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="mt-3 border-t pt-3">
+            <PaginationBar
+              page={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.setCurrentPage}
+              pageSize={10}
+              onPageSizeChange={() => {}}
+              total={pagination.total}
+            />
+          </div>
+        </Card>
+      )}
+
+      {/* ===== Tab 4: 报价审核 ===== */}
+      {activeTab === "price-review" && (
+        <Card className="p-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>订单号</TableHead>
+                <TableHead>服务类型</TableHead>
+                <TableHead>地址</TableHead>
+                <TableHead>服务人员</TableHead>
+                <TableHead>报价</TableHead>
+                <TableHead>参考价</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pagination.paginatedItems.map((o) => (
+                <TableRow key={o.id}>
+                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
+                  <TableCell>{o.serviceType}</TableCell>
+                  <TableCell className="max-w-[180px] truncate">{o.address}</TableCell>
+                  <TableCell>{o.staffName || "-"}</TableCell>
+                  <TableCell className="font-medium">
+                    <span className="text-blue-600">¥{o.priceQuote ?? "-"}</span>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {o.refPrice ? `¥${o.refPrice}` : "-"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-1 justify-end">
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
+                        onClick={() => handleApprovePrice(o.id)}>
+                        <CheckCircle2 className="size-3 mr-1" /> 通过
+                      </Button>
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
+                        onClick={() => handleRejectPrice(o.id)}>
+                        <Ban className="size-3 mr-1" /> 驳回
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredOrders.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无待审核报价
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="mt-3 border-t pt-3">
+            <PaginationBar
+              page={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.setCurrentPage}
+              pageSize={10}
+              onPageSizeChange={() => {}}
+              total={pagination.total}
+            />
+          </div>
+        </Card>
+      )}
+
+      {/* ===== Tab 5: 付款凭证 ===== */}
+      {activeTab === "payment-proof" && (
+        <Card className="p-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>订单号</TableHead>
+                <TableHead>服务类型</TableHead>
+                <TableHead>地址</TableHead>
+                <TableHead>服务人员</TableHead>
+                <TableHead>金额</TableHead>
+                <TableHead>凭证</TableHead>
+                <TableHead>上传时间</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pagination.paginatedItems.map((o) => (
+                <TableRow key={o.id}>
+                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
+                  <TableCell>{o.serviceType}</TableCell>
+                  <TableCell className="max-w-[160px] truncate">{o.address}</TableCell>
+                  <TableCell>{o.staffName || "-"}</TableCell>
+                  <TableCell className="font-medium">¥{o.priceQuote ?? "-"}</TableCell>
+                  <TableCell>
+                    {o.paymentProof ? (
+                      <a href={o.paymentProof} target="_blank" rel="noopener noreferrer">
+                        <ImageIcon className="size-5 text-blue-500 cursor-pointer hover:text-blue-700" />
+                      </a>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">{o.completedAt || o.createdAt}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-1 justify-end">
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
+                        onClick={() => handleApprovePayment(o.id)}>
+                        <CheckCircle2 className="size-3 mr-1" /> 确认
+                      </Button>
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
+                        onClick={() => handleRejectPayment(o.id)}>
+                        <XCircle className="size-3 mr-1" /> 驳回
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredOrders.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无待审核付款凭证
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="mt-3 border-t pt-3">
+            <PaginationBar
+              page={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.setCurrentPage}
+              pageSize={10}
+              onPageSizeChange={() => {}}
+              total={pagination.total}
+            />
+          </div>
+        </Card>
+      )}
+
+      {/* 手动派单弹窗 */}
+      <Dialog open={manualDialogOpen} onOpenChange={(open) => { setManualDialogOpen(open); if (!open) setStaffSearch("") }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>手动派单</DialogTitle>
@@ -570,10 +579,7 @@ export default function ConveniencePage() {
                   key={s.id}
                   type="button"
                   className="w-full flex items-center justify-between p-3 rounded-lg border hover:bg-slate-50 cursor-pointer transition-colors text-left"
-                  onClick={() => {
-                    confirmManualDispatch(s.id)
-                    setStaffSearch("")
-                  }}
+                  onClick={() => confirmManualDispatch(s.id)}
                 >
                   <div className="flex items-center gap-3">
                     <div className="size-8 rounded-full bg-gradient-to-br from-sky-100 to-blue-100 grid place-items-center text-blue-700 text-xs font-medium">
@@ -586,11 +592,7 @@ export default function ConveniencePage() {
                       </div>
                     </div>
                   </div>
-                  <Badge
-                    className={
-                      s.status === "online" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"
-                    }
-                  >
+                  <Badge className={s.status === "online" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
                     {s.status === "online" ? "在线" : "忙碌"}
                   </Badge>
                 </button>
@@ -598,16 +600,75 @@ export default function ConveniencePage() {
             )}
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setManualDialogOpen(false)
-                setStaffSearch("")
-              }}
-            >
-              取消
-            </Button>
+            <Button variant="outline" onClick={() => setManualDialogOpen(false)}>取消</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 拒绝取消弹窗 */}
+      <Dialog open={rejectDialogId !== null} onOpenChange={(open) => !open && setRejectDialogId(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>拒绝取消</DialogTitle>
+            <DialogDescription>请输入拒绝取消的原因</DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="请输入拒绝原因..."
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            rows={3}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectDialogId(null)}>取消</Button>
+            <Button variant="destructive" onClick={handleRejectCancel}>确认拒绝</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 订单详情弹窗 */}
+      <Dialog open={detailOrderId !== null} onOpenChange={(open) => !open && setDetailOrderId(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>订单详情</DialogTitle>
+          </DialogHeader>
+          {detailOrder && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                <div><span className="text-muted-foreground">订单号：</span><span className="font-mono">{detailOrder.id}</span></div>
+                <div><span className="text-muted-foreground">服务类型：</span><span>{detailOrder.serviceType}</span></div>
+                <div><span className="text-muted-foreground">地址：</span><span>{detailOrder.address}</span></div>
+                <div><span className="text-muted-foreground">状态：</span><StatusBadge status={detailOrder.status} kind="order" /></div>
+                <div><span className="text-muted-foreground">服务人员：</span><span>{detailOrder.staffName || "未指派"}</span></div>
+                <div><span className="text-muted-foreground">金额：</span><span>{detailOrder.priceQuote ? `¥${detailOrder.priceQuote}` : "未报价"}</span></div>
+                <div><span className="text-muted-foreground">下单时间：</span><span>{detailOrder.createdAt}</span></div>
+                <div><span className="text-muted-foreground">支付方式：</span><span>{detailOrder.payMethod === "online" ? "线上支付" : detailOrder.payMethod === "cash" ? "现金" : "未支付"}</span></div>
+              </div>
+              {detailOrder.note && (
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">备注：</div>
+                  <div className="p-3 bg-gray-50 rounded-lg text-sm">{detailOrder.note}</div>
+                </div>
+              )}
+              {detailOrder.completionPhotos && detailOrder.completionPhotos.length > 0 && (
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">完工照片：</div>
+                  <div className="flex gap-2">
+                    {detailOrder.completionPhotos.map((url, i) => (
+                      <img key={i} src={url} alt={`完工照${i + 1}`} className="w-20 h-20 object-cover rounded-lg" />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {detailOrder.paymentProof && (
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">付款凭证：</div>
+                  <a href={detailOrder.paymentProof} target="_blank" rel="noopener noreferrer">
+                    <img src={detailOrder.paymentProof} alt="付款凭证" className="w-40 h-auto rounded-lg border" />
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </PageLayout>

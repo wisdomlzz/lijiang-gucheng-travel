@@ -80,6 +80,7 @@ export const SEED_ORDERS: ConvenienceOrder[] = [
     staffName: "李师傅",
     staffPhone: "139****6666",
     completionPhotos: ["https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400"],
+    paymentProof: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400",
     lat: 26.872,
     lng: 100.23,
   },

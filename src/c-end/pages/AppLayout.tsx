@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate } from "react-router"
 import { Home, LayoutGrid, User, Store } from "lucide-react"
 import { motion } from "motion/react"
-import aiAvatar from "../assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png"
+import aiAvatar from "../assets/ai-avatar-new.png"
 
 const tabs = [
   { key: "/c/home", label: "首页", icon: Home },
@@ -25,27 +25,25 @@ export function AppLayout() {
       {/* Bottom tab bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
         {/* AI center avatar - raised above the bar */}
-        <div className="absolute left-1/2 -translate-x-1/2 -top-[22px] z-10">
+        <div className="absolute left-1/2 -translate-x-1/2 -top-[24px] z-10">
           <button
             onClick={() => navigate("/c/ai")}
             aria-label="AI咨询"
-            className="block w-[56px] h-[56px] rounded-full active:scale-95 transition-transform"
+            className="block w-[54px] h-[54px] rounded-full active:scale-95 transition-transform"
             style={{
-              background: aiActive
-                ? "linear-gradient(135deg, #2563EB, #3B82F6)"
-                : "linear-gradient(135deg, #60A5FA, #3B82F6)",
-              boxShadow: aiActive ? "0 6px 22px rgba(37,99,235,0.45)" : "0 6px 18px rgba(59,130,246,0.35)",
-              padding: "3px",
+              boxShadow: aiActive
+                ? "0 4px 16px rgba(45,99,192,0.25), 0 0 0 2.5px #2563EB"
+                : "0 4px 14px rgba(0,0,0,0.12)",
+              border: "2.5px solid #FFFFFF",
+              overflow: "hidden",
             }}
           >
-            <div className="w-full h-full rounded-full ring-[2.5px] ring-white overflow-hidden">
-              <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
-            </div>
+            <img src={aiAvatar} alt="AI" className="w-full h-full object-cover" />
           </button>
         </div>
 
         {/* Tab bar background */}
-        <div className="bg-white/95 backdrop-blur-xl border-t border-border-light h-[60px] flex items-center justify-around pb-[env(safe-area-inset-bottom)] shadow-[0_-1px_10px_rgba(0,0,0,0.05)]">
+        <div className="bg-white border-t border-[#DBE5F3] h-[60px] flex items-center justify-around pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_12px_rgba(45,99,192,0.06)]">
           {tabs.map((tab) => {
             const active = location.pathname === tab.key
 
