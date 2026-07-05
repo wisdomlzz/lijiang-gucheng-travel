@@ -4,17 +4,7 @@ import {
   Store,
   Plus,
   BadgeCheck,
-  Trash2,
-  Droplets,
-  Package,
-  Luggage,
-  Truck,
-  AlertTriangle,
-  Camera,
-  Newspaper,
-  Bell,
-  MessageSquareWarning,
-  House,
+  ConciergeBell,
 } from "lucide-react"
 import { useAuthStore } from "@/platform/auth"
 
@@ -35,21 +25,20 @@ interface GridSection {
 
 const SECTIONS: GridSection[] = [
   {
-    title: "🏪 古城店铺管理",
+    title: "商户服务",
     entries: [
       { icon: "", label: "我的店铺", route: "/c/my-shop", lucideIcon: Store, iconBg: "#FEF3C7" },
+      { icon: "", label: "便民服务", route: "/c/services", lucideIcon: ConciergeBell, iconBg: "#E0F2FE" },
       { icon: "/icons/公房服务@2x.png", label: "公房服务", route: "/c/housing" },
-    ],
-  },
-  {
-    title: "便民服务",
-    entries: [
-      { icon: "", label: "生活垃圾清运", route: "/c/services", lucideIcon: Trash2, iconBg: "#E0F2FE" },
-      { icon: "", label: "建筑垃圾清运", route: "/c/services", lucideIcon: Trash2, iconBg: "#FEE2E2" },
-      { icon: "", label: "布草配送", route: "/c/services", lucideIcon: Package, iconBg: "#FCE7F3" },
-      { icon: "", label: "送水服务", route: "/c/services", lucideIcon: Droplets, iconBg: "#DBEAFE" },
-      { icon: "", label: "行李搬运", route: "/c/services", lucideIcon: Luggage, iconBg: "#F3E8FF" },
-      { icon: "", label: "送货服务", route: "/c/services", lucideIcon: Truck, iconBg: "#FEF3C7" },
+      {
+        icon: "",
+        label: "供应商入驻",
+        route: "/c/supplier-entry",
+        lucideIcon: Plus,
+        iconBg: "#D1FAE5",
+        badge: "商城",
+        badgeColor: "#3B82F6",
+      },
     ],
   },
   {
@@ -60,20 +49,6 @@ const SECTIONS: GridSection[] = [
       { icon: "/icons/古城资讯@2x.png", label: "古城资讯", route: "/c/news" },
       { icon: "/icons/公告通知@2x.png", label: "公告通知", route: "/c/notice" },
       { icon: "/icons/便民信息@2x.png", label: "便民信息", route: "/c/info" },
-    ],
-  },
-  {
-    title: "🛒 线上商城供应商",
-    entries: [
-      {
-        icon: "",
-        label: "供应商入驻",
-        route: "/c/supplier-entry",
-        lucideIcon: Plus,
-        iconBg: "#D1FAE5",
-        badge: "商城",
-        badgeColor: "#3B82F6",
-      },
     ],
   },
 ]
