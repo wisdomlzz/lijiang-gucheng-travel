@@ -1,7 +1,5 @@
 import { useState, useRef } from "react"
-import {
-  ChevronUp, ChevronDown, EyeOff, Pencil, Upload, X,
-} from "lucide-react"
+import { ChevronUp, ChevronDown, EyeOff, Pencil, Upload, X } from "lucide-react"
 import { useHomepageConfigStore } from "../../../features/homepage/store"
 import type { GridItemConfig } from "../../../shared/types"
 import { PageLayout } from "../../components/common/PageLayout"
@@ -55,7 +53,9 @@ function GridTable({
           <TableBody>
             {items.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-12 text-center text-muted-foreground">暂无宫格</TableCell>
+                <TableCell colSpan={7} className="h-12 text-center text-muted-foreground">
+                  暂无宫格
+                </TableCell>
               </TableRow>
             ) : (
               items.map((item, localIdx) => {
@@ -66,11 +66,16 @@ function GridTable({
                       <span className="text-xs text-muted-foreground">{globalIdx + 1}</span>
                     </TableCell>
                     <TableCell>
-                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 ring-1 ring-slate-200 hover:ring-primary/40 hover:scale-110 transition-all cursor-pointer" title={item.label}>
+                      <div
+                        className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 ring-1 ring-slate-200 hover:ring-primary/40 hover:scale-110 transition-all cursor-pointer"
+                        title={item.label}
+                      >
                         {item.imageUrl ? (
                           <img src={item.imageUrl} alt={item.label} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-[10px] text-muted-foreground">无图</div>
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-[10px] text-muted-foreground">
+                            无图
+                          </div>
                         )}
                       </div>
                     </TableCell>
@@ -101,10 +106,22 @@ function GridTable({
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" title="编辑名称和图片" onClick={() => onEdit(item)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          title="编辑名称和图片"
+                          onClick={() => onEdit(item)}
+                        >
                           <Pencil className="size-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" title={item.visible ? "隐藏" : "显示"} onClick={() => onToggle(item.id)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          title={item.visible ? "隐藏" : "显示"}
+                          onClick={() => onToggle(item.id)}
+                        >
                           <EyeOff className="size-3.5" />
                         </Button>
                       </div>
@@ -157,7 +174,7 @@ export function GridSettingsPage() {
     toast.success(item?.visible ? "已隐藏" : "已显示")
   }
 
-  const openEdit = (item: typeof gridItems[0]) => {
+  const openEdit = (item: (typeof gridItems)[0]) => {
     setEditId(item.id)
     setEditLabel(item.label)
     setEditImageUrl(item.imageUrl)
@@ -245,12 +262,23 @@ export function GridSettingsPage() {
         )}
 
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>共 {gridItems.length} 个宫格 · 显示 {visibleItems.length} 个 · 隐藏 {hiddenItems.length} 个</span>
-          <span>C端自动分页：第 1 页 {page1Items.filter((i) => i.visible).length} 个 · 第 2 页 {page2Items.filter((i) => i.visible).length} 个{hasPage3 ? ` · 第 3 页 ${page3Items.filter((i) => i.visible).length} 个` : ""}</span>
+          <span>
+            共 {gridItems.length} 个宫格 · 显示 {visibleItems.length} 个 · 隐藏 {hiddenItems.length} 个
+          </span>
+          <span>
+            C端自动分页：第 1 页 {page1Items.filter((i) => i.visible).length} 个 · 第 2 页{" "}
+            {page2Items.filter((i) => i.visible).length} 个
+            {hasPage3 ? ` · 第 3 页 ${page3Items.filter((i) => i.visible).length} 个` : ""}
+          </span>
         </div>
       </div>
 
-      <Dialog open={!!editId} onOpenChange={(open) => { if (!open) setEditId(null) }}>
+      <Dialog
+        open={!!editId}
+        onOpenChange={(open) => {
+          if (!open) setEditId(null)
+        }}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>编辑宫格</DialogTitle>
@@ -269,7 +297,9 @@ export function GridSettingsPage() {
             {editingItem && (
               <div className="rounded-lg border bg-slate-50 p-3 flex items-center gap-3">
                 <div className="text-xs text-muted-foreground">
-                  <div>当前路由：<span className="font-mono">{editingItem.route}</span></div>
+                  <div>
+                    当前路由：<span className="font-mono">{editingItem.route}</span>
+                  </div>
                   <div className="text-[10px] mt-0.5 text-amber-600">路由不可修改</div>
                 </div>
               </div>
@@ -297,7 +327,10 @@ export function GridSettingsPage() {
                       </div>
                       <button
                         className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-red-500 transition-colors"
-                        onClick={(e) => { e.stopPropagation(); setEditImageUrl("") }}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setEditImageUrl("")
+                        }}
                       >
                         <X size={12} />
                       </button>
@@ -319,8 +352,12 @@ export function GridSettingsPage() {
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={() => setEditId(null)}>取消</Button>
-            <Button onClick={saveEdit} disabled={!editLabel.trim()}>保存</Button>
+            <Button variant="outline" onClick={() => setEditId(null)}>
+              取消
+            </Button>
+            <Button onClick={saveEdit} disabled={!editLabel.trim()}>
+              保存
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

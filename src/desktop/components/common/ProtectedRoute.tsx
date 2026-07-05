@@ -7,10 +7,6 @@ interface ProtectedRouteProps {
   redirectTo?: string
 }
 
-export function ProtectedRoute({
-  element,
-  isAllowed,
-  redirectTo = "/desktop/workbench",
-}: ProtectedRouteProps) {
+export function ProtectedRoute({ element, isAllowed, redirectTo = "/desktop/workbench" }: ProtectedRouteProps) {
   return isAllowed ? element : <Navigate to={redirectTo} replace />
 }

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router"
 import { ChevronRight } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 import { MiniProgramFrame } from "./MiniProgramFrame"
-import { useAuthStore } from "../stores/auth-store"
+import { useAuthStore } from "@/platform/auth"
 import { seedUsers } from "../types/seed-users"
 
 const HERO_IMG = "https://images.unsplash.com/photo-1775120246271-cd4b6a3ef428?auto=format&fit=crop&w=800&q=70"
@@ -31,7 +31,10 @@ export function LoginPageC() {
     setCountdown(60)
     const timer = setInterval(() => {
       setCountdown((c) => {
-        if (c <= 1) { clearInterval(timer); return 0 }
+        if (c <= 1) {
+          clearInterval(timer)
+          return 0
+        }
         return c - 1
       })
     }, 1000)
@@ -51,11 +54,7 @@ export function LoginPageC() {
       <div className="flex flex-col min-h-full bg-white">
         {/* Hero image with gradient overlay */}
         <div className="relative shrink-0 h-[280px] overflow-hidden">
-          <img
-            src={HERO_IMG}
-            alt="Lijiang"
-            className="w-full h-full object-cover"
-          />
+          <img src={HERO_IMG} alt="Lijiang" className="w-full h-full object-cover" />
           {/* Multi-layer gradient overlay for depth */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/70" />
           <div className="absolute inset-0 bg-gradient-to-b from-primary/30 via-transparent to-primary/60" />
@@ -71,12 +70,8 @@ export function LoginPageC() {
               <div className="w-[72px] h-[72px] rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center mx-auto mb-4 shadow-2xl ring-1 ring-white/30">
                 <span className="text-[32px] text-white font-bold drop-shadow-lg">古</span>
               </div>
-              <h1 className="text-[26px] text-white font-bold tracking-[0.05em] drop-shadow-lg">
-                丽江古城游
-              </h1>
-              <p className="text-white/70 text-[13px] mt-1.5 tracking-[0.15em]">
-                探索千年古城 · 遇见纳西之美
-              </p>
+              <h1 className="text-[26px] text-white font-bold tracking-[0.05em] drop-shadow-lg">丽江古城游</h1>
+              <p className="text-white/70 text-[13px] mt-1.5 tracking-[0.15em]">探索千年古城 · 遇见纳西之美</p>
             </motion.div>
           </div>
         </div>
@@ -109,7 +104,7 @@ export function LoginPageC() {
                   className="w-full h-[50px] rounded-2xl bg-[#07C160] text-white font-medium text-[15px] flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all shadow-lg shadow-[#07C160]/25"
                 >
                   <svg viewBox="0 0 24 24" className="size-5 fill-current">
-                    <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18z"/>
+                    <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18z" />
                   </svg>
                   微信一键登录
                 </button>
@@ -164,7 +159,11 @@ export function LoginPageC() {
                 </button>
                 <div className="text-center">
                   <button
-                    onClick={() => { setShowPhone(false); setPhone(""); setCode(""); }}
+                    onClick={() => {
+                      setShowPhone(false)
+                      setPhone("")
+                      setCode("")
+                    }}
                     className="text-[12px] text-text-tertiary hover:text-text-body transition-colors"
                   >
                     返回微信登录
@@ -177,8 +176,7 @@ export function LoginPageC() {
           {/* Agreement */}
           <p className="mt-7 text-[11px] text-text-tertiary text-center leading-relaxed">
             登录即代表同意
-            <span className="text-primary">《用户协议》</span>和
-            <span className="text-primary">《隐私政策》</span>
+            <span className="text-primary">《用户协议》</span>和<span className="text-primary">《隐私政策》</span>
           </p>
 
           {/* Trust badges */}

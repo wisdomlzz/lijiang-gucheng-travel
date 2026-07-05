@@ -3,13 +3,7 @@ import { useAIKnowledgeStore } from "../../features/ai-knowledge/store"
 import { Button } from "../../shared/components/ui/button"
 import { Input } from "../../shared/components/ui/input"
 import { Label } from "../../shared/components/ui/label"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../shared/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../shared/components/ui/dialog"
 import { ConfirmDialog } from "../components/common/ConfirmDialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../shared/components/ui/table"
 import { Switch } from "../../shared/components/ui/switch"
@@ -27,7 +21,12 @@ export function AIKnowledgeBasePage() {
   const searchStore = useAIKnowledgeStore((s) => s.search)
 
   const [keyword, setKeyword] = useState("")
-  const [editTarget, setEditTarget] = useState<{ id: string; question: string; answer: string; status: "enabled" | "disabled" } | null>(null)
+  const [editTarget, setEditTarget] = useState<{
+    id: string
+    question: string
+    answer: string
+    status: "enabled" | "disabled"
+  } | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [confirmStatus, setConfirmStatus] = useState<{ id: string; status: "enabled" | "disabled" } | null>(null)
   const [importOpen, setImportOpen] = useState(false)
@@ -38,9 +37,7 @@ export function AIKnowledgeBasePage() {
   const enabledCount = items.filter((i) => i.status === "enabled").length
   const pagination = usePagination(filtered, 10)
 
-  const templateData = JSON.stringify([
-    { question: "问题示例？", answer: "答案示例。" },
-  ], null, 2)
+  const templateData = JSON.stringify([{ question: "问题示例？", answer: "答案示例。" }], null, 2)
   const handleDownloadTemplate = () => {
     const blob = new Blob([templateData], { type: "application/json" })
     const url = URL.createObjectURL(blob)
@@ -113,7 +110,9 @@ export function AIKnowledgeBasePage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-lg font-semibold text-gray-900">AI 知识库</h1>
-        <p className="text-sm text-gray-500 mt-1">管理 AI 智能咨询的知识内容，共 {items.length} 条，已启用 {enabledCount} 条</p>
+        <p className="text-sm text-gray-500 mt-1">
+          管理 AI 智能咨询的知识内容，共 {items.length} 条，已启用 {enabledCount} 条
+        </p>
       </div>
 
       <div className="flex items-center gap-3 mb-4">
@@ -182,7 +181,12 @@ export function AIKnowledgeBasePage() {
                       <Button size="icon" variant="ghost" className="size-7" onClick={() => handleEdit(item)}>
                         <Pencil className="size-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="size-7 text-red-500 hover:text-red-600" onClick={() => setDeleteId(item.id)}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="size-7 text-red-500 hover:text-red-600"
+                        onClick={() => setDeleteId(item.id)}
+                      >
                         <Trash2 className="size-3.5" />
                       </Button>
                     </div>
@@ -218,7 +222,7 @@ export function AIKnowledgeBasePage() {
               <Label>问题</Label>
               <Input
                 value={editTarget?.question ?? ""}
-                onChange={(e) => setEditTarget((prev) => prev ? { ...prev, question: e.target.value } : null)}
+                onChange={(e) => setEditTarget((prev) => (prev ? { ...prev, question: e.target.value } : null))}
                 placeholder="例如：古城维护费多少钱？"
               />
             </div>
@@ -226,7 +230,7 @@ export function AIKnowledgeBasePage() {
               <Label>答案</Label>
               <textarea
                 value={editTarget?.answer ?? ""}
-                onChange={(e) => setEditTarget((prev) => prev ? { ...prev, answer: e.target.value } : null)}
+                onChange={(e) => setEditTarget((prev) => (prev ? { ...prev, answer: e.target.value } : null))}
                 placeholder="请输入回答内容..."
                 rows={6}
                 className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
@@ -236,7 +240,9 @@ export function AIKnowledgeBasePage() {
               <Label className="mb-0">状态</Label>
               <select
                 value={editTarget?.status ?? "enabled"}
-                onChange={(e) => setEditTarget((prev) => prev ? { ...prev, status: e.target.value as "enabled" | "disabled" } : null)}
+                onChange={(e) =>
+                  setEditTarget((prev) => (prev ? { ...prev, status: e.target.value as "enabled" | "disabled" } : null))
+                }
                 className="rounded-md border border-gray-200 px-3 py-1.5 text-sm"
               >
                 <option value="enabled">已启用</option>
@@ -245,8 +251,12 @@ export function AIKnowledgeBasePage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setEditTarget(null)}>取消</Button>
-            <Button size="sm" onClick={handleSave}>保存</Button>
+            <Button variant="outline" size="sm" onClick={() => setEditTarget(null)}>
+              取消
+            </Button>
+            <Button size="sm" onClick={handleSave}>
+              保存
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -275,19 +285,23 @@ export function AIKnowledgeBasePage() {
       />
 
       {/* Batch Import Dialog */}
-      <Dialog open={importOpen} onOpenChange={(v) => { setImportOpen(v); if (!v) setImportText("") }}>
+      <Dialog
+        open={importOpen}
+        onOpenChange={(v) => {
+          setImportOpen(v)
+          if (!v) setImportText("")
+        }}
+      >
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
             <DialogTitle>批量导入知识条目</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <p className="text-xs text-gray-500">
-支持 JSON 数组格式（如 <code className="bg-gray-100 px-1 rounded">[&#123;"question":"问","answer":"答"&#125;]</code>）
+              支持 JSON 数组格式（如{" "}
+              <code className="bg-gray-100 px-1 rounded">[&#123;"question":"问","answer":"答"&#125;]</code>）
             </p>
-            <button
-              onClick={handleDownloadTemplate}
-              className="text-xs text-primary hover:underline"
-            >
+            <button onClick={handleDownloadTemplate} className="text-xs text-primary hover:underline">
               下载导入模板
             </button>
             <div className="flex items-center gap-2">
@@ -311,8 +325,12 @@ export function AIKnowledgeBasePage() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setImportOpen(false)}>取消</Button>
-            <Button size="sm" onClick={handleImport} disabled={!importText.trim()}>导入</Button>
+            <Button variant="outline" size="sm" onClick={() => setImportOpen(false)}>
+              取消
+            </Button>
+            <Button size="sm" onClick={handleImport} disabled={!importText.trim()}>
+              导入
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

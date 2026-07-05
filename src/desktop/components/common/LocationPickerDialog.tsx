@@ -152,7 +152,13 @@ export function LocationPickerDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) reset(); onOpenChange(v) }}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) reset()
+        onOpenChange(v)
+      }}
+    >
       <DialogContent className="sm:max-w-2xl rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-[15px] flex items-center gap-2">
@@ -177,9 +183,11 @@ export function LocationPickerDialog({
             {searching ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
             搜索
           </Button>
-          <button onClick={handleLocate}
+          <button
+            onClick={handleLocate}
             className="size-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors"
-            title="定位到当前位置">
+            title="定位到当前位置"
+          >
             <Crosshair size={14} className="text-slate-400" />
           </button>
         </div>
@@ -188,8 +196,11 @@ export function LocationPickerDialog({
         {results.length > 0 && (
           <div className="max-h-32 overflow-y-auto rounded-lg border border-slate-100 bg-white divide-y divide-slate-50">
             {results.map((r, i) => (
-              <button key={i} onClick={() => handleSelectResult(r)}
-                className="w-full text-left px-3 py-2 text-[12px] text-slate-600 hover:bg-slate-50 transition-colors flex items-start gap-2">
+              <button
+                key={i}
+                onClick={() => handleSelectResult(r)}
+                className="w-full text-left px-3 py-2 text-[12px] text-slate-600 hover:bg-slate-50 transition-colors flex items-start gap-2"
+              >
                 <MapPin size={12} className="mt-0.5 shrink-0 text-slate-300" />
                 <span className="line-clamp-2">{r.display_name}</span>
               </button>
@@ -210,10 +221,23 @@ export function LocationPickerDialog({
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-2">
-          <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg" onClick={() => { reset(); onOpenChange(false) }}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs rounded-lg"
+            onClick={() => {
+              reset()
+              onOpenChange(false)
+            }}
+          >
             取消
           </Button>
-          <Button size="sm" className="h-8 text-xs rounded-lg bg-[#059669] hover:bg-[#047857]" onClick={handleConfirm} disabled={!selected}>
+          <Button
+            size="sm"
+            className="h-8 text-xs rounded-lg bg-[#059669] hover:bg-[#047857]"
+            onClick={handleConfirm}
+            disabled={!selected}
+          >
             确认地点
           </Button>
         </div>

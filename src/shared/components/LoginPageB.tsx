@@ -3,7 +3,7 @@ import { useNavigate } from "react-router"
 import { ChevronRight, Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 import { MiniProgramFrame } from "./MiniProgramFrame"
-import { useAuthStore } from "../stores/auth-store"
+import { useAuthStore } from "@/platform/auth"
 import { seedUsers } from "../types/seed-users"
 import type { User } from "../types"
 
@@ -85,7 +85,7 @@ export function LoginPageB() {
                   <div className="flex-1 min-w-0">
                     <p className="text-[14px] font-medium text-text-heading">{user.name}</p>
                     <p className="text-[11px] text-text-tertiary mt-0.5">
-                      {(user.roleTag ?? "服务人员")}
+                      {user.roleTag ?? "服务人员"}
                       <span className="mx-1.5">·</span>
                       {user.phone}
                     </p>
@@ -118,12 +118,8 @@ export function LoginPageB() {
               <div className="w-[68px] h-[68px] rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center mx-auto mb-3 shadow-2xl ring-1 ring-white/20">
                 <span className="text-[30px] text-white font-bold drop-shadow-lg">服</span>
               </div>
-              <h1 className="text-[24px] text-white font-bold tracking-[0.04em] drop-shadow-lg">
-                服务人员端
-              </h1>
-              <p className="text-white/60 text-[12px] mt-1 tracking-[0.1em]">
-                丽江古城游 · 服务端
-              </p>
+              <h1 className="text-[24px] text-white font-bold tracking-[0.04em] drop-shadow-lg">服务人员端</h1>
+              <p className="text-white/60 text-[12px] mt-1 tracking-[0.1em]">丽江古城游 · 服务端</p>
             </motion.div>
           </div>
         </div>
@@ -152,7 +148,7 @@ export function LoginPageB() {
                 className="w-full h-[50px] rounded-2xl bg-[#07C160] text-white font-medium text-[15px] flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all shadow-lg shadow-[#07C160]/25 hover:shadow-xl hover:shadow-[#07C160]/30"
               >
                 <svg viewBox="0 0 24 24" className="size-5 fill-current">
-                  <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18z"/>
+                  <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18z" />
                 </svg>
                 微信一键登录
               </motion.button>
@@ -234,7 +230,10 @@ export function LoginPageB() {
               我是游客 <ChevronRight size={12} className="inline" />
             </button>
             <button
-              onClick={() => { const w = window.open("/desktop", "_blank"); w?.focus(); }}
+              onClick={() => {
+                const w = window.open("/desktop", "_blank")
+                w?.focus()
+              }}
               className="w-full text-center text-[12px] text-text-tertiary hover:text-primary transition-colors py-1"
             >
               管理后台登录 <ChevronRight size={12} className="inline" />

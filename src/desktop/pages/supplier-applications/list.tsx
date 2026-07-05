@@ -1,37 +1,35 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { PageLayout } from "../../components/common/PageLayout";
-import { DataTable } from "../../components/common/DataTable";
-import { Button } from "../../../shared/components/ui/button";
-import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
-} from "../../../shared/components/ui/dialog";
-import { useSupplierStore } from "../../../features/supplier/store";
-import type { SupplierApplication } from "../../../shared/types";
-import { StatusBadge } from "@/shared/components/ui/status-badge";
-import { Building2, Phone, Clock } from "lucide-react";
-import { toast } from "sonner";
-import type { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react"
+import { useNavigate } from "react-router"
+import { PageLayout } from "../../components/common/PageLayout"
+import { DataTable } from "../../components/common/DataTable"
+import { Button } from "../../../shared/components/ui/button"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../shared/components/ui/dialog"
+import { useSupplierStore } from "../../../features/supplier/store"
+import type { SupplierApplication } from "../../../shared/types"
+import { StatusBadge } from "@/shared/components/ui/status-badge"
+import { Building2, Phone, Clock } from "lucide-react"
+import { toast } from "sonner"
+import type { ColumnDef } from "@tanstack/react-table"
 
 const STATUS_LABELS: Record<SupplierApplication["status"], string> = {
   pending: "待审核",
   approved: "已通过",
   rejected: "已驳回",
-};
+}
 
 const STATUS_COLORS: Record<SupplierApplication["status"], string> = {
   pending: "bg-amber-50 text-amber-600",
   approved: "bg-green-50 text-green-600",
   rejected: "bg-red-50 text-red-600",
-};
+}
 
 export default function SupplierApplicationsList() {
-  const navigate = useNavigate();
-  const { applications, updateStatus } = useSupplierStore();
-  const [filter, setFilter] = useState<"all" | SupplierApplication["status"]>("all");
-  const [approveTarget, setApproveTarget] = useState<SupplierApplication | null>(null);
+  const navigate = useNavigate()
+  const { applications, updateStatus } = useSupplierStore()
+  const [filter, setFilter] = useState<"all" | SupplierApplication["status"]>("all")
+  const [approveTarget, setApproveTarget] = useState<SupplierApplication | null>(null)
 
-  const filtered = filter === "all" ? applications : applications.filter((a) => a.status === filter);
+  const filtered = filter === "all" ? applications : applications.filter((a) => a.status === filter)
 
   const columns: ColumnDef<SupplierApplication>[] = [
     {
@@ -72,10 +70,7 @@ export default function SupplierApplicationsList() {
       accessorKey: "status",
       header: "状态",
       cell: ({ row }) => (
-        <StatusBadge
-          status={STATUS_LABELS[row.original.status]}
-          color={STATUS_COLORS[row.original.status]}
-        />
+        <StatusBadge status={STATUS_LABELS[row.original.status]} color={STATUS_COLORS[row.original.status]} />
       ),
     },
     {
@@ -114,19 +109,21 @@ export default function SupplierApplicationsList() {
         </div>
       ),
     },
-  ];
+  ]
 
   return (
-    <PageLayout
-      title="供应商入驻申请"
-      breadcrumbs={[{ label: "商城管理" }, { label: "供应商入驻申请" }]}
-    >
+    <PageLayout title="供应商入驻申请">
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {(["all", "pending", "approved", "rejected"] as const).map((f, i) => {
-          const count = f === "all" ? applications.length : applications.filter((a) => a.status === f).length;
-          const colors = ["bg-blue-50 text-blue-600", "bg-amber-50 text-amber-600", "bg-green-50 text-green-600", "bg-red-50 text-red-600"];
-          const labels = ["全部申请", "待审核", "已通过", "已驳回"];
+          const count = f === "all" ? applications.length : applications.filter((a) => a.status === f).length
+          const colors = [
+            "bg-blue-50 text-blue-600",
+            "bg-amber-50 text-amber-600",
+            "bg-green-50 text-green-600",
+            "bg-red-50 text-red-600",
+          ]
+          const labels = ["全部申请", "待审核", "已通过", "已驳回"]
           return (
             <div
               key={f}
@@ -138,7 +135,7 @@ export default function SupplierApplicationsList() {
               <p className="text-2xl font-bold">{count}</p>
               <p className="text-xs mt-1 opacity-80">{labels[i]}</p>
             </div>
-          );
+          )
         })}
       </div>
 
@@ -151,24 +148,31 @@ export default function SupplierApplicationsList() {
           </DialogHeader>
           <div className="py-2">
             <p className="text-sm text-muted-foreground">
-              确定要通过 <span className="font-medium text-foreground">{approveTarget?.companyName}</span> 的入驻申请吗？
+              确定要通过 <span className="font-medium text-foreground">{approveTarget?.companyName}</span>{" "}
+              的入驻申请吗？
             </p>
             <p className="text-xs text-muted-foreground mt-2">
               联系人：{approveTarget?.contactName} · {approveTarget?.phone}
             </p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setApproveTarget(null)}>取消</Button>
-            <Button onClick={() => {
-              if (approveTarget) {
-                updateStatus(approveTarget.id, "approved", "管理员");
-                toast.success(`已通过：${approveTarget.companyName}`);
-                setApproveTarget(null);
-              }
-            }}>确认通过</Button>
+            <Button variant="outline" onClick={() => setApproveTarget(null)}>
+              取消
+            </Button>
+            <Button
+              onClick={() => {
+                if (approveTarget) {
+                  updateStatus(approveTarget.id, "approved", "管理员")
+                  toast.success(`已通过：${approveTarget.companyName}`)
+                  setApproveTarget(null)
+                }
+              }}
+            >
+              确认通过
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </PageLayout>
-  );
+  )
 }

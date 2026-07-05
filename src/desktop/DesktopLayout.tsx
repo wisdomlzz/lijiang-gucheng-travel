@@ -1,18 +1,22 @@
 import { Outlet, useNavigate, useLocation } from "react-router"
 import { useState, useMemo } from "react"
-import { useAuthStore } from "../shared/stores/auth-store"
+import { useAuthStore } from "@/platform/auth"
 import { usePermissionStore } from "../shared/permissions"
 import { useComplaintStore } from "../features/complaints/store"
+import { useMerchantReviewStore, useMerchantRegistrationStore } from "../features/merchant-review/store"
 import { navGroups } from "./nav"
-import {
-  Search, Bell, Maximize2, Smartphone, LogOut, X,
-} from "lucide-react"
+import { Search, Bell, Maximize2, Smartphone, LogOut, X } from "lucide-react"
 import { Input } from "../shared/components/ui/input"
 import { Avatar, AvatarFallback } from "../shared/components/ui/avatar"
 import { Button } from "../shared/components/ui/button"
 import { Badge } from "../shared/components/ui/badge"
 import {
-  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from "../shared/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "../shared/components/ui/sheet"
 import { toast } from "sonner"
@@ -45,29 +49,35 @@ export function DesktopLayout() {
 
   const complaintCount = complaints.filter((c) => c.status === "C10").length
 
-  const filteredGroups = useMemo(
-    () => {
-      return navGroups
-        .map((group) => ({
-          ...group,
-          items: group.items
-            .filter((item) => {
-              if (roleId === "role_admin") return true
-              if (item.key === "workbench") return true
-              const moduleCode = item.permissionCode ?? item.key
-              return rolePerms.some((code) => code.startsWith(moduleCode + "."))
-            })
-            .map((item) => {
-              if (item.key === "complaints" && complaintCount > 0) {
-                return { ...item, badge: complaintCount }
-              }
-              return item
-            }),
-        }))
-        .filter((g) => g.items.length > 0)
-    },
-    [roleId, rolePerms, complaintCount],
-  )
+  const merchantRequests = useMerchantRegistrationStore((s) => s.requests)
+  const merchantReviewPending = useMerchantReviewStore((s) => s.getPending().length)
+  const claimPending = merchantRequests.filter((r) => r.type === "claim" && r.status === "pending").length
+  const newShopPending = merchantRequests.filter((r) => r.type === "new_shop" && r.status === "pending").length
+  const totalMerchantPending = claimPending + newShopPending + merchantReviewPending
+
+  const filteredGroups = useMemo(() => {
+    return navGroups
+      .map((group) => ({
+        ...group,
+        items: group.items
+          .filter((item) => {
+            if (roleId === "role_admin") return true
+            if (item.key === "workbench") return true
+            const moduleCode = item.permissionCode ?? item.key
+            return rolePerms.some((code) => code.startsWith(moduleCode + "."))
+          })
+          .map((item) => {
+            if (item.key === "complaints" && complaintCount > 0) {
+              return { ...item, badge: complaintCount }
+            }
+            if (item.key === "merchant-review" && totalMerchantPending > 0) {
+              return { ...item, badge: totalMerchantPending }
+            }
+            return item
+          }),
+      }))
+      .filter((g) => g.items.length > 0)
+  }, [roleId, rolePerms, complaintCount, totalMerchantPending])
 
   return (
     <div className="h-screen flex bg-gray-50">
@@ -87,33 +97,31 @@ export function DesktopLayout() {
                 {group.title}
               </p>
               {group.items.map((item) => {
-                  const Icon = item.icon
-                  const active = location.pathname === `/desktop/${item.key}`
-                  const isExternal = item.external != null
-                  return (
-                    <button
-                      key={item.key}
-                      onClick={() => {
-                        if (isExternal) {
-                          window.open(item.external, "_blank")
-                        } else {
-                          navigate(`/desktop/${item.key}`)
-                        }
-                      }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                        active
-                          ? "bg-primary-50 text-primary font-medium"
-                          : "text-text-body hover:bg-gray-50"
-                      }`}
-                    >
-                      <Icon className="size-4" />
-                      <span>{item.label}</span>
-                      {item.badge ? (
-                        <span className="ml-auto text-[10px] bg-destructive text-white px-1.5 py-0.5 rounded-full">
-                          {item.badge}
-                        </span>
-                      ) : null}
-                    </button>
+                const Icon = item.icon
+                const active = location.pathname === `/desktop/${item.key}`
+                const isExternal = item.external != null
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => {
+                      if (isExternal) {
+                        window.open(item.external, "_blank")
+                      } else {
+                        navigate(`/desktop/${item.key}`)
+                      }
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      active ? "bg-primary-50 text-primary font-medium" : "text-text-body hover:bg-gray-50"
+                    }`}
+                  >
+                    <Icon className="size-4" />
+                    <span>{item.label}</span>
+                    {item.badge ? (
+                      <span className="ml-auto text-[10px] bg-destructive text-white px-1.5 py-0.5 rounded-full">
+                        {item.badge}
+                      </span>
+                    ) : null}
+                  </button>
                 )
               })}
             </div>
@@ -127,7 +135,9 @@ export function DesktopLayout() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-text-heading truncate">{user?.name}</p>
-              <p className="text-[10px] text-text-tertiary">{user?.roles?.includes("platform_admin") ? "平台管理员" : "运营人员"}</p>
+              <p className="text-[10px] text-text-tertiary">
+                {user?.roles?.includes("platform_admin") ? "平台管理员" : "运营人员"}
+              </p>
             </div>
           </div>
         </div>
@@ -140,16 +150,22 @@ export function DesktopLayout() {
             {(() => {
               const labelMap: Record<string, string> = {
                 workbench: "平台运营工作台",
-                "convenience-overview": "服务概览", convenience: "派单列表",
-                zones: "片区管理", "dispatch-config": "派单配置",
-                "convenience-staff": "服务人员", "price-arbitration": "价格仲裁",
+                "convenience-overview": "服务概览",
+                convenience: "派单列表",
+                zones: "片区管理",
+                "dispatch-config": "派单配置",
+                "convenience-staff": "服务人员",
+                "price-arbitration": "价格仲裁",
                 "supplier-applications": "供应商入驻审核",
                 // 内容管理
-                "scenic-news": "景区资讯", "travel-guides": "古城攻略",
+                "scenic-news": "景区资讯",
+                "travel-guides": "古城攻略",
                 "photo-records": "文化院落打卡记录",
-                banner: "Banner管理", "grid-settings": "首页宫格管理",
+                banner: "Banner管理",
+                "grid-settings": "首页宫格管理",
                 // 系统管理
-                users: "账号管理", "role-management": "角色管理",
+                users: "账号管理",
+                "role-management": "角色管理",
                 complaints: "投诉管理",
                 audit: "操作审计",
                 // 新增功能
@@ -158,50 +174,78 @@ export function DesktopLayout() {
                 volunteer: "志愿服务",
 
                 // 内容管理占位页
-                "service-center": "服务中心", policies: "政策法规",
-                "protection-guide": "保护指南", procedures: "办事流程",
-                "heritage-fee": "古城维护费", "cultural-heritage": "文化古城",
-                "cultural-journal": "文化期刊", "image-library": "图片标识共享库",
-                videos: "古城视频", "featured-routes": "精选线路",
+                "service-center": "服务中心",
+                policies: "政策法规",
+                "protection-guide": "保护指南",
+                procedures: "办事流程",
+                "heritage-fee": "古城维护费",
+                "cultural-heritage": "文化古城",
+                "cultural-journal": "文化期刊",
+                "image-library": "图片标识共享库",
+                videos: "古城视频",
+                "featured-routes": "精选线路",
                 "recommended-routes": "推荐线路",
                 // 新增模块
                 settlement: "结算管理",
                 "point-rules": "积分规则配置",
                 "merchant-review": "商家信息审核",
                 "flow-warning": "人流量预警",
-              };
-              const key = location.pathname.replace("/desktop/", "").split("/")[0];
-              return labelMap[key] || key;
+              }
+              const key = location.pathname.replace("/desktop/", "").split("/")[0]
+              return labelMap[key] || key
             })()}
           </div>
           <div className="ml-6 relative w-80">
-            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary cursor-pointer" onClick={() => toast.info("输入功能、账号或手机号搜索")} />
-            <Input className="pl-9 h-9" placeholder="搜索功能 / 账号 / 手机号" onKeyDown={(e) => { if (e.key === "Enter") toast.success("搜索完成"); }} />
+            <Search
+              className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary cursor-pointer"
+              onClick={() => toast.info("输入功能、账号或手机号搜索")}
+            />
+            <Input
+              className="pl-9 h-9"
+              placeholder="搜索功能 / 账号 / 手机号"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") toast.success("搜索完成")
+              }}
+            />
           </div>
           <div className="flex-1" />
           <Button variant="ghost" size="icon" className="relative" onClick={() => setShowNotifications(true)}>
             <Bell className="size-4" />
-            <Badge className="absolute -top-0.5 -right-0.5 size-4 p-0 bg-rose-500 grid place-items-center text-[10px]">{mockNotifications.filter(n => !n.read).length}</Badge>
+            <Badge className="absolute -top-0.5 -right-0.5 size-4 p-0 bg-rose-500 grid place-items-center text-[10px]">
+              {mockNotifications.filter((n) => !n.read).length}
+            </Badge>
           </Button>
-          <Button variant="ghost" size="icon"><Maximize2 className="size-4" /></Button>
+          <Button variant="ghost" size="icon">
+            <Maximize2 className="size-4" />
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-gray-50">
                 <Avatar className="size-7">
-                  <AvatarFallback className="bg-amber-500 text-white text-xs">
-                    {user?.name?.[0] ?? "?"}
-                  </AvatarFallback>
+                  <AvatarFallback className="bg-amber-500 text-white text-xs">{user?.name?.[0] ?? "?"}</AvatarFallback>
                 </Avatar>
                 <span className="text-sm text-text-body">{user?.name}</span>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuLabel>{user?.roles?.includes("platform_admin") ? "平台管理员" : "运营人员"}</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                {user?.roles?.includes("platform_admin") ? "平台管理员" : "运营人员"}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => { switchPlatform("c"); navigate("/c") }}>
+              <DropdownMenuItem
+                onSelect={() => {
+                  switchPlatform("c")
+                  navigate("/c")
+                }}
+              >
                 <Smartphone className="size-4 mr-2" /> 切换至游客端
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => { switchPlatform("b"); navigate("/b") }}>
+              <DropdownMenuItem
+                onSelect={() => {
+                  switchPlatform("b")
+                  navigate("/b")
+                }}
+              >
                 <Smartphone className="size-4 mr-2" /> 切换至B端
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -240,9 +284,7 @@ export function DesktopLayout() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     {!n.read && <span className="size-2 rounded-full bg-primary shrink-0" />}
-                    <p className={`text-sm ${!n.read ? "font-medium text-slate-900" : "text-slate-600"}`}>
-                      {n.title}
-                    </p>
+                    <p className={`text-sm ${!n.read ? "font-medium text-slate-900" : "text-slate-600"}`}>{n.title}</p>
                   </div>
                   <p className="text-xs text-slate-400 mt-1 ml-4">{n.time}</p>
                 </div>

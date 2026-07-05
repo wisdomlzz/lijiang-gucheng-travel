@@ -1,13 +1,16 @@
-import { Route } from "react-router";
-import { ReactNode } from "react";
+import { Route } from "react-router"
+import { ReactNode } from "react"
 
 export function CrudRoutes({
-  list, create, show, edit,
+  list,
+  create,
+  show,
+  edit,
 }: {
-  list: ReactNode;
-  create?: ReactNode;
-  show?: ReactNode;
-  edit?: ReactNode;
+  list: ReactNode
+  create?: ReactNode
+  show?: ReactNode
+  edit?: ReactNode
 }) {
   return (
     <>
@@ -16,5 +19,5 @@ export function CrudRoutes({
       {show && <Route path=":id" element={show} />}
       {edit && <Route path=":id/edit" element={edit} />}
     </>
-  );
+  )
 }

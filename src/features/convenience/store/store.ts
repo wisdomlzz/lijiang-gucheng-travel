@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { ConvenienceOrder, ConvenienceStatus, DispatchLogEntry } from "../../../../shared/types"
+import type { ConvenienceOrder, ConvenienceStatus, DispatchLogEntry } from "../../../shared/types"
 import { transition } from "./transitions"
 import { pickStaff, lookupStaff } from "./dispatch"
 import { setTimer, clearTimer } from "./timers"
@@ -45,27 +45,15 @@ type ConvenienceState = {
 }
 
 // ---- Helpers (pure, not exported) ----
-function updateOrder(
-  orders: ConvenienceOrder[],
-  id: string,
-  patch: Partial<ConvenienceOrder>,
-): ConvenienceOrder[] {
+function updateOrder(orders: ConvenienceOrder[], id: string, patch: Partial<ConvenienceOrder>): ConvenienceOrder[] {
   return orders.map((o) => (o.id === id ? { ...o, ...patch } : o))
 }
 
-function notify(
-  order: ConvenienceOrder,
-  title: string,
-  summary: string,
-  targetUrl: string,
-) {
+function notify(order: ConvenienceOrder, title: string, summary: string, targetUrl: string) {
   notifyConvenience(order.id, String(order.serviceType), title, summary, targetUrl)
 }
 
-function logDispatch(
-  log: DispatchLogEntry[],
-  entry: Omit<DispatchLogEntry, "timestamp">,
-): DispatchLogEntry[] {
+function logDispatch(log: DispatchLogEntry[], entry: Omit<DispatchLogEntry, "timestamp">): DispatchLogEntry[] {
   return [{ ...entry, timestamp: new Date().toISOString() }, ...log]
 }
 
@@ -86,7 +74,12 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
   createOrder: (order) => {
     const newOrder = { ...order, status: "S10" as ConvenienceStatus }
     set((s) => ({ orders: [newOrder, ...s.orders] }))
-    notify(newOrder, "便民服务订单已提交", `您的${newOrder.serviceType}订单已提交，正在为您安排服务人员`, `/c/orders/${newOrder.id}`)
+    notify(
+      newOrder,
+      "便民服务订单已提交",
+      `您的${newOrder.serviceType}订单已提交，正在为您安排服务人员`,
+      `/c/orders/${newOrder.id}`
+    )
     setTimeout(() => get().dispatchOrder(newOrder.id), 500)
   },
 
@@ -103,14 +96,26 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     if (!order) return
     const valid = transition(order.status, "assign") || transition(order.status, "reDispatch")
     if (!valid) return
-    const next = (order.status === "S90") ? transition(order.status, "reDispatch")! : transition(order.status, "assign")!
+    const next = order.status === "S90" ? transition(order.status, "reDispatch")! : transition(order.status, "assign")!
     const staff = pickStaff(order.serviceType, order.lat, order.lng)
     const sid = staff?.id ?? ""
     set((s) => ({
-      orders: updateOrder(s.orders, orderId, { status: next, staffId: sid, staffName: staff?.name ?? "", staffPhone: staff?.phone ?? "" }),
-      dispatchLog: logDispatch(s.dispatchLog, { orderId, type: "manual", staffId: sid, staffName: staff?.name, reason: "系统指派" }),
+      orders: updateOrder(s.orders, orderId, {
+        status: next,
+        staffId: sid,
+        staffName: staff?.name ?? "",
+        staffPhone: staff?.phone ?? "",
+      }),
+      dispatchLog: logDispatch(s.dispatchLog, {
+        orderId,
+        type: "manual",
+        staffId: sid,
+        staffName: staff?.name,
+        reason: "系统指派",
+      }),
     }))
-    if (staff) notify(order, "便民服务已派单", `${order.serviceType}订单已指派${staff.name}，请留意电话联系`, `/b/service/tasks`)
+    if (staff)
+      notify(order, "便民服务已派单", `${order.serviceType}订单已指派${staff.name}，请留意电话联系`, `/b/service/tasks`)
   },
 
   autoDispatchOrder: (orderId) => {
@@ -130,10 +135,22 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     const next = transition(o.status, "assign") || transition(o.status, "reDispatch")!
     const staff = lookupStaff(staffId)
     set((s) => ({
-      orders: updateOrder(s.orders, orderId, { status: next, staffId, staffName: staff?.name ?? "", staffPhone: staff?.phone ?? "" }),
-      dispatchLog: logDispatch(s.dispatchLog, { orderId, type: "manual", staffId, staffName: staff?.name, reason: "手动指派" }),
+      orders: updateOrder(s.orders, orderId, {
+        status: next,
+        staffId,
+        staffName: staff?.name ?? "",
+        staffPhone: staff?.phone ?? "",
+      }),
+      dispatchLog: logDispatch(s.dispatchLog, {
+        orderId,
+        type: "manual",
+        staffId,
+        staffName: staff?.name,
+        reason: "手动指派",
+      }),
     }))
-    if (staff) notify(o, "便民服务已派单", `${o.serviceType}订单已指派${staff.name}，请留意电话联系`, `/b/service/tasks`)
+    if (staff)
+      notify(o, "便民服务已派单", `${o.serviceType}订单已指派${staff.name}，请留意电话联系`, `/b/service/tasks`)
   },
 
   acceptOrder: (orderId) => {
@@ -146,13 +163,21 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
   submitQuote: (orderId, price) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !transition(o.status, "quote")) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { status: transition(o.status, "quote")!, priceQuote: price }) }))
+    set((s) => ({
+      orders: updateOrder(s.orders, orderId, { status: transition(o.status, "quote")!, priceQuote: price }),
+    }))
     notify(o, "服务已核价", `您的${o.serviceType}订单已报价 ¥${price}，请在时间内确认支付`, `/c/orders/${orderId}`)
     setTimer(`conv:${orderId}:pay`, 15000, () => {
       const order = get().orders.find((o) => o.id === orderId)
       if (order?.status === "A35") {
         set((s) => ({ orders: updateOrder(s.orders, orderId, { status: "S90" }) }))
-        notifyConvenience(orderId, order.serviceType, "支付超时", "支付超时，订单已转入待人工处理", `/desktop/convenience`)
+        notifyConvenience(
+          orderId,
+          order.serviceType,
+          "支付超时",
+          "支付超时，订单已转入待人工处理",
+          `/desktop/convenience`
+        )
       }
     })
   },
@@ -161,8 +186,15 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     clearTimer(`conv:${orderId}:pay`)
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !transition(o.status, "pay")) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { status: transition(o.status, "pay")!, payMethod: method }) }))
-    notify(o, "支付成功", `${o.serviceType}订单已${method === "online" ? "在线" : "现金"}支付成功，服务人员即将开始服务`, `/c/orders/${orderId}`)
+    set((s) => ({
+      orders: updateOrder(s.orders, orderId, { status: transition(o.status, "pay")!, payMethod: method }),
+    }))
+    notify(
+      o,
+      "支付成功",
+      `${o.serviceType}订单已${method === "online" ? "在线" : "现金"}支付成功，服务人员即将开始服务`,
+      `/c/orders/${orderId}`
+    )
   },
 
   startService: (orderId) => {
@@ -175,7 +207,9 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
   completeService: (orderId, photos) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !transition(o.status, "complete")) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { status: transition(o.status, "complete")!, completionPhotos: photos }) }))
+    set((s) => ({
+      orders: updateOrder(s.orders, orderId, { status: transition(o.status, "complete")!, completionPhotos: photos }),
+    }))
     notify(o, "服务已完成", `您的${o.serviceType}订单服务已完成，请确认完成`, `/c/orders/${orderId}`)
     setTimer(`conv:${orderId}:autoConfirm`, 30000, () => get().confirmComplete(orderId))
   },
@@ -188,15 +222,19 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     set((s) => ({ orders: updateOrder(s.orders, orderId, { status: next, completedAt: new Date().toISOString() }) }))
     if (o.priceQuote && o.staffId) {
       useSettlementStore.getState().recordIncome({
-        orderId: o.id, staffId: o.staffId, staffName: o.staffName ?? "",
-        serviceType: String(o.serviceType), amount: o.priceQuote,
+        orderId: o.id,
+        staffId: o.staffId,
+        staffName: o.staffName ?? "",
+        serviceType: String(o.serviceType),
+        amount: o.priceQuote,
         payMethod: o.payMethod ?? "online",
       })
     }
     notify(o, "订单已完成", "服务已完成，欢迎评价", `/c/orders/${orderId}`)
   },
 
-  rateOrder: (orderId, rating) => set((s) => ({ orders: updateOrder(s.orders, orderId, { rating, ratedAt: new Date().toISOString() }) })),
+  rateOrder: (orderId, rating) =>
+    set((s) => ({ orders: updateOrder(s.orders, orderId, { rating, ratedAt: new Date().toISOString() }) })),
 
   // ---- Cancel flow ----
   requestCancel: (orderId) => {

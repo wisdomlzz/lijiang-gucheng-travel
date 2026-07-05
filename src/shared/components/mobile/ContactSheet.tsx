@@ -1,19 +1,19 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/shared/components/ui/sheet";
-import { Button } from "@/shared/components/ui/button";
-import { Phone, Copy, X, Star } from "lucide-react";
-import { toast } from "sonner";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/shared/components/ui/sheet"
+import { Button } from "@/shared/components/ui/button"
+import { Phone, Copy, X, Star } from "lucide-react"
+import { toast } from "sonner"
 
 type Props = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  name: string;
-  phone: string;
-  avatar?: string;
-  subtitle?: string;
-  rating?: number;
-  orderCount?: number;
-};
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  title: string
+  name: string
+  phone: string
+  avatar?: string
+  subtitle?: string
+  rating?: number
+  orderCount?: number
+}
 
 export function ContactSheet({ open, onOpenChange, title, name, phone, avatar, subtitle, rating, orderCount }: Props) {
   return (
@@ -40,21 +40,31 @@ export function ContactSheet({ open, onOpenChange, title, name, phone, avatar, s
             {subtitle && <div className="text-xs text-muted-foreground">{subtitle}</div>}
             {rating && (
               <div className="flex items-center gap-1 text-xs text-amber-500 mt-0.5">
-                <Star className="size-3 fill-current" />{rating}
+                <Star className="size-3 fill-current" />
+                {rating}
                 {orderCount && <span className="text-muted-foreground ml-1">{orderCount}单</span>}
               </div>
             )}
           </div>
         </div>
         <div className="space-y-2">
-          <Button variant="outline" className="w-full h-11 rounded-xl justify-start gap-2" onClick={() => { navigator.clipboard.writeText(phone); toast.success("已复制电话"); }}>
-            <Copy className="size-4" />复制电话 <span className="font-mono ml-auto">{phone}</span>
+          <Button
+            variant="outline"
+            className="w-full h-11 rounded-xl justify-start gap-2"
+            onClick={() => {
+              navigator.clipboard.writeText(phone)
+              toast.success("已复制电话")
+            }}
+          >
+            <Copy className="size-4" />
+            复制电话 <span className="font-mono ml-auto">{phone}</span>
           </Button>
           <Button className="w-full h-11 rounded-xl gap-2" onClick={() => toast.success(`正在呼叫 ${phone}`)}>
-            <Phone className="size-4" />拨打电话
+            <Phone className="size-4" />
+            拨打电话
           </Button>
         </div>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

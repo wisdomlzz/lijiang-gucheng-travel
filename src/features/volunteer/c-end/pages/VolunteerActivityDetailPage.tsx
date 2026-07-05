@@ -3,19 +3,32 @@ import { useParams, useNavigate } from "react-router"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useVolunteerStore } from "../../store"
 import { useAuthStore } from "@/platform/auth"
-import { Heart, MapPin, ArrowLeft, CheckCircle2, Calendar, Shield, AlertTriangle, AlertCircle, Clock4, Users, Image as ImageIcon, ChevronLeft, ChevronRight, X } from "lucide-react"
+import {
+  Heart,
+  MapPin,
+  ArrowLeft,
+  CheckCircle2,
+  Calendar,
+  Shield,
+  AlertTriangle,
+  AlertCircle,
+  Clock4,
+  Users,
+  Image as ImageIcon,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-react"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "motion/react"
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-} from "../../../../shared/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../../shared/components/ui/dialog"
 import { Button } from "../../../../shared/components/ui/button"
 
 const STATUS_MAP: Record<string, { label: string; bg: string; fg: string }> = {
-  pending:          { label: "待签到",   bg: "#DBEAFE", fg: "#2563EB" },
-  checked_in:       { label: "已签到",   bg: "#D1FAE5", fg: "#059669" },
-  checked_out:      { label: "已签退",   bg: "#F1F5F9", fg: "#64748B" },
-  no_show:          { label: "未参与",   bg: "#FEF3C7", fg: "#B45309" },
+  pending: { label: "待签到", bg: "#DBEAFE", fg: "#2563EB" },
+  checked_in: { label: "已签到", bg: "#D1FAE5", fg: "#059669" },
+  checked_out: { label: "已签退", bg: "#F1F5F9", fg: "#64748B" },
+  no_show: { label: "未参与", bg: "#FEF3C7", fg: "#B45309" },
   checkout_overdue: { label: "待补签退", bg: "#FEF3C7", fg: "#D97706" },
 }
 
@@ -36,7 +49,14 @@ function fmtHM(d: string) {
 
 function StatusBadge({ status, compact }: { status: string; compact?: boolean }) {
   const c = STATUS_MAP[status] || { label: status, bg: "#F1F5F9", fg: "#64748B" }
-  return <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap ${compact ? "text-[9px] px-1.5" : ""}`} style={{ background: c.bg, color: c.fg }}>{c.label}</span>
+  return (
+    <span
+      className={`text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap ${compact ? "text-[9px] px-1.5" : ""}`}
+      style={{ background: c.bg, color: c.fg }}
+    >
+      {c.label}
+    </span>
+  )
 }
 
 // ── Image Carousel ──
@@ -56,24 +76,33 @@ function ImageCarousel({ images }: { images: string[] }) {
           exit={{ opacity: 0, x: -40 }}
           transition={{ duration: 0.25 }}
           className="size-full object-cover"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
+          onError={(e) => {
+            ;(e.target as HTMLImageElement).style.display = "none"
+          }}
         />
       </AnimatePresence>
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
       {images.length > 1 && (
         <>
-          <button onClick={() => setIdx((i) => (i - 1 + images.length) % images.length)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full bg-white/70 flex items-center justify-center backdrop-blur-sm shadow-sm hover:bg-white/90 transition-all">
+          <button
+            onClick={() => setIdx((i) => (i - 1 + images.length) % images.length)}
+            className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full bg-white/70 flex items-center justify-center backdrop-blur-sm shadow-sm hover:bg-white/90 transition-all"
+          >
             <ChevronLeft size={16} className="text-slate-600" />
           </button>
-          <button onClick={() => setIdx((i) => (i + 1) % images.length)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full bg-white/70 flex items-center justify-center backdrop-blur-sm shadow-sm hover:bg-white/90 transition-all">
+          <button
+            onClick={() => setIdx((i) => (i + 1) % images.length)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full bg-white/70 flex items-center justify-center backdrop-blur-sm shadow-sm hover:bg-white/90 transition-all"
+          >
             <ChevronRight size={16} className="text-slate-600" />
           </button>
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
             {images.map((_, i) => (
-              <button key={i} onClick={() => setIdx(i)}
-                className={`size-1.5 rounded-full transition-all ${i === idx ? "bg-white w-4" : "bg-white/50"}`} />
+              <button
+                key={i}
+                onClick={() => setIdx(i)}
+                className={`size-1.5 rounded-full transition-all ${i === idx ? "bg-white w-4" : "bg-white/50"}`}
+              />
             ))}
           </div>
         </>
@@ -127,9 +156,7 @@ export function VolunteerActivityDetailPage() {
   // 我的每日记录（按日期排序）
   const myDailyRecords = useMemo(() => {
     if (!mySignUp) return []
-    return dailyRecords
-      .filter((d) => d.signUpId === mySignUp.id)
-      .sort((a, b) => a.date.localeCompare(b.date))
+    return dailyRecords.filter((d) => d.signUpId === mySignUp.id).sort((a, b) => a.date.localeCompare(b.date))
   }, [mySignUp, dailyRecords])
 
   // 今天或下一个需要操作的日记录
@@ -171,7 +198,11 @@ export function VolunteerActivityDetailPage() {
   // ── Handlers ──
 
   const handleSignUp = async () => {
-    if (!volunteer) { toast.error("请先完成志愿者注册"); navigate("/c/volunteer"); return }
+    if (!volunteer) {
+      toast.error("请先完成志愿者注册")
+      navigate("/c/volunteer")
+      return
+    }
     // 检测时间冲突
     const conflicts = volunteer ? getTimeConflicts(volunteer.id, act.id) : []
     if (conflicts.length > 0) {
@@ -182,7 +213,8 @@ export function VolunteerActivityDetailPage() {
     // 无冲突直接报名
     setLoading("signup")
     const res = doSignUp(volunteer.id, act.id)
-    if (res.ok) toast.success(res.msg); else toast.error(res.msg)
+    if (res.ok) toast.success(res.msg)
+    else toast.error(res.msg)
     setLoading("")
   }
 
@@ -190,7 +222,8 @@ export function VolunteerActivityDetailPage() {
     setConflictDialogOpen(false)
     setLoading("signup")
     const res = doSignUp(volunteer!.id, act.id)
-    if (res.ok) toast.success(res.msg); else toast.error(res.msg)
+    if (res.ok) toast.success(res.msg)
+    else toast.error(res.msg)
     setLoading("")
   }
 
@@ -198,7 +231,8 @@ export function VolunteerActivityDetailPage() {
     if (!mySignUp) return
     setLoading("cancel")
     const res = doCancelSignUp(mySignUp.id)
-    if (res.ok) toast.success(res.msg); else toast.error(res.msg)
+    if (res.ok) toast.success(res.msg)
+    else toast.error(res.msg)
     setLoading("")
   }
 
@@ -206,7 +240,8 @@ export function VolunteerActivityDetailPage() {
     if (!activeDaily) return
     setLoading("checkin")
     const res = doCheckIn(activeDaily.id)
-    if (res.ok) toast.success(res.msg); else toast.error(res.msg)
+    if (res.ok) toast.success(res.msg)
+    else toast.error(res.msg)
     setLoading("")
   }
 
@@ -214,21 +249,25 @@ export function VolunteerActivityDetailPage() {
     if (!activeDaily) return
     setLoading("checkout")
     const res = doCheckOut(activeDaily.id)
-    if (res.ok) toast.success(res.msg); else toast.error(res.msg)
+    if (res.ok) toast.success(res.msg)
+    else toast.error(res.msg)
     setLoading("")
   }
 
   // ── 时间模式文案 ──
-  const timeDisplay = act.timeMode === "multi"
-    ? `${fmtDate(act.startTime)} ~ ${fmtDate(act.endTime)}，每天 ${act.dailyStartTime}~${act.dailyEndTime}`
-    : `${fmtTime(act.startTime)} ~ ${fmtHM(act.endTime)}`
+  const timeDisplay =
+    act.timeMode === "multi"
+      ? `${fmtDate(act.startTime)} ~ ${fmtDate(act.endTime)}，每天 ${act.dailyStartTime}~${act.dailyEndTime}`
+      : `${fmtTime(act.startTime)} ~ ${fmtHM(act.endTime)}`
 
   // ── Render bottom action ──
   const renderAction = () => {
     if (!volunteer) {
       return (
-        <button onClick={() => navigate("/c/volunteer")}
-          className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-[#1D4ED8] text-white text-[14px] font-medium shadow-[0_4px_14px_rgba(37,99,235,0.25)] active:scale-[0.98] transition-transform">
+        <button
+          onClick={() => navigate("/c/volunteer")}
+          className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-[#1D4ED8] text-white text-[14px] font-medium shadow-[0_4px_14px_rgba(37,99,235,0.25)] active:scale-[0.98] transition-transform"
+        >
           先完成志愿者认证
         </button>
       )
@@ -236,13 +275,24 @@ export function VolunteerActivityDetailPage() {
 
     if (!mySignUp) {
       // 未报名时
-      if (isCancelled) return <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">活动已取消</div>
-      if (full) return <div className="text-center text-[13px] text-red-500 py-3 bg-red-50 rounded-2xl">名额已满（{count}/{act.maxParticipants}）</div>
-      if (deadlinePassed) return <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">报名已截止</div>
-      if (ended) return <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">活动已结束</div>
+      if (isCancelled)
+        return <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">活动已取消</div>
+      if (full)
+        return (
+          <div className="text-center text-[13px] text-red-500 py-3 bg-red-50 rounded-2xl">
+            名额已满（{count}/{act.maxParticipants}）
+          </div>
+        )
+      if (deadlinePassed)
+        return <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">报名已截止</div>
+      if (ended)
+        return <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">活动已结束</div>
       return (
-        <button onClick={handleSignUp} disabled={loading === "signup"}
-          className="w-full h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-[14px] font-medium shadow-[0_4px_14px_rgba(16,185,129,0.25)] disabled:opacity-50 active:scale-[0.98] transition-transform">
+        <button
+          onClick={handleSignUp}
+          disabled={loading === "signup"}
+          className="w-full h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-[14px] font-medium shadow-[0_4px_14px_rgba(16,185,129,0.25)] disabled:opacity-50 active:scale-[0.98] transition-transform"
+        >
           {loading === "signup" ? "处理中..." : "立即报名"}
         </button>
       )
@@ -250,15 +300,21 @@ export function VolunteerActivityDetailPage() {
 
     // 已报名 - 活动被取消
     if (isCancelled) {
-      return <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">活动已被管理员取消</div>
+      return (
+        <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">活动已被管理员取消</div>
+      )
     }
 
     if (!activeDaily) {
       // 所有天都已完成或异常
       const totalHours = myDailyRecords.reduce((sum, d) => sum + (d.serviceHours || 0), 0)
-      const hasAbnormal = myDailyRecords.some(d => d.status === "no_show" || d.status === "checkout_overdue")
+      const hasAbnormal = myDailyRecords.some((d) => d.status === "no_show" || d.status === "checkout_overdue")
       if (hasAbnormal) {
-        return <div className="text-center text-[13px] text-amber-600 py-3 bg-amber-50 rounded-2xl">有未处理记录，请联系管理员</div>
+        return (
+          <div className="text-center text-[13px] text-amber-600 py-3 bg-amber-50 rounded-2xl">
+            有未处理记录，请联系管理员
+          </div>
+        )
       }
       return (
         <div className="text-center py-4 bg-emerald-50 rounded-2xl">
@@ -274,16 +330,25 @@ export function VolunteerActivityDetailPage() {
 
     if (status === "checked_in") {
       const dayEnded = now > new Date(activeDaily.dayEndTime)
-      if (dayEnded) return <div className="text-center text-[13px] text-amber-600 py-3 bg-amber-50 rounded-2xl">{dayLabel}活动已结束，请及时签退</div>
+      if (dayEnded)
+        return (
+          <div className="text-center text-[13px] text-amber-600 py-3 bg-amber-50 rounded-2xl">
+            {dayLabel}活动已结束，请及时签退
+          </div>
+        )
       return (
         <div className="space-y-2">
           {isLate && lateMinutes && (
             <div className="flex items-center justify-center gap-1.5 text-[12px] text-red-500">
-              <Clock4 size={13} /><span>延时 {lateMinutes} 分钟</span>
+              <Clock4 size={13} />
+              <span>延时 {lateMinutes} 分钟</span>
             </div>
           )}
-          <button onClick={handleCheckOut} disabled={loading === "checkout"}
-            className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[14px] font-medium shadow-[0_4px_14px_rgba(245,158,11,0.25)] disabled:opacity-50 active:scale-[0.98] transition-transform">
+          <button
+            onClick={handleCheckOut}
+            disabled={loading === "checkout"}
+            className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[14px] font-medium shadow-[0_4px_14px_rgba(245,158,11,0.25)] disabled:opacity-50 active:scale-[0.98] transition-transform"
+          >
             {loading === "checkout" ? "处理中..." : `${dayLabel}签退`}
           </button>
         </div>
@@ -294,22 +359,35 @@ export function VolunteerActivityDetailPage() {
       const start = new Date(activeDaily.dayStartTime)
       const end = new Date(activeDaily.dayEndTime)
       const windowOpen = now >= new Date(start.getTime() - 30 * 60000)
-      if (now > end) return <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">{dayLabel}活动已结束（未签到）</div>
+      if (now > end)
+        return (
+          <div className="text-center text-[13px] text-slate-400 py-3 bg-slate-50 rounded-2xl">
+            {dayLabel}活动已结束（未签到）
+          </div>
+        )
       if (!windowOpen) {
         // 等待活动开始 + 可取消报名
         return (
           <div className="space-y-2">
-            <div className="text-center text-[13px] text-primary py-3 bg-blue-50 rounded-2xl">{dayLabel}等待活动开始</div>
-            <button onClick={handleCancelSignUp} disabled={loading === "cancel"}
-              className="w-full h-10 rounded-2xl border border-slate-200 text-slate-400 text-[12px] font-medium active:scale-[0.98] transition-transform hover:border-red-200 hover:text-red-400">
+            <div className="text-center text-[13px] text-primary py-3 bg-blue-50 rounded-2xl">
+              {dayLabel}等待活动开始
+            </div>
+            <button
+              onClick={handleCancelSignUp}
+              disabled={loading === "cancel"}
+              className="w-full h-10 rounded-2xl border border-slate-200 text-slate-400 text-[12px] font-medium active:scale-[0.98] transition-transform hover:border-red-200 hover:text-red-400"
+            >
               {loading === "cancel" ? "处理中..." : "取消报名"}
             </button>
           </div>
         )
       }
       return (
-        <button onClick={handleCheckIn} disabled={loading === "checkin"}
-          className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-[#1D4ED8] text-white text-[14px] font-medium shadow-[0_4px_14px_rgba(37,99,235,0.25)] disabled:opacity-50 active:scale-[0.98] transition-transform">
+        <button
+          onClick={handleCheckIn}
+          disabled={loading === "checkin"}
+          className="w-full h-12 rounded-2xl bg-gradient-to-r from-primary to-[#1D4ED8] text-white text-[14px] font-medium shadow-[0_4px_14px_rgba(37,99,235,0.25)] disabled:opacity-50 active:scale-[0.98] transition-transform"
+        >
           {loading === "checkin" ? "处理中..." : `${dayLabel}签到`}
         </button>
       )
@@ -339,9 +417,15 @@ export function VolunteerActivityDetailPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-[17px] font-semibold text-slate-800 truncate">{act.title}</h2>
-                <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full mt-1 ${
-                  ended ? "bg-slate-100 text-slate-500" : started ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600"
-                }`}>
+                <span
+                  className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full mt-1 ${
+                    ended
+                      ? "bg-slate-100 text-slate-500"
+                      : started
+                        ? "bg-emerald-50 text-emerald-600"
+                        : "bg-blue-50 text-blue-600"
+                  }`}
+                >
                   {ended ? "已结束" : started ? "进行中" : "即将开始"}
                 </span>
               </div>
@@ -371,7 +455,9 @@ export function VolunteerActivityDetailPage() {
             <div className="mt-4">
               <div className="flex items-center justify-between text-[11px] mb-1.5">
                 <span className="text-slate-400">报名进度</span>
-                <span className="font-medium" style={{ color: full ? "#DC2626" : "#059669" }}>{count}/{act.maxParticipants} 人</span>
+                <span className="font-medium" style={{ color: full ? "#DC2626" : "#059669" }}>
+                  {count}/{act.maxParticipants} 人
+                </span>
               </div>
               <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
                 <motion.div
@@ -408,9 +494,13 @@ export function VolunteerActivityDetailPage() {
                 签到记录
               </div>
               {(() => {
-                const done = myDailyRecords.filter(d => d.status === "checked_out").length
+                const done = myDailyRecords.filter((d) => d.status === "checked_out").length
                 const total = myDailyRecords.length
-                return <span className="text-[11px] text-slate-400">{done}/{total} 完成</span>
+                return (
+                  <span className="text-[11px] text-slate-400">
+                    {done}/{total} 完成
+                  </span>
+                )
               })()}
             </div>
 
@@ -421,12 +511,20 @@ export function VolunteerActivityDetailPage() {
                 const isPast = now > new Date(dr.dayEndTime)
                 const isActive = dr.id === activeDaily?.id
                 return (
-                  <div key={dr.id} className={`px-5 py-3.5 flex items-center gap-3 relative ${
-                    dr.status === "checked_in" ? "bg-emerald-50/40" :
-                    dr.status === "no_show" ? "bg-amber-50/30" :
-                    dr.status === "checkout_overdue" ? "bg-amber-50/30" :
-                    isToday && dr.status === "pending" ? "bg-blue-50/30" : ""
-                  } ${isActive ? "ring-2 ring-primary/20 rounded-none" : ""}`}>
+                  <div
+                    key={dr.id}
+                    className={`px-5 py-3.5 flex items-center gap-3 relative ${
+                      dr.status === "checked_in"
+                        ? "bg-emerald-50/40"
+                        : dr.status === "no_show"
+                          ? "bg-amber-50/30"
+                          : dr.status === "checkout_overdue"
+                            ? "bg-amber-50/30"
+                            : isToday && dr.status === "pending"
+                              ? "bg-blue-50/30"
+                              : ""
+                    } ${isActive ? "ring-2 ring-primary/20 rounded-none" : ""}`}
+                  >
                     {/* 活跃行左侧指示条 */}
                     {isActive && <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-full bg-primary" />}
                     {/* 日期 + 时段 */}
@@ -435,7 +533,11 @@ export function VolunteerActivityDetailPage() {
                         <span className="text-[13px] font-medium text-slate-800">
                           {act.timeMode === "multi" ? fmtDate(dr.dayStartTime) : "活动当天"}
                         </span>
-                        {isToday && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">今天</span>}
+                        {isToday && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                            今天
+                          </span>
+                        )}
                       </div>
                       <div className="text-[11px] text-slate-400 mt-0.5">
                         {fmtHM(dr.dayStartTime)} ~ {fmtHM(dr.dayEndTime)}
@@ -445,7 +547,8 @@ export function VolunteerActivityDetailPage() {
                     {/* 签到签退时间 */}
                     <div className="text-[11px] text-slate-500 text-right min-w-[80px]">
                       {dr.checkInTime ? (
-                        <div>签到 {fmtHM(dr.checkInTime)}
+                        <div>
+                          签到 {fmtHM(dr.checkInTime)}
                           {dr.isLate && dr.lateMinutes && (
                             <span className="ml-1 text-amber-600">延时{dr.lateMinutes}min</span>
                           )}
@@ -482,8 +585,10 @@ export function VolunteerActivityDetailPage() {
           {renderAction()}
         </motion.div>
 
-        <button onClick={() => navigate("/c/volunteer/activities")}
-          className="flex items-center gap-1.5 text-[12px] text-slate-400 mx-auto hover:text-slate-600 transition-colors">
+        <button
+          onClick={() => navigate("/c/volunteer/activities")}
+          className="flex items-center gap-1.5 text-[12px] text-slate-400 mx-auto hover:text-slate-600 transition-colors"
+        >
           <ArrowLeft size={14} /> 返回活动列表
         </button>
       </div>
@@ -498,12 +603,13 @@ export function VolunteerActivityDetailPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="py-2">
-            <p className="text-[13px] text-slate-600 leading-relaxed">
-              您已报名以下活动，时间与本活动重叠：
-            </p>
+            <p className="text-[13px] text-slate-600 leading-relaxed">您已报名以下活动，时间与本活动重叠：</p>
             <ul className="mt-2 space-y-1">
               {conflictTitles.map((t, i) => (
-                <li key={i} className="text-[13px] text-amber-700 bg-amber-50 rounded-lg px-3 py-1.5 flex items-center gap-2">
+                <li
+                  key={i}
+                  className="text-[13px] text-amber-700 bg-amber-50 rounded-lg px-3 py-1.5 flex items-center gap-2"
+                >
                   <AlertTriangle size={12} />
                   {t}
                 </li>
@@ -512,8 +618,12 @@ export function VolunteerActivityDetailPage() {
             <p className="text-[12px] text-slate-400 mt-3">确认报名后请自行协调时间安排。</p>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" size="sm" className="rounded-lg" onClick={() => setConflictDialogOpen(false)}>再想想</Button>
-            <Button size="sm" className="rounded-lg bg-primary hover:bg-[#1D4ED8]" onClick={handleConflictConfirm}>确认报名</Button>
+            <Button variant="outline" size="sm" className="rounded-lg" onClick={() => setConflictDialogOpen(false)}>
+              再想想
+            </Button>
+            <Button size="sm" className="rounded-lg bg-primary hover:bg-[#1D4ED8]" onClick={handleConflictConfirm}>
+              确认报名
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

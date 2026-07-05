@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
 import { motion } from "motion/react"
-import { useAuthStore } from "../stores/auth-store"
+import { useAuthStore } from "@/platform/auth"
 import { seedUsers } from "../types/seed-users"
 import { Shield, Store, ChevronRight, User, Smartphone, Eye, EyeOff } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../constants"
@@ -62,17 +62,14 @@ export function LoginPageDesktop() {
     <div className="min-h-screen flex bg-slate-50">
       {/* Left — brand panel with imagery */}
       <div className="hidden lg:flex w-[480px] xl:w-[540px] relative overflow-hidden">
-        <img
-          src={HERO_IMG}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <img src={HERO_IMG} alt="" className="absolute inset-0 w-full h-full object-cover" />
         {/* Rich gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-950/85 via-blue-900/70 to-indigo-950/80" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
         {/* Decorative pattern */}
-        <div className="absolute inset-0 opacity-[0.06]"
+        <div
+          className="absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}
@@ -81,11 +78,7 @@ export function LoginPageDesktop() {
         {/* Content */}
         <div className="relative flex flex-col justify-between p-12 xl:p-14 text-white w-full">
           {/* Top: brand */}
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center ring-1 ring-white/20">
                 <span className="text-lg font-bold">丽</span>
@@ -114,7 +107,10 @@ export function LoginPageDesktop() {
             {/* Feature pills */}
             <div className="flex justify-center gap-2 mt-6">
               {["实时数据", "订单管理", "权限控制", "内容运营"].map((f) => (
-                <span key={f} className="px-3 py-1 rounded-full bg-white/8 text-white/50 text-[11px] backdrop-blur-sm ring-1 ring-white/10">
+                <span
+                  key={f}
+                  className="px-3 py-1 rounded-full bg-white/8 text-white/50 text-[11px] backdrop-blur-sm ring-1 ring-white/10"
+                >
                   {f}
                 </span>
               ))}
@@ -169,7 +165,9 @@ export function LoginPageDesktop() {
                   onClick={() => doLogin(preset.user)}
                   className={`w-full flex items-center gap-4 p-4 rounded-2xl border ${preset.border} ${preset.bg} ${preset.hoverBg} hover:shadow-md active:scale-[0.99] transition-all group text-left`}
                 >
-                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${preset.gradient} flex items-center justify-center shadow-sm`}>
+                  <div
+                    className={`w-11 h-11 rounded-xl bg-gradient-to-br ${preset.gradient} flex items-center justify-center shadow-sm`}
+                  >
                     <Icon className="size-5 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -242,19 +240,31 @@ export function LoginPageDesktop() {
               </p>
             )}
             <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 flex-wrap">
-              <button onClick={() => navigate("/c")} className="flex items-center gap-1 hover:text-blue-500 transition-colors px-1">
+              <button
+                onClick={() => navigate("/c")}
+                className="flex items-center gap-1 hover:text-blue-500 transition-colors px-1"
+              >
                 <Smartphone size={12} /> 游客端
               </button>
               <span className="text-slate-300">·</span>
-              <button onClick={() => navigate("/b")} className="flex items-center gap-1 hover:text-blue-500 transition-colors px-1">
+              <button
+                onClick={() => navigate("/b")}
+                className="flex items-center gap-1 hover:text-blue-500 transition-colors px-1"
+              >
                 <Smartphone size={12} /> 便民服务人员端
               </button>
               <span className="text-slate-300">·</span>
-              <button onClick={() => navigate("/desktop/supplier-entry")} className="hover:text-blue-500 transition-colors px-1">
+              <button
+                onClick={() => navigate("/desktop/supplier-entry")}
+                className="hover:text-blue-500 transition-colors px-1"
+              >
                 供应商入驻
               </button>
               <span className="text-slate-300">·</span>
-              <button onClick={() => alert("请联系平台管理员重置密码")} className="hover:text-blue-500 transition-colors px-1">
+              <button
+                onClick={() => alert("请联系平台管理员重置密码")}
+                className="hover:text-blue-500 transition-colors px-1"
+              >
                 忘记密码
               </button>
             </div>

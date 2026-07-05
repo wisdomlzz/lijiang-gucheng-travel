@@ -8,10 +8,10 @@ import { create } from "zustand"
 
 // ---- ① 积分规则（PC 端可配置）----
 export interface PointRule {
-  code: string            // 场景编码，字符串非枚举（前向兼容）
-  label: string           // 展示名
-  points: number          // 基础分值
-  dailyLimit?: number     // 每日上限（防刷）
+  code: string // 场景编码，字符串非枚举（前向兼容）
+  label: string // 展示名
+  points: number // 基础分值
+  dailyLimit?: number // 每日上限（防刷）
   direction: "IN" | "OUT" // 赚取 / 消耗
   enabled: boolean
 }
@@ -37,11 +37,11 @@ export interface PointLedger {
   id: string
   userId: string
   direction: "IN" | "OUT"
-  delta: number              // 正数
-  sourceCode: string         // 对应 PointRule.code
-  sourceLabel: string        // 展示快照（规则改名不影响历史）
-  refId?: string             // 关联单据（打卡ID/订单号）
-  balanceAfter: number       // 流水后余额快照
+  delta: number // 正数
+  sourceCode: string // 对应 PointRule.code
+  sourceLabel: string // 展示快照（规则改名不影响历史）
+  refId?: string // 关联单据（打卡ID/订单号）
+  balanceAfter: number // 流水后余额快照
   createdAt: string
 }
 
@@ -55,7 +55,12 @@ type PointsState = {
   getLedgers: (userId: string) => PointLedger[]
 
   // ★ 唯一入口：所有来源都走这里
-  transact: (userId: string, sourceCode: string, refId?: string, customDelta?: number) => { ok: boolean; msg: string; delta?: number }
+  transact: (
+    userId: string,
+    sourceCode: string,
+    refId?: string,
+    customDelta?: number
+  ) => { ok: boolean; msg: string; delta?: number }
 
   // 规则管理（PC 端）
   addRule: (rule: PointRule) => void
@@ -63,20 +68,78 @@ type PointsState = {
   removeRule: (code: string) => void
 }
 
-function today(): string { return new Date().toISOString().slice(0, 10) }
+function today(): string {
+  return new Date().toISOString().slice(0, 10)
+}
 
 export const usePointsStore = create<PointsState>((set, get) => ({
   accounts: {
-    "u_c_001": { userId: "u_c_001", balance: 320, totalEarned: 380, totalUsed: 60 },
-    "u_b_001": { userId: "u_b_001", balance: 150, totalEarned: 200, totalUsed: 50 },
+    u_c_001: { userId: "u_c_001", balance: 320, totalEarned: 380, totalUsed: 60 },
+    u_b_001: { userId: "u_b_001", balance: 150, totalEarned: 200, totalUsed: 50 },
   },
   ledgers: [
-    { id: "pl1", userId: "u_c_001", direction: "IN", delta: 5, sourceCode: "courtyard_checkin", sourceLabel: "院落打卡", refId: "chk-1", balanceAfter: 5, createdAt: "2026-05-10 10:20" },
-    { id: "pl2", userId: "u_c_001", direction: "IN", delta: 50, sourceCode: "naxi_streak", sourceLabel: "纳西人连续打卡", balanceAfter: 55, createdAt: "2026-05-15 09:00" },
-    { id: "pl3", userId: "u_c_001", direction: "IN", delta: 8, sourceCode: "volunteer_service", sourceLabel: "志愿服务", balanceAfter: 63, createdAt: "2026-05-20 16:00" },
-    { id: "pl4", userId: "u_c_001", direction: "IN", delta: 257, sourceCode: "courtyard_checkin", sourceLabel: "院落打卡", balanceAfter: 320, createdAt: "2026-06-01 14:30" },
-    { id: "pl5", userId: "u_c_001", direction: "OUT", delta: 60, sourceCode: "mall_redeem", sourceLabel: "积分兑换", refId: "mall-order-001", balanceAfter: 260, createdAt: "2026-06-10 11:00" },
-    { id: "pl6", userId: "u_c_001", direction: "IN", delta: 60, sourceCode: "courtyard_checkin", sourceLabel: "院落打卡", balanceAfter: 320, createdAt: "2026-06-20 10:00" },
+    {
+      id: "pl1",
+      userId: "u_c_001",
+      direction: "IN",
+      delta: 5,
+      sourceCode: "courtyard_checkin",
+      sourceLabel: "院落打卡",
+      refId: "chk-1",
+      balanceAfter: 5,
+      createdAt: "2026-05-10 10:20",
+    },
+    {
+      id: "pl2",
+      userId: "u_c_001",
+      direction: "IN",
+      delta: 50,
+      sourceCode: "naxi_streak",
+      sourceLabel: "纳西人连续打卡",
+      balanceAfter: 55,
+      createdAt: "2026-05-15 09:00",
+    },
+    {
+      id: "pl3",
+      userId: "u_c_001",
+      direction: "IN",
+      delta: 8,
+      sourceCode: "volunteer_service",
+      sourceLabel: "志愿服务",
+      balanceAfter: 63,
+      createdAt: "2026-05-20 16:00",
+    },
+    {
+      id: "pl4",
+      userId: "u_c_001",
+      direction: "IN",
+      delta: 257,
+      sourceCode: "courtyard_checkin",
+      sourceLabel: "院落打卡",
+      balanceAfter: 320,
+      createdAt: "2026-06-01 14:30",
+    },
+    {
+      id: "pl5",
+      userId: "u_c_001",
+      direction: "OUT",
+      delta: 60,
+      sourceCode: "mall_redeem",
+      sourceLabel: "积分兑换",
+      refId: "mall-order-001",
+      balanceAfter: 260,
+      createdAt: "2026-06-10 11:00",
+    },
+    {
+      id: "pl6",
+      userId: "u_c_001",
+      direction: "IN",
+      delta: 60,
+      sourceCode: "courtyard_checkin",
+      sourceLabel: "院落打卡",
+      balanceAfter: 320,
+      createdAt: "2026-06-20 10:00",
+    },
   ],
   rules: SEED_RULES,
 
@@ -91,8 +154,8 @@ export const usePointsStore = create<PointsState>((set, get) => ({
     // 每日上限校验（防刷）
     if (rule.dailyLimit) {
       const todayStr = today()
-      const todayUsed = get().ledgers
-        .filter((l) => l.userId === userId && l.sourceCode === sourceCode && l.createdAt.startsWith(todayStr))
+      const todayUsed = get()
+        .ledgers.filter((l) => l.userId === userId && l.sourceCode === sourceCode && l.createdAt.startsWith(todayStr))
         .reduce((sum, l) => sum + l.delta, 0)
       if (todayUsed >= rule.dailyLimit) return { ok: false, msg: `今日「${rule.label}」已达上限` }
     }
@@ -137,6 +200,6 @@ export const usePointsStore = create<PointsState>((set, get) => ({
   },
 
   addRule: (rule) => set((s) => ({ rules: [...s.rules.filter((r) => r.code !== rule.code), rule] })),
-  updateRule: (code, patch) => set((s) => ({ rules: s.rules.map((r) => r.code === code ? { ...r, ...patch } : r) })),
+  updateRule: (code, patch) => set((s) => ({ rules: s.rules.map((r) => (r.code === code ? { ...r, ...patch } : r)) })),
   removeRule: (code) => set((s) => ({ rules: s.rules.filter((r) => r.code !== code) })),
 }))

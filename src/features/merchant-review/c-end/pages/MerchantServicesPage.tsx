@@ -1,6 +1,21 @@
 import { useNavigate } from "react-router"
 import { TabPageHeader } from "@/shared/components/mobile/TabPageHeader"
-import { Store, Plus, BadgeCheck, Trash2, Droplets, Package, Luggage, Truck, AlertTriangle, Camera, Newspaper, Bell, MessageSquareWarning, House } from "lucide-react"
+import {
+  Store,
+  Plus,
+  BadgeCheck,
+  Trash2,
+  Droplets,
+  Package,
+  Luggage,
+  Truck,
+  AlertTriangle,
+  Camera,
+  Newspaper,
+  Bell,
+  MessageSquareWarning,
+  House,
+} from "lucide-react"
 import { useAuthStore } from "@/platform/auth"
 
 interface GridEntry {
@@ -50,7 +65,15 @@ const SECTIONS: GridSection[] = [
   {
     title: "🛒 线上商城供应商",
     entries: [
-      { icon: "", label: "供应商入驻", route: "/c/supplier-entry", lucideIcon: Plus, iconBg: "#D1FAE5", badge: "商城", badgeColor: "#3B82F6" },
+      {
+        icon: "",
+        label: "供应商入驻",
+        route: "/c/supplier-entry",
+        lucideIcon: Plus,
+        iconBg: "#D1FAE5",
+        badge: "商城",
+        badgeColor: "#3B82F6",
+      },
     ],
   },
 ]
@@ -117,8 +140,10 @@ export function MerchantServicesPage() {
       </div>
 
       <p className="text-center text-[11px] text-text-tertiary mt-6 px-8 leading-relaxed">
-        <strong className="text-text-body">两种商户类型</strong><br />
-        古城商户 — 在古城景区经营的实体店铺，入驻后可在平台展示和管理店铺<br />
+        <strong className="text-text-body">两种商户类型</strong>
+        <br />
+        古城商户 — 在古城景区经营的实体店铺，入驻后可在平台展示和管理店铺
+        <br />
         供应商 — 为平台商城提供商品/服务的合作方，通过供应商入驻流程申请
       </p>
     </div>

@@ -1,14 +1,14 @@
-import { ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router";
+import { ChevronRight } from "lucide-react"
+import { useNavigate } from "react-router"
 
 interface SectionHeaderProps {
-  icon?: React.ComponentType<{ size?: number | string; className?: string }>;
-  title: string;
-  action?: { label: string; to: string };
+  icon?: React.ComponentType<{ size?: number | string; className?: string }>
+  title: string
+  action?: { label: string; to: string }
 }
 
 export function SectionHeader({ icon: Icon, title, action }: SectionHeaderProps) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-1.5">
@@ -25,5 +25,5 @@ export function SectionHeader({ icon: Icon, title, action }: SectionHeaderProps)
         </button>
       )}
     </div>
-  );
+  )
 }

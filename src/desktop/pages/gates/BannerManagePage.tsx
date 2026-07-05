@@ -5,13 +5,7 @@ import { Button } from "../../../shared/components/ui/button"
 import { Badge } from "../../../shared/components/ui/badge"
 import { Input } from "../../../shared/components/ui/input"
 import { Label } from "../../../shared/components/ui/label"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../../shared/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../shared/components/ui/dialog"
 import { ConfirmDialog } from "../../components/common/ConfirmDialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Eye, Pencil, Plus, Trash2, ChevronUp, ChevronDown, EyeOff, Upload, X } from "lucide-react"
@@ -168,16 +162,28 @@ export function BannerManagePage() {
               </TableRow>
             ) : (
               homeBanners.map((banner) => {
-              const index = homeBanners.findIndex((b) => b.id === banner.id)
-              return (
-                <TableRow key={banner.id}>
-                  <TableCell>
-                    <div className="size-16 rounded-md bg-slate-100 overflow-hidden relative">
-                      {banner.imageUrl ? (
-                        <>
-                          <img src={banner.imageUrl} alt={banner.title} className="size-full object-cover" />
-                          <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 bg-black/40 flex items-center justify-center transition-opacity">
-                            <Upload size={16} className="text-white" />
+                const index = homeBanners.findIndex((b) => b.id === banner.id)
+                return (
+                  <TableRow key={banner.id}>
+                    <TableCell>
+                      <div className="size-16 rounded-md bg-slate-100 overflow-hidden relative">
+                        {banner.imageUrl ? (
+                          <>
+                            <img src={banner.imageUrl} alt={banner.title} className="size-full object-cover" />
+                            <label className="absolute inset-0 cursor-pointer opacity-0 hover:opacity-100 bg-black/40 flex items-center justify-center transition-opacity">
+                              <Upload size={16} className="text-white" />
+                              <input
+                                type="file"
+                                accept=".jpg,.jpeg,.png,.webp"
+                                className="hidden"
+                                onChange={(e) => handleFileUpload(e, banner)}
+                              />
+                            </label>
+                          </>
+                        ) : (
+                          <label className="size-full flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors">
+                            <Upload size={16} className="text-muted-foreground mb-1" />
+                            <span className="text-[10px] text-muted-foreground">上传图片</span>
                             <input
                               type="file"
                               accept=".jpg,.jpeg,.png,.webp"
@@ -185,63 +191,71 @@ export function BannerManagePage() {
                               onChange={(e) => handleFileUpload(e, banner)}
                             />
                           </label>
-                        </>
-                      ) : (
-                        <label className="size-full flex flex-col items-center justify-center cursor-pointer hover:bg-slate-200 transition-colors">
-                          <Upload size={16} className="text-muted-foreground mb-1" />
-                          <span className="text-[10px] text-muted-foreground">上传图片</span>
-                          <input
-                            type="file"
-                            accept=".jpg,.jpeg,.png,.webp"
-                            className="hidden"
-                            onChange={(e) => handleFileUpload(e, banner)}
-                          />
-                        </label>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-medium">{banner.title}</TableCell>
-                  <TableCell className="text-muted-foreground text-xs">{banner.subtitle}</TableCell>
-                  <TableCell>
-                    {banner.badge && <Badge variant="secondary">{banner.badge}</Badge>}
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground max-w-[160px] truncate">{banner.link}</TableCell>
-                  <TableCell>
-                    <Badge variant={banner.visible ? "secondary" : "outline"}>{banner.visible ? "显示" : "隐藏"}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <button
-                        className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-20"
-                        disabled={index === 0}
-                        onClick={() => moveBanner(banner.id, -1)}
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{banner.title}</TableCell>
+                    <TableCell className="text-muted-foreground text-xs">{banner.subtitle}</TableCell>
+                    <TableCell>{banner.badge && <Badge variant="secondary">{banner.badge}</Badge>}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground max-w-[160px] truncate">
+                      {banner.link}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={banner.visible ? "secondary" : "outline"}>
+                        {banner.visible ? "显示" : "隐藏"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <button
+                          className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-20"
+                          disabled={index === 0}
+                          onClick={() => moveBanner(banner.id, -1)}
+                        >
+                          <ChevronUp className="size-3.5" />
+                        </button>
+                        <span className="text-xs text-muted-foreground w-4 text-center">{index + 1}</span>
+                        <button
+                          className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-20"
+                          disabled={index === homeBanners.length - 1}
+                          onClick={() => moveBanner(banner.id, 1)}
+                        >
+                          <ChevronDown className="size-3.5" />
+                        </button>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right space-x-1 whitespace-nowrap">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        title="编辑"
+                        onClick={() => handleEdit(banner)}
                       >
-                        <ChevronUp className="size-3.5" />
-                      </button>
-                      <span className="text-xs text-muted-foreground w-4 text-center">{index + 1}</span>
-                      <button
-                        className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-20"
-                        disabled={index === homeBanners.length - 1}
-                        onClick={() => moveBanner(banner.id, 1)}
+                        <Pencil className="size-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        title={banner.visible ? "隐藏" : "显示"}
+                        onClick={() => toggleVisibility(banner)}
                       >
-                        <ChevronDown className="size-3.5" />
-                      </button>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right space-x-1 whitespace-nowrap">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="编辑" onClick={() => handleEdit(banner)}>
-                      <Pencil className="size-3.5" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title={banner.visible ? "隐藏" : "显示"} onClick={() => toggleVisibility(banner)}>
-                      <EyeOff className="size-3.5" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" title="删除" onClick={() => setDeleteTarget(banner)}>
-                      <Trash2 className="size-3.5" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )
-            })
+                        <EyeOff className="size-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-600"
+                        title="删除"
+                        onClick={() => setDeleteTarget(banner)}
+                      >
+                        <Trash2 className="size-3.5" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )
+              })
             )}
           </TableBody>
         </Table>
@@ -287,12 +301,7 @@ export function BannerManagePage() {
                       className="hidden"
                       onChange={handleDialogFileUpload}
                     />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="mb-2"
-                    >
+                    <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} className="mb-2">
                       <Upload size={14} className="mr-1" />
                       重新上传图片
                     </Button>
@@ -304,19 +313,33 @@ export function BannerManagePage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>标题</Label>
-                  <Input value={editTarget.title} onChange={(e) => setEditTarget({ ...editTarget, title: e.target.value })} />
+                  <Input
+                    value={editTarget.title}
+                    onChange={(e) => setEditTarget({ ...editTarget, title: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>副标题</Label>
-                  <Input value={editTarget.subtitle} onChange={(e) => setEditTarget({ ...editTarget, subtitle: e.target.value })} />
+                  <Input
+                    value={editTarget.subtitle}
+                    onChange={(e) => setEditTarget({ ...editTarget, subtitle: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>徽章</Label>
-                  <Input value={editTarget.badge} onChange={(e) => setEditTarget({ ...editTarget, badge: e.target.value })} placeholder="如：热门、NEW" />
+                  <Input
+                    value={editTarget.badge}
+                    onChange={(e) => setEditTarget({ ...editTarget, badge: e.target.value })}
+                    placeholder="如：热门、NEW"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>跳转链接</Label>
-                  <Input value={editTarget.link} onChange={(e) => setEditTarget({ ...editTarget, link: e.target.value })} placeholder="/c/services" />
+                  <Input
+                    value={editTarget.link}
+                    onChange={(e) => setEditTarget({ ...editTarget, link: e.target.value })}
+                    placeholder="/c/services"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>显示状态</Label>
@@ -333,7 +356,9 @@ export function BannerManagePage() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditTarget(null)}>取消</Button>
+            <Button variant="outline" onClick={() => setEditTarget(null)}>
+              取消
+            </Button>
             <Button onClick={handleSave}>保存</Button>
           </DialogFooter>
         </DialogContent>

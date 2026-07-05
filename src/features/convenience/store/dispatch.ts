@@ -1,4 +1,4 @@
-import type { ConvenienceServiceType } from "../../../../shared/types"
+import type { ConvenienceServiceType } from "../shared/types"
 import { isPointToPoint } from "../shared/types"
 import { useStaffStore } from "./staff-store"
 import { useZoneStore } from "./zone-store"
@@ -26,7 +26,11 @@ export function lookupStaff(staffId: string): { id: string; name: string; phone:
  * - 点对点（行李搬运/送货）：按 Haversine 距离最近排序
  * - 片区型（垃圾清运/送水/布草）：按 zoneIds 严格匹配，无片区匹配时回退到全局
  */
-export function pickStaff(orderServiceType: string, orderLat?: number, orderLng?: number): {
+export function pickStaff(
+  orderServiceType: string,
+  orderLat?: number,
+  orderLng?: number
+): {
   id: string
   name: string
   phone: string
@@ -35,9 +39,7 @@ export function pickStaff(orderServiceType: string, orderLat?: number, orderLng?
   const zones = useZoneStore.getState().zones
   const type = orderServiceType as ConvenienceServiceType
 
-  let candidates = staffList.filter(
-    (s) => s.enabled && s.status === "online" && s.serviceTypes?.includes(type),
-  )
+  let candidates = staffList.filter((s) => s.enabled && s.status === "online" && s.serviceTypes?.includes(type))
   if (candidates.length === 0) return null
 
   if (isPointToPoint(type)) {
@@ -53,9 +55,7 @@ export function pickStaff(orderServiceType: string, orderLat?: number, orderLng?
   }
 
   // Zone-based: prefer staff whose zoneIds contain an eligible zone
-  const eligibleZoneIds = zones
-    .filter((z) => z.stations.some((st) => st.serviceType === type))
-    .map((z) => z.id)
+  const eligibleZoneIds = zones.filter((z) => z.stations.some((st) => st.serviceType === type)).map((z) => z.id)
   const zoneMatches = candidates.filter((s) => s.zoneIds?.some((zid) => eligibleZoneIds.includes(zid)))
   const pool = zoneMatches.length > 0 ? zoneMatches : candidates
   const pick = pool[Math.floor(Math.random() * pool.length)]

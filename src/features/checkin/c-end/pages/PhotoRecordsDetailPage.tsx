@@ -1,21 +1,21 @@
-import { useState } from "react";
-import { useParams } from "react-router";
-import { PageHeader } from "../../../../c-end/components/PageHeader";
-import { useNavigate } from "react-router";
+import { useState } from "react"
+import { useParams } from "react-router"
+import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { useNavigate } from "react-router"
 
 interface ReportRecord {
-  id: string;
-  images: string[];
-  area: string;
-  type: string;
-  object: string;
-  location: string;
-  address: string;
-  description: string;
-  status: "pending" | "processed" | "rejected";
-  createdAt: string;
-  submitter: string;
-  processResult?: string;
+  id: string
+  images: string[]
+  area: string
+  type: string
+  object: string
+  location: string
+  address: string
+  description: string
+  status: "pending" | "processed" | "rejected"
+  createdAt: string
+  submitter: string
+  processResult?: string
 }
 
 const mockRecords: Record<string, ReportRecord> = {
@@ -56,9 +56,7 @@ const mockRecords: Record<string, ReportRecord> = {
   },
   r3: {
     id: "r3",
-    images: [
-      "https://images.unsplash.com/photo-1585500568057-5d6c66be8c94?w=200&h=200&fit=crop",
-    ],
+    images: ["https://images.unsplash.com/photo-1585500568057-5d6c66be8c94?w=200&h=200&fit=crop"],
     area: "古城片区",
     type: "历史街巷",
     object: "四方街",
@@ -102,19 +100,19 @@ const mockRecords: Record<string, ReportRecord> = {
     submitter: "钱七",
     processResult: "经核查，问题属实，已安排人员处理",
   },
-};
+}
 
 const statusMeta = {
   pending: { label: "待处理", color: "text-primary", bg: "bg-primary-50" },
   processed: { label: "已核实", color: "text-[#10B981]", bg: "bg-[#10B981]/10" },
   rejected: { label: "驳回", color: "text-destructive", bg: "bg-destructive/10" },
-};
+}
 
 export function PhotoRecordsDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const record = mockRecords[id || ""];
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const record = mockRecords[id || ""]
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null)
 
   if (!record) {
     return (
@@ -122,13 +120,18 @@ export function PhotoRecordsDetailPage() {
         <PageHeader title="随手拍详情" back="/c/photo-records" />
         <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-[14px] text-text-tertiary">记录不存在</p>
-          <button onClick={() => navigate("/c/photo-records")} className="mt-4 px-4 py-2 rounded-full bg-primary text-white text-[13px]">返回列表</button>
+          <button
+            onClick={() => navigate("/c/photo-records")}
+            className="mt-4 px-4 py-2 rounded-full bg-primary text-white text-[13px]"
+          >
+            返回列表
+          </button>
         </div>
       </div>
-    );
+    )
   }
 
-  const s = statusMeta[record.status];
+  const s = statusMeta[record.status]
 
   return (
     <div className="min-h-full bg-surface-page flex flex-col">
@@ -139,9 +142,7 @@ export function PhotoRecordsDetailPage() {
         <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3.5 border-b border-border-light">
             <span className="text-[15px] font-semibold text-text-heading">基础信息</span>
-            <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${s.bg} ${s.color}`}>
-              {s.label}
-            </span>
+            <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${s.bg} ${s.color}`}>{s.label}</span>
           </div>
 
           <div className="px-4 py-3 border-b border-border-light">
@@ -261,13 +262,9 @@ export function PhotoRecordsDetailPage() {
           className="fixed inset-0 bg-black/85 z-50 flex items-center justify-center"
           onClick={() => setPreviewIndex(null)}
         >
-          <img
-            src={record.images[previewIndex]}
-            alt="预览"
-            className="max-w-[90%] max-h-[90%] rounded-2xl"
-          />
+          <img src={record.images[previewIndex]} alt="预览" className="max-w-[90%] max-h-[90%] rounded-2xl" />
         </div>
       )}
     </div>
-  );
+  )
 }

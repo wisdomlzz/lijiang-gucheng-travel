@@ -17,12 +17,20 @@ interface DocItem {
 }
 
 const DOC_LIST: DocItem[] = [
-  { name: "志愿服务", path: "/docs/志愿服务功能需求说明.md", label: "志愿服务功能需求说明", version: "V2.0 · 2026-07-02" },
+  {
+    name: "志愿服务",
+    path: "/docs/志愿服务功能需求说明.md",
+    label: "志愿服务功能需求说明",
+    version: "V2.0 · 2026-07-02",
+  },
   { name: "综合系统", path: "/docs/requirement.md", label: "综合系统需求说明书", version: "V2.2 · 2026-05-28" },
 ]
 
 function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^\u4e00-\u9fa5a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+  return text
+    .toLowerCase()
+    .replace(/[^\u4e00-\u9fa5a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
 }
 
 function extractHeadings(markdown: string): Heading[] {
@@ -94,7 +102,7 @@ export function RequirementPage() {
         const visible = entries.filter((e) => e.isIntersecting)
         if (visible.length > 0) setActiveId(visible[0].target.id)
       },
-      { rootMargin: `-${HEADER_H + 16}px 0px -70% 0px` },
+      { rootMargin: `-${HEADER_H + 16}px 0px -70% 0px` }
     )
     headings.forEach(({ id }) => {
       const el = document.getElementById(id)
@@ -126,7 +134,10 @@ export function RequirementPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200/80 flex items-center px-6 backdrop-blur-sm bg-white/90" style={{ height: HEADER_H }}>
+      <header
+        className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200/80 flex items-center px-6 backdrop-blur-sm bg-white/90"
+        style={{ height: HEADER_H }}
+      >
         <div className="flex items-center gap-3">
           <div className="size-8 rounded-lg bg-blue-50 flex items-center justify-center">
             <BookOpen className="size-4 text-blue-600" />
@@ -169,7 +180,10 @@ export function RequirementPage() {
             {DOC_LIST.map((doc) => (
               <button
                 key={doc.name}
-                onClick={() => { setCurrentDoc(doc); setLoading(true) }}
+                onClick={() => {
+                  setCurrentDoc(doc)
+                  setLoading(true)
+                }}
                 className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs transition-all ${
                   currentDoc.name === doc.name
                     ? "bg-blue-50 text-blue-600 font-medium"
@@ -185,15 +199,13 @@ export function RequirementPage() {
 
         {/* 目录 */}
         <div className="flex-1 overflow-y-auto p-4">
-          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-4 px-2">
-            目录
-          </p>
+          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-4 px-2">目录</p>
           <nav className="space-y-3">
             {groups.map((group) => {
               const hasChildren = group.children.length > 0
               const isCollapsed = collapsed.has(group.label)
-              const isGroupActive = group.label && headings.find(h => h.text === group.label)?.id === activeId
-              const isChildActive = group.children.some(c => c.id === activeId)
+              const isGroupActive = group.label && headings.find((h) => h.text === group.label)?.id === activeId
+              const isChildActive = group.children.some((c) => c.id === activeId)
               const isExpanded = !isCollapsed || isChildActive
 
               return (
@@ -201,7 +213,7 @@ export function RequirementPage() {
                   {group.label && (
                     <button
                       onClick={() => {
-                        const id = headings.find(h => h.text === group.label)?.id
+                        const id = headings.find((h) => h.text === group.label)?.id
                         if (id) scrollTo(id)
                         if (hasChildren) toggleGroup(group.label)
                       }}
@@ -253,7 +265,10 @@ export function RequirementPage() {
                   const id = slugify(text)
                   return (
                     <div className="mb-12">
-                      <h1 id={id} className="text-3xl font-bold text-slate-900 tracking-tight scroll-mt-20 leading-tight">
+                      <h1
+                        id={id}
+                        className="text-3xl font-bold text-slate-900 tracking-tight scroll-mt-20 leading-tight"
+                      >
                         {children}
                       </h1>
                       <div className="mt-3 h-0.5 w-16 rounded-full bg-gradient-to-r from-blue-400 to-blue-600" />
@@ -297,7 +312,9 @@ export function RequirementPage() {
                   const text = typeof children === "string" ? children : ""
                   const isMeta = text.startsWith("**版本**")
                   return (
-                    <p className={`text-sm leading-7 mb-4 ${isMeta ? "text-slate-500" : "text-slate-600"}`}>{children}</p>
+                    <p className={`text-sm leading-7 mb-4 ${isMeta ? "text-slate-500" : "text-slate-600"}`}>
+                      {children}
+                    </p>
                   )
                 },
                 ul: ({ children }) => (
@@ -313,18 +330,18 @@ export function RequirementPage() {
                   </div>
                 ),
                 thead: ({ children }) => (
-                  <thead className="bg-slate-50/80 text-xs font-medium text-slate-500 uppercase tracking-wider">{children}</thead>
+                  <thead className="bg-slate-50/80 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    {children}
+                  </thead>
                 ),
                 tbody: ({ children }) => <tbody>{children}</tbody>,
                 tr: ({ children }) => (
-                  <tr className="border-b border-slate-100 last:border-0 transition-colors [&:hover]:bg-slate-50">{children}</tr>
+                  <tr className="border-b border-slate-100 last:border-0 transition-colors [&:hover]:bg-slate-50">
+                    {children}
+                  </tr>
                 ),
-                th: ({ children }) => (
-                  <th className="px-4 py-3 text-left font-medium text-slate-500">{children}</th>
-                ),
-                td: ({ children }) => (
-                  <td className="px-4 py-3 text-slate-600">{children}</td>
-                ),
+                th: ({ children }) => <th className="px-4 py-3 text-left font-medium text-slate-500">{children}</th>,
+                td: ({ children }) => <td className="px-4 py-3 text-slate-600">{children}</td>,
                 blockquote: ({ children }) => {
                   const childArray = Array.isArray(children) ? children : [children]
                   const firstChild = childArray[0]
@@ -334,9 +351,7 @@ export function RequirementPage() {
                     <div className="mb-6 rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50 to-white p-5 shadow-sm">
                       <div className="flex items-start gap-3">
                         <div className="mt-0.5 size-2 rounded-full bg-blue-400 shrink-0" />
-                        <div className="text-sm text-slate-600 leading-7 [&>p]:mb-0">
-                          {children}
-                        </div>
+                        <div className="text-sm text-slate-600 leading-7 [&>p]:mb-0">{children}</div>
                       </div>
                     </div>
                   )
@@ -359,7 +374,12 @@ export function RequirementPage() {
                   </div>
                 ),
                 a: ({ href, children }) => (
-                  <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline underline-offset-2 decoration-blue-300 hover:decoration-blue-600 transition-all">
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline underline-offset-2 decoration-blue-300 hover:decoration-blue-600 transition-all"
+                  >
                     {children}
                   </a>
                 ),
@@ -374,9 +394,7 @@ export function RequirementPage() {
                       </span>
                     )
                   }
-                  return (
-                    <strong className="font-semibold text-slate-700">{children}</strong>
-                  )
+                  return <strong className="font-semibold text-slate-700">{children}</strong>
                 },
               }}
             >

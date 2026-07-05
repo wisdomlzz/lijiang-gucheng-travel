@@ -4,7 +4,7 @@ export function useSearch<T>(items: T[], searchFn: (item: T, query: string) => b
   const [query, setQuery] = useState("")
   const filtered = useMemo(
     () => (query.trim() ? items.filter((item) => searchFn(item, query.trim())) : items),
-    [items, query, searchFn],
+    [items, query, searchFn]
   )
   return { query, setQuery, filtered }
 }

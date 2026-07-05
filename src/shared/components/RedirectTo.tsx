@@ -14,8 +14,6 @@ export function RedirectTo({ to, replace = true }: { to: string; replace?: boole
   }, [])
 
   return (
-    <div className="flex items-center justify-center h-full min-h-[200px] text-sm text-text-tertiary">
-      跳转中...
-    </div>
+    <div className="flex items-center justify-center h-full min-h-[200px] text-sm text-text-tertiary">跳转中...</div>
   )
 }

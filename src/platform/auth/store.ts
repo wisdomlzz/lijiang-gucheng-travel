@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import type { User, Platform } from "../types"
+import type { User, Platform } from "../../shared/types"
 
 type AuthState = {
   user: User | null
@@ -21,14 +21,11 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
       currentPlatform: null,
 
-      login: (user, platform) =>
-        set({ user, isLoggedIn: true, currentPlatform: platform }),
+      login: (user, platform) => set({ user, isLoggedIn: true, currentPlatform: platform }),
 
-      logout: () =>
-        set({ user: null, isLoggedIn: false, currentPlatform: null }),
+      logout: () => set({ user: null, isLoggedIn: false, currentPlatform: null }),
 
-      switchPlatform: (platform) =>
-        set({ currentPlatform: platform }),
+      switchPlatform: (platform) => set({ currentPlatform: platform }),
 
       updateUser: (updates) =>
         set((state) => ({
@@ -43,6 +40,6 @@ export const useAuthStore = create<AuthState>()(
         isLoggedIn: state.isLoggedIn,
         currentPlatform: state.currentPlatform,
       }),
-    },
-  ),
+    }
+  )
 )

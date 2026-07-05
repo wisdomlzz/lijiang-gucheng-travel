@@ -13,23 +13,39 @@ import { useZoneStore } from "../../store"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
 } from "../../../../shared/components/ui/dialog"
 import {
-  AlertTriangle, CheckCircle2, Clock, Users, Truck, Package, Trash2,
-  Droplets, Shirt, RefreshCw, Play, XCircle, Search,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Users,
+  Truck,
+  Package,
+  Trash2,
+  Droplets,
+  Shirt,
+  RefreshCw,
+  Play,
+  XCircle,
+  Search,
 } from "lucide-react"
 import { toast } from "sonner"
 import type { StaffItem, ConvenienceServiceType } from "../../../../shared/types"
 import { ALL_CONVENIENCE_TYPES, isPointToPoint } from "../../../../shared/types"
 
 const SERVICE_ICONS: Record<string, any> = {
-  "送货服务": Package,
-  "行李搬运": Truck,
-  "建筑垃圾清运": Trash2,
-  "生活垃圾清运": Trash2,
-  "送水服务": Droplets,
-  "布草配送": Shirt,
+  送货服务: Package,
+  行李搬运: Truck,
+  建筑垃圾清运: Trash2,
+  生活垃圾清运: Trash2,
+  送水服务: Droplets,
+  布草配送: Shirt,
 }
 
 export default function ConveniencePage() {
@@ -62,9 +78,7 @@ export default function ConveniencePage() {
   const serviceBreakdown = useMemo(() => {
     return ALL_CONVENIENCE_TYPES.map((type) => {
       const typeOrders = orders.filter((o) => o.serviceType === type)
-      const onlineStaff = staffList.filter(
-        (s) => s.enabled && s.status === "online" && s.serviceTypes?.includes(type)
-      )
+      const onlineStaff = staffList.filter((s) => s.enabled && s.status === "online" && s.serviceTypes?.includes(type))
       return {
         type,
         total: typeOrders.length,
@@ -85,10 +99,7 @@ export default function ConveniencePage() {
   )
 
   // ---- cancel requests ----
-  const cancelRequestOrders = useMemo(
-    () => orders.filter((o) => o.cancelRequested),
-    [orders]
-  )
+  const cancelRequestOrders = useMemo(() => orders.filter((o) => o.cancelRequested), [orders])
 
   const handleManualDispatch = (orderId: string) => {
     setManualTarget(orderId)
@@ -124,10 +135,7 @@ export default function ConveniencePage() {
     const order = orders.find((o) => o.id === manualTarget)
     if (!order) return []
     return staffList.filter(
-      (s) =>
-        s.enabled &&
-        s.status === "online" &&
-        s.serviceTypes?.includes(order.serviceType as ConvenienceServiceType)
+      (s) => s.enabled && s.status === "online" && s.serviceTypes?.includes(order.serviceType as ConvenienceServiceType)
     )
   }, [manualTarget, orders, staffList])
 
@@ -135,10 +143,11 @@ export default function ConveniencePage() {
   const filteredManualPending = useMemo(() => {
     if (!dispatchSearch.trim()) return manualPendingOrders
     const q = dispatchSearch.trim().toLowerCase()
-    return manualPendingOrders.filter((o) =>
-      o.id.toLowerCase().includes(q) ||
-      (o.serviceType as string).toLowerCase().includes(q) ||
-      (o.address || "").toLowerCase().includes(q)
+    return manualPendingOrders.filter(
+      (o) =>
+        o.id.toLowerCase().includes(q) ||
+        (o.serviceType as string).toLowerCase().includes(q) ||
+        (o.address || "").toLowerCase().includes(q)
     )
   }, [manualPendingOrders, dispatchSearch])
 
@@ -150,9 +159,7 @@ export default function ConveniencePage() {
   const filteredCandidates = useMemo(() => {
     if (!staffSearch.trim()) return manualCandidates
     const q = staffSearch.trim().toLowerCase()
-    return manualCandidates.filter((s) =>
-      s.name.toLowerCase().includes(q) || s.phone.includes(q)
-    )
+    return manualCandidates.filter((s) => s.name.toLowerCase().includes(q) || s.phone.includes(q))
   }, [manualCandidates, staffSearch])
 
   // ---- render convenience staff tab ----
@@ -163,7 +170,6 @@ export default function ConveniencePage() {
 
   return (
     <PageLayout title="便民服务管理" description="服务运营监控 · 自动派单 · 片区管理 · 服务人员">
-
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="overview">服务概览</TabsTrigger>
@@ -181,26 +187,36 @@ export default function ConveniencePage() {
         <TabsContent value="overview" className="space-y-6">
           {/* 顶部统计 */}
           <div className="grid grid-cols-5 gap-4">
-            <Card><CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-amber-600">{stats.pending}</div>
-              <div className="text-xs text-muted-foreground mt-1">待派单</div>
-            </CardContent></Card>
-            <Card><CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
-              <div className="text-xs text-muted-foreground mt-1">进行中</div>
-            </CardContent></Card>
-            <Card><CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-emerald-600">{stats.completed}</div>
-              <div className="text-xs text-muted-foreground mt-1">今日完成</div>
-            </CardContent></Card>
-            <Card><CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-rose-600">{stats.manualIntervention}</div>
-              <div className="text-xs text-muted-foreground mt-1">人工干预</div>
-            </CardContent></Card>
-            <Card><CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-slate-700">{stats.total}</div>
-              <div className="text-xs text-muted-foreground mt-1">总订单</div>
-            </CardContent></Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-amber-600">{stats.pending}</div>
+                <div className="text-xs text-muted-foreground mt-1">待派单</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
+                <div className="text-xs text-muted-foreground mt-1">进行中</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-emerald-600">{stats.completed}</div>
+                <div className="text-xs text-muted-foreground mt-1">今日完成</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-rose-600">{stats.manualIntervention}</div>
+                <div className="text-xs text-muted-foreground mt-1">人工干预</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-slate-700">{stats.total}</div>
+                <div className="text-xs text-muted-foreground mt-1">总订单</div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* 服务类型矩阵 */}
@@ -233,7 +249,9 @@ export default function ConveniencePage() {
                         <div className="text-muted-foreground">已完成</div>
                       </div>
                       <div>
-                        <div className="font-semibold">{svc.onlineStaff}/{svc.totalStaff}</div>
+                        <div className="font-semibold">
+                          {svc.onlineStaff}/{svc.totalStaff}
+                        </div>
                         <div className="text-muted-foreground">在线</div>
                       </div>
                     </div>
@@ -268,7 +286,10 @@ export default function ConveniencePage() {
               <>
                 <div className="space-y-1.5 max-h-64 overflow-y-auto">
                   {dispatchLogPagination.paginatedItems.map((log, i) => (
-                    <div key={`${dispatchLogPagination.currentPage}-${i}`} className="flex items-center gap-2 text-xs py-1.5 px-2 rounded bg-slate-50">
+                    <div
+                      key={`${dispatchLogPagination.currentPage}-${i}`}
+                      className="flex items-center gap-2 text-xs py-1.5 px-2 rounded bg-slate-50"
+                    >
                       {log.type === "auto_success" ? (
                         <CheckCircle2 className="size-3.5 text-emerald-500 shrink-0" />
                       ) : log.type === "retry" ? (
@@ -281,7 +302,9 @@ export default function ConveniencePage() {
                       <span className="text-muted-foreground font-mono">{log.orderId}</span>
                       {log.staffName && <span>→ {log.staffName}</span>}
                       {log.reason && <span className="text-muted-foreground">({log.reason})</span>}
-                      <span className="ml-auto text-muted-foreground">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                      <span className="ml-auto text-muted-foreground">
+                        {new Date(log.timestamp).toLocaleTimeString()}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -309,7 +332,8 @@ export default function ConveniencePage() {
             </div>
             {filteredManualPending.length === 0 ? (
               <div className="text-sm text-muted-foreground py-4 text-center flex items-center justify-center gap-2">
-                <CheckCircle2 className="size-4 text-emerald-500" /> {dispatchSearch.trim() ? "无匹配订单" : "所有订单均正常流转"}
+                <CheckCircle2 className="size-4 text-emerald-500" />{" "}
+                {dispatchSearch.trim() ? "无匹配订单" : "所有订单均正常流转"}
               </div>
             ) : (
               <>
@@ -388,13 +412,27 @@ export default function ConveniencePage() {
                     <TableRow key={o.id}>
                       <TableCell className="font-mono text-xs">{o.id}</TableCell>
                       <TableCell>{o.serviceType}</TableCell>
-                      <TableCell><Badge className="bg-amber-100 text-amber-700">等待审批</Badge></TableCell>
+                      <TableCell>
+                        <Badge className="bg-amber-100 text-amber-700">等待审批</Badge>
+                      </TableCell>
                       <TableCell className="text-right space-x-1">
-                        <Button size="sm" variant="outline" className="text-emerald-600 border-emerald-200" onClick={() => handleApproveCancel(o.id)}>
-                          <CheckCircle2 className="size-3 mr-1" />同意
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-emerald-600 border-emerald-200"
+                          onClick={() => handleApproveCancel(o.id)}
+                        >
+                          <CheckCircle2 className="size-3 mr-1" />
+                          同意
                         </Button>
-                        <Button size="sm" variant="outline" className="text-rose-600 border-rose-200" onClick={() => handleRejectCancel(o.id)}>
-                          <XCircle className="size-3 mr-1" />拒绝
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-rose-600 border-rose-200"
+                          onClick={() => handleRejectCancel(o.id)}
+                        >
+                          <XCircle className="size-3 mr-1" />
+                          拒绝
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -425,7 +463,9 @@ export default function ConveniencePage() {
                               <div className="text-sm">{st.name}</div>
                               <div className="text-[11px] text-muted-foreground">{st.address}</div>
                             </div>
-                            <Badge variant="outline" className="text-[10px]">{st.serviceType}</Badge>
+                            <Badge variant="outline" className="text-[10px]">
+                              {st.serviceType}
+                            </Badge>
                           </div>
                         )
                       })}
@@ -463,7 +503,9 @@ export default function ConveniencePage() {
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           {s.serviceTypes?.map((st) => (
-                            <Badge key={st} variant="outline" className="text-[10px]">{st}</Badge>
+                            <Badge key={st} variant="outline" className="text-[10px]">
+                              {st}
+                            </Badge>
                           ))}
                         </div>
                       </TableCell>
@@ -471,13 +513,24 @@ export default function ConveniencePage() {
                         {staffZones.length > 0 ? staffZones.join("、") : "-"}
                       </TableCell>
                       <TableCell>
-                        <Badge className={
-                          s.status === "online" ? "bg-emerald-100 text-emerald-700" :
-                          s.status === "busy" ? "bg-amber-100 text-amber-700" :
-                          s.status === "rest" ? "bg-slate-100 text-slate-700" :
-                          "bg-rose-100 text-rose-700"
-                        }>
-                          {s.status === "online" ? "在线" : s.status === "busy" ? "忙碌" : s.status === "rest" ? "休息" : "离线"}
+                        <Badge
+                          className={
+                            s.status === "online"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : s.status === "busy"
+                                ? "bg-amber-100 text-amber-700"
+                                : s.status === "rest"
+                                  ? "bg-slate-100 text-slate-700"
+                                  : "bg-rose-100 text-rose-700"
+                          }
+                        >
+                          {s.status === "online"
+                            ? "在线"
+                            : s.status === "busy"
+                              ? "忙碌"
+                              : s.status === "rest"
+                                ? "休息"
+                                : "离线"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-center font-medium">{s.assignedOrders}</TableCell>
@@ -517,7 +570,10 @@ export default function ConveniencePage() {
                   key={s.id}
                   type="button"
                   className="w-full flex items-center justify-between p-3 rounded-lg border hover:bg-slate-50 cursor-pointer transition-colors text-left"
-                  onClick={() => { confirmManualDispatch(s.id); setStaffSearch("") }}
+                  onClick={() => {
+                    confirmManualDispatch(s.id)
+                    setStaffSearch("")
+                  }}
                 >
                   <div className="flex items-center gap-3">
                     <div className="size-8 rounded-full bg-gradient-to-br from-sky-100 to-blue-100 grid place-items-center text-blue-700 text-xs font-medium">
@@ -525,10 +581,16 @@ export default function ConveniencePage() {
                     </div>
                     <div>
                       <div className="text-sm font-medium">{s.name}</div>
-                      <div className="text-xs text-muted-foreground">{s.phone} · 今日接单 {s.assignedOrders}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {s.phone} · 今日接单 {s.assignedOrders}
+                      </div>
                     </div>
                   </div>
-                  <Badge className={s.status === "online" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
+                  <Badge
+                    className={
+                      s.status === "online" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"
+                    }
+                  >
                     {s.status === "online" ? "在线" : "忙碌"}
                   </Badge>
                 </button>
@@ -536,7 +598,15 @@ export default function ConveniencePage() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setManualDialogOpen(false); setStaffSearch("") }}>取消</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setManualDialogOpen(false)
+                setStaffSearch("")
+              }}
+            >
+              取消
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

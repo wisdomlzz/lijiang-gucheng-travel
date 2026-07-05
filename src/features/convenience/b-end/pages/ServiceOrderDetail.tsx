@@ -1,39 +1,36 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  Phone, MapPin, Wallet, Camera, Clock, AlertTriangle, User,
-  CheckCircle2, AlertCircle,
-} from "lucide-react";
-import { DetailLayout, InfoRow, SectionCard } from "../components/DetailLayout";
-import { StatusBadge } from "@/shared/components/ui/status-badge";
-import { ConfirmModal, Toast } from "../components/Sheet";
-import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow";
-import { useConvenienceStore } from "../../store";
-import type { ConvenienceStatus } from "../../../../shared/types";
-import type { BServiceState } from "../../shared/service-state";
-import { convToBState, B_SERVICE_STATE_META, B_SERVICE_STAGES, B_STATE_TRANSITIONS } from "../../shared/service-state";
+import { useEffect, useRef, useState } from "react"
+import { Phone, MapPin, Wallet, Camera, Clock, AlertTriangle, User, CheckCircle2, AlertCircle } from "lucide-react"
+import { DetailLayout, InfoRow, SectionCard } from "../components/DetailLayout"
+import { StatusBadge } from "@/shared/components/ui/status-badge"
+import { ConfirmModal, Toast } from "../components/Sheet"
+import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow"
+import { useConvenienceStore } from "../../store"
+import type { ConvenienceStatus } from "../../../../shared/types"
+import type { BServiceState } from "../../shared/service-state"
+import { convToBState, B_SERVICE_STATE_META, B_SERVICE_STAGES, B_STATE_TRANSITIONS } from "../../shared/service-state"
 
 export type ServiceState = BServiceState
 
 export type ServiceOrder = {
-  id: string;
-  state: ServiceState;
-  type: string;
-  typeColor: string;
-  addr: string;
-  buyer: string;
-  buyerPhone: string;
-  time: string;
-  ref: string;
-  amount?: string;
-  pay?: "online" | "cash";
-  note?: string;
-  cancelReason?: string;
-  cancelTime?: string;
-  images?: string[];
-  paymentProof?: string;
-  completionPhotos?: string[];
-  pricingMode?: "postQuote" | "fixed";
-};
+  id: string
+  state: ServiceState
+  type: string
+  typeColor: string
+  addr: string
+  buyer: string
+  buyerPhone: string
+  time: string
+  ref: string
+  amount?: string
+  pay?: "online" | "cash"
+  note?: string
+  cancelReason?: string
+  cancelTime?: string
+  images?: string[]
+  paymentProof?: string
+  completionPhotos?: string[]
+  pricingMode?: "postQuote" | "fixed"
+}
 
 const STATE_META = B_SERVICE_STATE_META
 const CONV_STAGES = B_SERVICE_STAGES
@@ -47,160 +44,189 @@ export function ServiceOrderDetail({
   onClose,
   onStateChange,
 }: {
-  order: ServiceOrder | null;
-  onClose: () => void;
-  onStateChange?: (id: string, next: ServiceState, pricingMode?: "postQuote" | "fixed") => void;
+  order: ServiceOrder | null
+  onClose: () => void
+  onStateChange?: (id: string, next: ServiceState, pricingMode?: "postQuote" | "fixed") => void
 }) {
-  const [flow, setFlow] = useState<"quote" | "photo" | "proof" | null>(null);
-  const [hasPaymentProof, setHasPaymentProof] = useState(false);
+  const [flow, setFlow] = useState<"quote" | "photo" | "proof" | null>(null)
+  const [hasPaymentProof, setHasPaymentProof] = useState(false)
   const [confirm, setConfirm] = useState<
     null | "accept" | "start" | "approve-cancel" | "reject-cancel" | "manual-resolve"
-  >(null);
-  const [toast, setToast] = useState("");
-  const liveOrder = useConvenienceStore((s) =>
-    order ? s.orders.find((item) => item.id === order.id) : undefined
-  );
+  >(null)
+  const [toast, setToast] = useState("")
+  const liveOrder = useConvenienceStore((s) => (order ? s.orders.find((item) => item.id === order.id) : undefined))
 
   useEffect(() => {
-    setFlow(null);
-    setHasPaymentProof(false);
-    setConfirm(null);
-    return () => clearTimeout(toastTimerRef.current);
-  }, [order?.id]);
+    setFlow(null)
+    setHasPaymentProof(false)
+    setConfirm(null)
+    return () => clearTimeout(toastTimerRef.current)
+  }, [order?.id])
 
-  if (!order) return null;
-  const liveState = convStatusToServiceState(liveOrder?.status);
-  const cur = liveState ?? order.state;
-  const meta = STATE_META[cur];
-  const stages = CONV_STAGES;
-  const stageIndex = stages.findIndex((s) => s.key === cur);
-  const hasUploadedPaymentProof = hasPaymentProof || Boolean(order.paymentProof) || Boolean(liveOrder?.paymentProof);
-  const isFixed = order.pricingMode === "fixed";
+  if (!order) return null
+  const liveState = convStatusToServiceState(liveOrder?.status)
+  const cur = liveState ?? order.state
+  const meta = STATE_META[cur]
+  const stages = CONV_STAGES
+  const stageIndex = stages.findIndex((s) => s.key === cur)
+  const hasUploadedPaymentProof = hasPaymentProof || Boolean(order.paymentProof) || Boolean(liveOrder?.paymentProof)
+  const isFixed = order.pricingMode === "fixed"
 
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const showToast = (t: string) => {
-    clearTimeout(toastTimerRef.current);
-    setToast(t);
-    toastTimerRef.current = setTimeout(() => setToast(""), 1600);
-  };
+    clearTimeout(toastTimerRef.current)
+    setToast(t)
+    toastTimerRef.current = setTimeout(() => setToast(""), 1600)
+  }
 
-  const VALID_TRANSITIONS = B_STATE_TRANSITIONS;
+  const VALID_TRANSITIONS = B_STATE_TRANSITIONS
 
   const change = (next: ServiceState, msg: string) => {
-    const allowed = VALID_TRANSITIONS[cur] ?? [];
+    const allowed = VALID_TRANSITIONS[cur] ?? []
     if (!allowed.includes(next)) {
-      showToast(`非法状态转换: ${cur} → ${next}`);
-      return;
+      showToast(`非法状态转换: ${cur} → ${next}`)
+      return
     }
     // Apply store transitions for actions that need them
     if (next === "accepted") {
-      useConvenienceStore.getState().acceptOrder(order.id);
+      useConvenienceStore.getState().acceptOrder(order.id)
     } else if (next === "serving") {
-      useConvenienceStore.getState().startService(order.id);
+      useConvenienceStore.getState().startService(order.id)
     } else if (next === "cancelled") {
-      useConvenienceStore.getState().approveCancelRequest(order.id);
+      useConvenienceStore.getState().approveCancelRequest(order.id)
     }
     // Only notify parent if store actually applied the transition
-    const updatedOrder = useConvenienceStore.getState().orders.find(item => item.id === order.id);
-    const updatedState = updatedOrder ? convStatusToServiceState(updatedOrder.status) : null;
+    const updatedOrder = useConvenienceStore.getState().orders.find((item) => item.id === order.id)
+    const updatedState = updatedOrder ? convStatusToServiceState(updatedOrder.status) : null
     if (updatedState === next || !updatedState) {
-      onStateChange?.(order.id, next, order.pricingMode);
+      onStateChange?.(order.id, next, order.pricingMode)
     }
-    showToast(msg);
-  };
+    showToast(msg)
+  }
 
   const banner =
-    cur === "manual" ? {
-      bg: "#FEE2E2", fg: "#9F1239",
-      icon: <AlertCircle className="size-4" />,
-      text: "异常订单，请联系客服处理",
-    } : null;
+    cur === "manual"
+      ? {
+          bg: "#FEE2E2",
+          fg: "#9F1239",
+          icon: <AlertCircle className="size-4" />,
+          text: "异常订单，请联系客服处理",
+        }
+      : null
 
   const renderFooter = () => {
     switch (cur) {
       case "pending":
         return (
           <div className="flex gap-2">
-            <button onClick={onClose} className="flex-1 h-11 rounded-2xl bg-white border border-[#E5E7EB] text-text-secondary text-[14px]">
+            <button
+              onClick={onClose}
+              className="flex-1 h-11 rounded-2xl bg-white border border-[#E5E7EB] text-text-secondary text-[14px]"
+            >
               暂不接单
             </button>
-            <button onClick={() => setConfirm("accept")}
+            <button
+              onClick={() => setConfirm("accept")}
               className="flex-1 h-11 rounded-2xl text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(245,158,11,0.32)]"
-              style={{ background: "#F59E0B" }}>确认接单</button>
+              style={{ background: "#F59E0B" }}
+            >
+              确认接单
+            </button>
           </div>
-        );
+        )
 
       case "accepted":
         return (
-          <button onClick={() => setFlow("quote")}
+          <button
+            onClick={() => setFlow("quote")}
             className="w-full h-11 rounded-2xl text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(245,158,11,0.32)]"
-            style={{ background: "#F59E0B" }}>
+            style={{ background: "#F59E0B" }}
+          >
             录入金额 / 报价
           </button>
-        );
+        )
 
       case "quoted":
         return (
           <div className="w-full h-11 rounded-2xl bg-gray-100 text-text-tertiary text-[14px] flex items-center justify-center">
             等待用户支付
           </div>
-        );
+        )
 
       case "paid":
         if (order.pay === "cash" && !hasUploadedPaymentProof) {
           return (
-            <button onClick={() => setFlow("proof")}
+            <button
+              onClick={() => setFlow("proof")}
               className="w-full h-11 rounded-2xl text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(16,185,129,0.32)]"
-              style={{ background: "#10B981" }}>
-              <span className="inline-flex items-center gap-1.5"><Camera className="size-4" /> 上传支付凭证</span>
+              style={{ background: "#10B981" }}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <Camera className="size-4" /> 上传支付凭证
+              </span>
             </button>
-          );
+          )
         }
         return (
-          <button onClick={() => setConfirm("start")}
+          <button
+            onClick={() => setConfirm("start")}
             className="w-full h-11 rounded-2xl text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(37,99,235,0.32)]"
-            style={{ background: "#2563EB" }}>
+            style={{ background: "#2563EB" }}
+          >
             开始服务
           </button>
-        );
+        )
 
       case "serving":
         return (
-          <button onClick={() => setFlow("photo")}
+          <button
+            onClick={() => setFlow("photo")}
             className="w-full h-11 rounded-2xl text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(245,158,11,0.32)]"
-            style={{ background: "#F59E0B" }}>
-            <span className="inline-flex items-center gap-1.5"><Camera className="size-4" /> 完工拍照</span>
+            style={{ background: "#F59E0B" }}
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <Camera className="size-4" /> 完工拍照
+            </span>
           </button>
-        );
+        )
 
       case "confirming":
         return (
           <div className="w-full h-11 rounded-2xl bg-gray-100 text-text-tertiary text-[14px] flex items-center justify-center">
             等待用户确认完成
           </div>
-        );
+        )
 
       case "manual":
         return (
-          <button onClick={() => setConfirm("manual-resolve")}
+          <button
+            onClick={() => setConfirm("manual-resolve")}
             className="w-full h-11 rounded-2xl text-white text-[14px] font-medium"
-            style={{ background: "#9F1239", boxShadow: "0 4px 12px rgba(159,18,57,0.32)" }}>
-            联系客服 / 标记已处理</button>
-        );
+            style={{ background: "#9F1239", boxShadow: "0 4px 12px rgba(159,18,57,0.32)" }}
+          >
+            联系客服 / 标记已处理
+          </button>
+        )
 
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   return (
     <DetailLayout open onClose={onClose} title="订单详情" tint="#F59E0B" footer={renderFooter()}>
       {banner && (
-        <div className="px-4 py-2.5 flex items-center gap-2 sticky top-0 z-10" style={{ background: banner.bg, color: banner.fg }}>
+        <div
+          className="px-4 py-2.5 flex items-center gap-2 sticky top-0 z-10"
+          style={{ background: banner.bg, color: banner.fg }}
+        >
           {banner.icon}
           <span className="text-[12px] flex-1">{banner.text}</span>
-          {cur === "cancelReview" && order.cancelTime && <span className="text-[10px] opacity-80">{order.cancelTime}</span>}
+          {/* @ts-expect-error: cancelReview is not in BServiceState union but valid at runtime */}
+          {cur === "cancelReview" && order.cancelTime && (
+            <span className="text-[10px] opacity-80">{order.cancelTime}</span>
+          )}
         </div>
       )}
 
@@ -212,25 +238,36 @@ export function ServiceOrderDetail({
         </div>
 
         {/* Stage progress */}
+        {/* @ts-expect-error: cancelReview is not in BServiceState but valid at runtime */}
         {stageIndex >= 0 && cur !== "cancelled" && cur !== "cancelReview" && (
           <SectionCard>
             <div className="flex items-center justify-between">
               {stages.map((s, i) => {
-                const passed = i <= stageIndex;
-                const active = i === stageIndex;
+                const passed = i <= stageIndex
+                const active = i === stageIndex
                 return (
                   <div key={s.key} className="flex-1 flex flex-col items-center relative">
-                    <div className="size-7 rounded-full flex items-center justify-center text-[11px] font-medium transition"
-                      style={{ background: passed ? "#F59E0B" : "#F1F5F9", color: passed ? "white" : "#94A3B8", boxShadow: active ? "0 0 0 4px rgba(245,158,11,0.18)" : "none" }}>
+                    <div
+                      className="size-7 rounded-full flex items-center justify-center text-[11px] font-medium transition"
+                      style={{
+                        background: passed ? "#F59E0B" : "#F1F5F9",
+                        color: passed ? "white" : "#94A3B8",
+                        boxShadow: active ? "0 0 0 4px rgba(245,158,11,0.18)" : "none",
+                      }}
+                    >
                       {passed ? <CheckCircle2 className="size-4" /> : i + 1}
                     </div>
-                    <div className="mt-1 text-[10px]" style={{ color: passed ? "#F59E0B" : "#94A3B8" }}>{s.label}</div>
+                    <div className="mt-1 text-[10px]" style={{ color: passed ? "#F59E0B" : "#94A3B8" }}>
+                      {s.label}
+                    </div>
                     {i < stages.length - 1 && (
-                      <div className="absolute top-[14px] left-[60%] right-[-40%] h-0.5"
-                        style={{ background: i < stageIndex ? "#F59E0B" : "#E5E7EB" }} />
+                      <div
+                        className="absolute top-[14px] left-[60%] right-[-40%] h-0.5"
+                        style={{ background: i < stageIndex ? "#F59E0B" : "#E5E7EB" }}
+                      />
                     )}
                   </div>
-                );
+                )
               })}
             </div>
           </SectionCard>
@@ -239,8 +276,10 @@ export function ServiceOrderDetail({
         {/* Service/product info */}
         <SectionCard>
           <div className="flex items-center gap-1.5 mb-1">
-            <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px]"
-              style={{ background: `${order.typeColor}14`, color: order.typeColor }}>
+            <div
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px]"
+              style={{ background: `${order.typeColor}14`, color: order.typeColor }}
+            >
               {order.type}
             </div>
           </div>
@@ -249,7 +288,9 @@ export function ServiceOrderDetail({
             <span>{order.addr}</span>
           </div>
           <div className="mt-2 space-y-1 text-[12px] text-text-secondary">
-            <div className="flex items-center gap-1.5"><Clock className="size-3.5 text-text-tertiary" /> {order.time}</div>
+            <div className="flex items-center gap-1.5">
+              <Clock className="size-3.5 text-text-tertiary" /> {order.time}
+            </div>
             {order.ref && <div className="text-[11px] text-text-tertiary">{order.ref}</div>}
           </div>
         </SectionCard>
@@ -301,6 +342,7 @@ export function ServiceOrderDetail({
         )}
 
         {/* Cancel reason */}
+        {/* @ts-expect-error: cancelReview is not in BServiceState but valid at runtime */}
         {(cur === "cancelled" || cur === "cancelReview") && order.cancelReason && (
           <div className="rounded-2xl p-4 bg-gray-100">
             <div className="text-[12px] text-text-tertiary">取消原因</div>
@@ -311,10 +353,19 @@ export function ServiceOrderDetail({
 
         {/* Buyer */}
         <SectionCard title="用户信息">
-          <InfoRow label="用户" value={<span className="inline-flex items-center gap-1"><User className="size-3.5 text-text-tertiary" /> {order.buyer}</span>} strong />
+          <InfoRow
+            label="用户"
+            value={
+              <span className="inline-flex items-center gap-1">
+                <User className="size-3.5 text-text-tertiary" /> {order.buyer}
+              </span>
+            }
+            strong
+          />
           <InfoRow label="联系电话" value={order.buyerPhone} mono />
           <button className="mt-2 w-full h-9 rounded-xl bg-primary-50 text-primary text-[12px] flex items-center justify-center gap-1.5">
-            <Phone className="size-3.5" /> 拨打电话</button>
+            <Phone className="size-3.5" /> 拨打电话
+          </button>
         </SectionCard>
 
         {order.note && (
@@ -331,33 +382,69 @@ export function ServiceOrderDetail({
         </SectionCard>
       </div>
 
-      <ConfirmModal open={confirm === "accept"} onClose={() => setConfirm(null)}
-        title="确认接单？" desc="接单后请尽快到达现场，超时未到将影响诚信分。" tint="#F59E0B"
-        cancel="再想想" confirm="确认接单"
-        onConfirm={() => change("accepted", "已接单")} />
-      <ConfirmModal open={confirm === "start"} onClose={() => setConfirm(null)}
+      <ConfirmModal
+        open={confirm === "accept"}
+        onClose={() => setConfirm(null)}
+        title="确认接单？"
+        desc="接单后请尽快到达现场，超时未到将影响诚信分。"
+        tint="#F59E0B"
+        cancel="再想想"
+        confirm="确认接单"
+        onConfirm={() => change("accepted", "已接单")}
+      />
+      <ConfirmModal
+        open={confirm === "start"}
+        onClose={() => setConfirm(null)}
         title="开始服务？"
         desc={isFixed ? "确认开始服务，完成后用户自动确认。" : "点击后订单将进入「服务中」，并开始计时。"}
-        tint="#2563EB" cancel="取消" confirm="开始"
-        onConfirm={() => change("serving", "服务已开始")} />
-      <ConfirmModal open={confirm === "approve-cancel"} onClose={() => setConfirm(null)}
-        title="同意取消该订单？" desc="同意后订单将被取消。" tint="#F59E0B"
-        cancel="再想想" confirm="同意取消"
-        onConfirm={() => change("cancelled", "订单已取消")} />
-      <ConfirmModal open={confirm === "reject-cancel"} onClose={() => setConfirm(null)}
+        tint="#2563EB"
+        cancel="取消"
+        confirm="开始"
+        onConfirm={() => change("serving", "服务已开始")}
+      />
+      <ConfirmModal
+        open={confirm === "approve-cancel"}
+        onClose={() => setConfirm(null)}
+        title="同意取消该订单？"
+        desc="同意后订单将被取消。"
+        tint="#F59E0B"
+        cancel="再想想"
+        confirm="同意取消"
+        onConfirm={() => change("cancelled", "订单已取消")}
+      />
+      <ConfirmModal
+        open={confirm === "reject-cancel"}
+        onClose={() => setConfirm(null)}
         title="拒绝取消申请？"
         desc="拒绝后订单将继续服务流程。"
-        cancel="取消" confirm="拒绝"
-        onConfirm={() => { useConvenienceStore.getState().rejectCancelRequest(order.id); showToast("已拒绝取消"); setConfirm(null); }} />
-      <ConfirmModal open={confirm === "manual-resolve"} onClose={() => setConfirm(null)}
-        title="标记为已处理？" desc="确认已与客服沟通完毕并完成线下结算。" tint="#9F1239"
-        cancel="取消" confirm="标记已处理"
-        onConfirm={() => change("done", "已标记处理")} />
-      <ConfirmModal open={confirm === "reject-pending"} onClose={() => setConfirm(null)}
+        cancel="取消"
+        confirm="拒绝"
+        onConfirm={() => {
+          useConvenienceStore.getState().rejectCancelRequest(order.id)
+          showToast("已拒绝取消")
+          setConfirm(null)
+        }}
+      />
+      <ConfirmModal
+        open={confirm === "manual-resolve"}
+        onClose={() => setConfirm(null)}
+        title="标记为已处理？"
+        desc="确认已与客服沟通完毕并完成线下结算。"
+        tint="#9F1239"
+        cancel="取消"
+        confirm="标记已处理"
+        onConfirm={() => change("done", "已标记处理")}
+      />
+      {/* @ts-expect-error: reject-pending is not in confirm state type but valid at runtime */}
+      <ConfirmModal
+        open={confirm === "reject-pending"}
+        onClose={() => setConfirm(null)}
         title="已收到取消申请"
         desc="该订单用户申请了取消，如需处理请前往桌面端。"
-        cancel="知道了" confirm="知道了"
-        onConfirm={() => setConfirm(null)} />
+        cancel="知道了"
+        confirm="知道了"
+        onConfirm={() => setConfirm(null)}
+      />
 
       <QuoteAndPhotoFlow
         open={flow !== null}
@@ -372,22 +459,22 @@ export function ServiceOrderDetail({
           amount: order.amount,
         }}
         onClose={() => {
-          const finishedFlow = flow;
-          setFlow(null);
+          const finishedFlow = flow
+          setFlow(null)
           if (finishedFlow === "quote") {
-            showToast("已提交报价，等待用户支付");
+            showToast("已提交报价，等待用户支付")
           } else if (finishedFlow === "proof") {
             if ((liveOrder?.payMethod ?? order.pay) !== "online") {
-              useConvenienceStore.getState().markPaid(order.id, "cash");
+              useConvenienceStore.getState().markPaid(order.id, "cash")
             }
-            setHasPaymentProof(true);
-            showToast("已上传支付凭证");
+            setHasPaymentProof(true)
+            showToast("已上传支付凭证")
           } else if (finishedFlow === "photo") {
-            showToast("已上传完工照片，等待用户确认");
+            showToast("已上传完工照片，等待用户确认")
           }
         }}
       />
       <Toast show={!!toast} text={toast} />
     </DetailLayout>
-  );
+  )
 }

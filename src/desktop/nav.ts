@@ -1,8 +1,21 @@
 import {
-  LayoutDashboard, LayoutList, Map, SlidersHorizontal, Users, Scale,
-  Store, LayoutGrid,
-  MessageCircleWarning, ScrollText, ExternalLink,
-  Camera, Image, Wallet, Gift, ShieldCheck, AlertTriangle,
+  LayoutDashboard,
+  LayoutList,
+  Map,
+  SlidersHorizontal,
+  Users,
+  Scale,
+  Store,
+  LayoutGrid,
+  MessageCircleWarning,
+  ScrollText,
+  ExternalLink,
+  Camera,
+  Image,
+  Wallet,
+  Gift,
+  ShieldCheck,
+  AlertTriangle,
   Heart,
 } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../shared/constants"
@@ -34,16 +47,20 @@ export const navGroups: NavGroup[] = [
   {
     title: "商家与供应商",
     items: [
-      { key: "supplier-applications", label: "供应商入驻审核", icon: Store, permissionCode: "mall" },
-      { key: "merchant-review", label: "商家信息审核", icon: ShieldCheck, badge: 2, permissionCode: "mall" },
-      { key: "crmeb-admin", label: "商城管理后台", icon: ExternalLink, external: CRMEB_ADMIN_URL, permissionCode: "mall" },
+      { key: "supplier-applications", label: "线上商城供应商审核", icon: Store, permissionCode: "mall" },
+      { key: "merchant-review", label: "古城商户审核", icon: ShieldCheck, badge: 2, permissionCode: "mall" },
+      {
+        key: "crmeb-admin",
+        label: "商城管理后台",
+        icon: ExternalLink,
+        external: CRMEB_ADMIN_URL,
+        permissionCode: "mall",
+      },
     ],
   },
   {
     title: "社区管理",
-    items: [
-      { key: "announcements", label: "公告下发管理", icon: ScrollText, permissionCode: "content" },
-    ],
+    items: [{ key: "announcements", label: "公告下发管理", icon: ScrollText, permissionCode: "content" }],
   },
   {
     title: "运营管理",

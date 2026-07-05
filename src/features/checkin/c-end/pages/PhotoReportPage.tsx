@@ -1,16 +1,16 @@
-import { useState, useRef } from "react";
-import { PageHeader } from "../../../../c-end/components/PageHeader";
-import { MapPin, ChevronDown, Camera, X } from "lucide-react";
-import { toast } from "sonner";
-import { useNavigate } from "react-router";
+import { useState, useRef } from "react"
+import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { MapPin, ChevronDown, Camera, X } from "lucide-react"
+import { toast } from "sonner"
+import { useNavigate } from "react-router"
 
-const areaOptions = ["古城", "白沙", "束河"];
+const areaOptions = ["古城", "白沙", "束河"]
 
 const areaTypeMap: Record<string, string[]> = {
   古城: ["历史街巷", "水系", "古井", "桥梁", "古树名木", "公共构筑物", "代表性民居", "文保单位", "人文环境", "商户"],
   白沙: ["历史街巷", "水系", "古井", "桥梁", "古树名木", "公共构筑物", "代表性民居", "文保单位", "人文环境", "商户"],
   束河: ["历史街巷", "水系", "古井", "桥梁", "古树名木", "公共构筑物", "代表性民居", "文保单位", "人文环境", "商户"],
-};
+}
 
 const typeObjectMap: Record<string, string[]> = {
   历史街巷: ["四方街", "卖草场", "新华街", "五一街", "七一街", "新义街", "光义街"],
@@ -23,7 +23,7 @@ const typeObjectMap: Record<string, string[]> = {
   文保单位: ["四方街", "卖草场", "新华街", "五一街", "七一街", "新义街", "光义街"],
   人文环境: ["四方街", "卖草场", "新华街", "五一街", "七一街", "新义街", "光义街"],
   商户: ["四方街", "卖草场", "新华街", "五一街", "七一街", "新义街", "光义街"],
-};
+}
 
 function SelectDropdown({
   value,
@@ -32,13 +32,13 @@ function SelectDropdown({
   placeholder,
   disabled,
 }: {
-  value: string;
-  options: string[];
-  onChange: (v: string) => void;
-  placeholder: string;
-  disabled?: boolean;
+  value: string
+  options: string[]
+  onChange: (v: string) => void
+  placeholder: string
+  disabled?: boolean
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <div className="relative">
@@ -52,19 +52,20 @@ function SelectDropdown({
             : "bg-[#F3F3F5] focus:bg-white focus:ring-2 focus:ring-primary/20"
         }`}
       >
-        <span className={value ? "text-text-body" : "text-text-tertiary"}>
-          {value || placeholder}
-        </span>
+        <span className={value ? "text-text-body" : "text-text-tertiary"}>{value || placeholder}</span>
         <ChevronDown size={16} className={`text-text-tertiary transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && !disabled && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute z-20 w-full mt-1 bg-white rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.08)] border border-border-light py-1 max-h-48 overflow-y-auto">
-            {options.map(opt => (
+            {options.map((opt) => (
               <button
                 key={opt}
-                onClick={() => { onChange(opt); setOpen(false); }}
+                onClick={() => {
+                  onChange(opt)
+                  setOpen(false)
+                }}
                 className={`w-full px-4 h-10 text-left text-[14px] hover:bg-[#F5F5F5] ${opt === value ? "text-primary bg-primary-50" : "text-text-body"}`}
               >
                 {opt}
@@ -74,80 +75,101 @@ function SelectDropdown({
         </>
       )}
     </div>
-  );
+  )
 }
 
 export function PhotoReportPage() {
-  const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [area, setArea] = useState("");
-  const [type, setType] = useState("");
-  const [object, setObject] = useState("");
-  const [location, setLocation] = useState("");
-  const [address, setAddress] = useState("");
-  const [description, setDescription] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const navigate = useNavigate()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [photos, setPhotos] = useState<string[]>([])
+  const [area, setArea] = useState("")
+  const [type, setType] = useState("")
+  const [object, setObject] = useState("")
+  const [location, setLocation] = useState("")
+  const [address, setAddress] = useState("")
+  const [description, setDescription] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
-  const typeOptions = area ? areaTypeMap[area] || [] : [];
-  const objectOptions = type ? typeObjectMap[type] || [] : [];
+  const typeOptions = area ? areaTypeMap[area] || [] : []
+  const objectOptions = type ? typeObjectMap[type] || [] : []
 
   const handleAreaChange = (v: string) => {
-    setArea(v);
-    setType("");
-    setObject("");
-  };
+    setArea(v)
+    setType("")
+    setObject("")
+  }
 
   const handleTypeChange = (v: string) => {
-    setType(v);
-    setObject("");
-  };
+    setType(v)
+    setObject("")
+  }
 
   const handleGetLocation = () => {
-    setLocation("获取位置中...");
+    setLocation("获取位置中...")
     setTimeout(() => {
-      setLocation("云南省丽江市古城区四方街");
-      toast.success("定位成功");
-    }, 1000);
-  };
+      setLocation("云南省丽江市古城区四方街")
+      toast.success("定位成功")
+    }, 1000)
+  }
 
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+    const files = e.target.files
+    if (!files) return
     if (photos.length + files.length > 9) {
-      toast.error("最多上传 9 张照片");
-      return;
+      toast.error("最多上传 9 张照片")
+      return
     }
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
+    Array.from(files).forEach((file) => {
+      const reader = new FileReader()
       reader.onload = (ev) => {
         if (ev.target?.result) {
-          setPhotos(prev => [...prev, ev.target!.result as string]);
+          setPhotos((prev) => [...prev, ev.target!.result as string])
         }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
+      }
+      reader.readAsDataURL(file)
+    })
+  }
 
   const removePhoto = (index: number) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
-  };
+    setPhotos((prev) => prev.filter((_, i) => i !== index))
+  }
 
   const handleSubmit = async () => {
-    if (!area) { toast.error("请选择片区"); return; }
-    if (!type) { toast.error("请选择类型"); return; }
-    if (!object) { toast.error("请选择对象"); return; }
-    if (!location) { toast.error("请获取位置"); return; }
-    if (!address.trim()) { toast.error("请输入详细地址"); return; }
-    if (!description.trim()) { toast.error("请描述异常情况"); return; }
-    if (photos.length === 0) { toast.error("请至少上传一张照片"); return; }
+    if (!area) {
+      toast.error("请选择片区")
+      return
+    }
+    if (!type) {
+      toast.error("请选择类型")
+      return
+    }
+    if (!object) {
+      toast.error("请选择对象")
+      return
+    }
+    if (!location) {
+      toast.error("请获取位置")
+      return
+    }
+    if (!address.trim()) {
+      toast.error("请输入详细地址")
+      return
+    }
+    if (!description.trim()) {
+      toast.error("请描述异常情况")
+      return
+    }
+    if (photos.length === 0) {
+      toast.error("请至少上传一张照片")
+      return
+    }
 
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
-    setShowSuccess(true);
-  };
+    setIsSubmitting(true)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    setIsSubmitting(false)
+    setShowSuccess(true)
+  }
 
   return (
     <div className="min-h-full bg-surface-page flex flex-col">
@@ -168,12 +190,7 @@ export function PhotoReportPage() {
           <div className="flex gap-2 px-4 py-3 border-b border-border-light">
             <div className="flex-1">
               <label className="text-[12px] text-text-secondary mb-1.5 block">片区</label>
-              <SelectDropdown
-                value={area}
-                options={areaOptions}
-                onChange={handleAreaChange}
-                placeholder="请选择片区"
-              />
+              <SelectDropdown value={area} options={areaOptions} onChange={handleAreaChange} placeholder="请选择片区" />
             </div>
             <div className="flex-1">
               <label className="text-[12px] text-text-secondary mb-1.5 block">类型</label>
@@ -325,5 +342,5 @@ export function PhotoReportPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

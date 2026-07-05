@@ -24,13 +24,19 @@ export function BApp() {
 
   return (
     <ErrorBoundary>
-    <Suspense fallback={<div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">加载中...</div>}>
-    <Routes>
-      <Route index element={<RedirectTo to="/b/service/workbench" />} />
-      <Route path="service/*" element={<ServiceApp />} />
-      <Route path="*" element={<RedirectTo to="/b/service/workbench" />} />
-    </Routes>
-    </Suspense>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">
+            加载中...
+          </div>
+        }
+      >
+        <Routes>
+          <Route index element={<RedirectTo to="/b/service/workbench" />} />
+          <Route path="service/*" element={<ServiceApp />} />
+          <Route path="*" element={<RedirectTo to="/b/service/workbench" />} />
+        </Routes>
+      </Suspense>
     </ErrorBoundary>
   )
 }

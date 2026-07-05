@@ -20,11 +20,7 @@ const seedRoles: RoleDef[] = [
     roleId: "role_supplier",
     roleName: "供应商",
     description: "供应商入驻与商城后台单点登录",
-    permissionCodes: [
-      "mall.admin.open",
-      "mall.supplier.view",
-      "dashboard.view",
-    ],
+    permissionCodes: ["mall.admin.open", "mall.supplier.view", "dashboard.view"],
   },
 ]
 

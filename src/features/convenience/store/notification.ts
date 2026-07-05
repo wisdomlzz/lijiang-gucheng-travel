@@ -9,7 +9,7 @@ export function notifyConvenience(
   serviceType: string,
   title: string,
   summary: string,
-  targetUrl: string,
+  targetUrl: string
 ) {
   useNotificationStore.getState().addNotification({
     type: "order",

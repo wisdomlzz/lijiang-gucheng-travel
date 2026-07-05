@@ -12,17 +12,23 @@ import { RedirectTo } from "../../../../shared/components/RedirectTo"
 export function ServiceApp() {
   return (
     <BLayout>
-      <Suspense fallback={<div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">加载中...</div>}>
-      <Routes>
-        <Route index element={<RedirectTo to="/b/service/workbench" />} />
-        <Route path="workbench" element={<ServiceWorkbench />} />
-        <Route path="tasks" element={<ServiceTasks />} />
-        <Route path="history" element={<ServiceHistory />} />
-        <Route path="profile" element={<ServiceProfile />} />
-        <Route path="quote" element={<QuoteAndPhotoFlow />} />
-        <Route path="notifications" element={<BNotificationsPage />} />
-        <Route path="*" element={<RedirectTo to="/b/service/workbench" />} />
-      </Routes>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">
+            加载中...
+          </div>
+        }
+      >
+        <Routes>
+          <Route index element={<RedirectTo to="/b/service/workbench" />} />
+          <Route path="workbench" element={<ServiceWorkbench />} />
+          <Route path="tasks" element={<ServiceTasks />} />
+          <Route path="history" element={<ServiceHistory />} />
+          <Route path="profile" element={<ServiceProfile />} />
+          <Route path="quote" element={<QuoteAndPhotoFlow {...({} as any)} />} />
+          <Route path="notifications" element={<BNotificationsPage />} />
+          <Route path="*" element={<RedirectTo to="/b/service/workbench" />} />
+        </Routes>
       </Suspense>
     </BLayout>
   )

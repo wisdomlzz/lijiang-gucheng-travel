@@ -1,37 +1,37 @@
-import { useState, useEffect, useRef, useMemo } from "react";
-import { useParams, useNavigate } from "react-router";
-import { PageHeader } from "../components/PageHeader";
-import { StatusProgress } from "../components/StatusProgress";
-import { toast } from "sonner";
-import { Phone, Clock, AlertCircle, User, Star } from "lucide-react";
-import { useConvenienceStore } from "../../store";
-import type { ConvenienceStatus } from "../../../../shared/types";
+import { useState, useEffect, useRef, useMemo } from "react"
+import { useParams, useNavigate } from "react-router"
+import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { StatusProgress } from "../components/StatusProgress"
+import { toast } from "sonner"
+import { Phone, Clock, AlertCircle, User, Star } from "lucide-react"
+import { useConvenienceStore } from "../../store"
+import type { ConvenienceStatus } from "../../../../shared/types"
 
-const STATUS_STEPS: ConvenienceStatus[] = ["S10", "A30", "A35", "A40", "S48", "S55", "S40"];
-const STEP_LABELS = ["已下单", "已接单", "已核价", "已收款", "服务中", "待验收", "已完成"];
+const STATUS_STEPS: ConvenienceStatus[] = ["S10", "A30", "A35", "A40", "S48", "S55", "S40"]
+const STEP_LABELS = ["已下单", "已接单", "已核价", "已收款", "服务中", "待验收", "已完成"]
 
 export function ServiceTrackingPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const order = useConvenienceStore((s) => s.orders.find((o) => o.id === id));
-  const markPaid = useConvenienceStore((s) => s.markPaid);
-  const completeService = useConvenienceStore((s) => s.completeService);
-  const requestCancel = useConvenienceStore((s) => s.requestCancel);
-  const [countdown, setCountdown] = useState(15 * 60);
-  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
-  const [showCashConfirm, setShowCashConfirm] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [waitTime, setWaitTime] = useState(0);
-  const [showRating, setShowRating] = useState(false);
-  const [rating, setRating] = useState(0);
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const order = useConvenienceStore((s) => s.orders.find((o) => o.id === id))
+  const markPaid = useConvenienceStore((s) => s.markPaid)
+  const completeService = useConvenienceStore((s) => s.completeService)
+  const requestCancel = useConvenienceStore((s) => s.requestCancel)
+  const [countdown, setCountdown] = useState(15 * 60)
+  const [showPaymentMethod, setShowPaymentMethod] = useState(false)
+  const [showCashConfirm, setShowCashConfirm] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [waitTime, setWaitTime] = useState(0)
+  const [showRating, setShowRating] = useState(false)
+  const [rating, setRating] = useState(0)
 
   const statusSteps = useMemo(() => {
-    const stateIdx = STATUS_STEPS.indexOf(order?.status ?? "S10");
+    const stateIdx = STATUS_STEPS.indexOf(order?.status ?? "S10")
     return STEP_LABELS.map((label, idx) => ({
       label,
       completed: order?.status === "S50" || (stateIdx >= 0 && idx < stateIdx),
-    }));
-  }, [order?.status]);
+    }))
+  }, [order?.status])
 
   // Countdown timer
   useEffect(() => {
@@ -40,118 +40,118 @@ export function ServiceTrackingPage() {
       timerRef.current = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 0) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            return 0;
+            if (timerRef.current) clearInterval(timerRef.current)
+            return 0
           }
-          return prev - 1;
-        });
-      }, 1000);
+          return prev - 1
+        })
+      }, 1000)
     } else if (order?.status === "S55") {
       // 24小时倒计时（从订单完成时间计算）
-      const completedAt = order.completedAt ? new Date(order.completedAt).getTime() : Date.now();
-      const autoConfirmAt = completedAt + 24 * 60 * 60 * 1000;
+      const completedAt = order.completedAt ? new Date(order.completedAt).getTime() : Date.now()
+      const autoConfirmAt = completedAt + 24 * 60 * 60 * 1000
       const tick = () => {
-        const remaining = Math.max(0, Math.floor((autoConfirmAt - Date.now()) / 1000));
-        setCountdown(remaining);
+        const remaining = Math.max(0, Math.floor((autoConfirmAt - Date.now()) / 1000))
+        setCountdown(remaining)
         if (remaining <= 0 && timerRef.current) {
-          clearInterval(timerRef.current);
+          clearInterval(timerRef.current)
         }
-      };
-      tick();
-      timerRef.current = setInterval(tick, 1000);
+      }
+      tick()
+      timerRef.current = setInterval(tick, 1000)
     }
     return () => {
       if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
+        clearInterval(timerRef.current)
+        timerRef.current = null
       }
-    };
-  }, [order?.status, order?.completedAt]);
+    }
+  }, [order?.status, order?.completedAt])
 
   // Simulate wait time
   useEffect(() => {
     if (order?.status === "S10" || order?.status === "A10") {
-      const t = setInterval(() => setWaitTime((prev) => prev + 1), 10000);
-      return () => clearInterval(t);
+      const t = setInterval(() => setWaitTime((prev) => prev + 1), 10000)
+      return () => clearInterval(t)
     } else {
-      setWaitTime(0);
+      setWaitTime(0)
     }
-  }, [order?.status]);
+  }, [order?.status])
 
   const formatCountdown = (seconds: number) => {
     if (seconds >= 24 * 60 * 60) {
       // 24小时以上显示 "XX天XX:XX:XX"
-      const days = Math.floor(seconds / (24 * 60 * 60));
-      const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
-      const mins = Math.floor((seconds % (60 * 60)) / 60);
-      return `${days}天${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+      const days = Math.floor(seconds / (24 * 60 * 60))
+      const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60))
+      const mins = Math.floor((seconds % (60 * 60)) / 60)
+      return `${days}天${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`
     }
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  };
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
+  }
 
-  const isUrgent = countdown > 0 && countdown < 180;
+  const isUrgent = countdown > 0 && countdown < 180
 
   const handleCallStaff = () => {
-    toast.info(`正在拨号 ${order?.staffPhone || "139****6666"}...`);
-  };
+    toast.info(`正在拨号 ${order?.staffPhone || "139****6666"}...`)
+  }
 
   const handleConfirmPayment = () => {
-    setShowPaymentMethod(true);
-  };
+    setShowPaymentMethod(true)
+  }
 
   const handlePayOnline = () => {
-    markPaid(order!.id, "online");
-    toast.success("支付成功");
-    setShowPaymentMethod(false);
-  };
+    markPaid(order!.id, "online")
+    toast.success("支付成功")
+    setShowPaymentMethod(false)
+  }
 
   const handlePayCash = () => {
-    setShowPaymentMethod(false);
-    setShowCashConfirm(true);
-  };
+    setShowPaymentMethod(false)
+    setShowCashConfirm(true)
+  }
 
   const handleConfirmCashPay = () => {
-    markPaid(order!.id, "cash");
-    toast.success("已确认现金支付");
-    setShowCashConfirm(false);
-  };
+    markPaid(order!.id, "cash")
+    toast.success("已确认现金支付")
+    setShowCashConfirm(false)
+  }
 
   const handleCancelOrder = () => {
-    useConvenienceStore.getState().requestCancel(order!.id);
+    useConvenienceStore.getState().requestCancel(order!.id)
     if (order?.status === "S10" || order?.status === "A10") {
-      toast("订单已取消");
+      toast("订单已取消")
     } else {
-      toast.info("取消申请已提交，等待管理员审批");
+      toast.info("取消申请已提交，等待管理员审批")
     }
-  };
+  }
 
   const handleApplyCancel = () => {
-    useConvenienceStore.getState().requestCancel(order!.id);
-    toast.info("取消申请已提交，等待审批");
-  };
+    useConvenienceStore.getState().requestCancel(order!.id)
+    toast.info("取消申请已提交，等待审批")
+  }
 
   const handleViewDetail = () => {
-    if (order) navigate(`/c/orders/${order.id}`);
-  };
+    if (order) navigate(`/c/orders/${order.id}`)
+  }
 
   const handleReview = () => {
-    if (order) setShowRating(true);
-  };
+    if (order) setShowRating(true)
+  }
 
   const handleSubmitRating = (stars: number) => {
-    if (!order) return;
-    useConvenienceStore.getState().rateOrder(order.id, stars);
-    setShowRating(false);
-    toast.success("评价成功");
-  };
+    if (!order) return
+    useConvenienceStore.getState().rateOrder(order.id, stars)
+    setShowRating(false)
+    toast.success("评价成功")
+  }
 
   // --- Bottom action bar ---
 
   const renderBottomBar = () => {
-    const status = order?.status;
-    if (!status) return null;
+    const status = order?.status
+    if (!status) return null
     if (["S10", "A10"].includes(status)) {
       return (
         <button
@@ -160,7 +160,7 @@ export function ServiceTrackingPage() {
         >
           取消订单
         </button>
-      );
+      )
     }
     if (["A20", "A30"].includes(status)) {
       return (
@@ -171,14 +171,11 @@ export function ServiceTrackingPage() {
           >
             申请取消
           </button>
-          <button
-            onClick={handleCallStaff}
-            className="flex-1 h-11 rounded-full bg-primary text-white text-[14px]"
-          >
+          <button onClick={handleCallStaff} className="flex-1 h-11 rounded-full bg-primary text-white text-[14px]">
             联系服务人员
           </button>
         </div>
-      );
+      )
     }
     if (status === "A35") {
       return (
@@ -197,24 +194,18 @@ export function ServiceTrackingPage() {
               联系服务人员
             </button>
           </div>
-          <button
-            onClick={handleConfirmPayment}
-            className="w-full h-11 rounded-full bg-primary text-white text-[14px]"
-          >
+          <button onClick={handleConfirmPayment} className="w-full h-11 rounded-full bg-primary text-white text-[14px]">
             完成支付（{formatCountdown(countdown)}）
           </button>
         </div>
-      );
+      )
     }
     if (["A40", "S48", "S55"].includes(status)) {
       return (
-        <button
-          onClick={handleCallStaff}
-          className="w-full h-11 rounded-full bg-primary text-white text-[14px]"
-        >
+        <button onClick={handleCallStaff} className="w-full h-11 rounded-full bg-primary text-white text-[14px]">
           联系服务人员
         </button>
-      );
+      )
     }
     if (status === "S40") {
       return (
@@ -225,14 +216,11 @@ export function ServiceTrackingPage() {
           >
             查看详情
           </button>
-          <button
-            onClick={handleReview}
-            className="flex-1 h-11 rounded-full bg-primary text-white text-[14px]"
-          >
+          <button onClick={handleReview} className="flex-1 h-11 rounded-full bg-primary text-white text-[14px]">
             评价
           </button>
         </div>
-      );
+      )
     }
     if (["S50"].includes(status)) {
       return (
@@ -242,12 +230,12 @@ export function ServiceTrackingPage() {
         >
           查看详情
         </button>
-      );
+      )
     }
-    return null;
-  };
+    return null
+  }
 
-  const showStaffCard = order?.status && !["S10", "A10", "S50"].includes(order.status) && order.status !== "S50";
+  const showStaffCard = order?.status && !["S10", "A10", "S50"].includes(order.status) && order.status !== "S50"
 
   if (!order) {
     return (
@@ -255,7 +243,7 @@ export function ServiceTrackingPage() {
         <PageHeader title="订单跟踪" />
         <div className="p-6 text-center text-text-tertiary">订单不存在</div>
       </div>
-    );
+    )
   }
 
   return (
@@ -277,9 +265,7 @@ export function ServiceTrackingPage() {
             <p className="text-[15px] text-gray-500 font-medium">
               {order?.status === "S50" ? "订单已取消" : "取消申请已提交，等待审批"}
             </p>
-            <p className="text-[13px] text-gray-400 mt-2">
-              如有疑问请联系客服
-            </p>
+            <p className="text-[13px] text-gray-400 mt-2">如有疑问请联系客服</p>
           </div>
         )}
 
@@ -294,19 +280,13 @@ export function ServiceTrackingPage() {
             </div>
             {waitTime < 5 && (
               <>
-                <p className="text-[15px] text-text-heading font-medium">
-                  正在为您安排服务人员...
-                </p>
-                <p className="text-[13px] text-text-tertiary mt-2">
-                  通常5分钟内为您安排
-                </p>
+                <p className="text-[15px] text-text-heading font-medium">正在为您安排服务人员...</p>
+                <p className="text-[13px] text-text-tertiary mt-2">通常5分钟内为您安排</p>
               </>
             )}
             {waitTime >= 5 && waitTime < 15 && (
               <>
-                <p className="text-[15px] text-text-heading font-medium">
-                  当前服务人员较忙，继续为您寻找中...
-                </p>
+                <p className="text-[15px] text-text-heading font-medium">当前服务人员较忙，继续为您寻找中...</p>
                 <div className="flex gap-3 mt-4">
                   <button
                     onClick={() => setWaitTime(0)}
@@ -325,9 +305,7 @@ export function ServiceTrackingPage() {
             )}
             {waitTime >= 15 && (
               <>
-                <p className="text-[15px] text-text-heading font-medium">
-                  暂无空闲服务人员
-                </p>
+                <p className="text-[15px] text-text-heading font-medium">暂无空闲服务人员</p>
                 <div className="flex gap-3 mt-4">
                   <button
                     onClick={() => setWaitTime(0)}
@@ -358,13 +336,9 @@ export function ServiceTrackingPage() {
 
               {/* Staff info */}
               <div className="flex-1 min-w-0">
-                <p className="text-[15px] text-text-heading font-medium">
-                  {order?.staffName || "服务人员"}
-                </p>
+                <p className="text-[15px] text-text-heading font-medium">{order?.staffName || "服务人员"}</p>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className="text-[13px] text-text-secondary">
-                    {order?.staffPhone || "暂无电话"}
-                  </span>
+                  <span className="text-[13px] text-text-secondary">{order?.staffPhone || "暂无电话"}</span>
                 </div>
               </div>
 
@@ -382,15 +356,11 @@ export function ServiceTrackingPage() {
         {/* Price confirmation card — shown in prepay state only */}
         {order?.status === "A35" && (
           <div className="bg-white rounded-2xl p-4">
-            <p className="text-[13px] text-text-body">
-              服务人员已确认价格
-            </p>
+            <p className="text-[13px] text-text-body">服务人员已确认价格</p>
 
             {/* Amount display */}
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-[32px] text-primary font-medium">
-                ¥{(order.priceQuote ?? 0).toFixed(2)}
-              </span>
+              <span className="text-[32px] text-primary font-medium">¥{(order.priceQuote ?? 0).toFixed(2)}</span>
               {order.refPrice != null && order.priceQuote != null && order.priceQuote > order.refPrice && (
                 <span className="px-2 py-0.5 rounded-full text-[11px] text-orange-600 bg-orange-50 border border-orange-200">
                   高于参考价
@@ -432,9 +402,7 @@ export function ServiceTrackingPage() {
               ) : (
                 <Clock size={18} className="text-primary" />
               )}
-              <span className="text-[13px] text-text-secondary">
-                支付剩余时间
-              </span>
+              <span className="text-[13px] text-text-secondary">支付剩余时间</span>
             </div>
 
             <p
@@ -445,9 +413,7 @@ export function ServiceTrackingPage() {
               {formatCountdown(countdown)}
             </p>
 
-            <p className="text-[12px] text-text-tertiary mt-1">
-              请尽快完成支付，超时订单将进入待人工处理
-            </p>
+            <p className="text-[12px] text-text-tertiary mt-1">请尽快完成支付，超时订单将进入待人工处理</p>
           </div>
         )}
 
@@ -456,18 +422,14 @@ export function ServiceTrackingPage() {
           <div className="bg-white rounded-2xl p-4 text-center">
             <div className="flex items-center justify-center gap-2">
               <Clock size={18} className="text-primary" />
-              <span className="text-[13px] text-text-secondary">
-                自动确认剩余时间
-              </span>
+              <span className="text-[13px] text-text-secondary">自动确认剩余时间</span>
             </div>
 
             <p className="text-[36px] font-mono mt-2 font-medium tracking-wider text-text-heading">
               {formatCountdown(countdown)}
             </p>
 
-            <p className="text-[12px] text-text-tertiary mt-1">
-              超时未确认将自动确认服务完成
-            </p>
+            <p className="text-[12px] text-text-tertiary mt-1">超时未确认将自动确认服务完成</p>
           </div>
         )}
 
@@ -488,16 +450,16 @@ export function ServiceTrackingPage() {
                       onClick={() => setRating(star)}
                       className="p-1 transition-transform active:scale-110"
                     >
-                      <Star
-                        size={32}
-                        className={star <= rating ? "fill-[#F59E0B] text-[#F59E0B]" : "text-gray-300"}
-                      />
+                      <Star size={32} className={star <= rating ? "fill-[#F59E0B] text-[#F59E0B]" : "text-gray-300"} />
                     </button>
                   ))}
                 </div>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => { setShowRating(false); setRating(0); }}
+                    onClick={() => {
+                      setShowRating(false)
+                      setRating(0)
+                    }}
                     className="flex-1 h-11 rounded-full border border-border-light text-text-body text-[14px]"
                   >
                     取消
@@ -554,12 +516,8 @@ export function ServiceTrackingPage() {
                 <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#D1FAE5] flex items-center justify-center">
                   <span className="text-2xl">💵</span>
                 </div>
-                <h3 className="text-[17px] text-text-body font-medium mb-2">
-                  确认现金支付？
-                </h3>
-                <p className="text-[14px] text-text-secondary">
-                  您将使用现金支付给服务人员，请确认收到服务后再支付
-                </p>
+                <h3 className="text-[17px] text-text-body font-medium mb-2">确认现金支付？</h3>
+                <p className="text-[14px] text-text-secondary">您将使用现金支付给服务人员，请确认收到服务后再支付</p>
               </div>
               <div className="flex border-t border-border-light">
                 <button
@@ -568,10 +526,7 @@ export function ServiceTrackingPage() {
                 >
                   再考虑
                 </button>
-                <button
-                  onClick={handleConfirmCashPay}
-                  className="flex-1 h-12 text-[15px] text-[#10B981] font-medium"
-                >
+                <button onClick={handleConfirmCashPay} className="flex-1 h-12 text-[15px] text-[#10B981] font-medium">
                   确认现金支付
                 </button>
               </div>
@@ -585,5 +540,5 @@ export function ServiceTrackingPage() {
         {renderBottomBar()}
       </div>
     </div>
-  );
+  )
 }

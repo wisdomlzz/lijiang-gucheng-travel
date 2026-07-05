@@ -50,19 +50,14 @@ export function MerchantRegistrationPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   // Unclaimed merchants only
-  const unclaimedMerchants = useMemo(
-    () => storeMerchants.filter((m) => m.claimStatus !== "claimed"),
-    [storeMerchants],
-  )
+  const unclaimedMerchants = useMemo(() => storeMerchants.filter((m) => m.claimStatus !== "claimed"), [storeMerchants])
 
   // Search filtering
   const displayedMerchants = useMemo(() => {
     if (!query.trim()) return unclaimedMerchants
     const q = query.toLowerCase()
     return unclaimedMerchants.filter(
-      (m) =>
-        m.name.toLowerCase().includes(q) ||
-        (m.address && m.address.toLowerCase().includes(q)),
+      (m) => m.name.toLowerCase().includes(q) || (m.address && m.address.toLowerCase().includes(q))
     )
   }, [query, unclaimedMerchants])
 
@@ -168,7 +163,8 @@ export function MerchantRegistrationPage() {
         </div>
         <h2 className="text-[18px] font-semibold text-text-heading mb-2">申请已提交</h2>
         <p className="text-[13px] text-text-secondary text-center mb-6">
-          平台将在 1-3 个工作日内完成审核<br />
+          平台将在 1-3 个工作日内完成审核
+          <br />
           审核通过后您将获得商户身份，可管理店铺信息
         </p>
         <button
@@ -187,35 +183,61 @@ export function MerchantRegistrationPage() {
   if (phase === "claim" && selectedShop) {
     return (
       <div className="min-h-full bg-surface-page pb-8">
-        <PageHeader title="认领店铺" back={() => { setPhase("list"); setSelectedShop(null) }} />
+        <PageHeader
+          title="认领店铺"
+          back={() => {
+            setPhase("list")
+            setSelectedShop(null)
+          }}
+        />
 
         <div className="px-4 mt-3">
           <div className="bg-white rounded-2xl p-5 shadow-[0_4px_14px_rgba(60,120,200,0.08)]">
-            <p className="text-[13px] text-text-secondary mb-5">
-              确认这是您的店铺，填写信息完成认领。
-            </p>
+            <p className="text-[13px] text-text-secondary mb-5">确认这是您的店铺，填写信息完成认领。</p>
 
             <form onSubmit={handleClaimSubmit} className="space-y-4">
               <div>
                 <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
                   <Store size={14} className="text-primary" /> 店铺名称
                 </label>
-                <input value={selectedShop.name} readOnly className="w-full h-11 px-4 rounded-xl border border-border-light text-[13px] bg-gray-50 text-text-muted outline-none" />
+                <input
+                  value={selectedShop.name}
+                  readOnly
+                  className="w-full h-11 px-4 rounded-xl border border-border-light text-[13px] bg-gray-50 text-text-muted outline-none"
+                />
               </div>
 
               <div>
-                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><User size={14} className="text-primary" /> 联系人</label>
-                <input value={claimForm.contactName} onChange={(e) => setClaimForm({ ...claimForm, contactName: e.target.value })} placeholder="您的姓名" className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${claimErrors.contactName ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20"}`} />
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <User size={14} className="text-primary" /> 联系人
+                </label>
+                <input
+                  value={claimForm.contactName}
+                  onChange={(e) => setClaimForm({ ...claimForm, contactName: e.target.value })}
+                  placeholder="您的姓名"
+                  className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${claimErrors.contactName ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
+                />
                 {claimErrors.contactName && <p className="text-[11px] text-red-500 mt-1">{claimErrors.contactName}</p>}
               </div>
 
               <div>
-                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><Phone size={14} className="text-primary" /> 联系电话</label>
-                <input value={claimForm.contactPhone} onChange={(e) => setClaimForm({ ...claimForm, contactPhone: e.target.value })} placeholder="手机号" className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${claimErrors.contactPhone ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20"}`} />
-                {claimErrors.contactPhone && <p className="text-[11px] text-red-500 mt-1">{claimErrors.contactPhone}</p>}
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <Phone size={14} className="text-primary" /> 联系电话
+                </label>
+                <input
+                  value={claimForm.contactPhone}
+                  onChange={(e) => setClaimForm({ ...claimForm, contactPhone: e.target.value })}
+                  placeholder="手机号"
+                  className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${claimErrors.contactPhone ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
+                />
+                {claimErrors.contactPhone && (
+                  <p className="text-[11px] text-red-500 mt-1">{claimErrors.contactPhone}</p>
+                )}
               </div>
 
-              <button type="submit" className="w-full h-12 rounded-full bg-primary text-white text-[14px] font-medium">提交认领申请</button>
+              <button type="submit" className="w-full h-12 rounded-full bg-primary text-white text-[14px] font-medium">
+                提交认领申请
+              </button>
             </form>
           </div>
         </div>
@@ -239,61 +261,127 @@ export function MerchantRegistrationPage() {
 
             <form onSubmit={handleRegistrationSubmit} className="space-y-4">
               <div>
-                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><Store size={14} className="text-primary" /> 店铺名称</label>
-                <input value={form.shopName} onChange={(e) => setForm({ ...form, shopName: e.target.value })} placeholder="请输入您的店铺名称" className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.shopName ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20"}`} />
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <Store size={14} className="text-primary" /> 店铺名称
+                </label>
+                <input
+                  value={form.shopName}
+                  onChange={(e) => setForm({ ...form, shopName: e.target.value })}
+                  placeholder="请输入您的店铺名称"
+                  className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.shopName ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
+                />
                 {errors.shopName && <p className="text-[11px] text-red-500 mt-1">{errors.shopName}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><User size={14} className="text-primary" /> 联系人</label>
-                  <input value={form.contactName} onChange={(e) => setForm({ ...form, contactName: e.target.value })} placeholder="您的姓名" className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.contactName ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`} />
+                  <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                    <User size={14} className="text-primary" /> 联系人
+                  </label>
+                  <input
+                    value={form.contactName}
+                    onChange={(e) => setForm({ ...form, contactName: e.target.value })}
+                    placeholder="您的姓名"
+                    className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.contactName ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`}
+                  />
                   {errors.contactName && <p className="text-[11px] text-red-500 mt-1">{errors.contactName}</p>}
                 </div>
                 <div>
-                  <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><Phone size={14} className="text-primary" /> 联系电话</label>
-                  <input value={form.contactPhone} onChange={(e) => setForm({ ...form, contactPhone: e.target.value })} placeholder="手机号" className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.contactPhone ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`} />
+                  <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                    <Phone size={14} className="text-primary" /> 联系电话
+                  </label>
+                  <input
+                    value={form.contactPhone}
+                    onChange={(e) => setForm({ ...form, contactPhone: e.target.value })}
+                    placeholder="手机号"
+                    className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.contactPhone ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`}
+                  />
                   {errors.contactPhone && <p className="text-[11px] text-red-500 mt-1">{errors.contactPhone}</p>}
                 </div>
               </div>
 
               <div>
-                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><Store size={14} className="text-primary" /> 经营类型</label>
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <Store size={14} className="text-primary" /> 经营类型
+                </label>
                 <div className="flex flex-wrap gap-2">
                   {CATEGORIES.map((cat) => (
-                    <button key={cat.key} type="button" onClick={() => { setForm({ ...form, category: cat.key }); setErrors({ ...errors, category: "" }) }} className={`px-4 h-9 rounded-full text-[12px] transition-all ${form.category === cat.key ? "bg-primary text-white" : "bg-surface-page text-text-secondary"}`}>{cat.label}</button>
+                    <button
+                      key={cat.key}
+                      type="button"
+                      onClick={() => {
+                        setForm({ ...form, category: cat.key })
+                        setErrors({ ...errors, category: "" })
+                      }}
+                      className={`px-4 h-9 rounded-full text-[12px] transition-all ${form.category === cat.key ? "bg-primary text-white" : "bg-surface-page text-text-secondary"}`}
+                    >
+                      {cat.label}
+                    </button>
                   ))}
                 </div>
                 {errors.category && <p className="text-[11px] text-red-500 mt-1">{errors.category}</p>}
               </div>
 
               <div>
-                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><MapPin size={14} className="text-primary" /> 店铺地址</label>
-                <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="丽江古城内详细地址" className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.address ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`} />
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <MapPin size={14} className="text-primary" /> 店铺地址
+                </label>
+                <input
+                  value={form.address}
+                  onChange={(e) => setForm({ ...form, address: e.target.value })}
+                  placeholder="丽江古城内详细地址"
+                  className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.address ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`}
+                />
                 {errors.address && <p className="text-[11px] text-red-500 mt-1">{errors.address}</p>}
               </div>
 
               <div>
-                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><Phone size={14} className="text-primary" /> 店铺电话</label>
-                <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="游客咨询电话" className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.phone ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`} />
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <Phone size={14} className="text-primary" /> 店铺电话
+                </label>
+                <input
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  placeholder="游客咨询电话"
+                  className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${errors.phone ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`}
+                />
                 {errors.phone && <p className="text-[11px] text-red-500 mt-1">{errors.phone}</p>}
               </div>
 
               <div>
-                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><Clock size={14} className="text-primary" /> 营业时间</label>
-                <input value={form.hours} onChange={(e) => setForm({ ...form, hours: e.target.value })} placeholder="如 09:00-22:00" className="w-full h-11 px-4 rounded-xl border border-border-light text-[13px] outline-none focus:border-primary" />
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <Clock size={14} className="text-primary" /> 营业时间
+                </label>
+                <input
+                  value={form.hours}
+                  onChange={(e) => setForm({ ...form, hours: e.target.value })}
+                  placeholder="如 09:00-22:00"
+                  className="w-full h-11 px-4 rounded-xl border border-border-light text-[13px] outline-none focus:border-primary"
+                />
               </div>
 
               <div>
-                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5"><AlignLeft size={14} className="text-primary" /> 店铺简介</label>
-                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="简要描述您的店铺特色和服务" rows={3} className={`w-full px-4 py-3 rounded-xl border text-[13px] outline-none resize-none ${errors.description ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`} />
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <AlignLeft size={14} className="text-primary" /> 店铺简介
+                </label>
+                <textarea
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  placeholder="简要描述您的店铺特色和服务"
+                  rows={3}
+                  className={`w-full px-4 py-3 rounded-xl border text-[13px] outline-none resize-none ${errors.description ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary"}`}
+                />
                 {errors.description && <p className="text-[11px] text-red-500 mt-1">{errors.description}</p>}
               </div>
 
-              <button type="submit" className="w-full h-12 rounded-full bg-primary text-white text-[14px] font-medium">提交入驻申请</button>
+              <button type="submit" className="w-full h-12 rounded-full bg-primary text-white text-[14px] font-medium">
+                提交入驻申请
+              </button>
             </form>
 
-            <p className="text-center text-[11px] text-text-tertiary mt-4">提交后需平台管理员审核，审核通过后即可管理您的店铺信息</p>
+            <p className="text-center text-[11px] text-text-tertiary mt-4">
+              提交后需平台管理员审核，审核通过后即可管理您的店铺信息
+            </p>
           </div>
         </div>
       </div>
@@ -330,7 +418,10 @@ export function MerchantRegistrationPage() {
         ) : (
           <div className="space-y-3">
             {displayedMerchants.map((m) => (
-              <div key={m.id} className="bg-white rounded-2xl overflow-hidden shadow-[0_4px_14px_rgba(60,120,200,0.10)]">
+              <div
+                key={m.id}
+                className="bg-white rounded-2xl overflow-hidden shadow-[0_4px_14px_rgba(60,120,200,0.10)]"
+              >
                 <div className="relative h-28">
                   <ImageWithFallback src={m.cover} alt={m.name} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />

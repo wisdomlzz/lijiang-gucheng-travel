@@ -16,9 +16,9 @@ export const LEVEL_META: Record<WarningLevel, { label: string; color: string; bg
 export interface WarningArea {
   id: string
   name: string
-  capacity: number       // 最大承载量
-  current: number        // 当前人流
-  level: WarningLevel    // 当前等级（由 current/capacity 推导）
+  capacity: number // 最大承载量
+  current: number // 当前人流
+  level: WarningLevel // 当前等级（由 current/capacity 推导）
   lng: number
   lat: number
 }
@@ -27,7 +27,7 @@ export interface WarningRule {
   id: string
   areaId: string
   areaName: string
-  yellowThreshold: number  // 百分比 0-100
+  yellowThreshold: number // 百分比 0-100
   orangeThreshold: number
   redThreshold: number
   enabled: boolean
@@ -41,7 +41,7 @@ export interface WarningEvent {
   capacity: number
   triggeredAt: string
   status: "active" | "resolved"
-  action?: string       // 疏导措施
+  action?: string // 疏导措施
 }
 
 type FlowWarningState = {
@@ -75,23 +75,55 @@ function calcLevel(current: number, capacity: number, rule?: WarningRule): Warni
 }
 
 const SEED_AREAS: WarningArea[] = [
-  { id: "area_sq", name: "四方街", capacity: 3000, current: 1850, level: "yellow", lng: 100.2345, lat: 26.8680 },
-  { id: "area_yh", name: "玉河广场", capacity: 2000, current: 1650, level: "orange", lng: 100.2320, lat: 26.8720 },
-  { id: "area_mf", name: "木府", capacity: 1500, current: 420, level: "green", lng: 100.2280, lat: 26.8670 },
-  { id: "area_nm", name: "古城南门", capacity: 2500, current: 2380, level: "red", lng: 100.2370, lat: 26.8650 },
+  { id: "area_sq", name: "四方街", capacity: 3000, current: 1850, level: "yellow", lng: 100.2345, lat: 26.868 },
+  { id: "area_yh", name: "玉河广场", capacity: 2000, current: 1650, level: "orange", lng: 100.232, lat: 26.872 },
+  { id: "area_mf", name: "木府", capacity: 1500, current: 420, level: "green", lng: 100.228, lat: 26.867 },
+  { id: "area_nm", name: "古城南门", capacity: 2500, current: 2380, level: "red", lng: 100.237, lat: 26.865 },
   { id: "area_bm", name: "古城北门", capacity: 2500, current: 1200, level: "yellow", lng: 100.2325, lat: 26.8735 },
-  { id: "area_sdj", name: "狮子山", capacity: 1000, current: 280, level: "green", lng: 100.2290, lat: 26.8700 },
+  { id: "area_sdj", name: "狮子山", capacity: 1000, current: 280, level: "green", lng: 100.229, lat: 26.87 },
 ]
 
 const SEED_RULES: WarningRule[] = SEED_AREAS.map((a) => ({
-  id: `rule_${a.id}`, areaId: a.id, areaName: a.name,
-  yellowThreshold: 60, orangeThreshold: 80, redThreshold: 95, enabled: true,
+  id: `rule_${a.id}`,
+  areaId: a.id,
+  areaName: a.name,
+  yellowThreshold: 60,
+  orangeThreshold: 80,
+  redThreshold: 95,
+  enabled: true,
 }))
 
 const SEED_EVENTS: WarningEvent[] = [
-  { id: "we1", areaName: "古城南门", level: "red", current: 2380, capacity: 2500, triggeredAt: "2026-06-29 14:20", status: "active", action: "已启动单向通行疏导，增派 3 名引导员" },
-  { id: "we2", areaName: "玉河广场", level: "orange", current: 1650, capacity: 2000, triggeredAt: "2026-06-29 13:45", status: "active", action: "建议游客分流至木府方向" },
-  { id: "we3", areaName: "四方街", level: "yellow", current: 1850, capacity: 3000, triggeredAt: "2026-06-28 16:00", status: "resolved", action: "人流已回落" },
+  {
+    id: "we1",
+    areaName: "古城南门",
+    level: "red",
+    current: 2380,
+    capacity: 2500,
+    triggeredAt: "2026-06-29 14:20",
+    status: "active",
+    action: "已启动单向通行疏导，增派 3 名引导员",
+  },
+  {
+    id: "we2",
+    areaName: "玉河广场",
+    level: "orange",
+    current: 1650,
+    capacity: 2000,
+    triggeredAt: "2026-06-29 13:45",
+    status: "active",
+    action: "建议游客分流至木府方向",
+  },
+  {
+    id: "we3",
+    areaName: "四方街",
+    level: "yellow",
+    current: 1850,
+    capacity: 3000,
+    triggeredAt: "2026-06-28 16:00",
+    status: "resolved",
+    action: "人流已回落",
+  },
 ]
 
 export const useFlowWarningStore = create<FlowWarningState>((set, get) => ({
@@ -106,14 +138,15 @@ export const useFlowWarningStore = create<FlowWarningState>((set, get) => ({
     return calcLevel(area.current, area.capacity, rule)
   },
 
-  simulateFlow: () => set((s) => ({
-    areas: s.areas.map((a) => {
-      const delta = Math.floor((Math.random() - 0.4) * a.capacity * 0.15)
-      const current = Math.max(0, Math.min(a.capacity, a.current + delta))
-      const rule = s.rules.find((r) => r.areaId === a.id && r.enabled)
-      return { ...a, current, level: calcLevel(current, a.capacity, rule) }
-    }),
-  })),
+  simulateFlow: () =>
+    set((s) => ({
+      areas: s.areas.map((a) => {
+        const delta = Math.floor((Math.random() - 0.4) * a.capacity * 0.15)
+        const current = Math.max(0, Math.min(a.capacity, a.current + delta))
+        const rule = s.rules.find((r) => r.areaId === a.id && r.enabled)
+        return { ...a, current, level: calcLevel(current, a.capacity, rule) }
+      }),
+    })),
 
   triggerWarning: (areaId) => {
     const area = get().areas.find((a) => a.id === areaId)
@@ -124,14 +157,22 @@ export const useFlowWarningStore = create<FlowWarningState>((set, get) => ({
     const exists = get().events.some((e) => e.areaName === area.name && e.status === "active")
     if (exists) return
     set((s) => ({
-      events: [{
-        id: `we${Date.now()}`, areaName: area.name, level, current: area.current, capacity: area.capacity,
-        triggeredAt: new Date().toLocaleString("zh-CN"), status: "active",
-        action: level === "red" ? "建议启动应急预案，单向通行" : level === "orange" ? "建议游客分流" : "持续监测",
-      }, ...s.events],
+      events: [
+        {
+          id: `we${Date.now()}`,
+          areaName: area.name,
+          level,
+          current: area.current,
+          capacity: area.capacity,
+          triggeredAt: new Date().toLocaleString("zh-CN"),
+          status: "active",
+          action: level === "red" ? "建议启动应急预案，单向通行" : level === "orange" ? "建议游客分流" : "持续监测",
+        },
+        ...s.events,
+      ],
     }))
   },
 
-  resolveEvent: (id) => set((s) => ({ events: s.events.map((e) => e.id === id ? { ...e, status: "resolved" } : e) })),
-  updateRule: (id, patch) => set((s) => ({ rules: s.rules.map((r) => r.id === id ? { ...r, ...patch } : r) })),
+  resolveEvent: (id) => set((s) => ({ events: s.events.map((e) => (e.id === id ? { ...e, status: "resolved" } : e)) })),
+  updateRule: (id, patch) => set((s) => ({ rules: s.rules.map((r) => (r.id === id ? { ...r, ...patch } : r)) })),
 }))

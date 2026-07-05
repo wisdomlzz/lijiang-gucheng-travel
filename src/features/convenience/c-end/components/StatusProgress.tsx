@@ -1,15 +1,14 @@
-import { cn } from "../../../../shared/components/ui/utils";
+import { cn } from "../../../../shared/components/ui/utils"
 
-type Step = { label: string; completed: boolean };
+type Step = { label: string; completed: boolean }
 
 export function StatusProgress({ steps, compact = false }: { steps: Step[]; compact?: boolean }) {
   if (compact) {
-    const completedCount = steps.filter(s => s.completed).length;
-    const totalWidth = 100; // percent
-    const circleWidth = 10; // percent per circle
-    const progressPercent = steps.length > 1
-      ? ((completedCount - 1) / (steps.length - 1)) * (totalWidth - circleWidth)
-      : 0;
+    const completedCount = steps.filter((s) => s.completed).length
+    const totalWidth = 100 // percent
+    const circleWidth = 10 // percent per circle
+    const progressPercent =
+      steps.length > 1 ? ((completedCount - 1) / (steps.length - 1)) * (totalWidth - circleWidth) : 0
 
     return (
       <div className="relative w-full">
@@ -27,21 +26,24 @@ export function StatusProgress({ steps, compact = false }: { steps: Step[]; comp
               <div
                 className={cn(
                   "w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-medium",
-                  step.completed
-                    ? "bg-primary text-white"
-                    : "bg-muted text-muted-foreground",
+                  step.completed ? "bg-primary text-white" : "bg-muted text-muted-foreground"
                 )}
               >
                 {step.completed ? "✓" : idx + 1}
               </div>
-              <span className={cn("text-[8px] mt-0.5 text-center leading-tight w-10", step.completed ? "text-primary font-medium" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "text-[8px] mt-0.5 text-center leading-tight w-10",
+                  step.completed ? "text-primary font-medium" : "text-muted-foreground"
+                )}
+              >
                 {step.label}
               </span>
             </div>
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -49,15 +51,11 @@ export function StatusProgress({ steps, compact = false }: { steps: Step[]; comp
       {steps.map((step, idx) => (
         <div key={idx} className="flex-1 flex flex-col items-center gap-1">
           <div className="flex items-center w-full">
-            {idx > 0 && (
-              <div className={cn("h-0.5 flex-1", step.completed ? "bg-primary" : "bg-muted")} />
-            )}
+            {idx > 0 && <div className={cn("h-0.5 flex-1", step.completed ? "bg-primary" : "bg-muted")} />}
             <div
               className={cn(
                 "size-6 rounded-full flex items-center justify-center text-xs font-medium shrink-0",
-                step.completed
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground",
+                step.completed ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               )}
             >
               {step.completed ? "✓" : idx + 1}
@@ -72,5 +70,5 @@ export function StatusProgress({ steps, compact = false }: { steps: Step[]; comp
         </div>
       ))}
     </div>
-  );
+  )
 }

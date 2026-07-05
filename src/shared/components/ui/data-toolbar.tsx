@@ -4,13 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { cn } from "./utils"
 import { Button } from "./button"
 import { Input } from "./input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select"
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -61,10 +55,7 @@ function DataToolbar({
   return (
     <div
       data-slot="data-toolbar"
-      className={cn(
-        "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
-        className,
-      )}
+      className={cn("flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", className)}
     >
       {/* Search input */}
       <div className="relative flex-1 max-w-sm">
@@ -141,13 +132,7 @@ function PaginationBar({
   const endItem = Math.min(page * pageSize, total)
 
   return (
-    <div
-      data-slot="pagination-bar"
-      className={cn(
-        "flex flex-wrap items-center gap-2 text-sm",
-        className,
-      )}
-    >
+    <div data-slot="pagination-bar" className={cn("flex flex-wrap items-center gap-2 text-sm", className)}>
       {/* Item count display */}
       <span className="text-muted-foreground whitespace-nowrap">
         {total > 0 ? `${startItem}-${endItem} / ${total}` : "暂无数据"}
@@ -156,10 +141,7 @@ function PaginationBar({
       {/* Page size selector */}
       <div className="flex items-center gap-1.5">
         <span className="text-muted-foreground">每页</span>
-        <Select
-          value={String(pageSize)}
-          onValueChange={(val) => onPageSizeChange(Number(val))}
-        >
+        <Select value={String(pageSize)} onValueChange={(val) => onPageSizeChange(Number(val))}>
           <SelectTrigger className="h-8 w-[70px]">
             <SelectValue />
           </SelectTrigger>

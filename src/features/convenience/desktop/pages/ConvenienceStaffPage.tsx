@@ -24,10 +24,7 @@ export default function ConvenienceStaffPage() {
   const [filter, setFilter] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
 
-  const convenienceStaff = useMemo(
-    () => staff.filter((s) => s.serviceTypes && s.serviceTypes.length > 0),
-    [staff]
-  )
+  const convenienceStaff = useMemo(() => staff.filter((s) => s.serviceTypes && s.serviceTypes.length > 0), [staff])
 
   const filtered = useMemo(() => {
     let list = filter === "all" ? convenienceStaff : convenienceStaff.filter((s) => s.status === filter)
@@ -43,28 +40,44 @@ export default function ConvenienceStaffPage() {
   const stats = useMemo(() => {
     const online = convenienceStaff.filter((s) => s.status === "online").length
     const busy = convenienceStaff.filter((s) => s.status === "busy").length
-    return { total: convenienceStaff.length, online, busy, rest: convenienceStaff.filter((s) => s.status === "rest").length }
+    return {
+      total: convenienceStaff.length,
+      online,
+      busy,
+      rest: convenienceStaff.filter((s) => s.status === "rest").length,
+    }
   }, [convenienceStaff])
 
   return (
     <PageLayout title="服务人员（便民）" description="便民服务派单人员管理">
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <Card><CardContent className="p-5">
-          <div className="flex items-center gap-2"><Users className="size-5 text-muted-foreground" /><span className="text-sm text-muted-foreground">总人数</span></div>
-          <div className="text-2xl font-semibold mt-1">{stats.total}</div>
-        </CardContent></Card>
-        <Card><CardContent className="p-5">
-          <div className="text-sm text-muted-foreground">在线</div>
-          <div className="text-2xl font-semibold mt-1 text-emerald-600">{stats.online}</div>
-        </CardContent></Card>
-        <Card><CardContent className="p-5">
-          <div className="text-sm text-muted-foreground">忙碌</div>
-          <div className="text-2xl font-semibold mt-1 text-amber-600">{stats.busy}</div>
-        </CardContent></Card>
-        <Card><CardContent className="p-5">
-          <div className="text-sm text-muted-foreground">休息</div>
-          <div className="text-2xl font-semibold mt-1 text-gray-600">{stats.rest}</div>
-        </CardContent></Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2">
+              <Users className="size-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">总人数</span>
+            </div>
+            <div className="text-2xl font-semibold mt-1">{stats.total}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="text-sm text-muted-foreground">在线</div>
+            <div className="text-2xl font-semibold mt-1 text-emerald-600">{stats.online}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="text-sm text-muted-foreground">忙碌</div>
+            <div className="text-2xl font-semibold mt-1 text-amber-600">{stats.busy}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="text-sm text-muted-foreground">休息</div>
+            <div className="text-2xl font-semibold mt-1 text-gray-600">{stats.rest}</div>
+          </CardContent>
+        </Card>
       </div>
       <Card className="p-4">
         <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -78,9 +91,13 @@ export default function ConvenienceStaffPage() {
             />
           </div>
           {["all", "online", "busy", "rest", "offline"].map((f) => (
-            <button key={f} onClick={() => setFilter(f)}
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${filter === f ? "bg-primary text-white" : "bg-gray-100 text-text-secondary hover:bg-gray-200"}`}
-            >{f === "all" ? "全部" : STATUS_MAP[f]?.label ?? f}</button>
+            >
+              {f === "all" ? "全部" : (STATUS_MAP[f]?.label ?? f)}
+            </button>
           ))}
         </div>
         <Table>
@@ -100,16 +117,29 @@ export default function ConvenienceStaffPage() {
               <TableRow key={s.id}>
                 <TableCell className="font-medium">{s.name}</TableCell>
                 <TableCell>{s.phone}</TableCell>
-                <TableCell><Badge className={STATUS_MAP[s.status]?.className}>{STATUS_MAP[s.status]?.label}</Badge></TableCell>
+                <TableCell>
+                  <Badge className={STATUS_MAP[s.status]?.className}>{STATUS_MAP[s.status]?.label}</Badge>
+                </TableCell>
                 <TableCell>
                   <div className="flex gap-1 flex-wrap">
-                    {s.serviceTypes?.map((t) => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}
+                    {s.serviceTypes?.map((t) => (
+                      <Badge key={t} variant="secondary" className="text-xs">
+                        {t}
+                      </Badge>
+                    ))}
                   </div>
                 </TableCell>
                 <TableCell>{s.zoneIds?.length ?? 0} 个</TableCell>
                 <TableCell>{s.assignedOrders}</TableCell>
                 <TableCell>
-                  <Button variant={s.enabled ? "default" : "outline"} size="sm" onClick={() => { toggleEnabled(s.id); toast.success(`${s.name} ${s.enabled ? "已禁用" : "已启用"}`) }}>
+                  <Button
+                    variant={s.enabled ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => {
+                      toggleEnabled(s.id)
+                      toast.success(`${s.name} ${s.enabled ? "已禁用" : "已启用"}`)
+                    }}
+                  >
                     {s.enabled ? "启用" : "禁用"}
                   </Button>
                 </TableCell>

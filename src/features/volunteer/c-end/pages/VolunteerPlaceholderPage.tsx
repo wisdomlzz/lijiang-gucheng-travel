@@ -12,7 +12,11 @@ const MAX_CREDENTIAL_IMAGES = 5
 
 // ── Credential Image Upload ──
 
-function CredentialUpload({ images, onAdd, onRemove }: {
+function CredentialUpload({
+  images,
+  onAdd,
+  onRemove,
+}: {
   images: string[]
   onAdd: (urls: string[]) => void
   onRemove: (idx: number) => void
@@ -54,9 +58,10 @@ function CredentialUpload({ images, onAdd, onRemove }: {
               </div>
               <p className="text-[13px] font-medium text-amber-700">上传资质图片</p>
               <p className="text-[11px] text-amber-400">
-                最多 {MAX_CREDENTIAL_IMAGES} 张
-                <span className="mx-1.5 text-amber-300">·</span>
-                <span className="text-amber-500">已选 {images.length}/{MAX_CREDENTIAL_IMAGES}</span>
+                最多 {MAX_CREDENTIAL_IMAGES} 张<span className="mx-1.5 text-amber-300">·</span>
+                <span className="text-amber-500">
+                  已选 {images.length}/{MAX_CREDENTIAL_IMAGES}
+                </span>
               </p>
             </div>
           </div>
@@ -77,16 +82,25 @@ function CredentialUpload({ images, onAdd, onRemove }: {
                 transition={{ duration: 0.2 }}
                 className="relative aspect-[3/4] rounded-xl overflow-hidden bg-slate-100 group"
               >
-                <img src={url} alt={`资质${i + 1}`}
+                <img
+                  src={url}
+                  alt={`资质${i + 1}`}
                   className="size-full object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+                  onError={(e) => {
+                    ;(e.target as HTMLImageElement).style.display = "none"
+                  }}
+                />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                <button onClick={() => onRemove(i)}
-                  className="absolute top-1 right-1 size-6 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500">
+                <button
+                  onClick={() => onRemove(i)}
+                  className="absolute top-1 right-1 size-6 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500"
+                >
                   <X size={12} />
                 </button>
                 <div className="absolute bottom-0 left-0 right-0 px-1.5 py-1 bg-gradient-to-t from-black/50 to-transparent">
-                  <span className="text-[10px] text-white/80 font-medium">{i + 1}/{images.length}</span>
+                  <span className="text-[10px] text-white/80 font-medium">
+                    {i + 1}/{images.length}
+                  </span>
                 </div>
               </motion.div>
             ))}
@@ -122,7 +136,7 @@ function CredentialUpload({ images, onAdd, onRemove }: {
 
 export function VolunteerPlaceholderPage() {
   const navigate = useNavigate()
-  const volunteers = useVolunteerStore((s) => s.volunteers)   // subscribe to data changes
+  const volunteers = useVolunteerStore((s) => s.volunteers) // subscribe to data changes
   const register = useVolunteerStore((s) => s.register)
   const getByUserId = useVolunteerStore((s) => s.getByUserId)
   const resubmitVolunteer = useVolunteerStore((s) => s.resubmitVolunteer)
@@ -143,23 +157,49 @@ export function VolunteerPlaceholderPage() {
   }, [existing, navigate])
 
   const handleSubmit = () => {
-    if (!userId) { toast.error("请先登录"); return }
+    if (!userId) {
+      toast.error("请先登录")
+      return
+    }
     // 校验所有必填字段
-    if (!name.trim()) { toast.error("请填写姓名"); return }
-    if (!phone.trim()) { toast.error("请填写电话"); return }
-    if (!/^1\d{10}$/.test(phone.trim())) { toast.error("请填写正确的11位手机号"); return }
-    if (!politicalStatus) { toast.error("请选择政治面貌"); return }
-    if (!workUnit.trim()) { toast.error("请填写工作单位"); return }
-    if (credentialImages.length === 0) { toast.error("请上传资质图片"); return }
+    if (!name.trim()) {
+      toast.error("请填写姓名")
+      return
+    }
+    if (!phone.trim()) {
+      toast.error("请填写电话")
+      return
+    }
+    if (!/^1\d{10}$/.test(phone.trim())) {
+      toast.error("请填写正确的11位手机号")
+      return
+    }
+    if (!politicalStatus) {
+      toast.error("请选择政治面貌")
+      return
+    }
+    if (!workUnit.trim()) {
+      toast.error("请填写工作单位")
+      return
+    }
+    if (credentialImages.length === 0) {
+      toast.error("请上传资质图片")
+      return
+    }
     const res = register(userId, name.trim(), phone.trim(), politicalStatus, workUnit.trim(), credentialImages)
-    if (res.ok) toast.success(res.msg); else toast.error(res.msg)
+    if (res.ok) toast.success(res.msg)
+    else toast.error(res.msg)
   }
 
   const handleResubmit = () => {
-    if (credentialImages.length === 0) { toast.error("请上传资质图片"); return }
+    if (credentialImages.length === 0) {
+      toast.error("请上传资质图片")
+      return
+    }
     if (!existing) return
     const res = resubmitVolunteer(existing.id, credentialImages)
-    if (res.ok) toast.success(res.msg); else toast.error(res.msg)
+    if (res.ok) toast.success(res.msg)
+    else toast.error(res.msg)
   }
 
   // ── Waiting / rejected state ──
@@ -169,9 +209,11 @@ export function VolunteerPlaceholderPage() {
       <div className="min-h-screen bg-surface-page pb-6">
         <PageHeader title="志愿者认证" back="/c/home" />
         <div className="px-4 py-5">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-            className="rounded-3xl bg-white p-6 shadow-[0_8px_28px_rgba(139,111,92,0.08)] overflow-hidden relative">
-
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-3xl bg-white p-6 shadow-[0_8px_28px_rgba(139,111,92,0.08)] overflow-hidden relative"
+          >
             {/* Decorative top accent */}
             <div className="absolute -top-10 -right-10 size-32 rounded-full bg-gradient-to-br from-amber-500/6 to-transparent" />
 
@@ -179,8 +221,14 @@ export function VolunteerPlaceholderPage() {
               <div className="text-center">
                 <div className="size-16 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-4">
                   <div className="size-3 rounded-full bg-amber-400 animate-pulse" />
-                  <div className="size-3 rounded-full bg-amber-400 animate-pulse ml-1.5" style={{ animationDelay: "0.2s" }} />
-                  <div className="size-3 rounded-full bg-amber-400 animate-pulse ml-1.5" style={{ animationDelay: "0.4s" }} />
+                  <div
+                    className="size-3 rounded-full bg-amber-400 animate-pulse ml-1.5"
+                    style={{ animationDelay: "0.2s" }}
+                  />
+                  <div
+                    className="size-3 rounded-full bg-amber-400 animate-pulse ml-1.5"
+                    style={{ animationDelay: "0.4s" }}
+                  />
                 </div>
                 <h2 className="text-[18px] font-semibold text-slate-800">审核中</h2>
                 <p className="text-[13px] text-slate-400 mt-1 leading-relaxed max-w-[240px] mx-auto">
@@ -232,9 +280,16 @@ export function VolunteerPlaceholderPage() {
                 </div>
                 <div>
                   <label className="text-[13px] font-medium text-slate-700 mb-2 block">重新上传资质图片</label>
-                  <CredentialUpload images={credentialImages} onAdd={(urls) => setCredentialImages((prev) => [...prev, ...urls])} onRemove={(i) => setCredentialImages((prev) => prev.filter((_, j) => j !== i))} />
-                  <button onClick={handleResubmit} disabled={credentialImages.length === 0}
-                    className="w-full h-11 rounded-2xl bg-primary text-white text-[14px] font-medium mt-4 flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.98] transition-transform">
+                  <CredentialUpload
+                    images={credentialImages}
+                    onAdd={(urls) => setCredentialImages((prev) => [...prev, ...urls])}
+                    onRemove={(i) => setCredentialImages((prev) => prev.filter((_, j) => j !== i))}
+                  />
+                  <button
+                    onClick={handleResubmit}
+                    disabled={credentialImages.length === 0}
+                    className="w-full h-11 rounded-2xl bg-primary text-white text-[14px] font-medium mt-4 flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.98] transition-transform"
+                  >
                     <RefreshCw size={15} /> 重新提交审核
                   </button>
                   <button
@@ -251,7 +306,10 @@ export function VolunteerPlaceholderPage() {
               </div>
             )}
 
-            <button onClick={() => navigate("/c/home")} className="mt-4 text-[12px] text-slate-300 hover:text-slate-500 transition-colors w-full text-center">
+            <button
+              onClick={() => navigate("/c/home")}
+              className="mt-4 text-[12px] text-slate-300 hover:text-slate-500 transition-colors w-full text-center"
+            >
               返回首页
             </button>
           </motion.div>
@@ -266,9 +324,11 @@ export function VolunteerPlaceholderPage() {
       <PageHeader title="志愿者认证" back="/c/home" />
 
       <div className="px-4 py-5">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl bg-white p-5 shadow-[0_8px_28px_rgba(139,111,92,0.08)] overflow-hidden relative">
-
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl bg-white p-5 shadow-[0_8px_28px_rgba(139,111,92,0.08)] overflow-hidden relative"
+        >
           {/* Decorative grain */}
           <div className="absolute -top-10 -right-10 size-36 rounded-full bg-gradient-to-br from-amber-500/5 to-transparent" />
 
@@ -289,8 +349,12 @@ export function VolunteerPlaceholderPage() {
               <label className="text-[12px] font-medium text-slate-600 mb-1.5 block">姓名</label>
               <div className="relative">
                 <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" />
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="请输入姓名"
-                  className="w-full h-11 pl-10 pr-3 rounded-2xl border border-slate-200 bg-[#FAFAF8] text-[14px] outline-none focus:border-amber-300 focus:bg-white transition-colors placeholder:text-slate-300" />
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="请输入姓名"
+                  className="w-full h-11 pl-10 pr-3 rounded-2xl border border-slate-200 bg-[#FAFAF8] text-[14px] outline-none focus:border-amber-300 focus:bg-white transition-colors placeholder:text-slate-300"
+                />
               </div>
             </div>
 
@@ -299,8 +363,13 @@ export function VolunteerPlaceholderPage() {
               <label className="text-[12px] font-medium text-slate-600 mb-1.5 block">电话</label>
               <div className="relative">
                 <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" />
-                <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="请输入手机号" maxLength={11}
-                  className="w-full h-11 pl-10 pr-3 rounded-2xl border border-slate-200 bg-[#FAFAF8] text-[14px] outline-none focus:border-amber-300 focus:bg-white transition-colors placeholder:text-slate-300" />
+                <input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="请输入手机号"
+                  maxLength={11}
+                  className="w-full h-11 pl-10 pr-3 rounded-2xl border border-slate-200 bg-[#FAFAF8] text-[14px] outline-none focus:border-amber-300 focus:bg-white transition-colors placeholder:text-slate-300"
+                />
               </div>
             </div>
 
@@ -309,12 +378,15 @@ export function VolunteerPlaceholderPage() {
               <label className="text-[12px] font-medium text-slate-600 mb-1.5 block">政治面貌</label>
               <div className="flex gap-2 flex-wrap">
                 {POLITICAL_OPTIONS.map((opt) => (
-                  <button key={opt} onClick={() => setPoliticalStatus(opt)}
+                  <button
+                    key={opt}
+                    onClick={() => setPoliticalStatus(opt)}
                     className={`px-4 py-2 rounded-xl text-[13px] border transition-all ${
                       politicalStatus === opt
                         ? "bg-amber-500 text-white border-amber-500 shadow-sm shadow-amber-200"
                         : "bg-white text-slate-600 border-slate-200 hover:border-amber-200 hover:bg-amber-50/30"
-                    }`}>
+                    }`}
+                  >
                     {opt}
                   </button>
                 ))}
@@ -326,20 +398,30 @@ export function VolunteerPlaceholderPage() {
               <label className="text-[12px] font-medium text-slate-600 mb-1.5 block">工作单位</label>
               <div className="relative">
                 <Building2 size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" />
-                <input value={workUnit} onChange={(e) => setWorkUnit(e.target.value)} placeholder="请输入工作单位"
-                  className="w-full h-11 pl-10 pr-3 rounded-2xl border border-slate-200 bg-[#FAFAF8] text-[14px] outline-none focus:border-amber-300 focus:bg-white transition-colors placeholder:text-slate-300" />
+                <input
+                  value={workUnit}
+                  onChange={(e) => setWorkUnit(e.target.value)}
+                  placeholder="请输入工作单位"
+                  className="w-full h-11 pl-10 pr-3 rounded-2xl border border-slate-200 bg-[#FAFAF8] text-[14px] outline-none focus:border-amber-300 focus:bg-white transition-colors placeholder:text-slate-300"
+                />
               </div>
             </div>
 
             {/* Credential images */}
             <div>
               <label className="text-[12px] font-medium text-slate-600 mb-2 block">资质图片</label>
-              <CredentialUpload images={credentialImages} onAdd={(urls) => setCredentialImages((prev) => [...prev, ...urls])} onRemove={(i) => setCredentialImages((prev) => prev.filter((_, j) => j !== i))} />
+              <CredentialUpload
+                images={credentialImages}
+                onAdd={(urls) => setCredentialImages((prev) => [...prev, ...urls])}
+                onRemove={(i) => setCredentialImages((prev) => prev.filter((_, j) => j !== i))}
+              />
             </div>
 
             {/* Submit */}
-            <button onClick={handleSubmit}
-              className="w-full h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white text-[15px] font-medium shadow-lg shadow-amber-200/50 active:scale-[0.98] transition-transform mt-1">
+            <button
+              onClick={handleSubmit}
+              className="w-full h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white text-[15px] font-medium shadow-lg shadow-amber-200/50 active:scale-[0.98] transition-transform mt-1"
+            >
               提交认证
             </button>
           </div>

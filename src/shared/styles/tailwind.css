@@ -47,6 +47,14 @@
   --color-primary-50: var(--primary-50);
   --color-primary-100: var(--primary-100);
   --color-primary-200: var(--primary-200);
+
+  --color-sky-deep: var(--sky-deep);
+  --color-sky-mid: var(--sky-mid);
+  --color-sky-light: var(--sky-light);
+  --color-sky-50: var(--sky-50);
+  --color-sky-100: var(--sky-100);
+  --color-sky-200: var(--sky-200);
+
   --color-text-heading: var(--text-heading);
   --color-text-body: var(--text-body);
   --color-text-secondary: var(--text-secondary);
@@ -58,6 +66,15 @@
   --color-border-light: var(--border-light);
   --color-border-blue: var(--border-blue);
   --color-star-gold: var(--star-gold);
+
+  --color-badge-hot: var(--badge-hot);
+  --color-badge-sale: var(--badge-sale);
+  --color-badge-culture: var(--badge-culture);
+  --color-badge-notice: var(--badge-notice);
+  --color-badge-volunteer: var(--badge-volunteer);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-elevated: var(--shadow-elevated);
 
   /* ── Status color mappings (keep backward compat) ── */
   --color-success: var(--success);
@@ -87,7 +104,9 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     height: 100%;
   }
 }

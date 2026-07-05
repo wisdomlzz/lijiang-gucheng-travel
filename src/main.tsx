@@ -8,10 +8,12 @@ import { LandingPage } from "./LandingPage"
 import { DemoSwitcher } from "./DemoSwitcher"
 import { useZoomStore } from "./shared/stores/zoom-store"
 
-const CApp = lazy(() => import("./c-end/App").then(m => ({ default: m.CApp })))
-const BApp = lazy(() => import("./b-end/App").then(m => ({ default: m.BApp })))
-const DesktopApp = lazy(() => import("./desktop/App").then(m => ({ default: m.DesktopApp })))
-const RequirementPage = lazy(() => import("./desktop/pages/RequirementPage").then(m => ({ default: m.RequirementPage })))
+const CApp = lazy(() => import("./c-end/App").then((m) => ({ default: m.CApp })))
+const BApp = lazy(() => import("./b-end/App").then((m) => ({ default: m.BApp })))
+const DesktopApp = lazy(() => import("./desktop/App").then((m) => ({ default: m.DesktopApp })))
+const RequirementPage = lazy(() =>
+  import("./desktop/pages/RequirementPage").then((m) => ({ default: m.RequirementPage }))
+)
 
 const MIN_SCALE = 0.4
 const MAX_SCALE = 1

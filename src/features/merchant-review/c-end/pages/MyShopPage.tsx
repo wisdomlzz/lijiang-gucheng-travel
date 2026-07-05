@@ -49,7 +49,10 @@ export function MyShopPage() {
   const allRequests = useMerchantReviewStore((s) => s.requests)
   const submitChange = useMerchantReviewStore((s) => s.submitChange)
 
-  const merchant = useMemo(() => merchants.find((m) => m.relatedUser === supplierName) ?? merchants[0], [merchants, supplierName])
+  const merchant = useMemo(
+    () => merchants.find((m) => m.relatedUser === supplierName) ?? merchants[0],
+    [merchants, supplierName]
+  )
   const myRequests = useMemo(() => allRequests.filter((r) => r.supplierId === supplierId), [allRequests, supplierId])
 
   const [editing, setEditing] = useState(false)
@@ -64,10 +67,21 @@ export function MyShopPage() {
 
   const handleSubmit = () => {
     const fields = []
-    if (form.hours !== merchant.hours) fields.push({ field: "hours", label: "营业时间", oldValue: merchant.hours, newValue: form.hours })
-    if (form.phone !== merchant.phone) fields.push({ field: "phone", label: "联系电话", oldValue: merchant.phone, newValue: form.phone })
-    if (form.description !== merchant.description) fields.push({ field: "description", label: "店铺简介", oldValue: merchant.description, newValue: form.description })
-    if (fields.length === 0) { toast.info("未修改任何信息"); return }
+    if (form.hours !== merchant.hours)
+      fields.push({ field: "hours", label: "营业时间", oldValue: merchant.hours, newValue: form.hours })
+    if (form.phone !== merchant.phone)
+      fields.push({ field: "phone", label: "联系电话", oldValue: merchant.phone, newValue: form.phone })
+    if (form.description !== merchant.description)
+      fields.push({
+        field: "description",
+        label: "店铺简介",
+        oldValue: merchant.description,
+        newValue: form.description,
+      })
+    if (fields.length === 0) {
+      toast.info("未修改任何信息")
+      return
+    }
     submitChange({ supplierId, supplierName, merchantName: merchant.name, fields })
     toast.success("变更已提交，等待平台审核")
     setEditing(false)
@@ -93,7 +107,10 @@ export function MyShopPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <p className="text-[17px] font-semibold text-text-heading">{merchant.name}</p>
-                <button onClick={() => setOpen(!open)} className={`text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1 ${open ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-text-tertiary"}`}>
+                <button
+                  onClick={() => setOpen(!open)}
+                  className={`text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1 ${open ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-text-tertiary"}`}
+                >
                   <Power size={11} /> {open ? "营业中" : "休息中"}
                 </button>
               </div>
@@ -108,7 +125,10 @@ export function MyShopPage() {
       {latestRequest && (
         <div className="px-4 mt-3">
           <div className={`rounded-xl p-3 flex items-center gap-2 ${STATUS_META[latestRequest.status].bg}`}>
-            {(() => { const Icon = STATUS_META[latestRequest.status].icon; return <Icon size={16} className={STATUS_META[latestRequest.status].color} /> })()}
+            {(() => {
+              const Icon = STATUS_META[latestRequest.status].icon
+              return <Icon size={16} className={STATUS_META[latestRequest.status].color} />
+            })()}
             <div className="flex-1">
               <p className={`text-[12px] font-medium ${STATUS_META[latestRequest.status].color}`}>
                 最近变更：{STATUS_META[latestRequest.status].label}
@@ -125,8 +145,14 @@ export function MyShopPage() {
       <div className="px-4 mt-3">
         <div className="bg-white rounded-2xl p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[14px] font-semibold text-text-heading flex items-center gap-1.5"><Store size={16} /> 店铺信息</p>
-            {!editing && <button onClick={() => setEditing(true)} className="text-[12px] text-primary">编辑</button>}
+            <p className="text-[14px] font-semibold text-text-heading flex items-center gap-1.5">
+              <Store size={16} /> 店铺信息
+            </p>
+            {!editing && (
+              <button onClick={() => setEditing(true)} className="text-[12px] text-primary">
+                编辑
+              </button>
+            )}
           </div>
 
           {[
@@ -137,8 +163,11 @@ export function MyShopPage() {
               <Icon size={16} className="text-text-tertiary shrink-0" />
               <span className="text-[13px] text-text-secondary w-20">{label}</span>
               {editing ? (
-                <input value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="flex-1 text-[13px] text-right outline-none bg-gray-50 rounded px-2 py-1" />
+                <input
+                  value={form[key]}
+                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                  className="flex-1 text-[13px] text-right outline-none bg-gray-50 rounded px-2 py-1"
+                />
               ) : (
                 <span className="flex-1 text-[13px] text-text-heading text-right">{form[key]}</span>
               )}
@@ -151,8 +180,12 @@ export function MyShopPage() {
               <span className="text-[13px] text-text-secondary">店铺简介</span>
             </div>
             {editing ? (
-              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
-                rows={3} className="w-full text-[13px] outline-none bg-gray-50 rounded-lg p-2 resize-none" />
+              <textarea
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                rows={3}
+                className="w-full text-[13px] outline-none bg-gray-50 rounded-lg p-2 resize-none"
+              />
             ) : (
               <p className="text-[13px] text-text-body leading-relaxed">{form.description}</p>
             )}
@@ -160,9 +193,21 @@ export function MyShopPage() {
 
           {editing && (
             <div className="flex gap-2 mt-2">
-              <button onClick={() => { setForm({ hours: merchant.hours, phone: merchant.phone, description: merchant.description }); setEditing(false) }}
-                className="flex-1 h-10 rounded-xl bg-gray-100 text-text-body text-[13px]">取消</button>
-              <button onClick={handleSubmit} className="flex-1 h-10 rounded-xl bg-primary text-white text-[13px] font-medium">提交审核</button>
+              <button
+                onClick={() => {
+                  setForm({ hours: merchant.hours, phone: merchant.phone, description: merchant.description })
+                  setEditing(false)
+                }}
+                className="flex-1 h-10 rounded-xl bg-gray-100 text-text-body text-[13px]"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="flex-1 h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
+              >
+                提交审核
+              </button>
             </div>
           )}
         </div>

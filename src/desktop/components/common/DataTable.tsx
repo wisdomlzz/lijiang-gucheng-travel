@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo } from "react"
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,34 +8,31 @@ import {
   flexRender,
   type ColumnDef,
   type SortingState,
-} from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../../shared/components/ui/table";
-import { Button } from "../../../shared/components/ui/button";
-import { Input } from "../../../shared/components/ui/input";
-import { Search, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
+} from "@tanstack/react-table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
+import { Button } from "../../../shared/components/ui/button"
+import { Input } from "../../../shared/components/ui/input"
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
 
 interface DataTableProps<TData> {
-  columns: ColumnDef<TData>[];
-  data: TData[];
-  searchPlaceholder?: string;
-  searchValue?: string;
-  onSearchChange?: (value: string) => void;
-  pageSize?: number;
+  columns: ColumnDef<TData>[]
+  data: TData[]
+  searchPlaceholder?: string
+  searchValue?: string
+  onSearchChange?: (value: string) => void
+  pageSize?: number
 }
 
 export function DataTable<TData>({
-  columns, data, searchPlaceholder = "搜索...",
-  searchValue, onSearchChange, pageSize = 10,
+  columns,
+  data,
+  searchPlaceholder = "搜索...",
+  searchValue,
+  onSearchChange,
+  pageSize = 10,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [globalFilter, setGlobalFilter] = useState("")
 
   const table = useReactTable({
     data,
@@ -48,12 +45,12 @@ export function DataTable<TData>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: { pagination: { pageSize } },
-  });
+  })
 
   const handleSearch = (v: string) => {
-    setGlobalFilter(v);
-    onSearchChange?.(v);
-  };
+    setGlobalFilter(v)
+    onSearchChange?.(v)
+  }
 
   return (
     <div className="space-y-3">
@@ -105,9 +102,7 @@ export function DataTable<TData>({
               table.getRowModel().rows.map((r) => (
                 <TableRow key={r.id}>
                   {r.getVisibleCells().map((c) => (
-                    <TableCell key={c.id}>
-                      {flexRender(c.column.columnDef.cell, c.getContext())}
-                    </TableCell>
+                    <TableCell key={c.id}>{flexRender(c.column.columnDef.cell, c.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
@@ -123,9 +118,7 @@ export function DataTable<TData>({
       </div>
 
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">
-          共 {table.getFilteredRowModel().rows.length} 条
-        </span>
+        <span className="text-sm text-muted-foreground">共 {table.getFilteredRowModel().rows.length} 条</span>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -138,16 +131,11 @@ export function DataTable<TData>({
           <span className="text-sm text-muted-foreground min-w-[80px] text-center">
             第 {table.getState().pagination.pageIndex + 1} / {table.getPageCount()} 页
           </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             <ChevronRight className="size-4" />
           </Button>
         </div>
       </div>
     </div>
-  );
+  )
 }

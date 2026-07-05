@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState } from "react"
 
 export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  const [didError, setDidError] = useState(false);
+  const [didError, setDidError] = useState(false)
 
   if (didError) {
     return (
@@ -11,8 +11,8 @@ export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElemen
       >
         加载失败
       </div>
-    );
+    )
   }
 
-  return <img {...props} onError={() => setDidError(true)} />;
+  return <img {...props} onError={() => setDidError(true)} />
 }

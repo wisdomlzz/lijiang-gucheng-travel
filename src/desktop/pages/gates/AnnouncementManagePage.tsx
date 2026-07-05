@@ -5,13 +5,7 @@ import { Badge } from "../../../shared/components/ui/badge"
 import { Input } from "../../../shared/components/ui/input"
 import { Label } from "../../../shared/components/ui/label"
 import { Textarea } from "../../../shared/components/ui/textarea"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../../shared/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../shared/components/ui/dialog"
 import { ConfirmDialog } from "../../components/common/ConfirmDialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Plus, Trash2, Upload, X, Search } from "lucide-react"
@@ -163,7 +157,7 @@ export function AnnouncementManagePage() {
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
     })
   }
 
@@ -305,7 +299,9 @@ export function AnnouncementManagePage() {
           <div className="space-y-4 py-4">
             {/* 标题 */}
             <div className="space-y-2">
-              <Label>标题 <span className="text-red-500">*</span></Label>
+              <Label>
+                标题 <span className="text-red-500">*</span>
+              </Label>
               <Input
                 value={editTarget?.title || ""}
                 onChange={(e) => setEditTarget(editTarget ? { ...editTarget, title: e.target.value } : null)}
@@ -315,7 +311,9 @@ export function AnnouncementManagePage() {
 
             {/* 内容 */}
             <div className="space-y-2">
-              <Label>内容 <span className="text-red-500">*</span></Label>
+              <Label>
+                内容 <span className="text-red-500">*</span>
+              </Label>
               <Textarea
                 value={editTarget?.content || ""}
                 onChange={(e) => setEditTarget(editTarget ? { ...editTarget, content: e.target.value } : null)}
@@ -355,8 +353,7 @@ export function AnnouncementManagePage() {
                 )}
               </div>
             </div>
-
-	          </div>
+          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>
               取消

@@ -3,13 +3,13 @@
 :root {
   /* ── shadcn/ui system tokens ── */
   --font-size: 16px;
-  --background: #EFF6FC;
+  --background: #eff6fc;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #2563EB;
+  --primary: #2563eb;
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.95 0.0058 264.53);
   --secondary-foreground: #030213;
@@ -34,7 +34,7 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #2563EB;
+  --sidebar-primary: #2563eb;
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
@@ -42,26 +42,48 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* ── App semantic tokens ── */
-  --primary-light: #60A5FA;
-  --primary-50: #EFF6FC;
-  --primary-100: #DBEAFE;
-  --primary-200: #BFDBFE;
-  --text-heading: #1E3A5F;
-  --text-body: #333333;
-  --text-secondary: #666666;
-  --text-tertiary: #999999;
-  --text-caption: #7A93AE;
-  --surface-card: #FFFFFF;
-  --surface-page: #EFF6FC;
-  --surface-elevated: #FFFFFF;
-  --border-light: #F0F0F0;
-  --border-blue: #D6E8F8;
-  --star-gold: #FFD24A;
+  --sky-deep: #2563eb;
+  --sky-mid: #3b82f6;
+  --sky-light: #60a5fa;
+  --sky-50: #eff6fc;
+  --sky-100: #dbeafe;
+  --sky-200: #bfdbfe;
+
+  --primary-light: #60a5fa;
+  --primary-50: #eff6fc;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+
+  --text-heading: #1e293b;
+  --text-body: #334155;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --text-caption: #7a93ae;
+
+  --surface-card: #ffffff;
+  --surface-page: #eff6fc;
+  --surface-elevated: #ffffff;
+
+  --border-light: #f0f0f0;
+  --border-blue: #d6e8f8;
+  --star-gold: #ffd24a;
+
+  /* ── Type badges ── */
+  --badge-hot: #10b981;
+  --badge-sale: #f59e0b;
+  --badge-culture: #8b5cf6;
+  --badge-notice: #f97316;
+  --badge-volunteer: #3b82f6;
+
+  /* ── Surfaces & atmosphere ── */
+  --header-gradient: linear-gradient(180deg, #3b82f6 0%, #60a5fa 55%, #eff6fc 100%);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 8px 24px rgba(59, 130, 246, 0.1);
 
   /* ── Status colors ── */
-  --success: #10B981;
-  --warning: #F59E0B;
-  --info: #3B82F6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --info: #3b82f6;
 }
 
 .dark {

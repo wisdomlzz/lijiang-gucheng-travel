@@ -34,13 +34,16 @@ export function DemoSwitcher() {
   const navigate = useNavigate()
   const isLanding = location.pathname === "/"
 
-  const clamp = useCallback((x: number, y: number) => ({
-    x: Math.max(0, Math.min(x, innerWidth - BTN)),
-    y: Math.max(0, Math.min(y, innerHeight - BTN)),
-  }), [])
+  const clamp = useCallback(
+    (x: number, y: number) => ({
+      x: Math.max(0, Math.min(x, innerWidth - BTN)),
+      y: Math.max(0, Math.min(y, innerHeight - BTN)),
+    }),
+    []
+  )
 
   useEffect(() => {
-    const onResize = () => setPos(p => clamp(p.x, p.y))
+    const onResize = () => setPos((p) => clamp(p.x, p.y))
     addEventListener("resize", onResize)
     return () => removeEventListener("resize", onResize)
   }, [clamp])
@@ -69,9 +72,11 @@ export function DemoSwitcher() {
             removeEventListener("pointermove", move)
             removeEventListener("pointerup", up)
             if (drag.current) {
-              try { localStorage.setItem(KEY, JSON.stringify(posRef.current)) } catch {}
+              try {
+                localStorage.setItem(KEY, JSON.stringify(posRef.current))
+              } catch {}
             } else {
-              setOpen(v => !v)
+              setOpen((v) => !v)
             }
             drag.current = false
           }
@@ -82,7 +87,16 @@ export function DemoSwitcher() {
         className="size-10 rounded-full bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow border border-border-light text-text-tertiary hover:text-text-heading"
         title="切换端"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
           <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
           <line x1="12" y1="22.08" x2="12" y2="12" />
@@ -117,7 +131,10 @@ export function DemoSwitcher() {
             })}
             <div className="h-px bg-border-light my-1" />
             <button
-              onClick={() => { window.open("/requirement", "_blank"); setOpen(false) }}
+              onClick={() => {
+                window.open("/requirement", "_blank")
+                setOpen(false)
+              }}
               className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-gray-50 text-left text-text-body"
             >
               <BookOpen className="size-4 text-muted-foreground" />

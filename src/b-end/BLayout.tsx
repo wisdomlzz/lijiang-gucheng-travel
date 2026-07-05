@@ -1,9 +1,7 @@
 import { type ReactNode } from "react"
 import { useLocation, useNavigate } from "react-router"
 import { MiniProgramFrame } from "../shared/components/MiniProgramFrame"
-import {
-  LayoutGrid, Inbox, Bell, History, User,
-} from "lucide-react"
+import { LayoutGrid, Inbox, Bell, History, User } from "lucide-react"
 
 type TabDef = {
   key: string
@@ -50,10 +48,7 @@ export function BLayout({ children }: BLayoutProps) {
             >
               {t.icon}
             </div>
-            <span
-              className="text-[10px]"
-              style={{ color: isActive ? "var(--primary)" : "#999999" }}
-            >
+            <span className="text-[10px]" style={{ color: isActive ? "var(--primary)" : "#999999" }}>
               {t.label}
             </span>
           </button>
@@ -62,9 +57,5 @@ export function BLayout({ children }: BLayoutProps) {
     </div>
   )
 
-  return (
-    <MiniProgramFrame footer={tabBar}>
-      {children}
-    </MiniProgramFrame>
-  )
+  return <MiniProgramFrame footer={tabBar}>{children}</MiniProgramFrame>
 }

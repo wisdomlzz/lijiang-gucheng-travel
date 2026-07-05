@@ -1,17 +1,17 @@
-import { useNavigate } from "react-router";
-import { PageHeader } from "../../../../c-end/components/PageHeader";
-import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback";
-import { MapPin, Clock, CheckCircle } from "lucide-react";
-import { useCheckinStore } from "../../store";
-import { useContentCourtyardStore } from "../../../content/store/courtyard-store";
-import { useLoadMore } from "../../../../shared/hooks/useLoadMore";
+import { useNavigate } from "react-router"
+import { PageHeader } from "@/shared/components/mobile/PageHeader"
+import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
+import { MapPin, Clock, CheckCircle } from "lucide-react"
+import { useCheckinStore } from "../../store"
+import { useContentCourtyardStore } from "../../../content/store/courtyard-store"
+import { useLoadMore } from "../../../../shared/hooks/useLoadMore"
 
 export function MyCheckinsPage() {
-  const navigate = useNavigate();
-  const checkins = useCheckinStore((s) => s.checkins);
-  const courtyardIds = new Set(useContentCourtyardStore((s) => s.courtyards).map((c) => c.id));
-  const myCheckins = checkins.filter((c) => c.userId === "user-1" && courtyardIds.has(c.courtyardId));
-  const { visible, hasMore, loadMore } = useLoadMore(myCheckins, 6);
+  const navigate = useNavigate()
+  const checkins = useCheckinStore((s) => s.checkins)
+  const courtyardIds = new Set(useContentCourtyardStore((s) => s.courtyards).map((c) => c.id))
+  const myCheckins = checkins.filter((c) => c.userId === "user-1" && courtyardIds.has(c.courtyardId))
+  const { visible, hasMore, loadMore } = useLoadMore(myCheckins, 6)
 
   return (
     <div className="min-h-full bg-surface-page pb-6">
@@ -35,10 +35,7 @@ export function MyCheckinsPage() {
         ) : (
           <>
             {visible.map((checkin) => (
-              <div
-                key={checkin.id}
-                className="bg-white rounded-xl overflow-hidden shadow-sm"
-              >
+              <div key={checkin.id} className="bg-white rounded-xl overflow-hidden shadow-sm">
                 <div className="h-36 relative">
                   <ImageWithFallback
                     src={checkin.photo}
@@ -86,5 +83,5 @@ export function MyCheckinsPage() {
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -16,10 +16,7 @@ export default function PriceArbitrationPage() {
   const approveCancelRequest = useConvenienceStore((s) => s.approveCancelRequest)
   const rejectCancelRequest = useConvenienceStore((s) => s.rejectCancelRequest)
 
-  const cancelRequests = useMemo(
-    () => orders.filter((o) => o.cancelRequested),
-    orders,
-  )
+  const cancelRequests = useMemo(() => orders.filter((o) => o.cancelRequested), orders)
 
   const resolvedPagination = usePagination(cancelRequests, 10)
 
@@ -36,17 +33,21 @@ export default function PriceArbitrationPage() {
   return (
     <PageLayout title="取消审批" description="处理便民服务的取消申请">
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <Card><CardContent className="p-5">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="size-5 text-amber-500" />
-            <span className="text-sm text-muted-foreground">待审批</span>
-          </div>
-          <div className="text-2xl font-semibold mt-1">{cancelRequests.length}</div>
-        </CardContent></Card>
-        <Card><CardContent className="p-5">
-          <div className="text-sm text-muted-foreground">待人工处理</div>
-          <div className="text-2xl font-semibold mt-1">{orders.filter((o) => o.status === "S90").length}</div>
-        </CardContent></Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="size-5 text-amber-500" />
+              <span className="text-sm text-muted-foreground">待审批</span>
+            </div>
+            <div className="text-2xl font-semibold mt-1">{cancelRequests.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="text-sm text-muted-foreground">待人工处理</div>
+            <div className="text-2xl font-semibold mt-1">{orders.filter((o) => o.status === "S90").length}</div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card className="p-4">
@@ -79,7 +80,8 @@ export default function PriceArbitrationPage() {
                         className="text-emerald-600 border-emerald-200"
                         onClick={() => handleApprove(o.id)}
                       >
-                        <CheckCircle2 className="size-3 mr-1" />同意
+                        <CheckCircle2 className="size-3 mr-1" />
+                        同意
                       </Button>
                       <Button
                         size="sm"
@@ -87,7 +89,8 @@ export default function PriceArbitrationPage() {
                         className="text-rose-600 border-rose-200"
                         onClick={() => handleReject(o.id)}
                       >
-                        <XCircle className="size-3 mr-1" />拒绝
+                        <XCircle className="size-3 mr-1" />
+                        拒绝
                       </Button>
                     </TableCell>
                   </TableRow>

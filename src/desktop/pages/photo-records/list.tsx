@@ -1,194 +1,176 @@
-import { useNavigate } from "react-router";
-import { useState, useMemo } from "react";
-import { PageLayout } from "../../components/common/PageLayout";
-import { Button } from "../../../shared/components/ui/button";
-import { Input } from "../../../shared/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../shared/components/ui/select";
-import { useCheckinStore } from "../../../features/checkin/store";
-import {
-  Eye, MapPin, Clock, Search, X, Camera, Users,
-  Trophy, CalendarDays,
-} from "lucide-react";
+import { useNavigate } from "react-router"
+import { useState, useMemo } from "react"
+import { PageLayout } from "../../components/common/PageLayout"
+import { Button } from "../../../shared/components/ui/button"
+import { Input } from "../../../shared/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../shared/components/ui/select"
+import { useCheckinStore } from "../../../features/checkin/store"
+import { Eye, MapPin, Clock, Search, X, Camera, Users, Trophy, CalendarDays } from "lucide-react"
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 10
 
-type TimeRange = "all" | "month" | "week" | "today" | "custom";
+type TimeRange = "all" | "month" | "week" | "today" | "custom"
 
 export default function PhotoRecordsList() {
-  const navigate = useNavigate();
-  const checkins = useCheckinStore((s) => s.checkins);
+  const navigate = useNavigate()
+  const checkins = useCheckinStore((s) => s.checkins)
 
   // — 页面级时间维度 —
-  const [timeRange, setTimeRange] = useState<TimeRange>("all");
-  const [customStart, setCustomStart] = useState("");
-  const [customEnd, setCustomEnd] = useState("");
+  const [timeRange, setTimeRange] = useState<TimeRange>("all")
+  const [customStart, setCustomStart] = useState("")
+  const [customEnd, setCustomEnd] = useState("")
 
   // — 表格筛选 —
-  const [searchName, setSearchName] = useState("");
-  const [courtyardFilter, setCourtyardFilter] = useState(""); // "" = 全部
-  const [page, setPage] = useState(1);
+  const [searchName, setSearchName] = useState("")
+  const [courtyardFilter, setCourtyardFilter] = useState("") // "" = 全部
+  const [page, setPage] = useState(1)
 
   // — 排行榜展开 —
-  const [rankExpanded, setRankExpanded] = useState(false);
+  const [rankExpanded, setRankExpanded] = useState(false)
 
   // ====== 日期范围计算 ======
   const dateRange = useMemo(() => {
-    const now = new Date();
+    const now = new Date()
     switch (timeRange) {
       case "all":
-        return { start: null, end: null };
+        return { start: null, end: null }
       case "month":
         return {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
           end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59),
-        };
+        }
       case "week": {
-        const day = now.getDay();
-        const diff = day === 0 ? -6 : 1 - day; // 周一 = 1
-        const monday = new Date(now);
-        monday.setDate(now.getDate() + diff);
-        monday.setHours(0, 0, 0, 0);
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
-        sunday.setHours(23, 59, 59, 999);
-        return { start: monday, end: sunday };
+        const day = now.getDay()
+        const diff = day === 0 ? -6 : 1 - day // 周一 = 1
+        const monday = new Date(now)
+        monday.setDate(now.getDate() + diff)
+        monday.setHours(0, 0, 0, 0)
+        const sunday = new Date(monday)
+        sunday.setDate(monday.getDate() + 6)
+        sunday.setHours(23, 59, 59, 999)
+        return { start: monday, end: sunday }
       }
       case "today": {
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
         return {
           start: today,
           end: new Date(today.getTime() + 86400000 - 1),
-        };
+        }
       }
       case "custom":
         return {
           start: customStart ? new Date(customStart) : null,
           end: customEnd ? new Date(customEnd + "T23:59:59") : null,
-        };
+        }
     }
-  }, [timeRange, customStart, customEnd]);
+  }, [timeRange, customStart, customEnd])
 
   // ====== 按时间过滤后的全量打卡 ======
   const dateFilteredCheckins = useMemo(() => {
-    if (!dateRange.start && !dateRange.end) return checkins;
+    if (!dateRange.start && !dateRange.end) return checkins
     return checkins.filter((c) => {
-      const created = new Date(c.createdAt.replace(/\//g, "-")).getTime();
-      if (dateRange.start && created < dateRange.start.getTime()) return false;
-      if (dateRange.end && created > dateRange.end.getTime()) return false;
-      return true;
-    });
-  }, [checkins, dateRange]);
+      const created = new Date(c.createdAt.replace(/\//g, "-")).getTime()
+      if (dateRange.start && created < dateRange.start.getTime()) return false
+      if (dateRange.end && created > dateRange.end.getTime()) return false
+      return true
+    })
+  }, [checkins, dateRange])
 
   // ====== KPI 指标 ======
-  const totalCheckins = dateFilteredCheckins.length;
-  const uniqueUsers = useMemo(
-    () => new Set(dateFilteredCheckins.map((c) => c.userId)).size,
-    [dateFilteredCheckins],
-  );
+  const totalCheckins = dateFilteredCheckins.length
+  const uniqueUsers = useMemo(() => new Set(dateFilteredCheckins.map((c) => c.userId)).size, [dateFilteredCheckins])
 
   // ====== 排行榜 ======
   const courtyardStats = useMemo(() => {
-    const map = new Map<string, { id: string; name: string; count: number }>();
+    const map = new Map<string, { id: string; name: string; count: number }>()
     dateFilteredCheckins.forEach((c) => {
-      const existing = map.get(c.courtyardId);
-      if (existing) existing.count++;
-      else map.set(c.courtyardId, { id: c.courtyardId, name: c.courtyardName, count: 1 });
-    });
-    return Array.from(map.values()).sort((a, b) => b.count - a.count);
-  }, [dateFilteredCheckins]);
+      const existing = map.get(c.courtyardId)
+      if (existing) existing.count++
+      else map.set(c.courtyardId, { id: c.courtyardId, name: c.courtyardName, count: 1 })
+    })
+    return Array.from(map.values()).sort((a, b) => b.count - a.count)
+  }, [dateFilteredCheckins])
 
-  const maxCount = courtyardStats[0]?.count ?? 1;
+  const maxCount = courtyardStats[0]?.count ?? 1
 
   // ====== 表格筛选 ======
   const tableFiltered = useMemo(() => {
     return dateFilteredCheckins.filter((c) => {
-      const nameMatch = !searchName || c.userName.includes(searchName);
-      const courtyardMatch = !courtyardFilter || c.courtyardId === courtyardFilter;
-      return nameMatch && courtyardMatch;
-    });
-  }, [dateFilteredCheckins, searchName, courtyardFilter]);
+      const nameMatch = !searchName || c.userName.includes(searchName)
+      const courtyardMatch = !courtyardFilter || c.courtyardId === courtyardFilter
+      return nameMatch && courtyardMatch
+    })
+  }, [dateFilteredCheckins, searchName, courtyardFilter])
 
-  const totalPages = Math.max(1, Math.ceil(tableFiltered.length / PAGE_SIZE));
-  const paginated = tableFiltered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(tableFiltered.length / PAGE_SIZE))
+  const paginated = tableFiltered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   // ====== 所有有打卡记录的院落（供下拉用） ======
   const allCourtyards = useMemo(() => {
-    const map = new Map<string, string>();
+    const map = new Map<string, string>()
     checkins.forEach((c) => {
-      if (!map.has(c.courtyardId)) map.set(c.courtyardId, c.courtyardName);
-    });
+      if (!map.has(c.courtyardId)) map.set(c.courtyardId, c.courtyardName)
+    })
     return Array.from(map.entries())
       .map(([id, name]) => ({ id, name }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [checkins]);
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }, [checkins])
 
   // ====== 交互 ======
   const handleTimeChange = (value: TimeRange) => {
-    setTimeRange(value);
-    setRankExpanded(false);
-    setPage(1);
-  };
+    setTimeRange(value)
+    setRankExpanded(false)
+    setPage(1)
+  }
 
   const clearTableFilters = () => {
-    setSearchName("");
-    setCourtyardFilter("");
-    setPage(1);
-  };
+    setSearchName("")
+    setCourtyardFilter("")
+    setPage(1)
+  }
 
   const handleCourtyardChange = (value: string) => {
-    setCourtyardFilter(value === "__all__" ? "" : value);
-    setPage(1);
-  };
+    setCourtyardFilter(value === "__all__" ? "" : value)
+    setPage(1)
+  }
 
-  const hasTableFilters = searchName || courtyardFilter;
+  const hasTableFilters = searchName || courtyardFilter
 
   // ====== 时间选择器显示文案 ======
   const formatDateLabel = (d: Date | null) => {
-    if (!d) return "";
-    return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
-  };
+    if (!d) return ""
+    return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`
+  }
 
   const timeLabel = useMemo(() => {
     switch (timeRange) {
       case "all":
-        return "全部时间";
+        return "全部时间"
       case "month":
-        return `${new Date().getFullYear()}年${new Date().getMonth() + 1}月`;
+        return `${new Date().getFullYear()}年${new Date().getMonth() + 1}月`
       case "week":
-        return `本周 (${formatDateLabel(dateRange.start)} ~ ${formatDateLabel(dateRange.end)})`;
+        return `本周 (${formatDateLabel(dateRange.start)} ~ ${formatDateLabel(dateRange.end)})`
       case "today":
-        return formatDateLabel(new Date());
+        return formatDateLabel(new Date())
       case "custom":
-        return `${customStart || "?"} ~ ${customEnd || "?"}`;
+        return `${customStart || "?"} ~ ${customEnd || "?"}`
     }
-  }, [timeRange, dateRange, customStart, customEnd]);
+  }, [timeRange, dateRange, customStart, customEnd])
 
   // ====== 渲染 ======
   const TabButton = ({ value, label }: { value: TimeRange; label: string }) => (
     <button
       onClick={() => handleTimeChange(value)}
       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-        timeRange === value
-          ? "bg-primary text-white shadow-sm"
-          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+        timeRange === value ? "bg-primary text-white shadow-sm" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
       }`}
     >
       {label}
     </button>
-  );
+  )
 
   return (
-    <PageLayout
-      title="文化院落打卡记录"
-      description="按时间维度统计各文化院落的游客打卡分布"
-      breadcrumbs={[{ label: "运营管理" }, { label: "文化院落打卡记录" }]}
-    >
+    <PageLayout title="文化院落打卡记录" description="按时间维度统计各文化院落的游客打卡分布">
       {/* ── ① 页面级时间维度选择器 ── */}
       <div className="bg-white rounded-xl border px-5 py-3 mb-4">
         <div className="flex flex-wrap items-center gap-3">
@@ -200,22 +182,40 @@ export default function PhotoRecordsList() {
           <span className="inline-flex items-center gap-1">
             <TabButton value="month" label="本月" />
             <span className="group relative inline-flex items-center cursor-help text-[10px] text-text-tertiary -ml-2">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">自然月（1日~月末）</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">
+                自然月（1日~月末）
+              </span>
             </span>
           </span>
           <span className="inline-flex items-center gap-1">
             <TabButton value="week" label="本周" />
             <span className="group relative inline-flex items-center cursor-help text-[10px] text-text-tertiary -ml-2">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">周一至周日</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">
+                周一至周日
+              </span>
             </span>
           </span>
           <span className="inline-flex items-center gap-1">
             <TabButton value="today" label="本日" />
             <span className="group relative inline-flex items-center cursor-help text-[10px] text-text-tertiary -ml-2">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">当日0点~24点</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+              <span className="hidden group-hover:block absolute top-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap shadow-lg z-10">
+                当日0点~24点
+              </span>
             </span>
           </span>
           <span className="inline-flex items-center gap-1">
@@ -227,14 +227,20 @@ export default function PhotoRecordsList() {
               <Input
                 type="date"
                 value={customStart}
-                onChange={(e) => { setCustomStart(e.target.value); setPage(1); }}
+                onChange={(e) => {
+                  setCustomStart(e.target.value)
+                  setPage(1)
+                }}
                 className="w-36 h-8 text-xs rounded-lg"
               />
               <span className="text-xs text-text-tertiary">~</span>
               <Input
                 type="date"
                 value={customEnd}
-                onChange={(e) => { setCustomEnd(e.target.value); setPage(1); }}
+                onChange={(e) => {
+                  setCustomEnd(e.target.value)
+                  setPage(1)
+                }}
                 className="w-36 h-8 text-xs rounded-lg"
               />
             </div>
@@ -249,18 +255,14 @@ export default function PhotoRecordsList() {
         <div className="flex items-center gap-2 text-sm text-text-secondary">
           <Camera size={15} className="text-primary" />
           <span>
-            总打卡{" "}
-            <strong className="text-text-heading text-base">{totalCheckins}</strong>{" "}
-            次
+            总打卡 <strong className="text-text-heading text-base">{totalCheckins}</strong> 次
           </span>
         </div>
         <div className="w-px h-5 bg-border" />
         <div className="flex items-center gap-2 text-sm text-text-secondary">
           <Users size={15} className="text-emerald-500" />
           <span>
-            参与游客{" "}
-            <strong className="text-text-heading text-base">{uniqueUsers}</strong>{" "}
-            人
+            参与游客 <strong className="text-text-heading text-base">{uniqueUsers}</strong> 人
           </span>
         </div>
       </div>
@@ -273,13 +275,8 @@ export default function PhotoRecordsList() {
             各院落打卡排行
           </h3>
           {courtyardStats.length > 5 && (
-            <button
-              onClick={() => setRankExpanded(!rankExpanded)}
-              className="text-xs text-primary hover:underline"
-            >
-              {rankExpanded
-                ? "收起"
-                : "展开全部"}
+            <button onClick={() => setRankExpanded(!rankExpanded)} className="text-xs text-primary hover:underline">
+              {rankExpanded ? "收起" : "展开全部"}
             </button>
           )}
         </div>
@@ -293,9 +290,10 @@ export default function PhotoRecordsList() {
               <span
                 className={`
                   w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold shrink-0
-                  ${idx === 0
-                    ? "bg-primary text-white shadow-[0_1px_4px_rgba(37,99,235,0.3)]"
-                    : "bg-slate-100 text-slate-500"
+                  ${
+                    idx === 0
+                      ? "bg-primary text-white shadow-[0_1px_4px_rgba(37,99,235,0.3)]"
+                      : "bg-slate-100 text-slate-500"
                   }
                 `}
               >
@@ -309,16 +307,15 @@ export default function PhotoRecordsList() {
                   className="h-full rounded-full transition-all duration-500 ease-out"
                   style={{
                     width: `${Math.max(4, (item.count / maxCount) * 100)}%`,
-                    background: idx === 0
-                      ? "linear-gradient(90deg, #2563eb, #60a5fa)"
-                      : "linear-gradient(90deg, #94a3b8, #cbd5e1)",
+                    background:
+                      idx === 0
+                        ? "linear-gradient(90deg, #2563eb, #60a5fa)"
+                        : "linear-gradient(90deg, #94a3b8, #cbd5e1)",
                   }}
                 />
               </div>
 
-              <span className="w-14 text-right text-sm text-slate-600 shrink-0 font-medium">
-                {item.count} 次
-              </span>
+              <span className="w-14 text-right text-sm text-slate-600 shrink-0 font-medium">{item.count} 次</span>
 
               <span className="w-12 text-right text-xs text-text-tertiary shrink-0">
                 {totalCheckins > 0 ? Math.round((item.count / totalCheckins) * 100) : 0}%
@@ -345,17 +342,17 @@ export default function PhotoRecordsList() {
               <Input
                 placeholder="搜索游客..."
                 value={searchName}
-                onChange={(e) => { setSearchName(e.target.value); setPage(1); }}
+                onChange={(e) => {
+                  setSearchName(e.target.value)
+                  setPage(1)
+                }}
                 className="w-40 pl-9 h-9 rounded-lg text-sm"
               />
             </div>
 
             {/* 院落下拉 */}
             <div className="w-36">
-              <Select
-                value={courtyardFilter || "__all__"}
-                onValueChange={handleCourtyardChange}
-              >
+              <Select value={courtyardFilter || "__all__"} onValueChange={handleCourtyardChange}>
                 <SelectTrigger className="h-9 rounded-lg text-sm">
                   <SelectValue placeholder="全部院落" />
                 </SelectTrigger>
@@ -372,7 +369,8 @@ export default function PhotoRecordsList() {
 
             {hasTableFilters && (
               <Button variant="outline" size="sm" onClick={clearTableFilters} className="h-9 px-3 rounded-lg text-xs">
-                <X size={13} className="mr-1" />清除筛选
+                <X size={13} className="mr-1" />
+                清除筛选
               </Button>
             )}
           </div>
@@ -436,13 +434,10 @@ export default function PhotoRecordsList() {
         <div className="px-4 py-2 border-t border-slate-100 text-xs text-text-tertiary text-right">
           {timeRange !== "all" && (
             <span className="mr-3">
-              时间范围共 {dateFilteredCheckins.length} 条
-              {hasTableFilters && `，筛选后 ${tableFiltered.length} 条`}
+              时间范围共 {dateFilteredCheckins.length} 条{hasTableFilters && `，筛选后 ${tableFiltered.length} 条`}
             </span>
           )}
-          {(!hasTableFilters || timeRange === "all") && (
-            <span>共 {tableFiltered.length} 条记录</span>
-          )}
+          {(!hasTableFilters || timeRange === "all") && <span>共 {tableFiltered.length} 条记录</span>}
         </div>
       </div>
 
@@ -450,8 +445,7 @@ export default function PhotoRecordsList() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-1 mb-4">
           <span className="text-sm text-text-tertiary">
-            显示第 {(page - 1) * PAGE_SIZE + 1}–
-            {Math.min(page * PAGE_SIZE, tableFiltered.length)} 条，共{" "}
+            显示第 {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, tableFiltered.length)} 条，共{" "}
             {tableFiltered.length} 条
           </span>
           <div className="flex items-center gap-2">
@@ -480,5 +474,5 @@ export default function PhotoRecordsList() {
         </div>
       )}
     </PageLayout>
-  );
+  )
 }

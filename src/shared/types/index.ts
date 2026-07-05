@@ -1,33 +1,43 @@
 // ====== 便民服务状态码（S/A 系列） ======
 // 生产精简：去除 A38（协商中）和 R80（取消审批中），合并为订单标记位
 export type ConvenienceStatus =
-  | "S10"  // 已下单
-  | "A10"  // 待派单
-  | "A20"  // 已指派
-  | "A30"  // 已接单
-  | "A35"  // 已核价
-  | "A40"  // 已收款
-  | "S48"  // 服务中
-  | "S55"  // 完工待确认
-  | "S40"  // 已完成
-  | "S50"  // 已取消
-  | "S90"  // 待人工处理
+  | "S10" // 已下单
+  | "A10" // 待派单
+  | "A20" // 已指派
+  | "A30" // 已接单
+  | "A35" // 已核价
+  | "A40" // 已收款
+  | "S48" // 服务中
+  | "S55" // 完工待确认
+  | "S40" // 已完成
+  | "S50" // 已取消
+  | "S90" // 待人工处理
 
 export const ConvenienceStatusLabel: Record<ConvenienceStatus, string> = {
-  S10: "已下单", A10: "待派单", A20: "已指派", A30: "已接单", A35: "已核价",
-  A40: "已收款", S48: "服务中", S55: "完工待确认", S40: "已完成",
-  S50: "已取消", S90: "待人工处理",
+  S10: "已下单",
+  A10: "待派单",
+  A20: "已指派",
+  A30: "已接单",
+  A35: "已核价",
+  A40: "已收款",
+  S48: "服务中",
+  S55: "完工待确认",
+  S40: "已完成",
+  S50: "已取消",
+  S90: "待人工处理",
 }
 
 // ====== 投诉状态码 ======
 // 简化流程：已提交 → 已处理 或 已驳回
 export type ComplaintStatus =
-  | "C10"  // 已提交
-  | "C40"  // 已处理
-  | "CR"   // 已驳回
+  | "C10" // 已提交
+  | "C40" // 已处理
+  | "CR" // 已驳回
 
 export const ComplaintStatusLabel: Record<ComplaintStatus, string> = {
-  C10: "已提交", C40: "已处理", CR: "已驳回",
+  C10: "已提交",
+  C40: "已处理",
+  CR: "已驳回",
 }
 
 // ====== 用户/角色 ======
@@ -52,9 +62,7 @@ export type User = {
 }
 
 // ====== 便民服务类型 ======
-export type ConvenienceServiceType =
-  | "送货服务" | "行李搬运"
-  | "建筑垃圾清运" | "生活垃圾清运" | "送水服务" | "布草配送"
+export type ConvenienceServiceType = "送货服务" | "行李搬运" | "建筑垃圾清运" | "生活垃圾清运" | "送水服务" | "布草配送"
 
 export const POINT_TO_POINT_TYPES: ConvenienceServiceType[] = ["送货服务", "行李搬运"]
 export const ZONE_BASED_TYPES: ConvenienceServiceType[] = ["建筑垃圾清运", "生活垃圾清运", "送水服务", "布草配送"]
@@ -359,11 +367,11 @@ export type VolunteerActivity = {
   description: string
   images: string[]
   location: string
-  startTime: string          // 单天=活动开始 / 多天=首日开始时刻
-  endTime: string            // 单天=活动结束 / 多天=末日结束时刻
+  startTime: string // 单天=活动开始 / 多天=首日开始时刻
+  endTime: string // 单天=活动结束 / 多天=末日结束时刻
   timeMode: "single" | "multi"
-  dailyStartTime?: string    // 多天模式：每日开始时间 "HH:mm"
-  dailyEndTime?: string      // 多天模式：每日结束时间 "HH:mm"
+  dailyStartTime?: string // 多天模式：每日开始时间 "HH:mm"
+  dailyEndTime?: string // 多天模式：每日结束时间 "HH:mm"
   enrollStartTime?: string
   signUpDeadline: string
   maxParticipants: number
@@ -385,9 +393,9 @@ export type VolunteerDailyRecord = {
   signUpId: string
   volunteerId: string
   activityId: string
-  date: string               // "YYYY-MM-DD" 该天日期
-  dayStartTime: string       // 该天活动开始时刻（完整 datetime）
-  dayEndTime: string         // 该天活动结束时刻（完整 datetime）
+  date: string // "YYYY-MM-DD" 该天日期
+  dayStartTime: string // 该天活动开始时刻（完整 datetime）
+  dayEndTime: string // 该天活动结束时刻（完整 datetime）
   checkInTime?: string
   checkOutTime?: string
   serviceHours?: number

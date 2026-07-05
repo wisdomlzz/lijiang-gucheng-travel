@@ -1,31 +1,25 @@
-import { useParams, useNavigate } from "react-router";
-import { PageLayout } from "../../components/common/PageLayout";
-import { Button } from "../../../shared/components/ui/button";
-import { useCheckinStore } from "../../../features/checkin/store";
-import { ArrowLeft, MapPin, Clock, User } from "lucide-react";
+import { useParams, useNavigate } from "react-router"
+import { PageLayout } from "../../components/common/PageLayout"
+import { Button } from "../../../shared/components/ui/button"
+import { useCheckinStore } from "../../../features/checkin/store"
+import { ArrowLeft, MapPin, Clock, User } from "lucide-react"
 
 export default function PhotoRecordShow() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const checkins = useCheckinStore((s) => s.checkins);
-  const checkin = checkins.find((c) => c.id === id);
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const checkins = useCheckinStore((s) => s.checkins)
+  const checkin = checkins.find((c) => c.id === id)
 
   if (!checkin) {
     return (
-      <PageLayout
-        title="文化院落打卡详情"
-        breadcrumbs={[{ label: "运营管理" }, { label: "文化院落打卡记录" }, { label: "详情" }]}
-      >
+      <PageLayout title="文化院落打卡详情">
         <div className="text-center py-20 text-text-tertiary">记录不存在</div>
       </PageLayout>
-    );
+    )
   }
 
   return (
-    <PageLayout
-      title="文化院落打卡详情"
-      breadcrumbs={[{ label: "运营管理" }, { label: "文化院落打卡记录" }, { label: checkin.courtyardName }]}
-    >
+    <PageLayout title="文化院落打卡详情">
       <div className="max-w-2xl">
         <div className="rounded-xl overflow-hidden mb-6">
           <img src={checkin.photo} alt="打卡照片" className="w-full object-cover max-h-96" />
@@ -62,5 +56,5 @@ export default function PhotoRecordShow() {
         </Button>
       </div>
     </PageLayout>
-  );
+  )
 }

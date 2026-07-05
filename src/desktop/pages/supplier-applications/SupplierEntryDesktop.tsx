@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { Building2, User, Phone, MapPin, FileText, AlignLeft, Check } from "lucide-react";
-import { toast } from "sonner";
-import { useSupplierStore } from "../../../features/supplier/store";
-import { ImageUpload } from "../../../shared/components/ui/image-upload";
+import { useState } from "react"
+import { useNavigate } from "react-router"
+import { Building2, User, Phone, MapPin, FileText, AlignLeft, Check } from "lucide-react"
+import { toast } from "sonner"
+import { useSupplierStore } from "../../../features/supplier/store"
+import { ImageUpload } from "../../../shared/components/ui/image-upload"
 
-const BUSINESS_TYPES = ["餐饮", "住宿", "酒吧", "文创", "手工艺", "服装", "其他"];
+const BUSINESS_TYPES = ["餐饮", "住宿", "酒吧", "文创", "手工艺", "服装", "其他"]
 
 export function SupplierEntryDesktop() {
-  const navigate = useNavigate();
-  const addApplication = useSupplierStore((s) => s.addApplication);
+  const navigate = useNavigate()
+  const addApplication = useSupplierStore((s) => s.addApplication)
 
   const [form, setForm] = useState({
     companyName: "",
@@ -20,33 +20,33 @@ export function SupplierEntryDesktop() {
     licenseNo: "",
     licenseImg: "",
     description: "",
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!form.companyName.trim()) errs.companyName = "请填写公司名称";
-    if (!form.contactName.trim()) errs.contactName = "请填写联系人";
-    if (!form.phone.trim()) errs.phone = "请填写联系电话";
-    else if (!/^1[3-9]\d{9}$/.test(form.phone)) errs.phone = "手机号格式不正确";
-    if (!form.businessType) errs.businessType = "请选择经营类型";
-    if (!form.address.trim()) errs.address = "请填写经营地址";
-    if (!form.licenseNo.trim()) errs.licenseNo = "请填写营业执照号";
-    if (!form.description.trim()) errs.description = "请填写经营范围简介";
-    return errs;
-  };
+    const errs: Record<string, string> = {}
+    if (!form.companyName.trim()) errs.companyName = "请填写公司名称"
+    if (!form.contactName.trim()) errs.contactName = "请填写联系人"
+    if (!form.phone.trim()) errs.phone = "请填写联系电话"
+    else if (!/^1[3-9]\d{9}$/.test(form.phone)) errs.phone = "手机号格式不正确"
+    if (!form.businessType) errs.businessType = "请选择经营类型"
+    if (!form.address.trim()) errs.address = "请填写经营地址"
+    if (!form.licenseNo.trim()) errs.licenseNo = "请填写营业执照号"
+    if (!form.description.trim()) errs.description = "请填写经营范围简介"
+    return errs
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const errs = validate();
+    e.preventDefault()
+    const errs = validate()
     if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
+      setErrors(errs)
+      return
     }
-    addApplication(form);
-    toast.success("提交成功，等待审核");
-    navigate("/desktop/login", { state: { submitted: true } });
-  };
+    addApplication(form)
+    toast.success("提交成功，等待审核")
+    navigate("/desktop/login", { state: { submitted: true } })
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
@@ -71,7 +71,9 @@ export function SupplierEntryDesktop() {
               onChange={(e) => setForm({ ...form, companyName: e.target.value })}
               placeholder="请输入公司/店铺名称"
               className={`w-full h-11 px-4 rounded-xl border text-sm outline-none transition-all ${
-                errors.companyName ? "border-red-400 bg-red-50" : "border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                errors.companyName
+                  ? "border-red-400 bg-red-50"
+                  : "border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               }`}
             />
             {errors.companyName && <p className="text-xs text-red-500 mt-1">{errors.companyName}</p>}
@@ -195,9 +197,7 @@ export function SupplierEntryDesktop() {
             提交申请
           </button>
 
-          <p className="text-center text-xs text-slate-400">
-            提交后预计 1-3 个工作日内完成审核
-          </p>
+          <p className="text-center text-xs text-slate-400">提交后预计 1-3 个工作日内完成审核</p>
         </form>
 
         {/* Back */}
@@ -209,5 +209,5 @@ export function SupplierEntryDesktop() {
         </button>
       </div>
     </div>
-  );
+  )
 }

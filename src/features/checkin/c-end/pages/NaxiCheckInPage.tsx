@@ -1,10 +1,10 @@
 import { useState, useMemo } from "react"
 import { useNavigate } from "react-router"
-import { PageHeader } from "../../../../c-end/components/PageHeader"
+import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { useNaxiCheckinStore } from "../../store"
 import { usePointsStore } from "../../../points/store"
-import { useAuthStore } from "../../../../platform/auth"
+import { useAuthStore } from "@/platform/auth"
 import { Camera, Flame, MapPin, Award } from "lucide-react"
 import { toast } from "sonner"
 
@@ -29,7 +29,10 @@ export function NaxiCheckInPage() {
 
   const handleCheckin = () => {
     const result = addCheckin({ userId, photo, location: "古城内（GPS 定位）" })
-    if (!result.ok) { toast.error(result.msg); return }
+    if (!result.ok) {
+      toast.error(result.msg)
+      return
+    }
     // 连续 7 天达成 → 触发积分奖励（跨域联动）
     if (result.streakBonus) {
       transact(userId, "naxi_streak")
@@ -53,7 +56,9 @@ export function NaxiCheckInPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[13px] opacity-90">已连续打卡</p>
-              <p className="text-3xl font-bold mt-1">{streak} <span className="text-[14px] font-normal opacity-90">天</span></p>
+              <p className="text-3xl font-bold mt-1">
+                {streak} <span className="text-[14px] font-normal opacity-90">天</span>
+              </p>
             </div>
             <Flame size={40} className="opacity-80" />
           </div>
@@ -71,7 +76,10 @@ export function NaxiCheckInPage() {
       <div className="px-4 mt-4">
         <div className="bg-white rounded-2xl p-4">
           <p className="text-[14px] font-semibold text-text-heading mb-3">穿纳西族服饰拍照打卡</p>
-          <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-gray-100" onClick={() => setPhoto(PLACEHOLDER_PHOTO + "?t=" + Date.now())}>
+          <div
+            className="relative rounded-xl overflow-hidden aspect-[4/3] bg-gray-100"
+            onClick={() => setPhoto(PLACEHOLDER_PHOTO + "?t=" + Date.now())}
+          >
             <ImageWithFallback src={photo} alt="打卡照片" className="w-full h-full object-cover" />
             <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[11px] px-2 py-1 rounded-full flex items-center gap-1">
               <Camera size={12} /> 点击拍照
@@ -87,7 +95,9 @@ export function NaxiCheckInPage() {
             onClick={handleCheckin}
             disabled={!canToday}
             className={`w-full mt-3 h-11 rounded-xl font-medium text-[14px] transition ${
-              canToday ? "bg-gradient-to-r from-rose-500 to-orange-500 text-white active:scale-95" : "bg-gray-100 text-text-tertiary"
+              canToday
+                ? "bg-gradient-to-r from-rose-500 to-orange-500 text-white active:scale-95"
+                : "bg-gray-100 text-text-tertiary"
             }`}
           >
             {canToday ? "提交今日打卡" : "今日已打卡"}
@@ -110,9 +120,7 @@ export function NaxiCheckInPage() {
             </div>
           ))}
         </div>
-        {checkins.length === 0 && (
-          <p className="text-center text-[12px] text-text-tertiary py-8">还没有打卡记录</p>
-        )}
+        {checkins.length === 0 && <p className="text-center text-[12px] text-text-tertiary py-8">还没有打卡记录</p>}
       </div>
     </div>
   )

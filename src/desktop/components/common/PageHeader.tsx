@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from "react"
 
 export function PageHeader({ title, desc, actions }: { title: string; desc?: string; actions?: ReactNode }) {
   return (
@@ -9,5 +9,5 @@ export function PageHeader({ title, desc, actions }: { title: string; desc?: str
       </div>
       <div className="flex items-center gap-2">{actions}</div>
     </div>
-  );
+  )
 }

@@ -9,14 +9,14 @@ import { useContentMerchantStore } from "../../content/store/merchant-store"
 
 export interface ShopClaimRequest {
   id: string
-  type: "claim" | "new_shop"      // 认领已有店铺 OR 新建店铺
+  type: "claim" | "new_shop" // 认领已有店铺 OR 新建店铺
   userId: string
   userName: string
   userPhone: string
 
   // claim 场景：用户声称的店铺
-  claimedShopId?: string           // 用户声称的店铺 ID
-  claimedShopName?: string          // 用户声称的店铺名
+  claimedShopId?: string // 用户声称的店铺 ID
+  claimedShopName?: string // 用户声称的店铺名
 
   // new_shop 场景：用户提交的新店铺信息
   newShopName?: string
@@ -40,14 +40,23 @@ type RegistrationState = {
   getByUserId: (userId: string) => ShopClaimRequest[]
   /** 提交认领申请（店铺已存在，用户认领） */
   submitClaim: (input: {
-    userId: string; userName: string; userPhone: string;
-    claimedShopId: string; claimedShopName: string
+    userId: string
+    userName: string
+    userPhone: string
+    claimedShopId: string
+    claimedShopName: string
   }) => void
   /** 提交入驻申请（店铺不存在，新建） */
   submitRegistration: (input: {
-    userId: string; userName: string; userPhone: string;
-    newShopName: string; newCategory: string; newAddress: string;
-    newPhone: string; newDescription: string; newHours: string
+    userId: string
+    userName: string
+    userPhone: string
+    newShopName: string
+    newCategory: string
+    newAddress: string
+    newPhone: string
+    newDescription: string
+    newHours: string
   }) => void
   approveRegistration: (id: string, reviewer: string) => void
   rejectRegistration: (id: string, reviewer: string, reason: string) => void
@@ -107,16 +116,14 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
     // 1. 更新申请状态
     set((s) => ({
       requests: s.requests.map((r) =>
-        r.id === id
-          ? { ...r, status: "approved", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer }
-          : r
+        r.id === id ? { ...r, status: "approved", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer } : r
       ),
     }))
 
     // 2. 认领场景：更新已有商家的认领状态
     const merchantStore = useContentMerchantStore.getState()
     if (req.type === "claim" && req.claimedShopId) {
-      const merchant = merchantStore.merchants.find(m => m.id === req.claimedShopId)
+      const merchant = merchantStore.merchants.find((m) => m.id === req.claimedShopId)
       if (merchant) {
         merchantStore.updateMerchant(merchant.id, {
           claimStatus: "claimed",

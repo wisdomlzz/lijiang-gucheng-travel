@@ -38,19 +38,31 @@ export function FlowWarningPage() {
       {/* 汇总 */}
       <div className="grid grid-cols-4 gap-3 mb-4">
         <div className="bg-white rounded-lg border border-border-light p-4">
-          <div className="flex items-center justify-between"><span className="text-[12px] text-text-tertiary">监测区域</span><Activity size={16} className="text-primary" /></div>
+          <div className="flex items-center justify-between">
+            <span className="text-[12px] text-text-tertiary">监测区域</span>
+            <Activity size={16} className="text-primary" />
+          </div>
           <p className="text-[22px] font-bold mt-1">{areas.length}</p>
         </div>
         <div className="bg-white rounded-lg border border-border-light p-4">
-          <div className="flex items-center justify-between"><span className="text-[12px] text-text-tertiary">红色预警</span><AlertTriangle size={16} className="text-red-500" /></div>
+          <div className="flex items-center justify-between">
+            <span className="text-[12px] text-text-tertiary">红色预警</span>
+            <AlertTriangle size={16} className="text-red-500" />
+          </div>
           <p className="text-[22px] font-bold mt-1 text-red-500">{redCount}</p>
         </div>
         <div className="bg-white rounded-lg border border-border-light p-4">
-          <div className="flex items-center justify-between"><span className="text-[12px] text-text-tertiary">橙色拥挤</span><AlertTriangle size={16} className="text-orange-500" /></div>
+          <div className="flex items-center justify-between">
+            <span className="text-[12px] text-text-tertiary">橙色拥挤</span>
+            <AlertTriangle size={16} className="text-orange-500" />
+          </div>
           <p className="text-[22px] font-bold mt-1 text-orange-500">{orangeCount}</p>
         </div>
         <div className="bg-white rounded-lg border border-border-light p-4">
-          <div className="flex items-center justify-between"><span className="text-[12px] text-text-tertiary">活跃事件</span><AlertTriangle size={16} className="text-amber-500" /></div>
+          <div className="flex items-center justify-between">
+            <span className="text-[12px] text-text-tertiary">活跃事件</span>
+            <AlertTriangle size={16} className="text-amber-500" />
+          </div>
           <p className="text-[22px] font-bold mt-1 text-amber-600">{activeEvents.length}</p>
         </div>
       </div>
@@ -63,7 +75,9 @@ export function FlowWarningPage() {
             <TabsTrigger value="rules">规则配置</TabsTrigger>
           </TabsList>
         </Tabs>
-        <Button variant="outline" size="sm" onClick={handleSimulate}><RefreshCw size={14} className="mr-1" /> 刷新人流</Button>
+        <Button variant="outline" size="sm" onClick={handleSimulate}>
+          <RefreshCw size={14} className="mr-1" /> 刷新人流
+        </Button>
       </div>
 
       <Tabs defaultValue="realtime">
@@ -92,12 +106,17 @@ export function FlowWarningPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                            <div className={`h-full ${level === "red" ? "bg-red-500" : level === "orange" ? "bg-orange-500" : level === "yellow" ? "bg-amber-400" : "bg-emerald-500"}`} style={{ width: `${pct}%` }} />
+                            <div
+                              className={`h-full ${level === "red" ? "bg-red-500" : level === "orange" ? "bg-orange-500" : level === "yellow" ? "bg-amber-400" : "bg-emerald-500"}`}
+                              style={{ width: `${pct}%` }}
+                            />
                           </div>
                           <span className="text-[12px]">{pct}%</span>
                         </div>
                       </TableCell>
-                      <TableCell><Badge className={`${meta.bg} ${meta.color}`}>{meta.label}</Badge></TableCell>
+                      <TableCell>
+                        <Badge className={`${meta.bg} ${meta.color}`}>{meta.label}</Badge>
+                      </TableCell>
                     </TableRow>
                   )
                 })}
@@ -126,15 +145,33 @@ export function FlowWarningPage() {
                   return (
                     <TableRow key={e.id}>
                       <TableCell className="font-medium">{e.areaName}</TableCell>
-                      <TableCell><Badge className={`${meta.bg} ${meta.color}`}>{meta.label}</Badge></TableCell>
-                      <TableCell className="text-[12px]">{e.current}/{e.capacity}</TableCell>
+                      <TableCell>
+                        <Badge className={`${meta.bg} ${meta.color}`}>{meta.label}</Badge>
+                      </TableCell>
+                      <TableCell className="text-[12px]">
+                        {e.current}/{e.capacity}
+                      </TableCell>
                       <TableCell className="text-[12px] text-text-secondary">{e.triggeredAt}</TableCell>
                       <TableCell className="text-[12px] text-text-body max-w-xs">{e.action}</TableCell>
                       <TableCell>
-                        <Badge variant={e.status === "active" ? "destructive" : "secondary"}>{e.status === "active" ? "处理中" : "已解除"}</Badge>
+                        <Badge variant={e.status === "active" ? "destructive" : "secondary"}>
+                          {e.status === "active" ? "处理中" : "已解除"}
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        {e.status === "active" && <Button variant="ghost" size="sm" onClick={() => { resolveEvent(e.id); toast.success("已解除") }}><CheckCircle2 size={14} className="mr-1" />解除</Button>}
+                        {e.status === "active" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              resolveEvent(e.id)
+                              toast.success("已解除")
+                            }}
+                          >
+                            <CheckCircle2 size={14} className="mr-1" />
+                            解除
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   )
@@ -162,18 +199,55 @@ export function FlowWarningPage() {
                   <TableRow key={r.id}>
                     <TableCell className="font-medium">{r.areaName}</TableCell>
                     <TableCell>
-                      {editingRule === r.id ? <Input type="number" defaultValue={r.yellowThreshold} className="h-8 w-20" onChange={(e) => updateRule(r.id, { yellowThreshold: Number(e.target.value) })} /> : `${r.yellowThreshold}%`}
+                      {editingRule === r.id ? (
+                        <Input
+                          type="number"
+                          defaultValue={r.yellowThreshold}
+                          className="h-8 w-20"
+                          onChange={(e) => updateRule(r.id, { yellowThreshold: Number(e.target.value) })}
+                        />
+                      ) : (
+                        `${r.yellowThreshold}%`
+                      )}
                     </TableCell>
                     <TableCell>
-                      {editingRule === r.id ? <Input type="number" defaultValue={r.orangeThreshold} className="h-8 w-20" onChange={(e) => updateRule(r.id, { orangeThreshold: Number(e.target.value) })} /> : `${r.orangeThreshold}%`}
+                      {editingRule === r.id ? (
+                        <Input
+                          type="number"
+                          defaultValue={r.orangeThreshold}
+                          className="h-8 w-20"
+                          onChange={(e) => updateRule(r.id, { orangeThreshold: Number(e.target.value) })}
+                        />
+                      ) : (
+                        `${r.orangeThreshold}%`
+                      )}
                     </TableCell>
                     <TableCell>
-                      {editingRule === r.id ? <Input type="number" defaultValue={r.redThreshold} className="h-8 w-20" onChange={(e) => updateRule(r.id, { redThreshold: Number(e.target.value) })} /> : `${r.redThreshold}%`}
+                      {editingRule === r.id ? (
+                        <Input
+                          type="number"
+                          defaultValue={r.redThreshold}
+                          className="h-8 w-20"
+                          onChange={(e) => updateRule(r.id, { redThreshold: Number(e.target.value) })}
+                        />
+                      ) : (
+                        `${r.redThreshold}%`
+                      )}
                     </TableCell>
-                    <TableCell><Switch checked={r.enabled} onCheckedChange={(v) => updateRule(r.id, { enabled: v })} /></TableCell>
+                    <TableCell>
+                      <Switch checked={r.enabled} onCheckedChange={(v) => updateRule(r.id, { enabled: v })} />
+                    </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => { setEditingRule(editingRule === r.id ? null : r.id); if (editingRule === r.id) toast.success("已保存") }}>
-                        <Settings2 size={14} className="mr-1" />{editingRule === r.id ? "保存" : "编辑"}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEditingRule(editingRule === r.id ? null : r.id)
+                          if (editingRule === r.id) toast.success("已保存")
+                        }}
+                      >
+                        <Settings2 size={14} className="mr-1" />
+                        {editingRule === r.id ? "保存" : "编辑"}
                       </Button>
                     </TableCell>
                   </TableRow>

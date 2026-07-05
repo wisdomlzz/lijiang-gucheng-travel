@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
-import { Input } from "../../../shared/components/ui/input";
-import { Search, Download, Plus } from "lucide-react";
-import { Button } from "../../../shared/components/ui/button";
+import { ReactNode } from "react"
+import { Input } from "../../../shared/components/ui/input"
+import { Search, Download, Plus } from "lucide-react"
+import { Button } from "../../../shared/components/ui/button"
 
 export function DataToolbar({
   search = true,
@@ -12,13 +12,13 @@ export function DataToolbar({
   onExport,
   onCreate,
 }: {
-  search?: boolean;
-  placeholder?: string;
-  onSearch?: (v: string) => void;
-  filters?: ReactNode;
-  right?: ReactNode;
-  onExport?: () => void;
-  onCreate?: () => void;
+  search?: boolean
+  placeholder?: string
+  onSearch?: (v: string) => void
+  filters?: ReactNode
+  right?: ReactNode
+  onExport?: () => void
+  onCreate?: () => void
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -32,11 +32,17 @@ export function DataToolbar({
       <div className="flex-1" />
       {right}
       {onExport && (
-        <Button variant="outline" size="sm" onClick={onExport}><Download className="size-3.5 mr-1" />导出</Button>
+        <Button variant="outline" size="sm" onClick={onExport}>
+          <Download className="size-3.5 mr-1" />
+          导出
+        </Button>
       )}
       {onCreate && (
-        <Button size="sm" className="bg-amber-600 hover:bg-amber-700" onClick={onCreate}><Plus className="size-3.5 mr-1" />新建</Button>
+        <Button size="sm" className="bg-amber-600 hover:bg-amber-700" onClick={onCreate}>
+          <Plus className="size-3.5 mr-1" />
+          新建
+        </Button>
       )}
     </div>
-  );
+  )
 }

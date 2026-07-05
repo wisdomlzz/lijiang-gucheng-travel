@@ -13,21 +13,13 @@ export function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-8">
       <div className="text-center mb-12 animate-fade-in">
-        <h1 className="text-3xl font-bold text-text-heading mb-2">
-          丽江古城游
-        </h1>
-        <p className="text-text-tertiary text-sm">
-          Lijiang Ancient City Tour · V2.0 Demo
-        </p>
+        <h1 className="text-3xl font-bold text-text-heading mb-2">丽江古城游</h1>
+        <p className="text-text-tertiary text-sm">Lijiang Ancient City Tour · V2.0 Demo</p>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-6 w-full max-w-2xl">
         {ends.map((end) => (
-          <button
-            key={end.path}
-            onClick={() => navigate(end.path)}
-            className="flex-1 group cursor-pointer"
-          >
+          <button key={end.path} onClick={() => navigate(end.path)} className="flex-1 group cursor-pointer">
             <div
               className="rounded-2xl p-8 text-center transition-all duration-300 hover:scale-[1.03] hover:shadow-xl active:scale-[0.98]"
               style={{
@@ -57,9 +49,7 @@ export function LandingPage() {
         点击可在线查看需求文档
       </button>
 
-      <p className="mt-12 text-xs text-text-tertiary">
-        进入后右上角悬浮按钮可在三端之间快速切换 · 演示环境
-      </p>
+      <p className="mt-12 text-xs text-text-tertiary">进入后右上角悬浮按钮可在三端之间快速切换 · 演示环境</p>
     </div>
   )
 }

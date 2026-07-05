@@ -1,66 +1,66 @@
-import { useState, useRef } from "react";
-import { Play, Pause, Volume2, VolumeX, Maximize } from "lucide-react";
-import { Button } from "./ui/button";
+import { useState, useRef } from "react"
+import { Play, Pause, Volume2, VolumeX, Maximize } from "lucide-react"
+import { Button } from "./ui/button"
 
 interface VideoPlayerProps {
-  src: string;
-  poster?: string;
-  className?: string;
+  src: string
+  poster?: string
+  className?: string
 }
 
 export function VideoPlayer({ src, poster, className = "" }: VideoPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [duration, setDuration] = useState(0)
 
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
-        videoRef.current.pause();
+        videoRef.current.pause()
       } else {
-        videoRef.current.play();
+        videoRef.current.play()
       }
-      setIsPlaying(!isPlaying);
+      setIsPlaying(!isPlaying)
     }
-  };
+  }
 
   const toggleMute = () => {
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      videoRef.current.muted = !isMuted
+      setIsMuted(!isMuted)
     }
-  };
+  }
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      const percent = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-      setProgress(percent);
+      const percent = (videoRef.current.currentTime / videoRef.current.duration) * 100
+      setProgress(percent)
     }
-  };
+  }
 
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
-      setDuration(videoRef.current.duration);
+      setDuration(videoRef.current.duration)
     }
-  };
+  }
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins}:${secs.toString().padStart(2, "0")}`
+  }
 
   const handleFullscreen = () => {
     if (videoRef.current) {
       if (document.fullscreenElement) {
-        document.exitFullscreen();
+        document.exitFullscreen()
       } else {
-        videoRef.current.requestFullscreen();
+        videoRef.current.requestFullscreen()
       }
     }
-  };
+  }
 
   return (
     <div className={`relative rounded-xl overflow-hidden bg-black ${className}`}>
@@ -77,10 +77,7 @@ export function VideoPlayer({ src, poster, className = "" }: VideoPlayerProps) {
       />
 
       {!isPlaying && (
-        <button
-          onClick={togglePlay}
-          className="absolute inset-0 flex items-center justify-center bg-black/30"
-        >
+        <button onClick={togglePlay} className="absolute inset-0 flex items-center justify-center bg-black/30">
           <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
             <Play size={28} className="text-gray-900 ml-1" />
           </div>
@@ -97,20 +94,10 @@ export function VideoPlayer({ src, poster, className = "" }: VideoPlayerProps) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-white hover:bg-white/20"
-              onClick={togglePlay}
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20" onClick={togglePlay}>
               {isPlaying ? <Pause size={18} /> : <Play size={18} />}
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-white hover:bg-white/20"
-              onClick={toggleMute}
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20" onClick={toggleMute}>
               {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
             </Button>
           </div>
@@ -130,5 +117,5 @@ export function VideoPlayer({ src, poster, className = "" }: VideoPlayerProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

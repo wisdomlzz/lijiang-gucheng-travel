@@ -1,4 +1,4 @@
-import type { ConvenienceStatus } from "../../../../shared/types"
+import type { ConvenienceStatus } from "../../../shared/types"
 
 /**
  * State machine transition table.
