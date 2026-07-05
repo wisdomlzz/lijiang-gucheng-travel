@@ -32,6 +32,7 @@ import {
   MessageSquare,
   BadgeCheck,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "motion/react"
 import type { Complaint, ComplaintStatus } from "../../../../shared/types"

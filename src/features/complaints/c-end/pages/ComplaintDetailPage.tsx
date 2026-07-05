@@ -4,6 +4,7 @@ import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useComplaintStore } from "../../store"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { MapPin, Clock, CheckCircle, XCircle, Phone, FileText, RotateCcw, X } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { toast } from "sonner"
 
 const STATUS_CONFIG: Record<string, { label: string; icon: LucideIcon; color: string; bg: string }> = {

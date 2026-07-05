@@ -18,6 +18,7 @@ import {
   AlertTriangle,
   Heart,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../shared/constants"
 
 export type NavGroup = {

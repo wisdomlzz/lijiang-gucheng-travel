@@ -27,6 +27,7 @@ import {
   Umbrella,
   ArrowLeftRight,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { haversineDistance, formatDistance } from "@/shared/utils/geo"
 
 type Category = {

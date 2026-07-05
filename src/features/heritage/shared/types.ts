@@ -3,7 +3,7 @@ export type HeritageType =
   "road" | "water" | "well" | "bridge" | "ancient-tree" | "protected-house" | "historic-building" | "human-environment"
 
 // 片区
-export type Area = "大研" | "白沙" | "束河" | "大研古城（含黑龙潭）"
+export type Area = "大研" | "白沙" | "束河" | "大研古城" | "大研古城（含黑龙潭）"
 
 // 统一遗产接口
 export interface HeritageItem {

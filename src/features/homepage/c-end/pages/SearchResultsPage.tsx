@@ -63,7 +63,7 @@ export function SearchResultsPage() {
 
   return (
     <div className="min-h-screen bg-surface-page">
-      <PageHeader title="搜索" back />
+      <PageHeader title="搜索" back={() => navigate(-1)} />
       <div className="px-3 py-2">
         <form onSubmit={handleSearch} className="flex items-center gap-2 bg-white rounded-full h-10 pl-4 pr-2 shadow-card">
           <Search size={16} className="text-text-caption" />

@@ -54,7 +54,7 @@ export function DesktopApp() {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
   const currentPlatform = useAuthStore((s) => s.currentPlatform)
   const user = useAuthStore((s) => s.user)
-  const isSuperAdmin = user?.roles?.includes("platform_admin")
+  const isSuperAdmin = user?.roles?.includes("platform_admin") ?? false
 
   if (isLoggedIn && currentPlatform === "desktop" && user?.roles?.includes("supplier")) {
     return (

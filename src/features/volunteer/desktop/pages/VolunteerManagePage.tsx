@@ -76,7 +76,6 @@ function LocationMapField({ value, onChange }: { value: string; onChange: (v: st
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
-    // @ts-expect-error leaflet 内部 API 无类型声明
     delete (L.Icon.Default.prototype as any)._getIconUrl
     L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl })
     const map = L.map(containerRef.current, { center: MAP_DEFAULT, zoom: 15 })

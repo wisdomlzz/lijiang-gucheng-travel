@@ -435,9 +435,8 @@ export function ServiceOrderDetail({
         confirm="标记已处理"
         onConfirm={() => change("done", "已标记处理")}
       />
-      {/* @ts-expect-error: reject-pending is not in confirm state type but valid at runtime */}
       <ConfirmModal
-        open={confirm === "reject-pending"}
+        open={(confirm as string) === "reject-pending"}
         onClose={() => setConfirm(null)}
         title="已收到取消申请"
         desc="该订单用户申请了取消，如需处理请前往桌面端。"
