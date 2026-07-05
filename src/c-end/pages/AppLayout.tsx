@@ -16,6 +16,10 @@ export function AppLayout() {
   const navigate = useNavigate()
   const aiActive = location.pathname === "/c/ai"
 
+  const handleTabClick = (key: string) => {
+    if (key !== "/c/ai") navigate(key)
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-surface-page">
       <div className="flex-1 overflow-y-auto pb-[72px]">
@@ -28,6 +32,7 @@ export function AppLayout() {
         <div className="absolute left-1/2 -translate-x-1/2 -top-[22px] z-10">
           <button
             onClick={() => navigate("/c/ai")}
+            aria-label="AI咨询"
             className="block w-[56px] h-[56px] rounded-full active:scale-95 transition-transform"
             style={{
               background: aiActive
@@ -66,6 +71,7 @@ export function AppLayout() {
               <button
                 key={tab.key}
                 onClick={() => navigate(tab.key)}
+                aria-label={tab.label}
                 className="flex flex-col items-center justify-center pt-1.5 flex-1 active:scale-95 transition-transform relative"
               >
                 <motion.div

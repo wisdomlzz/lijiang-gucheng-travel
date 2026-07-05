@@ -68,6 +68,7 @@ export function MiniProgramFrame({ children, footer }: Props) {
                   }}
                   className="mr-1 size-6 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center"
                   title="切换端"
+                  aria-label="切换端"
                 >
                   <SwitchCamera className={`size-3 ${statusBarTransparent ? "text-white" : "text-text-heading"}`} />
                 </button>
