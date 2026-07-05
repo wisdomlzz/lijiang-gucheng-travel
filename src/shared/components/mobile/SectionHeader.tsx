@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
 
 interface SectionHeaderProps {
-  icon?: React.ElementType;
+  icon?: React.ComponentType<{ size?: number | string; className?: string }>;
   title: string;
   action?: { label: string; to: string };
 }
