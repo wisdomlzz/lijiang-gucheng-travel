@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { usePointsStore } from "@/features/points/store"
 import type {
   Volunteer,
   VolunteerActivity,
@@ -1136,6 +1137,7 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
           : x
       ),
     }))
+    usePointsStore.getState().transact(dr.volunteerId, "volunteer_service", dr.id)
     return { ok: true, msg: `签退成功，本次服务 ${realHours} 小时` }
   },
 

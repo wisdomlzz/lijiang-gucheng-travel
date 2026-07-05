@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import type { Complaint as ComplaintType, ComplaintStatus } from "../../../shared/types"
+import { useNotificationStore } from "@/platform/notification"
 
 type ComplaintState = {
   complaints: ComplaintType[]
@@ -110,22 +111,44 @@ export const useComplaintStore = create<ComplaintState>((set, get) => ({
       ],
     })),
   updateComplaintPhone: (phone) => set({ complaintPhone: phone }),
-  resolveWithResult: (id, result) =>
+  resolveWithResult: (id, result) => {
     set((s) => ({
       complaints: s.complaints.map((c) =>
         c.id === id
           ? { ...c, status: "C40" as ComplaintStatus, result, handledAt: new Date().toLocaleString("zh-CN") }
           : c
       ),
-    })),
-  reject: (id, reason) =>
+    }))
+
+    const complaint = get().complaints.find((c) => c.id === id)
+    if (complaint) {
+      useNotificationStore.getState().addNotification({
+        type: "system",
+        title: "投诉已处理",
+        summary: `您的投诉「${complaint.type}」已处理完成。处理结果：${result}`,
+        targetUrl: `/c/complaints/${id}`,
+      })
+    }
+  },
+  reject: (id, reason) => {
     set((s) => ({
       complaints: s.complaints.map((c) =>
         c.id === id
           ? { ...c, status: "CR" as ComplaintStatus, result: reason, handledAt: new Date().toLocaleString("zh-CN") }
           : c
       ),
-    })),
+    }))
+
+    const complaint = get().complaints.find((c) => c.id === id)
+    if (complaint) {
+      useNotificationStore.getState().addNotification({
+        type: "system",
+        title: "投诉被驳回",
+        summary: `您的投诉「${complaint.type}」已被驳回。原因：${reason}`,
+        targetUrl: `/c/complaints/${id}`,
+      })
+    }
+  },
 }))
 
 export type { Complaint } from "../../../shared/types"

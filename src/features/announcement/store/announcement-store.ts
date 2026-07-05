@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
+import { useNotificationStore } from "@/platform/notification"
 
 export interface Announcement {
   id: string
@@ -109,7 +110,7 @@ export const useAnnouncementStore = create<AnnouncementState>()(
           ),
         })),
       deleteAnnouncement: (id) => set((s) => ({ announcements: s.announcements.filter((a) => a.id !== id) })),
-      publishAnnouncement: (id) =>
+      publishAnnouncement: (id) => {
         set((s) => ({
           announcements: s.announcements.map((a) =>
             a.id === id
@@ -121,7 +122,18 @@ export const useAnnouncementStore = create<AnnouncementState>()(
                 }
               : a
           ),
-        })),
+        }))
+
+        const ann = get().announcements.find((a) => a.id === id)
+        if (ann) {
+          useNotificationStore.getState().addNotification({
+            type: "system",
+            title: "新公告",
+            summary: ann.title,
+            targetUrl: `/c/announcement/${id}`,
+          })
+        }
+      },
       unpublishAnnouncement: (id) =>
         set((s) => ({
           announcements: s.announcements.map((a) =>

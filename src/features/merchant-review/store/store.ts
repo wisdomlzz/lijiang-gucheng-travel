@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { useContentMerchantStore } from "../../content/store/merchant-store"
+import { useNotificationStore } from "@/platform/notification"
 
 // ============================================================
 // 商家信息审核 —— 商户自助提交店铺变更 + PC 审核
@@ -106,14 +107,35 @@ export const useMerchantReviewStore = create<MerchantReviewState>((set, get) => 
       })
       merchantStore.updateMerchant(merchant.id, updates)
     }
+
+    // 3. 通知申请人
+    if (req) {
+      useNotificationStore.getState().addNotification({
+        type: "system",
+        title: "店铺信息变更已通过",
+        summary: `您提交的「${req.merchantName}」信息变更已审核通过。`,
+        targetUrl: "/c/my-shop",
+      })
+    }
   },
 
-  reject: (id, reviewer, reason) =>
+  reject: (id, reviewer, reason) => {
     set((s) => ({
       requests: s.requests.map((r) =>
         r.id === id
           ? { ...r, status: "rejected", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer, rejectReason: reason }
           : r
       ),
-    })),
+    }))
+
+    const req = get().requests.find((r) => r.id === id)
+    if (req) {
+      useNotificationStore.getState().addNotification({
+        type: "system",
+        title: "店铺信息变更未通过",
+        summary: `「${req.merchantName}」的信息变更未通过。原因：${reason}。`,
+        targetUrl: "/c/my-shop",
+      })
+    }
+  },
 }))

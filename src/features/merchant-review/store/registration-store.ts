@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { useAuthStore } from "@/platform/auth"
 import { useContentMerchantStore } from "../../content/store/merchant-store"
+import { useNotificationStore } from "@/platform/notification"
 
 // ============================================================
 // 古城商户认领 & 入驻申请
@@ -171,14 +172,33 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
         supplierId: `sup_${req.id}`,
       })
     }
+
+    // 5. 通知申请人审核通过
+    useNotificationStore.getState().addNotification({
+      type: "system",
+      title: "店铺认领审核通过",
+      summary: `您的店铺「${req.type === "claim" ? req.claimedShopName : req.newShopName}」已审核通过，您现在可以管理店铺信息了。`,
+      targetUrl: "/c/my-shop",
+    })
   },
 
-  rejectRegistration: (id, reviewer, reason) =>
+  rejectRegistration: (id, reviewer, reason) => {
     set((s) => ({
       requests: s.requests.map((r) =>
         r.id === id
           ? { ...r, status: "rejected", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer, rejectReason: reason }
           : r
       ),
-    })),
+    }))
+
+    const req = get().requests.find((r) => r.id === id)
+    if (req) {
+      useNotificationStore.getState().addNotification({
+        type: "system",
+        title: "店铺认领审核未通过",
+        summary: `您的申请未通过。原因：${reason}。`,
+        targetUrl: "/c/merchant-services",
+      })
+    }
+  },
 }))

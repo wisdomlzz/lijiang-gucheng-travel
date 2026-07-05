@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import type { SupplierApplication } from "../../../shared/types"
+import { useNotificationStore } from "@/platform/notification"
 
 type SupplierState = {
   applications: SupplierApplication[]
@@ -59,7 +60,7 @@ export const useSupplierStore = create<SupplierState>((set, get) => ({
         ...s.applications,
       ],
     })),
-  updateStatus: (id, status, reviewer, rejectReason) =>
+  updateStatus: (id, status, reviewer, rejectReason) => {
     set((s) => ({
       applications: s.applications.map((a) =>
         a.id === id
@@ -72,7 +73,23 @@ export const useSupplierStore = create<SupplierState>((set, get) => ({
             }
           : a
       ),
-    })),
+    }))
+
+    if (status === "approved" || status === "rejected") {
+      const app = get().applications.find((a) => a.id === id)
+      if (app) {
+        useNotificationStore.getState().addNotification({
+          type: "system",
+          title: status === "approved" ? "供应商入驻审核通过" : "供应商入驻审核未通过",
+          summary:
+            status === "approved"
+              ? `您的供应商入驻申请已通过，您现在可以登录桌面端管理商品了。`
+              : `您的供应商入驻申请未通过。原因：${rejectReason ?? "未知"}。`,
+          targetUrl: "/c/merchant-services",
+        })
+      }
+    }
+  },
   getByPhone: (phone) => get().applications.filter((a) => a.phone === phone),
 }))
 
