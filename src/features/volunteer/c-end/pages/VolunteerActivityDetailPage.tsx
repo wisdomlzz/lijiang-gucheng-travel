@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from "react"
 import { useParams, useNavigate } from "react-router"
-import { PageHeader } from "../../../../c-end/components/PageHeader"
+import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useVolunteerStore } from "../../store"
-import { useAuthStore } from "../../../../platform/auth"
+import { useAuthStore } from "@/platform/auth"
 import { Heart, MapPin, ArrowLeft, CheckCircle2, Calendar, Shield, AlertTriangle, AlertCircle, Clock4, Users, Image as ImageIcon, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "motion/react"
@@ -150,7 +150,7 @@ export function VolunteerActivityDetailPage() {
 
   if (!act) {
     return (
-      <div className="min-h-screen bg-[#F8F6F3] pb-6">
+      <div className="min-h-screen bg-surface-page pb-6">
         <PageHeader title="活动详情" back={() => navigate("/c/volunteer/activities")} />
         <div className="px-4 py-14 text-center">
           <p className="text-[13px] text-slate-300">活动不存在</p>
@@ -319,7 +319,7 @@ export function VolunteerActivityDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F6F3] pb-6">
+    <div className="min-h-screen bg-surface-page pb-6">
       <PageHeader title="活动详情" back={() => navigate("/c/volunteer/activities")} />
 
       <div className="px-4 py-5 space-y-4">

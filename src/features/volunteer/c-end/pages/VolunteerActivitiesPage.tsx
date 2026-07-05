@@ -4,9 +4,9 @@ import {
   Heart, MapPin, ChevronRight, Calendar, ArrowRight, AlertCircle, RefreshCw,
   Clock, Search, Sparkles, CheckCircle2, AlertTriangle, X, XCircle,
 } from "lucide-react"
-import { PageHeader } from "../../../../c-end/components/PageHeader"
+import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useVolunteerStore } from "../../store"
-import { useAuthStore } from "../../../../platform/auth"
+import { useAuthStore } from "@/platform/auth"
 import { useSearch } from "../../../../shared/hooks/useSearch"
 import { useLoadMore } from "../../../../shared/hooks/useLoadMore"
 import { motion, AnimatePresence } from "motion/react"
@@ -482,7 +482,7 @@ export function VolunteerActivitiesPage() {
   if (volunteer && volunteer.status !== "approved") {
     const isRejected = volunteer.status === "rejected"
     return (
-      <div className="min-h-screen bg-[#F8F6F3]">
+      <div className="min-h-screen bg-surface-page">
         <PageHeader title="志愿活动" back="/c/home" />
         <div className="px-4 py-16 flex flex-col items-center text-center">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
@@ -508,7 +508,7 @@ export function VolunteerActivitiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F6F3] pb-20">
+    <div className="min-h-screen bg-surface-page pb-20">
       <PageHeader title="志愿活动" back="/c/home" />
 
       <div className="pt-5 px-4 space-y-3">

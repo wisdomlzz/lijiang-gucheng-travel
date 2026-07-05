@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react"
 import { Heart, Phone, User, Building2, Upload, X, AlertCircle, RefreshCw, CheckCircle2, Zap } from "lucide-react"
-import { PageHeader } from "../../../../c-end/components/PageHeader"
+import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useVolunteerStore } from "../../store"
-import { useAuthStore } from "../../../../platform/auth"
+import { useAuthStore } from "@/platform/auth"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "motion/react"
@@ -166,7 +166,7 @@ export function VolunteerPlaceholderPage() {
   if (existing && existing.status !== "approved") {
     const isPending = existing.status === "pending"
     return (
-      <div className="min-h-screen bg-[#F8F6F3] pb-6">
+      <div className="min-h-screen bg-surface-page pb-6">
         <PageHeader title="志愿者认证" back="/c/home" />
         <div className="px-4 py-5">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -262,7 +262,7 @@ export function VolunteerPlaceholderPage() {
 
   // ── Registration form ──
   return (
-    <div className="min-h-screen bg-[#F8F6F3] pb-6">
+    <div className="min-h-screen bg-surface-page pb-6">
       <PageHeader title="志愿者认证" back="/c/home" />
 
       <div className="px-4 py-5">
