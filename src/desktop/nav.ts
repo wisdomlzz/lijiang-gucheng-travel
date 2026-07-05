@@ -25,7 +25,7 @@ export type NavGroup = {
   items: {
     key: string
     label: string
-    icon: any
+    icon: LucideIcon
     badge?: number
     permissionCode?: string
     external?: string

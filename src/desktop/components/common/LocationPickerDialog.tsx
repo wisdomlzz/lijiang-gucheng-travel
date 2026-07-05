@@ -10,7 +10,7 @@ import "leaflet/dist/leaflet.css"
 import iconUrl from "leaflet/dist/images/marker-icon.png"
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png"
 import shadowUrl from "leaflet/dist/images/marker-shadow.png"
-// @ts-ignore
+// @ts-expect-error leaflet 内部 API 无类型声明
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl })
 
@@ -138,6 +138,7 @@ export function LocationPickerDialog({
         if (mapRef.current) {
           mapRef.current.setView([latitude, longitude], 16)
           markerRef.current?.setLatLng([latitude, longitude])
+          // @ts-expect-error leaflet fire 对自定义 payload 类型不严格
           mapRef.current.fire("click", { latlng: L.latLng(latitude, longitude) } as any)
         }
       },

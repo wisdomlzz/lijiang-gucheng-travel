@@ -32,7 +32,7 @@ import { haversineDistance, formatDistance } from "@/shared/utils/geo"
 type Category = {
   key: string
   label: string
-  icon: any
+  icon: LucideIcon
   color: string
   count: number
 }

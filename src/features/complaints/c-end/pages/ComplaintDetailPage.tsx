@@ -6,7 +6,7 @@ import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { MapPin, Clock, CheckCircle, XCircle, Phone, FileText, RotateCcw, X } from "lucide-react"
 import { toast } from "sonner"
 
-const STATUS_CONFIG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
+const STATUS_CONFIG: Record<string, { label: string; icon: LucideIcon; color: string; bg: string }> = {
   C10: { label: "已提交", icon: Clock, color: "text-amber-500", bg: "bg-amber-50" },
   C40: { label: "已处理", icon: CheckCircle, color: "text-green-500", bg: "bg-green-50" },
   CR: { label: "已驳回", icon: XCircle, color: "text-red-500", bg: "bg-red-50" },

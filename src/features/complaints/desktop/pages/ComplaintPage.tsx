@@ -624,7 +624,7 @@ export default function ComplaintPage() {
   )
 }
 
-function InfoCard({ icon: Icon, title, lines }: { icon: any; title: string; lines: string[] }) {
+function InfoCard({ icon: Icon, title, lines }: { icon: LucideIcon; title: string; lines: string[] }) {
   return (
     <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3.5">
       <div className="flex items-center gap-2 text-[12px] font-medium text-slate-700 mb-2">
