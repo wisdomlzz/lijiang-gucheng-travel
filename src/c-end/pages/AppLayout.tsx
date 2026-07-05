@@ -16,10 +16,6 @@ export function AppLayout() {
   const navigate = useNavigate()
   const aiActive = location.pathname === "/c/ai"
 
-  const handleTabClick = (key: string) => {
-    if (key !== "/c/ai") navigate(key)
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-surface-page">
       <div className="flex-1 overflow-y-auto pb-[72px]">
