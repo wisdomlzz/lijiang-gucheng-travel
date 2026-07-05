@@ -1,1 +1,0 @@
-const t={food:"餐饮",hotel:"住宿",bar:"酒吧",shopping:"购物"};function a(e){switch(e){case"food":case"hotel":case"bar":case"shopping":return e;case"culture":return"shopping";default:return"shopping"}}function n(e){return t[a(e)]}export{n as g,a as n};

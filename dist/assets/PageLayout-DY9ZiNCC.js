@@ -1,1 +1,0 @@
-import{N as s}from"./vendor-radix-Bb9z72AJ.js";import{P as t}from"./PageHeader-WKKN-jd9.js";function p({title:e,description:a,actions:r,children:o}){return s.jsxs("div",{className:"p-6 space-y-4",children:[s.jsx(t,{title:e,desc:a,actions:r}),o]})}export{p as P};

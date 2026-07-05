@@ -1,1 +1,0 @@
-import{r as s}from"./vendor-react-pXPKqagJ.js";function h(t,o=10){const[n,c]=s.useState(o),r=s.useMemo(()=>t.slice(0,n),[t,n]),l=n<t.length,u=t.length,e=s.useCallback(()=>{c(M=>M+o)},[o]),a=s.useCallback(()=>{c(o)},[o]);return{visible:r,hasMore:l,loadMore:e,reset:a,total:u}}export{h as u};
