@@ -15,3 +15,10 @@
 | C | AddressEditPage | `/c/addresses/edit/:id` | 地址编辑/新增 |
 
 **约束：** 无桌面端管理，地址数据本地持久化（localStorage）。
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: AddressListPage（地址列表）、AddressEditPage（新增/编辑地址）
+- ✅ **Store**: address-store（地址 CRUD）
+- ⚠️ **localStorage 持久化**: 无后端数据库
+- ❌ **无桌面端管理**: 无后台地址管理页面

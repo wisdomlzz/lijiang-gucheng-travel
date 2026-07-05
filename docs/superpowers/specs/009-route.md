@@ -46,3 +46,11 @@ interface Route {
 
 1. `recommendRoutes` 当前硬编码在 `HomePage.tsx` 中，`SearchResultsPage.tsx` 重复定义了同一份数据。应抽到 `features/route/shared/routes-data.ts`
 2. 路线无独立 store（通过首页配置展现），未来可扩展
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: RoutesPage（精选路线列表）、RouteDetailPage（路线详情）、RoutePreviewPage（分享预览）— 3 个页面全实现
+- ⚠️ **硬编码数据**: 路线数据在 `features/route/shared/routes-data.ts` 中静态定义
+- ⚠️ **无独立 store**: 路线无 zustand store
+- ⚠️ **重复数据**: recommendRoutes 同时硬编码在 HomePage.tsx 和 SearchResultsPage.tsx 中
+- ❌ **无桌面端管理**: 路线编辑/发布无后台入口

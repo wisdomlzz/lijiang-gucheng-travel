@@ -46,3 +46,11 @@ interface SupplierApplication {
 ## 依赖关系
 
 - merchant-review（共用同一个页面的供应商入口）
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: SupplierEntryPage（供应商入驻申请表单）
+- ✅ **桌面端**: SupplierApplicationsList（列表）、SupplierApplicationsShow（审核详情）
+- ✅ **Store**: supplier-store（申请提交 + 审核状态管理）
+- ✅ **通知闭环**: 审核通过/驳回 → 推送通知到申请人
+- ❌ **无 B 端页面**: 供应商无独立 B 端入口

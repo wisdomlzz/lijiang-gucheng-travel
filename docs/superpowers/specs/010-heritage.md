@@ -48,3 +48,10 @@ interface HeritageItem {
 1. 全部数据硬编码在 `features/heritage/shared/data/`，无后端
 2. 地图位用 Leaflet 标注，只有位置、无路径
 3. 遗产分类体系已经固定，不动态扩展
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: HeritagePage（分类 Tab + 附近列表）+ 8 类遗产详情页（道路/水系/桥梁/古井/保护民居/历史建筑/古树名木/人文环境）
+- ⚠️ **硬编码数据**: 所有遗产数据在 `features/heritage/shared/data/` 下静态定义，无后端
+- ⚠️ **地图**: 用 Leaflet 标注，只有位置、无路径
+- ❌ **无桌面端管理**: 遗产数据编辑/管理无后台入口

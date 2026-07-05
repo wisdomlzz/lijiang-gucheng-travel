@@ -64,3 +64,12 @@ interface Merchant {
 1. `MerchantListPage` 不做重构，只增量优化 claimStatus 标记
 2. VR 全景用静态图片 + 360 度容器的模拟方案，无 WebXR
 3. 地图用 leaflet + OpenStreetMap，无高德/百度 SDK
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: MerchantListPage（分类/搜索/附近）、MerchantDetailPage（详情/评价/诚信分）、MapPage（Leaflet 地图标注）
+- ✅ **桌面端**: BannerManagePage（轮播图管理）、GridSettingsPage（宫格配置）
+- ✅ **Store**: merchant-store（商户 CRUD）、courtyard-store（院落 POI）、poi-store（兴趣点）、news-store（新闻）、guide-store（导游指南）— 6 个模块
+- ⚠️ **VR 全景**: 用静态图片 + 360° 容器模拟，无 WebXR
+- ⚠️ **地图**: 用 Leaflet + OSM，无高德/百度 SDK
+- ❌ **非电子商城**: 本模块是信息展示平台，不做在线交易

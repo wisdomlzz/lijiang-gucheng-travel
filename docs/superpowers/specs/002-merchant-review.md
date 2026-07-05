@@ -87,3 +87,12 @@ unclaimed → pending(认领审核中) → claimed(已认领)
 1. `Merchant` 的 `claimStatus` 扩展了 `MerchantListPage` 的展示（增量优化，不重构）
 2. 新建入驻的店铺需经审核后才对外展示
 3. 信息变更每次都要走审核，不设自动通过
+
+## 本 Demo 的范围
+
+- ✅ **C 端完整**: MerchantRegistrationPage, MerchantServicesPage, MyShopPage — 入驻/认领/服务管理完整流程
+- ✅ **桌面端**: MerchantReviewPage 实现（3 Tab: 待审核/已通过/已驳回）
+- ✅ **Store**: 注册/认领状态管理 (registration-store.ts + store.ts)
+- ✅ **通知闭环**: 审核通过/驳回 → 推送通知到申请人
+- ⚠️ **供应商审核**: 桌面端 SupplierApplicationsList/Show 在 supplier feature 中独立实现（见 016-supplier.md）
+- ❌ **无自动审核**: 全部人工审核，无自动化规则

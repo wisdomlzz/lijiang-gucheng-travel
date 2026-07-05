@@ -98,3 +98,11 @@ interface VolunteerDailyRecord {
 1. 桌面端 `VolunteerManagePage` 有 ~1500 行，含志愿者审核列表 + 活动管理 CRUD + 地图选点 + 签到管理 + Excel 导出，建议拆为小组件
 2. 活动状态变更（发布/结束/取消）未推送到通知中心（与审核流程联动）
 3. 志愿者注册审核通过/驳回 → 未通知申请人
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: VolunteerActivitiesPage（活动列表）、VolunteerActivityDetailPage（活动详情+报名）、VolunteerPlaceholderPage（注册引导）
+- ✅ **桌面端**: VolunteerManagePage（~1500 行，含审核列表 + 活动 CRUD + 地图选点 + 签到管理 + Excel 导出）
+- ✅ **Store**: volunteer-store（志愿者注册、活动管理、签到/签退、服务时长记录）
+- ⚠️ **无通知**: 活动状态变更和审核结果未接入通知中心
+- ⚠️ **桌面端待拆**: VolunteerManagePage 功能密集，建议拆为小组件

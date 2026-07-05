@@ -44,3 +44,10 @@ interface Notification {
 | 公告发布 | `announcement/store/announcement-store.ts` | ✅ |
 
 **约束：** 通知仅 C 端可见，B 端/桌面端无通知中心。
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: NotificationsPage（全部/订单/系统 3 Tab 分类展示）
+- ✅ **platform store**: notification-store（通知状态管理，基础设施层）
+- ✅ **6 种触发源全部实现**: 订单状态变更、商户认领审核、信息变更审核、投诉处理、供应商审核、公告发布
+- ⚠️ **仅 C 端可见**: B 端/桌面端无通知中心界面

@@ -61,3 +61,12 @@ interface NaxiStreak {
 1. `MyCheckinsPage` 存在但路由未在 `cRoutes` 注册
 2. 纳西打卡无补签机制（连续断了就断了）
 3. 随手拍与无障碍/投诉随手拍的关系不清晰（PhotoReportPage 是独立入口还是复用？）
+
+## 本 Demo 的范围
+
+- ✅ **C 端核心**: NaxiCheckInPage（纳西连续打卡）、PhotoRecordsPage（随手拍记录）、PhotoReportPage（随手拍提交）、PhotoRecordsDetailPage（照片详情）
+- ✅ **Store**: checkin-store + naxi-store — 打卡记录、纳西连续签到、积分联动
+- ✅ **积分联动**: checkin-store 已实现 courtyard_checkin → 5 分、naxi_streak → 50 分
+- ⚠️ **MyCheckinsPage**: 代码存在但路由未在 cRoutes 注册
+- ⚠️ **无补签机制**: 纳西打卡连续断了就断了
+- ⚠️ **随手拍定位**: PhotoReportPage 功能独立，与投诉随手拍关系待明确

@@ -16,3 +16,10 @@
 | Desktop | FlowWarningPage | `/desktop/flow-warning` | 人流量看板 + 预警标记 |
 
 **约束：** 无真实数据源，只有 C 端无入口，仅桌面端展示用。
+
+## 本 Demo 的范围
+
+- ✅ **桌面端**: FlowWarningPage（人流量看板 + 预警标记 — 受 ProtectedRoute 保护）
+- ✅ **Store**: flow-warning-store（区域人流数据 + 预警状态）
+- ⚠️ **模拟数据**: 无真实数据源，纯 Demo 图表展示
+- ❌ **无 C 端入口**: 仅桌面端可用

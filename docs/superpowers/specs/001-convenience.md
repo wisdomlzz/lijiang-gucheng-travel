@@ -110,3 +110,17 @@ Cancellation: 任意状态 → requestCancel → A35_CANCEL_REVIEW → approveCa
 2. 无实时 WebSocket，轮询或手动刷新
 3. 派单算法用 Haversine + zone 匹配，不做智能调度
 4. 无物流跟踪（GPS 实时路径）
+
+## 本 Demo 的范围
+
+- ✅ **C 端完整**: ServicesPage, ServiceTrackingPage, OrderListPage, OrderDetailPage — 4 个页面全部实现并注册路由
+- ✅ **B 端完整**: ServiceWorkbench, ServiceTasks, BNotificationsPage, ServiceHistory, ServiceProfile, ServiceOrderDetail, QuoteAndPhotoFlow — 完整工作流
+- ✅ **桌面端完整**: ConvenienceOverviewPage, ZoneManagementPage, DispatchConfigPage, ConvenienceStaffPage, SettlementPage, PriceArbitrationPage — 7 个页面
+- ✅ **完整状态机**: S10→A10→A20→A30→A35→A40→S48/S50/S55/S90 完整状态流转
+- ✅ **派单引擎**: Haversine 距离 + zone 匹配 (dispatch.ts)
+- ✅ **自动定时器**: 超时自动转派、状态流转定时器 (timers.ts)
+- ✅ **种子数据**: 每状态 1 条 (seed.ts)，覆盖所有状态码
+- ⚠️ **模拟支付**: 无真实支付对接，仅模拟线上/线下支付标记
+- ❌ **无 WebSocket**: 轮询或手动刷新，无实时推送
+- ❌ **无 GPS 物流跟踪**: 无实时路径展示
+- ❌ **积分获取尚未实现**: 订单完成→积分的链路未打通

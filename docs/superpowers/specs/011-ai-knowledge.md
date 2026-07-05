@@ -44,3 +44,12 @@ interface KnowledgeEntry {
 1. 无真实 LLM 接入，用关键词匹配 + 预设回答模拟
 2. 知识库条目在 seed 数据中预置，无上传功能
 3. 无流式输出、无 Markdown 渲染（纯文本）
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: AIChatPage（对话界面，模拟问答交互）
+- ✅ **Store**: ai-knowledge-store（对话记录 + 知识库数据）
+- ⚠️ **模拟回答**: 关键词匹配 + 预设回答，无真实 LLM 接入
+- ⚠️ **预置种子数据**: 知识库条目硬编码，无上传/管理功能
+- ⚠️ **无流式输出**: 瞬时返回，无打字机效果；纯文本无 Markdown
+- ❌ **桌面端知识库管理**: AIKnowledgeBasePage 路由未在 desktop nav 注册

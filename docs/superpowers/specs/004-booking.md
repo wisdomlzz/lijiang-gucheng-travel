@@ -72,3 +72,12 @@ interface Booking {
 2. 无核销码生成（纯文本状态管理）
 3. VR 非真实全景，用图片阵列模拟
 4. 预约有时间冲突检测（同院落同时间不可重复预约），但未做容量限制
+
+## 本 Demo 的范围
+
+- ✅ **C 端完整**: CulturalCourtyardsPage（院落列表）、CulturalCourtyardDetailPage（详情）、CulturalCourtyardVRPage（VR 参观）、CourtyardBookingPage（预约提交）、MyBookingsPage（我的预约）— 5 个页面全实现
+- ✅ **Store**: booking-store 管理预约状态
+- ⚠️ **无桌面端管理**: 后台应能查看/核销预约，demo 未实现
+- ⚠️ **无核销码**: 纯文本状态管理
+- ⚠️ **VR 模拟**: 非真实全景，用图片阵列模拟
+- ⚠️ **容量限制**: 有时间冲突检测但无院落容量限制

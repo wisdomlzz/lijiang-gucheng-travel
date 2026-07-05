@@ -59,3 +59,13 @@ interface Announcement {
 
 - 计算公告内容字数（C 端用 slice）做预览截断，规范应限制标题和正文字数
 - 无"公告分类"（全部是 type: "公告"），未来可扩展应急通知/活动通知等
+
+## 本 Demo 的范围
+
+- ✅ **C 端**: AnnouncementPage（公告列表）、AnnouncementDetailPage（公告详情）
+- ✅ **桌面端**: AnnouncementManagePage（发布/草稿/下架管理）
+- ✅ **Store**: announcement-store（公告 CRUD + 状态管理）
+- ✅ **通知闭环**: 公告发布 → 推送 system 类型通知到全部用户
+- ⚠️ **无定时发布**: 仅 "草稿/发布/下架" 三态
+- ⚠️ **无分类**: 全部 type 为 "公告"，无子类型
+- ⚠️ **无字数规范**: C 端用 slice 截断预览，无后端限制
