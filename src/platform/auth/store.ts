@@ -10,6 +10,8 @@ type AuthState = {
   login: (user: User, platform: Platform) => void
   logout: () => void
   switchPlatform: (platform: Platform) => void
+  /** 更新当前用户的部分字段（如追加角色） */
+  updateUser: (updates: Partial<User>) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -27,6 +29,11 @@ export const useAuthStore = create<AuthState>()(
 
       switchPlatform: (platform) =>
         set({ currentPlatform: platform }),
+
+      updateUser: (updates) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, ...updates } : null,
+        })),
     }),
     {
       name: "lijiang-demo-auth",
