@@ -524,8 +524,13 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
       status: "pending" as VolunteerStatus,
       createdAt: fmt(new Date()),
     }
-    syncAction("registerVolunteer", () => api.create("volunteers", newVolunteer), () => {})
-    set((s) => ({ volunteers: [...s.volunteers, newVolunteer] }))
+    void syncAction(
+      "registerVolunteer",
+      () => api.create<Volunteer>("volunteers", newVolunteer),
+      (result) => {
+        set((s) => ({ volunteers: [...s.volunteers, result] }))
+      }
+    )
     return { ok: true, msg: "注册提交成功，请等待审核" }
   },
 
@@ -594,21 +599,22 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
     if (!credentialImages.length) return { ok: false, msg: "请上传资质图片" }
     const now = fmt(new Date())
     const record: VolunteerReviewRecord = { action: "resubmitted", reviewedAt: now }
-    syncAction("resubmitVolunteer", () => api.update("volunteers", volunteerId, { credentialImages }), () => {})
-    set((s) => ({
-      volunteers: s.volunteers.map((x) =>
-        x.id === volunteerId
-          ? {
-              ...x,
-              status: "pending" as VolunteerStatus,
-              credentialImages,
-              reviewNote: undefined,
-              reviewedAt: undefined,
-              reviewHistory: [...(x.reviewHistory || []), record],
-            }
-          : x
-      ),
-    }))
+    void syncAction(
+      "resubmitVolunteer",
+      () =>
+        api.update<Volunteer>("volunteers", volunteerId, {
+          credentialImages,
+          status: "pending",
+          reviewNote: null,
+          reviewedAt: null,
+          reviewHistory: [...(v.reviewHistory || []), record],
+        }),
+      (result) => {
+        set((s) => ({
+          volunteers: s.volunteers.map((x) => (x.id === volunteerId ? result : x)),
+        }))
+      }
+    )
     return { ok: true, msg: "重新提交成功，请等待审核" }
   },
 
@@ -643,8 +649,13 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
   addActivity: (act) => {
     const id = `act-${Date.now()}`
     const fullAct = { ...act, id, status: "draft" as VolunteerActivityStatus, createdAt: fmt(new Date()) }
-    syncAction("addActivity", () => volunteerApi.activities.create(fullAct), () => {})
-    set((s) => ({ activities: [...s.activities, fullAct] }))
+    void syncAction(
+      "addActivity",
+      () => volunteerApi.activities.create(fullAct),
+      (result: VolunteerActivity) => {
+        set((s) => ({ activities: [...s.activities, result] }))
+      }
+    )
     return id
   },
 
@@ -656,13 +667,23 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
         Object.entries(fields).filter(([k]) => ["description", "maxParticipants"].includes(k))
       )
       if (Object.keys(allowed).length) {
-        syncAction("editActivity", () => api.update("volunteer-activities", activityId, allowed), () => {})
-        set((s) => ({ activities: s.activities.map((a) => (a.id === activityId ? { ...a, ...allowed } : a)) }))
+        void syncAction(
+          "editActivity",
+          () => api.update<VolunteerActivity>("volunteer-activities", activityId, allowed),
+          (result) => {
+            set((s) => ({ activities: s.activities.map((a) => (a.id === activityId ? result : a)) }))
+          }
+        )
       }
       return
     }
-    syncAction("editActivity", () => api.update("volunteer-activities", activityId, fields), () => {})
-    set((s) => ({ activities: s.activities.map((a) => (a.id === activityId ? { ...a, ...fields } : a)) }))
+    void syncAction(
+      "editActivity",
+      () => api.update<VolunteerActivity>("volunteer-activities", activityId, fields),
+      (result) => {
+        set((s) => ({ activities: s.activities.map((a) => (a.id === activityId ? result : a)) }))
+      }
+    )
   },
 
   publishActivity: (activityId) => {
@@ -718,12 +739,17 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
 
   deleteActivity: (activityId) => {
     clearActTimers(activityId)
-    syncAction("deleteActivity", () => api.remove("volunteer-activities", activityId), () => {})
-    set((s) => ({
-      activities: s.activities.filter((a) => a.id !== activityId),
-      signUps: s.signUps.filter((su) => su.activityId !== activityId),
-      dailyRecords: s.dailyRecords.filter((dr) => dr.activityId !== activityId),
-    }))
+    void syncAction(
+      "deleteActivity",
+      () => api.remove("volunteer-activities", activityId),
+      () => {
+        set((s) => ({
+          activities: s.activities.filter((a) => a.id !== activityId),
+          signUps: s.signUps.filter((su) => su.activityId !== activityId),
+          dailyRecords: s.dailyRecords.filter((dr) => dr.activityId !== activityId),
+        }))
+      }
+    )
   },
 
   // ── sign-up ──

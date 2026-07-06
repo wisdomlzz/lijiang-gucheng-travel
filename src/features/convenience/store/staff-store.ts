@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { staffApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 import type { ConvenienceServiceType } from "../../../shared/types"
 
 export interface StaffItem {
@@ -16,12 +18,6 @@ export interface StaffItem {
   lng?: number
 }
 
-/**
- * 便民服务人员派单候选池（6 人 × 覆盖全部 6 种服务类型）。
- * 仅李师傅有独立登录账号，其余为后台派单使用。
- */
-const SEED: StaffItem[] =[]
-
 type StaffState = {
   staff: StaffItem[]
   autoDispatch: boolean
@@ -29,10 +25,10 @@ type StaffState = {
   getAvailable: (supplierId: string) => StaffItem[]
   getConvenienceStaffByType: (serviceType: ConvenienceServiceType) => StaffItem[]
   getConvenienceStaffByZone: (zoneId: string, serviceType: ConvenienceServiceType) => StaffItem[]
-  addStaff: (item: { supplierId: string; name: string; phone: string }) => void
-  toggleEnabled: (id: string) => void
-  setStaffStatus: (id: string, status: StaffItem["status"]) => void
-  removeStaff: (id: string) => void
+  addStaff: (item: { supplierId: string; name: string; phone: string }) => Promise<void>
+  toggleEnabled: (id: string) => Promise<void>
+  setStaffStatus: (id: string, status: StaffItem["status"]) => Promise<void>
+  removeStaff: (id: string) => Promise<void>
   setAutoDispatch: (val: boolean) => void
 }
 
@@ -48,12 +44,11 @@ export const useStaffStore = create<StaffState>((set, get) => ({
     get().staff.filter(
       (s) => s.enabled && s.status === "online" && s.serviceTypes?.includes(serviceType) && s.zoneIds?.includes(zoneId)
     ),
-  addStaff: (item) =>
-    set((s) => ({
-      staff: [
-        ...s.staff,
-        {
-          id: `s${Date.now()}`,
+  addStaff: async (item) => {
+    await syncAction(
+      "addStaff",
+      () =>
+        staffApi.create({
           supplierId: item.supplierId,
           name: item.name,
           phone: item.phone,
@@ -61,11 +56,40 @@ export const useStaffStore = create<StaffState>((set, get) => ({
           status: "offline",
           assignedOrders: 0,
           joinedAt: new Date().toISOString().slice(0, 10),
-        },
-      ],
-    })),
-  toggleEnabled: (id) => set((s) => ({ staff: s.staff.map((x) => (x.id === id ? { ...x, enabled: !x.enabled } : x)) })),
-  setStaffStatus: (id, status) => set((s) => ({ staff: s.staff.map((x) => (x.id === id ? { ...x, status } : x)) })),
-  removeStaff: (id) => set((s) => ({ staff: s.staff.filter((x) => x.id !== id) })),
+        }),
+      (result: StaffItem) => {
+        set((s) => ({ staff: [...s.staff, result] }))
+      }
+    )
+  },
+  toggleEnabled: async (id) => {
+    const current = get().staff.find((s) => s.id === id)
+    if (!current) return
+    await syncAction(
+      "toggleEnabled",
+      () => staffApi.update(id, { enabled: !current.enabled }),
+      (result: StaffItem) => {
+        set((s) => ({ staff: s.staff.map((x) => (x.id === id ? result : x)) }))
+      }
+    )
+  },
+  setStaffStatus: async (id, status) => {
+    await syncAction(
+      "setStaffStatus",
+      () => staffApi.update(id, { status }),
+      (result: StaffItem) => {
+        set((s) => ({ staff: s.staff.map((x) => (x.id === id ? result : x)) }))
+      }
+    )
+  },
+  removeStaff: async (id) => {
+    await syncAction(
+      "removeStaff",
+      () => staffApi.remove(id),
+      () => {
+        set((s) => ({ staff: s.staff.filter((x) => x.id !== id) }))
+      }
+    )
+  },
   setAutoDispatch: (val) => set({ autoDispatch: val }),
 }))

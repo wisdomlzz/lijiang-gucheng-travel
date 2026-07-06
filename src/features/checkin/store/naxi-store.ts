@@ -1,4 +1,7 @@
 import { create } from "zustand"
+import { api } from "@/api/client"
+import { syncAction } from "@/api/sync"
+import { usePointsStore } from "../../points/store"
 
 // ============================================================
 // 纳西人打卡 —— "今天我想做纳西人"活动
@@ -20,7 +23,9 @@ type NaxiCheckinState = {
   getStreak: (userId: string) => number // 当前连续天数
   getTotalDays: (userId: string) => number // 累计打卡天数
   canCheckinToday: (userId: string) => boolean
-  addCheckin: (input: Omit<NaxiCheckin, "id" | "createdAt">) => { ok: boolean; msg: string; streakBonus?: boolean }
+  addCheckin: (
+    input: Omit<NaxiCheckin, "id" | "createdAt">
+  ) => Promise<{ ok: boolean; msg: string; streakBonus?: boolean }>
 }
 
 function todayStr() {
@@ -34,29 +39,7 @@ function isYesterday(dateStr: string, ref: Date): boolean {
 }
 
 export const useNaxiCheckinStore = create<NaxiCheckinState>((set, get) => ({
-  checkins: [
-    {
-      id: "nx1",
-      userId: "u_c_001",
-      photo: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400",
-      location: "五一街文治巷",
-      createdAt: "2026-06-26 10:00",
-    },
-    {
-      id: "nx2",
-      userId: "u_c_001",
-      photo: "https://images.unsplash.com/photo-1552526881-5517a57c17ae?w=400",
-      location: "四方街",
-      createdAt: "2026-06-27 11:00",
-    },
-    {
-      id: "nx3",
-      userId: "u_c_001",
-      photo: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
-      location: "木府前",
-      createdAt: "2026-06-28 09:30",
-    },
-  ],
+  checkins: [],
 
   getMyCheckins: (userId) => get().checkins.filter((c) => c.userId === userId),
 
@@ -94,19 +77,26 @@ export const useNaxiCheckinStore = create<NaxiCheckinState>((set, get) => ({
       .getMyCheckins(userId)
       .some((c) => c.createdAt.slice(0, 10) === todayStr()),
 
-  addCheckin: (input) => {
+  addCheckin: async (input) => {
     if (!get().canCheckinToday(input.userId)) return { ok: false, msg: "今日已打卡" }
-    const prevStreak = get().getStreak(input.userId)
-    set((s) => ({
-      checkins: [{ ...input, id: `nx${Date.now()}`, createdAt: new Date().toLocaleString("zh-CN") }, ...s.checkins],
-    }))
+    const result = await syncAction(
+      "naxi.add",
+      () =>
+        api.create<NaxiCheckin>("naxi-checkins", {
+          userId: input.userId,
+          photo: input.photo,
+          location: input.location,
+        }),
+      (r) => {
+        set((s) => ({ checkins: [r, ...s.checkins] }))
+      }
+    )
+    if (!result) return { ok: false, msg: "打卡失败" }
     const newStreak = get().getStreak(input.userId)
-    // 连续 7 天达成 → 触发积分奖励（跨域联动由调用方执行 transact）
-    const streakBonus = newStreak > 0 && newStreak % 7 === 0 && newStreak > prevStreak
-    return {
-      ok: true,
-      msg: streakBonus ? `连续打卡 ${newStreak} 天，获得额外积分奖励！` : `打卡成功，已连续 ${newStreak} 天`,
-      streakBonus,
+    const streakBonus = newStreak > 0 && newStreak % 7 === 0
+    if (streakBonus) {
+      usePointsStore.getState().transact(input.userId, "naxi_streak", result.id)
     }
+    return { ok: true, msg: "打卡成功", streakBonus }
   },
 }))

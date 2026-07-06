@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { api } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 // ============================================================
 // 结算管理 —— 便民服务结算闭环
@@ -37,18 +39,13 @@ type SettlementState = {
   getAllSummary: () => { totalStaff: number; totalIncome: number; monthIncome: number; pendingWithdraw: number }
 
   // 录入收入（订单完成时调用——跨域联动入口）
-  recordIncome: (record: Omit<IncomeRecord, "completedAt"> & { completedAt?: string }) => void
+  recordIncome: (record: Omit<IncomeRecord, "completedAt"> & { completedAt?: string }) => Promise<void>
 
   // 提现
-  requestWithdrawal: (staffId: string, staffName: string, amount: number) => { ok: boolean; msg: string }
-  approveWithdrawal: (id: string, reviewer: string) => void
-  rejectWithdrawal: (id: string, reviewer: string, reason: string) => void
+  requestWithdrawal: (staffId: string, staffName: string, amount: number) => Promise<{ ok: boolean; msg: string }>
+  approveWithdrawal: (id: string, reviewer: string) => Promise<void>
+  rejectWithdrawal: (id: string, reviewer: string, reason: string) => Promise<void>
 }
-
-// 种子：从已完成的便民订单衍生（staffId 对应 staff service）
-const SEED_INCOMES: IncomeRecord[] =[]
-
-const SEED_WITHDRAWALS: WithdrawalRequest[] =[]
 
 function isThisMonth(dateStr: string): boolean {
   const d = new Date(dateStr)
@@ -84,46 +81,71 @@ export const useSettlementStore = create<SettlementState>((set, get) => ({
   },
 
   // 跨域联动入口：订单完成时录入收入
-  recordIncome: (record) =>
-    set((s) => ({
-      incomes: [{ ...record, completedAt: record.completedAt ?? new Date().toISOString() }, ...s.incomes],
-    })),
+  recordIncome: async (record) => {
+    await syncAction(
+      "recordIncome",
+      () =>
+        api.create<IncomeRecord>("incomes", {
+          ...record,
+          completedAt: record.completedAt ?? new Date().toISOString(),
+        }),
+      (result) => {
+        set((s) => ({ incomes: [result, ...s.incomes] }))
+      }
+    )
+  },
 
-  requestWithdrawal: (staffId, staffName, amount) => {
+  requestWithdrawal: async (staffId, staffName, amount) => {
     if (amount <= 0) return { ok: false, msg: "提现金额需大于 0" }
     const summary = get().getStaffSummary(staffId)
     const pendingAmount = get()
       .withdrawals.filter((w) => w.staffId === staffId && w.status === "pending")
       .reduce((s, w) => s + w.amount, 0)
     if (summary.total - pendingAmount < amount) return { ok: false, msg: "可提现余额不足" }
-    set((s) => ({
-      withdrawals: [
-        {
-          id: `wd${Date.now()}`,
+    const result = await syncAction(
+      "requestWithdrawal",
+      () =>
+        api.create<WithdrawalRequest>("withdrawals", {
           staffId,
           staffName,
           amount,
           status: "pending",
-          requestedAt: new Date().toLocaleString("zh-CN"),
-        },
-        ...s.withdrawals,
-      ],
-    }))
-    return { ok: true, msg: "提现申请已提交" }
+        }),
+      (r) => {
+        set((s) => ({ withdrawals: [r, ...s.withdrawals] }))
+      }
+    )
+    return result ? { ok: true, msg: "提现申请已提交" } : { ok: false, msg: "提交失败" }
   },
 
-  approveWithdrawal: (id, reviewer) =>
-    set((s) => ({
-      withdrawals: s.withdrawals.map((w) =>
-        w.id === id ? { ...w, status: "approved", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer } : w
-      ),
-    })),
-  rejectWithdrawal: (id, reviewer, reason) =>
-    set((s) => ({
-      withdrawals: s.withdrawals.map((w) =>
-        w.id === id
-          ? { ...w, status: "rejected", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer, rejectReason: reason }
-          : w
-      ),
-    })),
+  approveWithdrawal: async (id, reviewer) => {
+    await syncAction(
+      "approveWithdrawal",
+      () =>
+        api.update<WithdrawalRequest>("withdrawals", id, {
+          status: "approved",
+          reviewedAt: new Date().toLocaleString("zh-CN"),
+          reviewer,
+        }),
+      (result) => {
+        set((s) => ({ withdrawals: s.withdrawals.map((w) => (w.id === id ? result : w)) }))
+      }
+    )
+  },
+
+  rejectWithdrawal: async (id, reviewer, reason) => {
+    await syncAction(
+      "rejectWithdrawal",
+      () =>
+        api.update<WithdrawalRequest>("withdrawals", id, {
+          status: "rejected",
+          reviewedAt: new Date().toLocaleString("zh-CN"),
+          reviewer,
+          rejectReason: reason,
+        }),
+      (result) => {
+        set((s) => ({ withdrawals: s.withdrawals.map((w) => (w.id === id ? result : w)) }))
+      }
+    )
+  },
 }))

@@ -27,8 +27,8 @@ export function NaxiCheckInPage() {
 
   const [photo, setPhoto] = useState(PLACEHOLDER_PHOTO)
 
-  const handleCheckin = () => {
-    const result = addCheckin({ userId, photo, location: "古城内（GPS 定位）" })
+  const handleCheckin = async () => {
+    const result = await addCheckin({ userId, photo, location: "古城内（GPS 定位）" })
     if (!result.ok) {
       toast.error(result.msg)
       return
