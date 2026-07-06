@@ -12,7 +12,7 @@ export function haversineKm(lat1, lng1, lat2, lng2) {
 
 export function pickStaff(staffList, orderServiceType, orderLat, orderLng, zones) {
   const type = orderServiceType
-  const candidates = staffList.filter(s => s.enabled && s.status === "online" && s.service_types?.includes(type))
+  const candidates = staffList.filter(s => s.enabled && s.status === "online" && s.serviceTypes?.includes(orderServiceType))
   if (candidates.length === 0) return null
 
   const pointToPoint = ["送货服务", "行李搬运"]
@@ -31,7 +31,7 @@ export function pickStaff(staffList, orderServiceType, orderLat, orderLng, zones
   const eligibleZoneIds = zones
     .filter(z => z.stations?.some(st => st.serviceType === type))
     .map(z => z.id)
-  const zoneMatches = candidates.filter(s => s.zone_ids?.some(zid => eligibleZoneIds.includes(zid)))
+  const zoneMatches = candidates.filter(s => s.zoneIds?.some(zid => eligibleZoneIds.includes(zid)))
   const pool = zoneMatches.length > 0 ? zoneMatches : candidates
   const pick = pool[Math.floor(Math.random() * pool.length)]
   return pick || null
