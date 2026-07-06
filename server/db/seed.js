@@ -163,8 +163,15 @@ export function seed() {
   writeTable("service_configs", [])
   writeTable("checkins", [])
   writeTable("naxi_checkins", [])
-  writeTable("addresses", [])
-  writeTable("favorites", [])
+  writeTable("addresses", [
+    { id: "addr_1", userId: "u_c_001", province: "云南省", city: "丽江市", district: "古城区", detail: "五一街文治巷88号", isDefault: true, createdAt: now, updatedAt: now },
+    { id: "addr_2", userId: "u_c_001", province: "云南省", city: "丽江市", district: "古城区", detail: "四方街12号", createdAt: now, updatedAt: now },
+    { id: "addr_3", userId: "u_c_s_001", province: "云南省", city: "丽江市", district: "古城区", detail: "七一街兴文巷", isDefault: true, createdAt: now, updatedAt: now },
+  ])
+  writeTable("favorites", [
+    { id: "fav_1", userId: "u_c_001", targetType: "merchant", targetId: "m1", title: "古城小院餐厅", createdAt: now },
+    { id: "fav_2", userId: "u_c_001", targetType: "courtyard", targetId: "c1", title: "木府", createdAt: now },
+  ])
   writeTable("volunteers", [])
   writeTable("volunteer_daily_records", [])
   writeTable("score_rules", [])

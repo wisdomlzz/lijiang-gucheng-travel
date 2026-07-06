@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { api } from "./client"
-import { useConvenienceStore, useStaffStore, useZoneStore, useReviewStore } from "@/features/convenience/store"
+import { useConvenienceStore, useStaffStore, useZoneStore, useReviewStore, useSettlementStore } from "@/features/convenience/store"
 import { useContentNewsStore, useContentGuideStore, useContentCourtyardStore, useContentMerchantStore, useContentPOIStore } from "@/features/content/store"
 import { useHousingStore } from "@/features/housing/store/housing-store"
 import { useComplaintStore } from "@/features/complaints/store"
@@ -10,6 +10,13 @@ import { useRulesStore, useTrustScoreStore } from "@/features/trust-score/store"
 import { useVolunteerStore } from "@/features/volunteer/store"
 import { useHomepageConfigStore } from "@/features/homepage/store"
 import { useAIKnowledgeStore } from "@/features/ai-knowledge/store"
+import { useFavoriteStore } from "@/features/favorite/store"
+import { useAddressStore } from "@/features/address/store"
+import { useBookingStore } from "@/features/booking/store"
+import { useCheckinStore } from "@/features/checkin/store"
+import { useNaxiCheckinStore } from "@/features/checkin/store"
+import { useSupplierStore } from "@/features/supplier/store"
+import { useMerchantReviewStore, useMerchantRegistrationStore } from "@/features/merchant-review/store"
 
 /**
  * 全量 hydration：启动时从 API 加载所有数据到 zustand stores。
@@ -23,10 +30,8 @@ export function useApiHydrate() {
 
     async function hydrate() {
       try {
-        // 测试连接
         await api.list("staff", { pageSize: 1 })
 
-        // 并行调所有 API
         const results = await Promise.allSettled([
           api.list("staff", { pageSize: 200 }),
           api.list("orders", { pageSize: 200 }),
@@ -47,6 +52,17 @@ export function useApiHydrate() {
           api.list("volunteers", { pageSize: 200 }),
           api.list("volunteer-activities", { pageSize: 200 }),
           api.list("ai-knowledge", { pageSize: 200 }),
+          api.list("favorites", { pageSize: 200 }),
+          api.list("addresses", { pageSize: 200 }),
+          api.list("bookings", { pageSize: 200 }),
+          api.list("checkins", { pageSize: 200 }),
+          api.list("naxi-checkins", { pageSize: 200 }),
+          api.list("incomes", { pageSize: 200 }),
+          api.list("withdrawals", { pageSize: 200 }),
+          api.list("suppliers", { pageSize: 200 }),
+          api.list("supplier-applications", { pageSize: 200 }),
+          api.list("merchant-registrations", { pageSize: 200 }),
+          api.list("merchant-reviews", { pageSize: 200 }),
         ])
 
         if (cancelled) return
@@ -70,6 +86,15 @@ export function useApiHydrate() {
         useHomepageConfigStore.setState({ banners: r[14], gridItems: r[15] })
         useVolunteerStore.setState({ volunteers: r[16], activities: r[17] })
         useAIKnowledgeStore.setState({ items: r[18] })
+        useFavoriteStore.setState({ favorites: r[19] })
+        useAddressStore.setState({ addresses: r[20] })
+        useBookingStore.setState({ bookings: r[21] })
+        useCheckinStore.setState({ checkins: r[22] })
+        useNaxiCheckinStore.setState({ checkins: r[23] })
+        useSettlementStore.setState({ incomes: r[24], withdrawals: r[25] })
+        useSupplierStore.setState({ suppliers: r[26] })
+        // supplier-applications and merchant-registrations/reviews serve
+        // their own stores in the features that own them
 
         if (!cancelled) setStatus("online")
       } catch (e) {
@@ -93,6 +118,13 @@ export function useApiHydrate() {
           useHomepageConfigStore.setState({ banners: [], gridItems: [] })
           useVolunteerStore.setState({ volunteers: [], activities: [] })
           useAIKnowledgeStore.setState({ items: [] })
+          useFavoriteStore.setState({ favorites: [] })
+          useAddressStore.setState({ addresses: [] })
+          useBookingStore.setState({ bookings: [] })
+          useCheckinStore.setState({ checkins: [] })
+          useNaxiCheckinStore.setState({ checkins: [] })
+          useSettlementStore.setState({ incomes: [], withdrawals: [] })
+          useSupplierStore.setState({ suppliers: [] })
           setStatus("offline")
           toast.error("无法连接到后端服务 (localhost:3001)，请启动 server", { duration: 8000 })
         }
