@@ -147,8 +147,25 @@ app.use("/api/v1/volunteers", crudRoutes("volunteers", { filters: ["status", "us
 app.use("/api/v1/volunteer-activities", crudRoutes("volunteer_activities", { filters: ["status"] }))
 app.use("/api/v1/volunteer-records", crudRoutes("volunteer_daily_records", { filters: ["volunteerId", "activityId"] }))
 app.use("/api/v1/points/rules", crudRoutes("points_rules"))
-app.use("/api/v1/trust-scores", crudRoutes("trust_scores"))
 app.use("/api/v1/trust-scores/rules", crudRoutes("score_rules"))
+
+// Trust threshold (before general trust-scores to avoid :id capture)
+app.get("/api/v1/trust-scores/threshold", (req, res) => {
+  let thresholds = getTable("trust_thresholds") || []
+  if (thresholds.length === 0) {
+    const def = { id: 1, defaultScore: 100, delinquentThreshold: 60, autoRecover: true, recoverScore: 70 }
+    thresholds = [def]
+    setTable("trust_thresholds", thresholds)
+  }
+  res.json(ok(thresholds[0]))
+})
+app.put("/api/v1/trust-scores/threshold", (req, res) => {
+  const data = { ...req.body, id: 1 }
+  setTable("trust_thresholds", [data])
+  res.json(ok(data))
+})
+
+app.use("/api/v1/trust-scores", crudRoutes("trust_scores"))
 app.use("/api/v1/supplier-applications", crudRoutes("supplier_applications", { filters: ["status"] }))
 app.use("/api/v1/merchant-registrations", crudRoutes("merchant_registrations", { filters: ["status", "userId"] }))
 app.use("/api/v1/merchant-reviews", crudRoutes("merchant_reviews", { filters: ["status", "userId"] }))
@@ -209,23 +226,6 @@ app.post("/api/v1/points/transact", (req, res) => {
     setTable("points_ledgers", ledgers)
     res.json(ok(account, `积分${delta > 0 ? "+" : ""}${delta}`))
   } catch (e) { res.json(fail(e.message)) }
-})
-
-// Trust threshold
-app.get("/api/v1/trust-scores/threshold", (req, res) => {
-  let thresholds = getTable("trust_thresholds") || []
-  if (thresholds.length === 0) {
-    const def = { id: 1, defaultScore: 100, delinquentThreshold: 60, autoRecover: true, recoverScore: 70 }
-    thresholds = [def]
-    setTable("trust_thresholds", thresholds)
-  }
-  res.json(ok(thresholds[0]))
-})
-
-app.put("/api/v1/trust-scores/threshold", (req, res) => {
-  const data = { ...req.body, id: 1 }
-  setTable("trust_thresholds", [data])
-  res.json(ok(data))
 })
 
 // Banner reorder

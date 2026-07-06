@@ -155,30 +155,58 @@ export function seed() {
     { staffId: "s3", supplierId: "sup_001", name: "张环卫", roleTag: "便民服务人员", trustScore: 88, status: "正常", totalOrders: 234, totalRatings: 220, rating5Count: 180, rating4Count: 30, rating3Count: 6, rating2Count: 3, rating1Count: 1, complaintCount: 5, rejectionCount: 2, createdAt: now, updatedAt: now },
   ])
 
-  // Empty tables that need initial files
-  writeTable("zones", [])
-  writeTable("dispatch_configs", [])
-  writeTable("income_records", [])
-  writeTable("withdrawal_requests", [])
-  writeTable("service_configs", [])
+  // Seed data tables
+  writeTable("zones", [
+    { id: "zone_core", name: "大研古城核心区", stations: [{ id: "st1", zoneId: "zone_core", serviceType: "生活垃圾清运", name: "四方街服务站", address: "四方街", lat: 26.870, lng: 100.234 }, { id: "st2", zoneId: "zone_core", serviceType: "建筑垃圾清运", name: "木府服务站", address: "木府旁", lat: 26.868, lng: 100.236 }] },
+    { id: "zone_south", name: "七一街片区", stations: [{ id: "st3", zoneId: "zone_south", serviceType: "送水服务", name: "七一街水站", address: "七一街", lat: 26.865, lng: 100.237 }] },
+    { id: "zone_inn", name: "客栈集中区", stations: [{ id: "st4", zoneId: "zone_inn", serviceType: "布草配送", name: "客栈布草中转站", address: "五一街", lat: 26.873, lng: 100.232 }] },
+  ])
+  writeTable("dispatch_configs", [{ id: 1, autoDispatchEnabled: true, maxRetries: 3, dispatchTimeoutSeconds: 300, zoneMode: "prefer", data: {} }])
+  writeTable("income_records", [
+    { id: "ir1", orderId: "CO20260509001", staffId: "s1", staffName: "李师傅", serviceType: "行李搬运", amount: 60, payMethod: "online", completedAt: "2026-05-09T12:00:00" },
+    { id: "ir2", orderId: "CO20260511003", staffId: "s1", staffName: "李师傅", serviceType: "布草配送", amount: 80, payMethod: "online", completedAt: "2026-05-11T12:00:00" },
+  ])
+  writeTable("withdrawal_requests", [
+    { id: "wd1", staffId: "s1", staffName: "李师傅", amount: 500, status: "approved", reviewedAt: "2026-06-11T14:00:00", reviewer: "管理员" },
+    { id: "wd2", staffId: "s5", staffName: "杨送水", amount: 300, status: "pending" },
+  ])
+  writeTable("service_configs", [
+    { id: "garbage", name: "生活垃圾清运", type: "zone", emoji: "🗑️", unit: "桶", enabled: true, order: 0 },
+    { id: "construction", name: "建筑垃圾清运", type: "zone", emoji: "🧱", unit: "方", enabled: true, order: 1 },
+    { id: "linen", name: "布草配送", type: "zone", emoji: "🧺", unit: "套", enabled: true, order: 2 },
+    { id: "water", name: "送水服务", type: "zone", emoji: "💧", unit: "桶", enabled: true, order: 3 },
+    { id: "luggage", name: "行李搬运", type: "point", emoji: "🧳", unit: "件", enabled: true, order: 4 },
+    { id: "delivery", name: "送货服务", type: "point", emoji: "📦", unit: "件", enabled: true, order: 5 },
+  ])
   writeTable("checkins", [])
   writeTable("naxi_checkins", [])
   writeTable("addresses", [
-    { id: "addr_1", userId: "u_c_001", province: "云南省", city: "丽江市", district: "古城区", detail: "五一街文治巷88号", isDefault: true, createdAt: now, updatedAt: now },
-    { id: "addr_2", userId: "u_c_001", province: "云南省", city: "丽江市", district: "古城区", detail: "四方街12号", createdAt: now, updatedAt: now },
-    { id: "addr_3", userId: "u_c_s_001", province: "云南省", city: "丽江市", district: "古城区", detail: "七一街兴文巷", isDefault: true, createdAt: now, updatedAt: now },
+    { id: "addr_1", userId: "u_c_001", province: "云南省", city: "丽江市", district: "古城区", detail: "五一街文治巷88号", isDefault: true },
+    { id: "addr_2", userId: "u_c_001", province: "云南省", city: "丽江市", district: "古城区", detail: "四方街12号" },
+    { id: "addr_3", userId: "u_c_s_001", province: "云南省", city: "丽江市", district: "古城区", detail: "七一街兴文巷", isDefault: true },
   ])
   writeTable("favorites", [
-    { id: "fav_1", userId: "u_c_001", targetType: "merchant", targetId: "m1", title: "古城小院餐厅", createdAt: now },
-    { id: "fav_2", userId: "u_c_001", targetType: "courtyard", targetId: "c1", title: "木府", createdAt: now },
+    { id: "fav_1", userId: "u_c_001", targetType: "merchant", targetId: "m1", title: "古城小院餐厅" },
+    { id: "fav_2", userId: "u_c_001", targetType: "courtyard", targetId: "c1", title: "木府" },
   ])
   writeTable("volunteers", [])
   writeTable("volunteer_daily_records", [])
-  writeTable("score_rules", [])
+  writeTable("score_rules", [
+    { id: "rule_01", type: "deduct", name: "差评扣分", condition: "用户评价 ≤ 2 星", scoreChange: -5, enabled: true, description: "每次获得差评扣除诚信分" },
+    { id: "rule_02", type: "deduct", name: "取消订单扣分", condition: "已接单后取消", scoreChange: -3, enabled: true, description: "接单后取消扣除诚信分" },
+    { id: "rule_03", type: "deduct", name: "投诉扣分（一般）", condition: "投诉成立（一般）", scoreChange: -3, enabled: true, description: "一般投诉核实成立后扣除诚信分" },
+    { id: "rule_06", type: "reward", name: "5星好评加分", condition: "用户评价 5 星", scoreChange: 1, enabled: true, description: "获得5星好评每次加诚信分" },
+    { id: "rule_07", type: "reward", name: "4星好评加分", condition: "用户评价 4 星", scoreChange: 0.5, enabled: true, description: "获得4星好评每次加诚信分" },
+  ])
   writeTable("merchant_registrations", [])
   writeTable("merchant_reviews", [])
-  writeTable("bookings", [])
-  writeTable("suppliers", [])
+  writeTable("bookings", [
+    { id: "bk1", userId: "u_c_001", courtyardId: "c1", date: "2026-07-10", timeSlot: "09:00-11:00", status: "confirmed" },
+    { id: "bk2", userId: "u_c_s_001", courtyardId: "c2", date: "2026-07-12", timeSlot: "14:00-16:00", status: "pending" },
+  ])
+  writeTable("suppliers", [
+    { id: "sup_001", name: "古城服务管理公司", contactName: "和经理", contactPhone: "139****0000", address: "古城区", status: "active" },
+  ])
 
   console.log("🌱 Seed data written to", DATA_DIR)
 }
