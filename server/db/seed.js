@@ -332,6 +332,102 @@ export function seedIfNeeded() {
     { id: "ann-4", title: "五一假期旅游攻略", content: "五一假期将至，为您准备了一份详细的古城游玩攻略。\n\n推荐路线：大水车 → 四方街 → 木府 → 狮子山 → 束河古镇\n\n美食推荐：丽江腊排骨、纳西烤鱼、鸡豆凉粉\n\n住宿建议：建议提前预订古城内客栈", images: ["https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=800&q=70", "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=70", "https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?auto=format&fit=crop&w=800&q=70"], type: "公告", publishTime: "2024-04-08T10:00:00Z", status: "published" },
   ])
 
+  // ====== Checkins (院落打卡, ~35 items) ======
+  // Images from PHOTOS in source; users spread across u_c_001 / u_c_s_001 + demo user names
+  const CHK_PHOTOS = [
+    "https://images.unsplash.com/photo-1683825093397-5bbc64e496e6?auto=format&fit=crop&w=400&q=70",
+    "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=400&q=70",
+    "https://images.unsplash.com/photo-1663609968423-657ff4f0dd5a?auto=format&fit=crop&w=400&q=70",
+    "https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?auto=format&fit=crop&w=400&q=70",
+    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=400&q=70",
+    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=400&q=70",
+    "https://images.unsplash.com/photo-1552526881-5517a57c17ae?auto=format&fit=crop&w=400&q=70",
+    "https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=400&q=70",
+  ]
+  insertMany("checkins", [
+    { id: "chk-1", userId: "u_c_001", courtyardId: "1", imageUrl: CHK_PHOTOS[0], note: "木府参观打卡", lat: 26.8685, lng: 100.2312, createdAt: "2026-06-15 09:20" },
+    { id: "chk-2", userId: "u_c_001", courtyardId: "5", imageUrl: CHK_PHOTOS[6], note: "四方街热闹", lat: 26.868, lng: 100.2345, createdAt: "2026-06-16 10:45" },
+    { id: "chk-3", userId: "u_c_001", courtyardId: "24", imageUrl: CHK_PHOTOS[1], note: "大水车合影", lat: 26.872, lng: 100.232, createdAt: "2026-06-17 08:30" },
+    { id: "chk-4", userId: "u_c_001", courtyardId: "2", imageUrl: CHK_PHOTOS[2], note: "方国瑜故居", lat: 26.8692, lng: 100.2356, createdAt: "2026-06-18 14:10" },
+    { id: "chk-5", userId: "u_c_001", courtyardId: "3", imageUrl: CHK_PHOTOS[3], note: "登万古楼", lat: 26.8701, lng: 100.2298, createdAt: "2026-06-19 15:20" },
+    { id: "chk-6", userId: "u_c_s_001", courtyardId: "4", imageUrl: CHK_PHOTOS[4], note: "纳西古乐现场", lat: 26.8668, lng: 100.2298, createdAt: "2026-06-20 20:15" },
+    { id: "chk-7", userId: "u_c_s_001", courtyardId: "6", imageUrl: CHK_PHOTOS[5], note: "文昌宫", lat: 26.8712, lng: 100.2285, createdAt: "2026-06-21 11:00" },
+    { id: "chk-8", userId: "u_c_001", courtyardId: "7", imageUrl: CHK_PHOTOS[6], note: "恒裕公民居", lat: 26.8698, lng: 100.2338, createdAt: "2026-06-22 10:00" },
+    { id: "chk-9", userId: "u_c_001", courtyardId: "8", imageUrl: CHK_PHOTOS[7], note: "王丕震纪念馆", lat: 26.8675, lng: 100.2342, createdAt: "2026-06-23 09:15" },
+    { id: "chk-10", userId: "u_c_s_001", courtyardId: "14", imageUrl: CHK_PHOTOS[0], note: "白马龙潭寺", lat: 26.866, lng: 100.226, createdAt: "2026-06-24 16:30" },
+    { id: "chk-11", userId: "u_c_001", courtyardId: "15", imageUrl: CHK_PHOTOS[1], note: "三眼井", lat: 26.8695, lng: 100.2348, createdAt: "2026-06-25 12:00" },
+    { id: "chk-12", userId: "u_c_001", courtyardId: "17", imageUrl: CHK_PHOTOS[2], note: "天地院一游", lat: 26.8683, lng: 100.2325, createdAt: "2026-06-26 13:40" },
+    { id: "chk-13", userId: "u_c_s_001", courtyardId: "19", imageUrl: CHK_PHOTOS[3], note: "东巴纸坊体验", lat: 26.867, lng: 100.2338, createdAt: "2026-06-27 14:00" },
+    { id: "chk-14", userId: "u_c_001", courtyardId: "21", imageUrl: CHK_PHOTOS[4], note: "古城画院", lat: 26.8686, lng: 100.232, createdAt: "2026-06-28 10:20" },
+    { id: "chk-15", userId: "u_c_001", courtyardId: "22", imageUrl: CHK_PHOTOS[5], note: "忠义坊", lat: 26.8676, lng: 100.231, createdAt: "2026-06-29 09:50" },
+    { id: "chk-16", userId: "u_c_s_001", courtyardId: "1", imageUrl: CHK_PHOTOS[6], note: "再访木府", lat: 26.8685, lng: 100.2312, createdAt: "2026-06-30 11:20" },
+    { id: "chk-17", userId: "u_c_001", courtyardId: "5", imageUrl: CHK_PHOTOS[7], note: "四方街夜景", lat: 26.868, lng: 100.2345, createdAt: "2026-07-01 20:00" },
+    { id: "chk-18", userId: "u_c_001", courtyardId: "12", imageUrl: CHK_PHOTOS[0], note: "净莲寺清晨", lat: 26.8705, lng: 100.2305, createdAt: "2026-07-01 07:30" },
+    { id: "chk-19", userId: "u_c_s_001", courtyardId: "25", imageUrl: CHK_PHOTOS[1], note: "纳西人家民居", lat: 26.8697, lng: 100.236, createdAt: "2026-07-02 10:00" },
+    { id: "chk-20", userId: "u_c_001", courtyardId: "9", imageUrl: CHK_PHOTOS[2], note: "周霖故居", lat: 26.869, lng: 100.2365, createdAt: "2026-07-02 15:30" },
+    { id: "chk-21", userId: "u_c_001", courtyardId: "10", imageUrl: CHK_PHOTOS[3], note: "顾彼得旧居", lat: 26.8682, lng: 100.2328, createdAt: "2026-07-03 09:00" },
+    { id: "chk-22", userId: "u_c_s_001", courtyardId: "11", imageUrl: CHK_PHOTOS[4], note: "洛克故居", lat: 26.8678, lng: 100.235, createdAt: "2026-07-03 11:10" },
+    { id: "chk-23", userId: "u_c_001", courtyardId: "13", imageUrl: CHK_PHOTOS[5], note: "普贤寺", lat: 26.8672, lng: 100.2335, createdAt: "2026-07-04 08:45" },
+    { id: "chk-24", userId: "u_c_001", courtyardId: "16", imageUrl: CHK_PHOTOS[6], note: "百岁坊", lat: 26.8688, lng: 100.2332, createdAt: "2026-07-04 14:20" },
+    { id: "chk-25", userId: "u_c_s_001", courtyardId: "18", imageUrl: CHK_PHOTOS[7], note: "银饰坊参观", lat: 26.8693, lng: 100.234, createdAt: "2026-07-04 16:00" },
+    { id: "chk-26", userId: "u_c_001", courtyardId: "20", imageUrl: CHK_PHOTOS[0], note: "和志刚书斋", lat: 26.8696, lng: 100.2358, createdAt: "2026-07-05 10:30" },
+    { id: "chk-27", userId: "u_c_001", courtyardId: "23", imageUrl: CHK_PHOTOS[1], note: "官门口", lat: 26.8684, lng: 100.233, createdAt: "2026-07-05 12:15" },
+    { id: "chk-28", userId: "u_c_s_001", courtyardId: "24", imageUrl: CHK_PHOTOS[2], note: "大水车早班", lat: 26.872, lng: 100.232, createdAt: "2026-07-05 07:45" },
+    { id: "chk-29", userId: "u_c_001", courtyardId: "1", imageUrl: CHK_PHOTOS[3], note: "木府晚场", lat: 26.8685, lng: 100.2312, createdAt: "2026-07-05 17:00" },
+    { id: "chk-30", userId: "u_c_001", courtyardId: "5", imageUrl: CHK_PHOTOS[4], note: "四方街集市", lat: 26.868, lng: 100.2345, createdAt: "2026-07-05 19:30" },
+    { id: "chk-31", userId: "u_c_s_001", courtyardId: "6", imageUrl: CHK_PHOTOS[5], note: "文昌宫俯瞰", lat: 26.8712, lng: 100.2285, createdAt: "2026-07-06 08:00" },
+    { id: "chk-32", userId: "u_c_001", courtyardId: "19", imageUrl: CHK_PHOTOS[6], note: "东巴纸再体验", lat: 26.867, lng: 100.2338, createdAt: "2026-07-06 09:40" },
+    { id: "chk-33", userId: "u_c_001", courtyardId: "21", imageUrl: CHK_PHOTOS[7], note: "画院展览", lat: 26.8686, lng: 100.232, createdAt: "2026-07-06 11:00" },
+    { id: "chk-34", userId: "u_c_s_001", courtyardId: "2", imageUrl: CHK_PHOTOS[0], note: "方国瑜故居再访", lat: 26.8692, lng: 100.2356, createdAt: "2026-07-06 13:30" },
+    { id: "chk-35", userId: "u_c_001", courtyardId: "4", imageUrl: CHK_PHOTOS[1], note: "古乐会开演前", lat: 26.8668, lng: 100.2298, createdAt: "2026-07-06 18:15" },
+  ])
+
+  // ====== Naxi Checkins (3 items — u_c_001, 6/26-6/28) ======
+  insertMany("naxi_checkins", [
+    { id: "nx1", userId: "u_c_001", imageUrl: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400", note: "", location: "五一街文治巷", lat: 26.869, lng: 100.235, createdAt: "2026-06-26 10:00" },
+    { id: "nx2", userId: "u_c_001", imageUrl: "https://images.unsplash.com/photo-1552526881-5517a57c17ae?w=400", note: "", location: "四方街", lat: 26.868, lng: 100.2345, createdAt: "2026-06-27 11:00" },
+    { id: "nx3", userId: "u_c_001", imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400", note: "", location: "木府前", lat: 26.8685, lng: 100.2312, createdAt: "2026-06-28 09:30" },
+  ])
+
+  // ====== Volunteers (3 items) ======
+  insertMany("volunteers", [
+    { id: "v1", userId: "u_c_001", name: "张小游", phone: "13800001001", politicalStatus: "群众", workUnit: "自由职业", credentialImages: ["https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400"], status: "approved", score: 15, reviewHistory: [{ action: "approved", note: "资料齐全", reviewedAt: "2026-05-20 10:00" }] },
+    { id: "v2", userId: "u_c_s_001", name: "张老板", phone: "13800001002", politicalStatus: "中共党员", workUnit: "古城客栈", credentialImages: ["https://images.unsplash.com/photo-1586953208270-767889fa9b0e?w=400"], status: "approved", score: 40, reviewHistory: [{ action: "approved", note: "长期志愿者", reviewedAt: "2026-04-15 09:30" }] },
+    { id: "v3", userId: "sv-p1", name: "赵小明", phone: "13800009001", politicalStatus: "群众", workUnit: "古城区社区居民", credentialImages: ["https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400"], status: "pending", score: 0, reviewHistory: [] },
+  ])
+
+  // ====== Volunteer Daily Records (5 items) ======
+  insertMany("volunteer_daily_records", [
+    { id: "vdr1", volunteerId: "v1", activityId: "act-ended-ok", checkInTime: "2026-07-03 09:00", checkOutTime: "2026-07-03 12:00", durationMinutes: 180, status: "completed" },
+    { id: "vdr2", volunteerId: "v2", activityId: "act-ended-ok", checkInTime: "2026-07-03 09:05", checkOutTime: "2026-07-03 12:10", durationMinutes: 185, status: "completed" },
+    { id: "vdr3", volunteerId: "v1", activityId: "act-ongoing", checkInTime: "2026-07-06 10:00", checkOutTime: null, durationMinutes: 0, status: "checked_in" },
+    { id: "vdr4", volunteerId: "v2", activityId: "act-multi-ongoing", checkInTime: "2026-07-05 09:00", checkOutTime: "2026-07-05 12:00", durationMinutes: 180, status: "completed" },
+    { id: "vdr5", volunteerId: "v2", activityId: "act-ended-multi", checkInTime: "2026-07-01 14:00", checkOutTime: "2026-07-01 17:00", durationMinutes: 180, status: "completed" },
+  ])
+
+  // ====== Merchant Registrations (2 items) ======
+  insertMany("merchant_registrations", [
+    { id: "mr1", userId: "u_c_s_001", merchantName: "银器工坊", category: "shopping", address: "新华街翠文段", contactName: "张老板", contactPhone: "13800001002", images: ["https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400"], status: "pending" },
+    { id: "mr2", userId: "u_c_s_001", merchantName: "纳西手工艺展馆", category: "shopping", address: "七一街兴文巷12号", contactName: "张老板", contactPhone: "13800001002", images: ["https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=400"], status: "approved", remark: "资料齐全，已批准" },
+  ])
+
+  // ====== Merchant Reviews (3 items — mcr1/mcr2/mcr3) ======
+  insertMany("merchant_reviews", [
+    { id: "mcr1", merchantId: "sup_001", userId: "u_c_s_001", fields: [
+      { field: "name", label: "商家名称", oldValue: "古城文创·王老板", newValue: "古城文创集合店" },
+      { field: "hours", label: "营业时间", oldValue: "09:00-22:00", newValue: "08:30-23:00" },
+      { field: "phone", label: "联系电话", oldValue: "139-8888-3456", newValue: "139-8888-9999" },
+    ], status: "pending", createdAt: "2026-06-28 10:00" },
+    { id: "mcr2", merchantId: "sup_002", userId: "u_c_s_001", fields: [
+      { field: "name", label: "商家名称", oldValue: "丽江云味餐厅", newValue: "纳西人家餐厅" },
+      { field: "description", label: "商家简介", oldValue: "老式云南菜馆", newValue: "新升级的纳西风味餐厅，专注地道纳西美食" },
+    ], status: "pending", createdAt: "2026-06-29 15:20" },
+    { id: "mcr3", merchantId: "sup_001", userId: "u_c_s_001", fields: [
+      { field: "name", label: "商家名称", oldValue: "古城文创·王老板", newValue: "雪山清吧" },
+      { field: "barType", label: "酒吧类型", oldValue: "民谣清吧", newValue: "民谣驻唱+精酿啤酒" },
+    ], status: "approved", remark: "管理员审核通过 2026-06-21", createdAt: "2026-06-18 09:00", updatedAt: "2026-06-21 14:30" },
+  ])
+
   console.log("🌱 Seed 完成")
   return true
 }
