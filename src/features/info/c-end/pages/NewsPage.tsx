@@ -2,62 +2,15 @@ import { useState } from "react"
 import { useNavigate } from "react-router"
 import { ChevronRight } from "lucide-react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
-
-const newsItems = [
-  {
-    id: "1",
-    img: "https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?auto=format&fit=crop&w=600&q=70",
-    title: "古城春日文化节开幕",
-    tag: "热门活动",
-    tagColor: "#3B82F6",
-    date: "04-25",
-    summary: "丽江古城春日文化节将于4月25日盛大开幕，精彩活动等您参与",
-    link: "/c/info/1",
-  },
-  {
-    id: "2",
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=70",
-    title: "景区优惠券发放",
-    tag: "优惠活动",
-    tagColor: "#DC2626",
-    date: "04-30",
-    summary: "限时优惠券发放，游客专享福利，先到先得",
-    link: "/c/info/3",
-  },
-  {
-    id: "3",
-    img: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=600&q=70",
-    title: "纳西文化体验课",
-    tag: "体验活动",
-    tagColor: "#7C3AED",
-    date: "每周末",
-    summary: "传统文化体验，纳西文字、东巴纸制作等活动",
-    link: "/c/info/4",
-  },
-  {
-    id: "4",
-    img: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=600&q=70",
-    title: "景区安全须知",
-    tag: "公告",
-    tagColor: "#F59E0B",
-    date: "04-20",
-    summary: "请各位游客注意游览安全，文明出行",
-    link: "/c/info/7",
-  },
-  {
-    id: "5",
-    img: "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=600&q=70",
-    title: "公房出租公告",
-    tag: "便民公告",
-    tagColor: "#0891B2",
-    date: "04-12",
-    summary: "丽江古城公房出租信息更新，商户可关注公开招租安排",
-    link: "/c/info/9",
-  },
-]
+import { useContentNewsStore } from "@/features/content/store/news-store"
 
 export function NewsPage() {
   const navigate = useNavigate()
+  const newsItems = useContentNewsStore((s) => s.news)
+  const [tab, setTab] = useState<string>("all")
+
+  const categories = [...new Set(newsItems.map((n) => n.category))]
+  const filtered = tab === "all" ? newsItems : newsItems.filter((n) => n.category === tab)
 
   return (
     <div className="min-h-screen bg-surface-page">
@@ -77,32 +30,51 @@ export function NewsPage() {
         </div>
       </div>
 
-      <div className="px-3 mt-3 space-y-3 pb-24">
-        {newsItems.map((item) => (
+      {/* 分类 Tab */}
+      <div className="px-3 mt-3 flex gap-2 overflow-x-auto no-scrollbar">
+        {["all", ...categories].map((c) => (
           <button
-            key={item.id}
-            onClick={() => navigate(item.link)}
-            className="w-full bg-white rounded-2xl p-2.5 shadow-[0_4px_14px_rgba(60,120,200,0.10)] active:scale-[0.99] transition-transform text-left"
+            key={c}
+            onClick={() => setTab(c)}
+            className={`shrink-0 px-3.5 h-7 rounded-full text-[12px] font-medium transition ${
+              tab === c ? "bg-primary text-white" : "bg-white text-text-secondary border border-gray-100"
+            }`}
           >
-            <div className="flex gap-3">
-              <div className="w-[96px] h-[96px] rounded-xl overflow-hidden flex-shrink-0 relative">
-                <ImageWithFallback src={item.img} alt={item.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            {c === "all" ? "全部" : c}
+          </button>
+        ))}
+      </div>
+
+      <div className="px-3 mt-3 space-y-3 pb-24">
+        {filtered.map((item) => (
+          <div
+            key={item.id}
+            onClick={() => navigate(`/c/info/${item.id}`)}
+            className="bg-white rounded-xl overflow-hidden shadow-[0_2px_12px_rgba(60,60,80,0.06)] cursor-pointer active:scale-[0.98] transition-transform"
+          >
+            <ImageWithFallback
+              src={item.imageUrl}
+              alt={item.title}
+              className="w-full h-[152px] object-cover"
+            />
+            <div className="p-3 space-y-1.5">
+              <div className="flex items-center gap-2">
                 <span
-                  className="absolute bottom-1 left-1.5 text-[10px] text-white/95"
-                  style={{ backgroundColor: item.tagColor }}
+                  className="px-1.5 py-0.5 rounded-md text-[10px] text-white font-medium"
+                  style={{ background: item.tagColor }}
                 >
                   {item.tag}
                 </span>
+                <span className="text-[11px] text-text-caption">{item.date}</span>
               </div>
-              <div className="flex-1 min-w-0 py-0.5 flex flex-col">
-                <p className="text-[14px] text-text-body leading-snug line-clamp-2">{item.title}</p>
-                <p className="text-[12px] text-text-secondary mt-1 line-clamp-2">{item.summary}</p>
-                <p className="mt-auto text-[11px] text-text-tertiary">{item.date}</p>
-              </div>
+              <h3 className="text-[15px] text-text-body font-medium leading-snug">{item.title}</h3>
+              <p className="text-[13px] text-text-secondary leading-relaxed">{item.summary}</p>
             </div>
-          </button>
+          </div>
         ))}
+        {filtered.length === 0 && (
+          <div className="text-center text-text-tertiary py-16 text-[13px]">暂无资讯</div>
+        )}
       </div>
     </div>
   )
