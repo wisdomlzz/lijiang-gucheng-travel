@@ -14,6 +14,11 @@ export default defineConfig({
     },
   },
   assetsInclude: ['**/*.svg', '**/*.csv'],
+  server: {
+    proxy: {
+      "/uploads": "http://localhost:3001",
+    },
+  },
   build: {
     rollupOptions: {
       output: {
