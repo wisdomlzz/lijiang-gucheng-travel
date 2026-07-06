@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { bannersApi, gridApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 import type { GridItemConfig, BannerConfig } from "../../../shared/types"
 
 const DONE_ICON =
@@ -205,15 +207,20 @@ export const useHomepageConfigStore = create<HomepageState>((set) => ({
       items.splice(toIndex, 0, moved)
       return { gridItems: items.map((item, idx) => ({ ...item, order: idx, page: idx < 8 ? 1 : 2 }) as GridItemConfig) }
     }),
-  toggleGridItem: (id) =>
-    set((s) => ({
-      gridItems: s.gridItems.map((item) => (item.id === id ? { ...item, visible: !item.visible } : item)),
-    })),
-  updateGridItem: (id, fields) =>
-    set((s) => ({ gridItems: s.gridItems.map((item) => (item.id === id ? { ...item, ...fields } : item)) })),
+  toggleGridItem: (id) => {
+      syncAction("grid.toggle", () => gridApi.update(id, {}), () => {})
+      set((s) => ({
+        gridItems: s.gridItems.map((item) => (item.id === id ? { ...item, visible: !item.visible } : item)),
+      }))
+    },
+  updateGridItem: (id, fields) => {
+      syncAction("grid.update", () => gridApi.update(id, fields), () => {})
+      set((s) => ({ gridItems: s.gridItems.map((item) => (item.id === id ? { ...item, ...fields } : item)) }))
+    },
   resetGridToDefault: () => set({ gridItems: DEFAULT_GRID.map((g) => ({ ...g })) }),
 
   addBanner: (scene) => {
+    syncAction("banner.add", () => bannersApi.create({ scene }), () => {})
     let newId = ""
     set((s) => {
       const maxOrder = s.banners.filter((b) => b.scene === scene).reduce((m, b) => Math.max(m, b.order), -1)
@@ -237,11 +244,17 @@ export const useHomepageConfigStore = create<HomepageState>((set) => ({
     })
     return newId
   },
-  updateBanner: (id, fields) =>
-    set((s) => ({ banners: s.banners.map((b) => (b.id === id ? { ...b, ...fields } : b)) })),
-  removeBanner: (id) => set((s) => ({ banners: s.banners.filter((b) => b.id !== id) })),
-  moveBanner: (id, direction) =>
-    set((s) => {
+  updateBanner: (id, fields) => {
+    syncAction("banner.update", () => bannersApi.update(id, fields), () => {})
+    set((s) => ({ banners: s.banners.map((b) => (b.id === id ? { ...b, ...fields } : b)) }))
+  },
+  removeBanner: (id) => {
+    syncAction("banner.remove", () => bannersApi.remove(id), () => {})
+    set((s) => ({ banners: s.banners.filter((b) => b.id !== id) }))
+  },
+  moveBanner: (id, direction) => {
+    syncAction("banner.reorder", () => bannersApi.reorder([id]), () => {})
+    return set((s) => {
       const scene = s.banners.find((b) => b.id === id)?.scene
       if (!scene) return s
       const sceneItems = s.banners.filter((b) => b.scene === scene).sort((a, b) => a.order - b.order)
@@ -251,6 +264,7 @@ export const useHomepageConfigStore = create<HomepageState>((set) => ({
       ;[newScene[idx], newScene[idx + direction]] = [newScene[idx + direction], newScene[idx]]
       const updated = newScene.map((b, i) => ({ ...b, order: i }))
       return { banners: [...s.banners.filter((b) => b.scene !== scene), ...updated] }
-    }),
+    })
+  },
   initBanners: () => set({ banners: DEFAULT_BANNERS.map((b) => ({ ...b })) }),
 }))

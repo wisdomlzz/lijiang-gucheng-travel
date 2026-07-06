@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { pointsApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 // ============================================================
 // 积分服务 —— 「账户 + 流水 + 规则」三件套
@@ -183,6 +185,15 @@ export const usePointsStore = create<PointsState>((set, get) => ({
       createdAt: new Date().toLocaleString("zh-CN"),
     }
 
+    syncAction("transact", () => pointsApi.transact({
+      userId,
+      sourceCode,
+      refId,
+      delta: Math.abs(delta),
+      direction: rule.direction,
+      balanceAfter: newBalance,
+    }), () => {})
+
     set((s) => ({
       ledgers: [ledger, ...s.ledgers],
       accounts: {
@@ -199,7 +210,16 @@ export const usePointsStore = create<PointsState>((set, get) => ({
     return { ok: true, msg: `${delta > 0 ? "获得" : "消耗"} ${Math.abs(delta)} 积分`, delta }
   },
 
-  addRule: (rule) => set((s) => ({ rules: [...s.rules.filter((r) => r.code !== rule.code), rule] })),
-  updateRule: (code, patch) => set((s) => ({ rules: s.rules.map((r) => (r.code === code ? { ...r, ...patch } : r)) })),
-  removeRule: (code) => set((s) => ({ rules: s.rules.filter((r) => r.code !== code) })),
+  addRule: (rule) => {
+    syncAction("addRule", () => pointsApi.rules.create(rule), () => {})
+    set((s) => ({ rules: [...s.rules.filter((r) => r.code !== rule.code), rule] }))
+  },
+  updateRule: (code, patch) => {
+    syncAction("updateRule", () => pointsApi.rules.update(code, patch), () => {})
+    set((s) => ({ rules: s.rules.map((r) => (r.code === code ? { ...r, ...patch } : r)) }))
+  },
+  removeRule: (code) => {
+    syncAction("removeRule", () => pointsApi.rules.remove(code), () => {})
+    set((s) => ({ rules: s.rules.filter((r) => r.code !== code) }))
+  },
 }))

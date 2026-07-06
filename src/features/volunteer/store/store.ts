@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { api, volunteerApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 import { usePointsStore } from "@/features/points/store"
 import { useNotificationStore } from "@/platform/notification"
 import type {
@@ -856,22 +858,19 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
   register: (userId, name, phone, politicalStatus, workUnit, credentialImages) => {
     if (get().volunteers.find((v) => v.userId === userId)) return { ok: false, msg: "您已提交注册，无需重复注册" }
     if (!credentialImages.length) return { ok: false, msg: "请上传资质图片" }
-    set((s) => ({
-      volunteers: [
-        ...s.volunteers,
-        {
-          id: userId,
-          userId,
-          name,
-          phone,
-          politicalStatus,
-          workUnit,
-          credentialImages,
-          status: "pending",
-          createdAt: fmt(new Date()),
-        },
-      ],
-    }))
+    const newVolunteer = {
+      id: userId,
+      userId,
+      name,
+      phone,
+      politicalStatus,
+      workUnit,
+      credentialImages,
+      status: "pending" as VolunteerStatus,
+      createdAt: fmt(new Date()),
+    }
+    syncAction("registerVolunteer", () => api.create("volunteers", newVolunteer), () => {})
+    set((s) => ({ volunteers: [...s.volunteers, newVolunteer] }))
     return { ok: true, msg: "注册提交成功，请等待审核" }
   },
 
@@ -940,6 +939,7 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
     if (!credentialImages.length) return { ok: false, msg: "请上传资质图片" }
     const now = fmt(new Date())
     const record: VolunteerReviewRecord = { action: "resubmitted", reviewedAt: now }
+    syncAction("resubmitVolunteer", () => api.update("volunteers", volunteerId, { credentialImages }), () => {})
     set((s) => ({
       volunteers: s.volunteers.map((x) =>
         x.id === volunteerId
@@ -987,7 +987,9 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
 
   addActivity: (act) => {
     const id = `act-${Date.now()}`
-    set((s) => ({ activities: [...s.activities, { ...act, id, status: "draft", createdAt: fmt(new Date()) }] }))
+    const fullAct = { ...act, id, status: "draft" as VolunteerActivityStatus, createdAt: fmt(new Date()) }
+    syncAction("addActivity", () => volunteerApi.activities.create(fullAct), () => {})
+    set((s) => ({ activities: [...s.activities, fullAct] }))
     return id
   },
 
@@ -998,10 +1000,13 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
       const allowed = Object.fromEntries(
         Object.entries(fields).filter(([k]) => ["description", "maxParticipants"].includes(k))
       )
-      if (Object.keys(allowed).length)
+      if (Object.keys(allowed).length) {
+        syncAction("editActivity", () => api.update("volunteer-activities", activityId, allowed), () => {})
         set((s) => ({ activities: s.activities.map((a) => (a.id === activityId ? { ...a, ...allowed } : a)) }))
+      }
       return
     }
+    syncAction("editActivity", () => api.update("volunteer-activities", activityId, fields), () => {})
     set((s) => ({ activities: s.activities.map((a) => (a.id === activityId ? { ...a, ...fields } : a)) }))
   },
 
@@ -1058,6 +1063,7 @@ export const useVolunteerStore = create<VolunteerState>((set, get) => ({
 
   deleteActivity: (activityId) => {
     clearActTimers(activityId)
+    syncAction("deleteActivity", () => api.remove("volunteer-activities", activityId), () => {})
     set((s) => ({
       activities: s.activities.filter((a) => a.id !== activityId),
       signUps: s.signUps.filter((su) => su.activityId !== activityId),

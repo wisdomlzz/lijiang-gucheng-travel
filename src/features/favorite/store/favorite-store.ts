@@ -1,5 +1,7 @@
 import { create } from "zustand"
 import type { FavoriteItem } from "../../../shared/types"
+import { favoritesApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 type FavoriteState = {
   favorites: FavoriteItem[]
@@ -47,19 +49,20 @@ export const useFavoriteStore = create<FavoriteState>((set, get) => ({
     const numId = typeof itemId === "string" ? Number(itemId) : itemId
     return get().favorites.some((f) => f.userId === userId && f.type === type && f.itemId === numId)
   },
-  add: (item) =>
-    set((s) => ({
-      favorites: [
-        {
-          ...item,
-          itemId: typeof item.itemId === "string" ? Number(item.itemId) : item.itemId,
-          id: `fav_${Date.now()}`,
-          savedAt: new Date().toISOString().slice(0, 10),
-        },
-        ...s.favorites,
-      ],
-    })),
-  remove: (id) => set((s) => ({ favorites: s.favorites.filter((f) => f.id !== id) })),
+  add: (item) => {
+    const fav: FavoriteItem = {
+      ...item,
+      itemId: typeof item.itemId === "string" ? Number(item.itemId) : item.itemId,
+      id: `fav_${Date.now()}`,
+      savedAt: new Date().toISOString().slice(0, 10),
+    }
+    syncAction("addFavorite", () => favoritesApi.create(fav), () => {})
+    set((s) => ({ favorites: [fav, ...s.favorites] }))
+  },
+  remove: (id) => {
+    syncAction("removeFavorite", () => favoritesApi.remove(id), () => {})
+    set((s) => ({ favorites: s.favorites.filter((f) => f.id !== id) }))
+  },
   toggle: (item) => {
     const state = get()
     const numId = typeof item.itemId === "string" ? Number(item.itemId) : item.itemId

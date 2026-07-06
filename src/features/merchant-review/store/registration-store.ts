@@ -2,6 +2,8 @@ import { create } from "zustand"
 import { useAuthStore } from "@/platform/auth"
 import { useContentMerchantStore } from "../../content/store/merchant-store"
 import { useNotificationStore } from "@/platform/notification"
+import { merchantRegApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 // ============================================================
 // 古城商户认领 & 入驻申请
@@ -70,45 +72,41 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
 
   getByUserId: (userId) => get().requests.filter((r) => r.userId === userId),
 
-  submitClaim: (input) =>
-    set((s) => ({
-      requests: [
-        {
-          id: `claim_${Date.now()}`,
-          type: "claim",
-          userId: input.userId,
-          userName: input.userName,
-          userPhone: input.userPhone,
-          claimedShopId: input.claimedShopId,
-          claimedShopName: input.claimedShopName,
-          status: "pending",
-          submittedAt: new Date().toLocaleString("zh-CN"),
-        },
-        ...s.requests,
-      ],
-    })),
+  submitClaim: (input) => {
+    const item: ShopClaimRequest = {
+      id: `claim_${Date.now()}`,
+      type: "claim",
+      userId: input.userId,
+      userName: input.userName,
+      userPhone: input.userPhone,
+      claimedShopId: input.claimedShopId,
+      claimedShopName: input.claimedShopName,
+      status: "pending",
+      submittedAt: new Date().toLocaleString("zh-CN"),
+    }
+    syncAction("submitClaim", () => merchantRegApi.create(item), () => {})
+    set((s) => ({ requests: [item, ...s.requests] }))
+  },
 
-  submitRegistration: (input) =>
-    set((s) => ({
-      requests: [
-        {
-          id: `reg_${Date.now()}`,
-          type: "new_shop",
-          userId: input.userId,
-          userName: input.userName,
-          userPhone: input.userPhone,
-          newShopName: input.newShopName,
-          newCategory: input.newCategory,
-          newAddress: input.newAddress,
-          newPhone: input.newPhone,
-          newDescription: input.newDescription,
-          newHours: input.newHours,
-          status: "pending",
-          submittedAt: new Date().toLocaleString("zh-CN"),
-        },
-        ...s.requests,
-      ],
-    })),
+  submitRegistration: (input) => {
+    const item: ShopClaimRequest = {
+      id: `reg_${Date.now()}`,
+      type: "new_shop",
+      userId: input.userId,
+      userName: input.userName,
+      userPhone: input.userPhone,
+      newShopName: input.newShopName,
+      newCategory: input.newCategory,
+      newAddress: input.newAddress,
+      newPhone: input.newPhone,
+      newDescription: input.newDescription,
+      newHours: input.newHours,
+      status: "pending",
+      submittedAt: new Date().toLocaleString("zh-CN"),
+    }
+    syncAction("submitRegistration", () => merchantRegApi.create(item), () => {})
+    set((s) => ({ requests: [item, ...s.requests] }))
+  },
 
   approveRegistration: (id, reviewer) => {
     const req = get().requests.find((r) => r.id === id)

@@ -1,6 +1,8 @@
 import { create } from "zustand"
 import type { SupplierApplication } from "../../../shared/types"
 import { useNotificationStore } from "@/platform/notification"
+import { supplierApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 type SupplierState = {
   applications: SupplierApplication[]
@@ -53,13 +55,13 @@ export const useSupplierStore = create<SupplierState>((set, get) => ({
       submittedAt: "2026-05-19 16:45",
     },
   ],
-  addApplication: (app) =>
+  addApplication: (app) => {
+    const item = { ...app, id: `app-${Date.now()}`, submittedAt: new Date().toLocaleString("zh-CN"), status: "pending" as const }
+    syncAction("addApplication", () => supplierApi.create(item), () => {})
     set((s) => ({
-      applications: [
-        { ...app, id: `app-${Date.now()}`, submittedAt: new Date().toLocaleString("zh-CN"), status: "pending" },
-        ...s.applications,
-      ],
-    })),
+      applications: [item as SupplierApplication, ...s.applications],
+    }))
+  },
   updateStatus: (id, status, reviewer, rejectReason) => {
     set((s) => ({
       applications: s.applications.map((a) =>

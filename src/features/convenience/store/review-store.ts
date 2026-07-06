@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { reviewsApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 // ====== Types ======
 export interface ReviewData {
@@ -256,15 +258,21 @@ export const useReviewStore = create<ReviewStoreState>((set, get) => ({
 
   getReview: (id) => get().reviews.find((r) => r.id === id),
 
-  replyReview: (id, content) =>
+  replyReview: (id, content) => {
+    syncAction("replyReview", () => reviewsApi.update(id, { replyContent: content }), () => {})
     set((s) => ({
       reviews: s.reviews.map((r) =>
         r.id === id ? { ...r, replyContent: content, repliedAt: new Date().toLocaleString("zh-CN") } : r
       ),
-    })),
+    }))
+  },
 
-  markFollowUp: (id) =>
+  markFollowUp: (id) => {
+    const current = get().reviews.find((r) => r.id === id)
+    const next = !current?.followUp
+    syncAction("markFollowUp", () => reviewsApi.update(id, { followUp: next }), () => {})
     set((s) => ({
-      reviews: s.reviews.map((r) => (r.id === id ? { ...r, followUp: !r.followUp } : r)),
-    })),
+      reviews: s.reviews.map((r) => (r.id === id ? { ...r, followUp: next } : r)),
+    }))
+  },
 }))

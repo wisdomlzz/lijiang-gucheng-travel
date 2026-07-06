@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { aiKnowledgeApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 interface KnowledgeItem {
   id: string
@@ -94,6 +96,7 @@ type AIKnowledgeState = {
 export const useAIKnowledgeStore = create<AIKnowledgeState>((set, get) => ({
   items: SEED,
   addItem: (question, answer) => {
+    syncAction("knowledge.add", () => aiKnowledgeApi.create({ question, answer }), () => {})
     const id = `k-new-${Date.now()}`
     set((s) => ({
       items: [
@@ -110,13 +113,18 @@ export const useAIKnowledgeStore = create<AIKnowledgeState>((set, get) => ({
     }))
     return id
   },
-  updateItem: (id, fields) =>
+  updateItem: (id, fields) => {
+    syncAction("knowledge.update", () => aiKnowledgeApi.update(id, fields), () => {})
     set((s) => ({
       items: s.items.map((item) =>
         item.id === id ? { ...item, ...fields, updatedAt: new Date().toISOString().slice(0, 10) } : item
       ),
-    })),
-  removeItem: (id) => set((s) => ({ items: s.items.filter((item) => item.id !== id) })),
+    }))
+  },
+  removeItem: (id) => {
+    syncAction("knowledge.remove", () => aiKnowledgeApi.remove(id), () => {})
+    set((s) => ({ items: s.items.filter((item) => item.id !== id) }))
+  },
   batchImport: (data) => {
     let success = 0,
       failed = 0

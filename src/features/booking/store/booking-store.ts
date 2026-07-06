@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { bookingsApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 // ============================================================
 // 院落预约 —— 预约闭环（选时段 → 预约码 → 核销 → 我的预约）
@@ -96,6 +98,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
       status: "pending",
       createdAt: new Date().toLocaleString("zh-CN"),
     }
+    syncAction("createBooking", () => bookingsApi.create(booking), () => {})
     set((s) => ({ bookings: [booking, ...s.bookings] }))
     return { ok: true, msg: "预约成功", booking }
   },

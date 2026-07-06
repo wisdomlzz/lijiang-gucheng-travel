@@ -1,6 +1,8 @@
 import { create } from "zustand"
 import type { Complaint as ComplaintType, ComplaintStatus } from "../../../shared/types"
 import { useNotificationStore } from "@/platform/notification"
+import { complaintsApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 type ComplaintState = {
   complaints: ComplaintType[]
@@ -103,13 +105,11 @@ const SEED: ComplaintType[] = [
 export const useComplaintStore = create<ComplaintState>((set, get) => ({
   complaints: SEED,
   complaintPhone: "0888-123456",
-  createComplaint: (c) =>
-    set((s) => ({
-      complaints: [
-        { ...c, id: `CP${Date.now()}`, status: "C10" as ComplaintStatus, createdAt: new Date().toISOString() },
-        ...s.complaints,
-      ],
-    })),
+  createComplaint: (c) => {
+    const item = { ...c, id: `CP${Date.now()}`, status: "C10" as ComplaintStatus, createdAt: new Date().toISOString() }
+    syncAction("createComplaint", () => complaintsApi.create(item), () => {})
+    set((s) => ({ complaints: [item, ...s.complaints] }))
+  },
   updateComplaintPhone: (phone) => set({ complaintPhone: phone }),
   resolveWithResult: (id, result) => {
     set((s) => ({

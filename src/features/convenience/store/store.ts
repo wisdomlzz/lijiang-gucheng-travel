@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { ordersApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 import type { ConvenienceOrder, ConvenienceStatus, DispatchLogEntry } from "../../../shared/types"
 import { transition } from "./transitions"
 import { pickStaff, lookupStaff } from "./dispatch"
@@ -77,17 +79,19 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
   getCancelPendingOrders: () => get().orders.filter((o) => o.cancelRequested),
 
   // ---- Order lifecycle ----
-  createOrder: (order) => {
-    const newOrder = { ...order, status: "S10" as ConvenienceStatus }
-    set((s) => ({ orders: [newOrder, ...s.orders] }))
-    notify(
-      newOrder,
-      "便民服务订单已提交",
-      `您的${newOrder.serviceType}订单已提交，正在为您安排服务人员`,
-      `/c/orders/${newOrder.id}`
-    )
-    // 全自动派单：改变状态 + 分配服务人员
-    setTimeout(() => get().autoDispatchOrder(newOrder.id), 500)
+  createOrder: async (order) => {
+    await syncAction("createOrder", () => ordersApi.create(order), (result) => {
+      const newOrder = result ?? { ...order, status: "S10" as ConvenienceStatus }
+      set((s) => ({ orders: [newOrder, ...s.orders] }))
+      notify(
+        newOrder,
+        "便民服务订单已提交",
+        `您的${newOrder.serviceType}订单已提交，正在为您安排服务人员`,
+        `/c/orders/${newOrder.id}`
+      )
+      // 全自动派单：改变状态 + 分配服务人员
+      setTimeout(() => get().autoDispatchOrder(newOrder.id), 500)
+    })
   },
 
   dispatchOrder: (orderId) => {
@@ -170,114 +174,135 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     notify(o, "服务人员已接单", `${o.staffName ?? "服务人员"}已接单，即将联系您确认服务`, `/c/orders/${orderId}`)
   },
 
-  submitQuote: (orderId, price) => {
+  submitQuote: async (orderId, price) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !transition(o.status, "quote")) return
-    set((s) => ({
-      orders: updateOrder(s.orders, orderId, { status: transition(o.status, "quote")!, priceQuote: price }),
-    }))
-    notify(o, "服务已核价", `您的${o.serviceType}订单已报价 ¥${price}，请在时间内确认支付`, `/c/orders/${orderId}`)
-    setTimer(`conv:${orderId}:pay`, 15000, () => {
-      const order = get().orders.find((o) => o.id === orderId)
-      if (order?.status === "A35") {
-        set((s) => ({ orders: updateOrder(s.orders, orderId, { status: "S90" }) }))
-        notifyConvenience(
-          orderId,
-          order.serviceType,
-          "支付超时",
-          "支付超时，订单已转入待人工处理",
-          `/desktop/convenience`
-        )
-      }
+    await syncAction("submitQuote", () => ordersApi.transition(orderId, "quote"), () => {
+      set((s) => ({
+        orders: updateOrder(s.orders, orderId, { status: transition(o.status, "quote")!, priceQuote: price }),
+      }))
+      notify(o, "服务已核价", `您的${o.serviceType}订单已报价 ¥${price}，请在时间内确认支付`, `/c/orders/${orderId}`)
+      setTimer(`conv:${orderId}:pay`, 15000, () => {
+        const order = get().orders.find((o) => o.id === orderId)
+        if (order?.status === "A35") {
+          set((s) => ({ orders: updateOrder(s.orders, orderId, { status: "S90" }) }))
+          notifyConvenience(
+            orderId,
+            order.serviceType,
+            "支付超时",
+            "支付超时，订单已转入待人工处理",
+            `/desktop/convenience`
+          )
+        }
+      })
     })
   },
 
-  markPaid: (orderId, method) => {
+  markPaid: async (orderId, method) => {
     clearTimer(`conv:${orderId}:pay`)
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !transition(o.status, "pay")) return
-    set((s) => ({
-      orders: updateOrder(s.orders, orderId, { status: transition(o.status, "pay")!, payMethod: method }),
-    }))
-    notify(
-      o,
-      "支付成功",
-      `${o.serviceType}订单已${method === "online" ? "在线" : "现金"}支付成功，服务人员即将开始服务`,
-      `/c/orders/${orderId}`
-    )
+    await syncAction("markPaid", () => ordersApi.transition(orderId, "pay"), () => {
+      set((s) => ({
+        orders: updateOrder(s.orders, orderId, { status: transition(o.status, "pay")!, payMethod: method }),
+      }))
+      notify(
+        o,
+        "支付成功",
+        `${o.serviceType}订单已${method === "online" ? "在线" : "现金"}支付成功，服务人员即将开始服务`,
+        `/c/orders/${orderId}`
+      )
+    })
   },
 
-  startService: (orderId) => {
+  startService: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !transition(o.status, "startService")) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { status: transition(o.status, "startService")! }) }))
-    notify(o, "服务进行中", `${o.serviceType}订单开始服务`, `/c/orders/${orderId}`)
+    await syncAction("startService", () => ordersApi.transition(orderId, "startService"), () => {
+      set((s) => ({ orders: updateOrder(s.orders, orderId, { status: transition(o.status, "startService")! }) }))
+      notify(o, "服务进行中", `${o.serviceType}订单开始服务`, `/c/orders/${orderId}`)
+    })
   },
 
-  completeService: (orderId, photos) => {
+  completeService: async (orderId, photos) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !transition(o.status, "complete")) return
-    set((s) => ({
-      orders: updateOrder(s.orders, orderId, { status: transition(o.status, "complete")!, completionPhotos: photos }),
-    }))
-    notify(o, "服务已完成", `您的${o.serviceType}订单服务已完成，请确认完成`, `/c/orders/${orderId}`)
-    setTimer(`conv:${orderId}:autoConfirm`, 30000, () => get().confirmComplete(orderId))
+    await syncAction("completeService", () => ordersApi.transition(orderId, "complete"), () => {
+      set((s) => ({
+        orders: updateOrder(s.orders, orderId, { status: transition(o.status, "complete")!, completionPhotos: photos }),
+      }))
+      notify(o, "服务已完成", `您的${o.serviceType}订单服务已完成，请确认完成`, `/c/orders/${orderId}`)
+      setTimer(`conv:${orderId}:autoConfirm`, 30000, () => get().confirmComplete(orderId))
+    })
   },
 
-  confirmComplete: (orderId) => {
+  confirmComplete: async (orderId) => {
     clearTimer(`conv:${orderId}:autoConfirm`)
     const o = get().orders.find((x) => x.id === orderId)
     const next = transition(o?.status ?? "S55", "confirm") || transition(o?.status ?? "S55", "autoConfirm")
     if (!next || !o) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { status: next, completedAt: new Date().toISOString() }) }))
-    if (o.priceQuote && o.staffId) {
-      useSettlementStore.getState().recordIncome({
-        orderId: o.id,
-        staffId: o.staffId,
-        staffName: o.staffName ?? "",
-        serviceType: String(o.serviceType),
-        amount: o.priceQuote,
-        payMethod: o.payMethod ?? "online",
-      })
-    }
-    notify(o, "订单已完成", "服务已完成，欢迎评价", `/c/orders/${orderId}`)
-    usePointsStore.getState().transact(o.userId, "mall_purchase", orderId)
+    await syncAction("confirmComplete", () => ordersApi.transition(orderId, "confirm"), () => {
+      set((s) => ({ orders: updateOrder(s.orders, orderId, { status: next, completedAt: new Date().toISOString() }) }))
+      if (o.priceQuote && o.staffId) {
+        useSettlementStore.getState().recordIncome({
+          orderId: o.id,
+          staffId: o.staffId,
+          staffName: o.staffName ?? "",
+          serviceType: String(o.serviceType),
+          amount: o.priceQuote,
+          payMethod: o.payMethod ?? "online",
+        })
+      }
+      notify(o, "订单已完成", "服务已完成，欢迎评价", `/c/orders/${orderId}`)
+      usePointsStore.getState().transact(o.userId, "mall_purchase", orderId)
+    })
   },
 
-  rateOrder: (orderId, rating) =>
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { rating, ratedAt: new Date().toISOString() }) })),
+  rateOrder: async (orderId, rating) => {
+    await syncAction("rateOrder", () => ordersApi.update(orderId, { rating }), () => {
+      set((s) => ({ orders: updateOrder(s.orders, orderId, { rating, ratedAt: new Date().toISOString() }) }))
+    })
+  },
 
   // ---- Cancel flow ----
-  requestCancel: (orderId) => {
+  requestCancel: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o) return
     const directCancel = transition(o.status, "cancel")
-    if (directCancel) {
-      set((s) => ({ orders: updateOrder(s.orders, orderId, { status: directCancel }) }))
-      return
-    }
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { cancelRequested: true }) }))
-    notify(o, "用户申请取消", `${o.serviceType}订单用户申请取消，请处理`, `/desktop/convenience`)
+    await syncAction("requestCancel", () => ordersApi.transition(orderId, "requestCancel"), () => {
+      if (directCancel) {
+        set((s) => ({ orders: updateOrder(s.orders, orderId, { status: directCancel }) }))
+      } else {
+        set((s) => ({ orders: updateOrder(s.orders, orderId, { cancelRequested: true }) }))
+        notify(o, "用户申请取消", `${o.serviceType}订单用户申请取消，请处理`, `/desktop/convenience`)
+      }
+    })
   },
 
-  approveCancelRequest: (orderId) => {
+  approveCancelRequest: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !o.cancelRequested) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { status: "S50", cancelRequested: false }) }))
-    notify(o, "取消已同意", `您的${o.serviceType}订单取消已同意`, `/c/orders/${orderId}`)
+    await syncAction("approveCancelRequest", () => ordersApi.transition(orderId, "approveCancel"), () => {
+      set((s) => ({ orders: updateOrder(s.orders, orderId, { status: "S50", cancelRequested: false }) }))
+      notify(o, "取消已同意", `您的${o.serviceType}订单取消已同意`, `/c/orders/${orderId}`)
+    })
   },
 
-  rejectCancelRequest: (orderId) => {
+  rejectCancelRequest: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !o.cancelRequested) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { cancelRequested: false }) }))
-    notify(o, "取消已拒绝", `您的${o.serviceType}订单取消申请已被拒绝，服务继续`, `/c/orders/${orderId}`)
+    await syncAction("rejectCancelRequest", () => ordersApi.transition(orderId, "rejectCancel"), () => {
+      set((s) => ({ orders: updateOrder(s.orders, orderId, { cancelRequested: false }) }))
+      notify(o, "取消已拒绝", `您的${o.serviceType}订单取消申请已被拒绝，服务继续`, `/c/orders/${orderId}`)
+    })
   },
 
-  forceCancel: (orderId) => {
+  forceCancel: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o || !transition(o.status, "forceCancel")) return
-    set((s) => ({ orders: updateOrder(s.orders, orderId, { status: "S50" }) }))
+    await syncAction("forceCancel", () => ordersApi.transition(orderId, "forceCancel"), () => {
+      set((s) => ({ orders: updateOrder(s.orders, orderId, { status: "S50" }) }))
+    })
   },
 
   reDispatch: (orderId) => {
@@ -287,32 +312,40 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     set((s) => ({ orders: updateOrder(s.orders, orderId, { status: "A10" }) }))
   },
 
-  uploadPaymentProof: (orderId, url) => set((s) => ({ orders: updateOrder(s.orders, orderId, { paymentProof: url }) })),
+  uploadPaymentProof: async (orderId, url) => {
+    await syncAction("uploadPaymentProof", () => ordersApi.update(orderId, { paymentProof: url }), () => {
+      set((s) => ({ orders: updateOrder(s.orders, orderId, { paymentProof: url }) }))
+    })
+  },
 
   // ---- Admin review actions ----
-  approvePriceQuote: (orderId) => {
+  approvePriceQuote: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o) return
     const next = transition(o.status, "approveQuote")
     if (!next) return
-    set((s) => ({
-      orders: updateOrder(s.orders, orderId, { status: next, payMethod: "online" }),
-    }))
-    notify(o, "报价审核通过", `${o.serviceType}订单报价已审核通过，服务继续`, `/c/orders/${orderId}`)
+    await syncAction("approvePriceQuote", () => ordersApi.transition(orderId, "approveQuote"), () => {
+      set((s) => ({
+        orders: updateOrder(s.orders, orderId, { status: next, payMethod: "online" }),
+      }))
+      notify(o, "报价审核通过", `${o.serviceType}订单报价已审核通过，服务继续`, `/c/orders/${orderId}`)
+    })
   },
 
-  rejectPriceQuote: (orderId) => {
+  rejectPriceQuote: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o) return
     const next = transition(o.status, "rejectQuote")
     if (!next) return
-    set((s) => ({
-      orders: updateOrder(s.orders, orderId, { status: next, priceQuote: undefined }),
-    }))
-    notify(o, "报价审核驳回", `${o.serviceType}订单报价被驳回，请重新报价`, `/b/service/tasks`)
+    await syncAction("rejectPriceQuote", () => ordersApi.transition(orderId, "rejectQuote"), () => {
+      set((s) => ({
+        orders: updateOrder(s.orders, orderId, { status: next, priceQuote: undefined }),
+      }))
+      notify(o, "报价审核驳回", `${o.serviceType}订单报价被驳回，请重新报价`, `/b/service/tasks`)
+    })
   },
 
-  confirmPaymentProof: (orderId) => {
+  confirmPaymentProof: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o) return
     // 如果在服务中（S48），先完成服务再确认
@@ -323,29 +356,33 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     }
     const next = transition(o.status === "S48" ? "S55" : o.status, "confirmPayment")
     if (!next) return
-    set((s) => ({
-      orders: updateOrder(s.orders, orderId, { status: next, completedAt: new Date().toISOString() }),
-    }))
-    // 记录收入
-    if (o.priceQuote && o.staffId) {
-      useSettlementStore.getState().recordIncome({
-        orderId: o.id,
-        staffId: o.staffId,
-        staffName: o.staffName ?? "",
-        serviceType: String(o.serviceType),
-        amount: o.priceQuote,
-        payMethod: o.payMethod ?? "online",
-      })
-    }
-    notify(o, "付款凭证已确认", `${o.serviceType}订单收款确认，订单已完成`, `/c/orders/${orderId}`)
+    await syncAction("confirmPaymentProof", () => ordersApi.transition(orderId, "confirmPayment"), () => {
+      set((s) => ({
+        orders: updateOrder(s.orders, orderId, { status: next, completedAt: new Date().toISOString() }),
+      }))
+      // 记录收入
+      if (o.priceQuote && o.staffId) {
+        useSettlementStore.getState().recordIncome({
+          orderId: o.id,
+          staffId: o.staffId,
+          staffName: o.staffName ?? "",
+          serviceType: String(o.serviceType),
+          amount: o.priceQuote,
+          payMethod: o.payMethod ?? "online",
+        })
+      }
+      notify(o, "付款凭证已确认", `${o.serviceType}订单收款确认，订单已完成`, `/c/orders/${orderId}`)
+    })
   },
 
-  rejectPaymentProof: (orderId) => {
+  rejectPaymentProof: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
     if (!o) return
-    set((s) => ({
-      orders: updateOrder(s.orders, orderId, { paymentProof: undefined }),
-    }))
-    notify(o, "付款凭证驳回", `${o.serviceType}订单付款凭证被驳回，请重新上传`, `/b/service/tasks`)
+    await syncAction("rejectPaymentProof", () => ordersApi.update(orderId, { paymentProof: undefined }), () => {
+      set((s) => ({
+        orders: updateOrder(s.orders, orderId, { paymentProof: undefined }),
+      }))
+      notify(o, "付款凭证驳回", `${o.serviceType}订单付款凭证被驳回，请重新上传`, `/b/service/tasks`)
+    })
   },
 }))

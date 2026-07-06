@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { contentApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 import type { NewsItem } from "../../../shared/types/content-types"
 
 const DEFAULT: NewsItem[] = [
@@ -140,7 +142,16 @@ type State = {
 
 export const useContentNewsStore = create<State>((set) => ({
   news: DEFAULT,
-  addNews: (item) => set((s) => ({ news: [...s.news, item] })),
-  updateNews: (id, fields) => set((s) => ({ news: s.news.map((n) => (n.id === id ? { ...n, ...fields } : n)) })),
-  deleteNews: (id) => set((s) => ({ news: s.news.filter((n) => n.id !== id) })),
+  addNews: (item) => {
+    syncAction("news.add", () => contentApi.news.create(item), () => {})
+    set((s) => ({ news: [...s.news, item] }))
+  },
+  updateNews: (id, fields) => {
+    syncAction("news.update", () => contentApi.news.update(id, fields), () => {})
+    set((s) => ({ news: s.news.map((n) => (n.id === id ? { ...n, ...fields } : n)) }))
+  },
+  deleteNews: (id) => {
+    syncAction("news.delete", () => contentApi.news.remove(id), () => {})
+    set((s) => ({ news: s.news.filter((n) => n.id !== id) }))
+  },
 }))
