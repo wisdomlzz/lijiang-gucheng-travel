@@ -15,30 +15,7 @@ type AddressState = {
 export const useAddressStore = create<AddressState>()(
   persist(
     (set, get) => ({
-      addresses: [
-        {
-          id: "a1",
-          userId: "u_c_001",
-          name: "张小游",
-          phone: "13888888888",
-          province: "云南省",
-          city: "丽江市",
-          district: "古城区",
-          detail: "大研街道新华街3号",
-          isDefault: true,
-        },
-        {
-          id: "a2",
-          userId: "u_c_001",
-          name: "李小旅",
-          phone: "13712345678",
-          province: "云南省",
-          city: "丽江市",
-          district: "古城区",
-          detail: "七一街兴仁巷12号院",
-          isDefault: false,
-        },
-      ],
+      addresses: [],
 
       getByUser: (userId) => get().addresses.filter((a) => a.userId === userId),
       upsert: (addr) => {

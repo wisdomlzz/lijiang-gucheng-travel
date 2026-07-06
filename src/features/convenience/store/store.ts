@@ -67,7 +67,7 @@ function logDispatch(log: DispatchLogEntry[], entry: Omit<DispatchLogEntry, "tim
 
 // ---- Store ----
 export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
-  orders: SEED_ORDERS,
+  orders: [],
   dispatchLog: [],
 
   // Queries

@@ -18,13 +18,7 @@ export interface PointRule {
   enabled: boolean
 }
 
-const SEED_RULES: PointRule[] = [
-  { code: "courtyard_checkin", label: "院落打卡", points: 5, dailyLimit: 10, direction: "IN", enabled: true },
-  { code: "naxi_streak", label: "纳西人连续打卡", points: 50, dailyLimit: 1, direction: "IN", enabled: true },
-  { code: "volunteer_service", label: "志愿服务", points: 2, dailyLimit: 100, direction: "IN", enabled: true },
-  { code: "mall_purchase", label: "商城消费", points: 1, direction: "IN", enabled: true },
-  { code: "mall_redeem", label: "积分兑换", points: 1, direction: "OUT", enabled: true },
-]
+const SEED_RULES: PointRule[] = []
 
 // ---- ② 积分账户（当前状态）----
 export interface PointAccount {
@@ -75,75 +69,9 @@ function today(): string {
 }
 
 export const usePointsStore = create<PointsState>((set, get) => ({
-  accounts: {
-    u_c_001: { userId: "u_c_001", balance: 320, totalEarned: 380, totalUsed: 60 },
-    u_b_001: { userId: "u_b_001", balance: 150, totalEarned: 200, totalUsed: 50 },
-  },
-  ledgers: [
-    {
-      id: "pl1",
-      userId: "u_c_001",
-      direction: "IN",
-      delta: 5,
-      sourceCode: "courtyard_checkin",
-      sourceLabel: "院落打卡",
-      refId: "chk-1",
-      balanceAfter: 5,
-      createdAt: "2026-05-10 10:20",
-    },
-    {
-      id: "pl2",
-      userId: "u_c_001",
-      direction: "IN",
-      delta: 50,
-      sourceCode: "naxi_streak",
-      sourceLabel: "纳西人连续打卡",
-      balanceAfter: 55,
-      createdAt: "2026-05-15 09:00",
-    },
-    {
-      id: "pl3",
-      userId: "u_c_001",
-      direction: "IN",
-      delta: 8,
-      sourceCode: "volunteer_service",
-      sourceLabel: "志愿服务",
-      balanceAfter: 63,
-      createdAt: "2026-05-20 16:00",
-    },
-    {
-      id: "pl4",
-      userId: "u_c_001",
-      direction: "IN",
-      delta: 257,
-      sourceCode: "courtyard_checkin",
-      sourceLabel: "院落打卡",
-      balanceAfter: 320,
-      createdAt: "2026-06-01 14:30",
-    },
-    {
-      id: "pl5",
-      userId: "u_c_001",
-      direction: "OUT",
-      delta: 60,
-      sourceCode: "mall_redeem",
-      sourceLabel: "积分兑换",
-      refId: "mall-order-001",
-      balanceAfter: 260,
-      createdAt: "2026-06-10 11:00",
-    },
-    {
-      id: "pl6",
-      userId: "u_c_001",
-      direction: "IN",
-      delta: 60,
-      sourceCode: "courtyard_checkin",
-      sourceLabel: "院落打卡",
-      balanceAfter: 320,
-      createdAt: "2026-06-20 10:00",
-    },
-  ],
-  rules: SEED_RULES,
+  accounts: {},
+  ledgers: [],
+  rules: [],
 
   getAccount: (userId) => get().accounts[userId] ?? { userId, balance: 0, totalEarned: 0, totalUsed: 0 },
   getLedgers: (userId) => get().ledgers.filter((l) => l.userId === userId),

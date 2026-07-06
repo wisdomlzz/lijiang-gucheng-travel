@@ -46,84 +46,9 @@ type SettlementState = {
 }
 
 // 种子：从已完成的便民订单衍生（staffId 对应 staff service）
-const SEED_INCOMES: IncomeRecord[] = [
-  {
-    orderId: "CO20260509001",
-    staffId: "s1",
-    staffName: "李师傅",
-    serviceType: "行李搬运",
-    amount: 60,
-    payMethod: "online",
-    completedAt: "2026-05-09T12:00:00.000Z",
-  },
-  {
-    orderId: "CO20260507002",
-    staffId: "s3",
-    staffName: "张环卫",
-    serviceType: "生活垃圾清运",
-    amount: 45,
-    payMethod: "cash",
-    completedAt: "2026-05-07T18:00:00.000Z",
-  },
-  {
-    orderId: "CO20260508001",
-    staffId: "s5",
-    staffName: "送水工老赵",
-    serviceType: "送水服务",
-    amount: 40,
-    payMethod: "cash",
-    completedAt: "2026-05-08T10:00:00.000Z",
-  },
-  {
-    orderId: "CO20260509001",
-    staffId: "s1",
-    staffName: "李师傅",
-    serviceType: "行李搬运",
-    amount: 55,
-    payMethod: "online",
-    completedAt: "2026-06-20T15:00:00.000Z",
-  },
-  {
-    orderId: "CO20260507002",
-    staffId: "s3",
-    staffName: "张环卫",
-    serviceType: "生活垃圾清运",
-    amount: 30,
-    payMethod: "cash",
-    completedAt: "2026-06-22T09:00:00.000Z",
-  },
-  {
-    orderId: "CO20260508001",
-    staffId: "s5",
-    staffName: "送水工老赵",
-    serviceType: "送水服务",
-    amount: 35,
-    payMethod: "online",
-    completedAt: "2026-06-25T14:00:00.000Z",
-  },
-]
+const SEED_INCOMES: IncomeRecord[] =[]
 
-const SEED_WITHDRAWALS: WithdrawalRequest[] = [
-  {
-    id: "wd1",
-    staffId: "s1",
-    staffName: "李师傅",
-    amount: 500,
-    status: "approved",
-    requestedAt: "2026-06-10 10:00",
-    reviewedAt: "2026-06-11 14:00",
-    reviewer: "管理员",
-  },
-  {
-    id: "wd2",
-    staffId: "s5",
-    staffName: "送水工老赵",
-    amount: 300,
-    status: "pending",
-    requestedAt: "2026-06-26 09:30",
-  },
-  { id: "wd3", staffId: "s3", staffName: "张环卫", amount: 200, status: "pending", requestedAt: "2026-06-27 16:00" },
-]
+const SEED_WITHDRAWALS: WithdrawalRequest[] =[]
 
 function isThisMonth(dateStr: string): boolean {
   const d = new Date(dateStr)
@@ -132,8 +57,8 @@ function isThisMonth(dateStr: string): boolean {
 }
 
 export const useSettlementStore = create<SettlementState>((set, get) => ({
-  incomes: SEED_INCOMES,
-  withdrawals: SEED_WITHDRAWALS,
+  incomes: [],
+  withdrawals: [],
 
   getIncomesByStaff: (staffId) => get().incomes.filter((i) => i.staffId === staffId),
 

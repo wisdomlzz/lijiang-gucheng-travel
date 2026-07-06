@@ -46,37 +46,7 @@ function genCode(): string {
 }
 
 export const useBookingStore = create<BookingState>((set, get) => ({
-  bookings: [
-    {
-      id: "bk1",
-      courtyardId: "1",
-      courtyardName: "木府",
-      userId: "u_c_001",
-      userName: "张小游",
-      userPhone: "138****1001",
-      date: "2026-06-30",
-      slot: "09:00-10:00",
-      visitors: 2,
-      code: "YY280601",
-      status: "pending",
-      createdAt: "2026-06-28 10:00",
-    },
-    {
-      id: "bk2",
-      courtyardId: "3",
-      courtyardName: "纳西古乐会",
-      userId: "u_c_001",
-      userName: "张小游",
-      userPhone: "138****1001",
-      date: "2026-06-15",
-      slot: "20:00-21:30",
-      visitors: 1,
-      code: "YY150615",
-      status: "checked",
-      createdAt: "2026-06-10 14:00",
-      checkedAt: "2026-06-15 20:05",
-    },
-  ],
+  bookings: [],
 
   getBookingsByUser: (userId) => get().bookings.filter((b) => b.userId === userId),
   getBooking: (id) => get().bookings.find((b) => b.id === id),

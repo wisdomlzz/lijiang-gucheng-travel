@@ -55,88 +55,7 @@ export interface TrustScore {
   scoreHistory?: ScoreChangeRecord[]
 }
 
-const SEED_SCORES: TrustScore[] = [
-  {
-    staffId: "s1",
-    supplierId: "sup_001",
-    name: "李师傅",
-    roleTag: "便民服务人员",
-    trustScore: 78,
-    status: "正常",
-    totalOrders: 156,
-    totalRatings: 142,
-    rating5Count: 98,
-    rating4Count: 35,
-    rating3Count: 5,
-    rating2Count: 3,
-    rating1Count: 1,
-    complaintCount: 3,
-    rejectionCount: 1,
-    scoreHistory: [
-      { id: "h1", date: "2026-05-01", change: -3, reason: "服务迟到投诉" },
-      { id: "h2", date: "2026-04-20", change: -4, reason: "服务态度投诉" },
-    ],
-  },
-  {
-    staffId: "s2",
-    supplierId: "sup_001",
-    name: "王导游",
-    roleTag: "讲解员",
-    trustScore: 95,
-    status: "正常",
-    totalOrders: 89,
-    totalRatings: 85,
-    rating5Count: 72,
-    rating4Count: 10,
-    rating3Count: 2,
-    rating2Count: 1,
-    rating1Count: 0,
-    complaintCount: 0,
-    rejectionCount: 0,
-    scoreHistory: [],
-  },
-  {
-    staffId: "s3",
-    supplierId: "sup_001",
-    name: "张司机",
-    roleTag: "包车司机",
-    trustScore: 88,
-    status: "正常",
-    totalOrders: 234,
-    totalRatings: 220,
-    rating5Count: 180,
-    rating4Count: 30,
-    rating3Count: 6,
-    rating2Count: 3,
-    rating1Count: 1,
-    complaintCount: 5,
-    rejectionCount: 2,
-    scoreHistory: [],
-  },
-  {
-    staffId: "s4",
-    supplierId: "sup_001",
-    name: "赵旅拍",
-    roleTag: "旅拍",
-    trustScore: 52,
-    status: "观察期",
-    totalOrders: 67,
-    totalRatings: 62,
-    rating5Count: 45,
-    rating4Count: 12,
-    rating3Count: 3,
-    rating2Count: 1,
-    rating1Count: 1,
-    complaintCount: 6,
-    rejectionCount: 3,
-    observationStartAt: "2026-04-11",
-    lastComplaintAt: "2026-05-01",
-    scoreHistory: [
-      { id: "h5", date: "2026-05-02", change: -6, reason: "成片质量差投诉" },
-      { id: "h6", date: "2026-04-22", change: -5, reason: "修图过度投诉" },
-    ],
-  },
-]
+const SEED_SCORES: TrustScore[] = []
 
 // ====== Supplier rating data (merged from supplier-rating.ts) ======
 type SupplierRatingData = {
@@ -239,7 +158,7 @@ function nowStr() {
 }
 
 export const useTrustScoreStore = create<TrustScoreState>((set, get) => ({
-  scores: SEED_SCORES,
+  scores: [],
   adjustRecords: [],
   supplierRatings: SEED_SUPPLIER_RATINGS,
 
