@@ -6,10 +6,15 @@ import { useContentNewsStore, useContentGuideStore, useContentCourtyardStore, us
 import { useHousingStore } from "@/features/housing/store/housing-store"
 import { useComplaintStore } from "@/features/complaints/store"
 import { usePointsStore } from "@/features/points/store"
-import { useRulesStore } from "@/features/trust-score/store"
+import { useRulesStore, useTrustScoreStore } from "@/features/trust-score/store"
+import { useVolunteerStore } from "@/features/volunteer/store"
 import { useHomepageConfigStore } from "@/features/homepage/store"
+import { useAIKnowledgeStore } from "@/features/ai-knowledge/store"
 
-// 从 API 加载所有数据，失败则清空 store（不 fallback seed）
+/**
+ * 全量 hydration：启动时从 API 加载所有数据到 zustand stores。
+ * 后端不可用时全部清空，不使用 seed 数据。
+ */
 export function useApiHydrate() {
   const [status, setStatus] = useState<"loading" | "online" | "offline">("loading")
 
@@ -18,9 +23,11 @@ export function useApiHydrate() {
 
     async function hydrate() {
       try {
+        // 测试连接
         await api.list("staff", { pageSize: 1 })
 
-        const [staffRes, ordersRes, zonesRes, compRes, revRes, prRes, srRes, newsRes, routesRes, courtsRes, merchRes, poisRes, housesRes] = await Promise.allSettled([
+        // 并行调所有 API
+        const results = await Promise.allSettled([
           api.list("staff", { pageSize: 200 }),
           api.list("orders", { pageSize: 200 }),
           api.list("zones", { pageSize: 200 }),
@@ -28,50 +35,66 @@ export function useApiHydrate() {
           api.list("reviews", { pageSize: 200 }),
           api.list("points/rules", { pageSize: 200 }),
           api.list("trust-scores/rules", { pageSize: 200 }),
+          api.list("trust-scores", { pageSize: 200 }),
           api.list("content/news", { pageSize: 200 }),
           api.list("content/routes", { pageSize: 200 }),
           api.list("content/courtyards", { pageSize: 200 }),
           api.list("content/merchants", { pageSize: 200 }),
           api.list("content/pois", { pageSize: 200 }),
           api.list("content/housing", { pageSize: 200 }),
+          api.list("banners", { pageSize: 200 }),
+          api.list("grid-items", { pageSize: 200 }),
+          api.list("volunteers", { pageSize: 200 }),
+          api.list("volunteer-activities", { pageSize: 200 }),
+          api.list("ai-knowledge", { pageSize: 200 }),
         ])
 
         if (cancelled) return
 
-        // 成功的数据覆盖 store，失败的保持空
-        if (staffRes.status === "fulfilled" && staffRes.value?.items) useStaffStore.setState({ staff: staffRes.value.items })
-        else useStaffStore.setState({ staff: [] })
-        if (ordersRes.status === "fulfilled" && ordersRes.value?.items) useConvenienceStore.setState({ orders: ordersRes.value.items })
-        else useConvenienceStore.setState({ orders: [] })
-        if (zonesRes.status === "fulfilled" && zonesRes.value?.items) useZoneStore.setState({ zones: zonesRes.value.items })
-        else useZoneStore.setState({ zones: [] })
-        if (compRes.status === "fulfilled" && compRes.value?.items) useComplaintStore.setState({ complaints: compRes.value.items })
-        else useComplaintStore.setState({ complaints: [] })
-        if (revRes.status === "fulfilled" && revRes.value?.items) useReviewStore.setState({ reviews: revRes.value.items })
-        else useReviewStore.setState({ reviews: [] })
-        if (prRes.status === "fulfilled" && prRes.value?.items) usePointsStore.setState({ rules: prRes.value.items })
-        else usePointsStore.setState({ rules: [] })
-        if (srRes.status === "fulfilled" && srRes.value?.items) useRulesStore.setState({ rules: srRes.value.items })
-        else useRulesStore.setState({ rules: [] })
-        if (newsRes.status === "fulfilled" && newsRes.value?.items) useContentNewsStore.setState({ news: newsRes.value.items })
-        else useContentNewsStore.setState({ news: [] })
-        if (routesRes.status === "fulfilled" && routesRes.value?.items) useContentGuideStore.setState({ guides: routesRes.value.items })
-        else useContentGuideStore.setState({ guides: [] })
-        if (courtsRes.status === "fulfilled" && courtsRes.value?.items) useContentCourtyardStore.setState({ courtyards: courtsRes.value.items })
-        else useContentCourtyardStore.setState({ courtyards: [] })
-        if (merchRes.status === "fulfilled" && merchRes.value?.items) useContentMerchantStore.setState({ merchants: merchRes.value.items })
-        else useContentMerchantStore.setState({ merchants: [] })
-        if (poisRes.status === "fulfilled" && poisRes.value?.items) useContentPOIStore.setState({ pois: poisRes.value.items })
-        else useContentPOIStore.setState({ pois: [] })
-        if (housesRes.status === "fulfilled" && housesRes.value?.items) useHousingStore.setState({ houses: housesRes.value.items })
-        else useHousingStore.setState({ houses: [] })
+        const r = results.map(r => r.status === "fulfilled" ? (r.value?.items || []) : [])
+
+        useStaffStore.setState({ staff: r[0] })
+        useConvenienceStore.setState({ orders: r[1] })
+        useZoneStore.setState({ zones: r[2] })
+        useComplaintStore.setState({ complaints: r[3] })
+        useReviewStore.setState({ reviews: r[4] })
+        usePointsStore.setState({ rules: r[5] })
+        useRulesStore.setState({ rules: r[6] })
+        useTrustScoreStore.setState({ scores: r[7] })
+        useContentNewsStore.setState({ news: r[8] })
+        useContentGuideStore.setState({ guides: r[9] })
+        useContentCourtyardStore.setState({ courtyards: r[10] })
+        useContentMerchantStore.setState({ merchants: r[11] })
+        useContentPOIStore.setState({ pois: r[12] })
+        useHousingStore.setState({ houses: r[13] })
+        useHomepageConfigStore.setState({ banners: r[14], gridItems: r[15] })
+        useVolunteerStore.setState({ volunteers: r[16], activities: r[17] })
+        useAIKnowledgeStore.setState({ items: r[18] })
 
         if (!cancelled) setStatus("online")
       } catch (e) {
-        console.error("后端服务不可用，请启动后端：cd server && npm run dev")
+        console.error("后端不可用，请启动 server：cd server && npm run dev")
         if (!cancelled) {
+          // 清空所有 store
+          useStaffStore.setState({ staff: [] })
+          useConvenienceStore.setState({ orders: [] })
+          useZoneStore.setState({ zones: [] })
+          useComplaintStore.setState({ complaints: [] })
+          useReviewStore.setState({ reviews: [] })
+          usePointsStore.setState({ rules: [] })
+          useRulesStore.setState({ rules: [] })
+          useTrustScoreStore.setState({ scores: [] })
+          useContentNewsStore.setState({ news: [] })
+          useContentGuideStore.setState({ guides: [] })
+          useContentCourtyardStore.setState({ courtyards: [] })
+          useContentMerchantStore.setState({ merchants: [] })
+          useContentPOIStore.setState({ pois: [] })
+          useHousingStore.setState({ houses: [] })
+          useHomepageConfigStore.setState({ banners: [], gridItems: [] })
+          useVolunteerStore.setState({ volunteers: [], activities: [] })
+          useAIKnowledgeStore.setState({ items: [] })
           setStatus("offline")
-          toast.error("无法连接到后端服务，请启动 server", { duration: 8000 })
+          toast.error("无法连接到后端服务 (localhost:3001)，请启动 server", { duration: 8000 })
         }
       }
     }
