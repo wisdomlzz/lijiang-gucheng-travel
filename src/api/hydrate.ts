@@ -17,6 +17,7 @@ import { useCheckinStore } from "@/features/checkin/store"
 import { useNaxiCheckinStore } from "@/features/checkin/store"
 import { useSupplierStore } from "@/features/supplier/store"
 import { useMerchantReviewStore, useMerchantRegistrationStore } from "@/features/merchant-review/store"
+import { useAnnouncementStore } from "@/features/announcement/store/announcement-store"
 
 /**
  * 全量 hydration：启动时从 API 加载所有数据到 zustand stores。
@@ -63,6 +64,7 @@ export function useApiHydrate() {
           api.list("supplier-applications", { pageSize: 200 }),
           api.list("merchant-registrations", { pageSize: 200 }),
           api.list("merchant-reviews", { pageSize: 200 }),
+          api.list("announcements", { pageSize: 200 }),
         ])
 
         if (cancelled) return
@@ -93,6 +95,9 @@ export function useApiHydrate() {
         useNaxiCheckinStore.setState({ checkins: r[23] })
         useSettlementStore.setState({ incomes: r[24], withdrawals: r[25] })
         useSupplierStore.setState({ suppliers: r[26] })
+        useMerchantRegistrationStore.setState({ requests: r[27] })
+        useMerchantReviewStore.setState({ requests: r[28] })
+        useAnnouncementStore.setState({ announcements: r[29] })
         // supplier-applications and merchant-registrations/reviews serve
         // their own stores in the features that own them
 
@@ -125,6 +130,7 @@ export function useApiHydrate() {
           useNaxiCheckinStore.setState({ checkins: [] })
           useSettlementStore.setState({ incomes: [], withdrawals: [] })
           useSupplierStore.setState({ suppliers: [] })
+          useAnnouncementStore.setState({ announcements: [] })
           setStatus("offline")
           toast.error("无法连接到后端服务 (localhost:3001)，请启动 server", { duration: 8000 })
         }

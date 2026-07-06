@@ -1,7 +1,8 @@
 import { create } from "zustand"
 
 // ============================================================
-// 人流量预警 —— PC 规则配置 + 实时预警 + C端地图色块联动
+// 人流量预警 —— 保留本地模拟数据(Demo 里人流由随机波动生成,非 CRUD 管理)
+// 实际生产:areas/rules 走 API,current/level 由后端实时监控推送
 // ============================================================
 
 export type WarningLevel = "green" | "yellow" | "orange" | "red"
