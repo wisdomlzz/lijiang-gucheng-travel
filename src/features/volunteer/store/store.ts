@@ -109,67 +109,10 @@ const seedActivities: VolunteerActivity[] = []
 
 // ── seed sign-ups ──
 
-const seedSignUps: VolunteerSignUp[] = [
-  // act-ongoing: 7人报名
-  { id: "ss-og-1", volunteerId: "u_c_001", activityId: "act-ongoing", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-og-2", volunteerId: "sv-2", activityId: "act-ongoing", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-og-3", volunteerId: "sv-3", activityId: "act-ongoing", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-og-4", volunteerId: "sv-4", activityId: "act-ongoing", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-og-5", volunteerId: "sv-5", activityId: "act-ongoing", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-og-6", volunteerId: "sv-6", activityId: "act-ongoing", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-og-7", volunteerId: "sv-7", activityId: "act-ongoing", signUpTime: fmt(offsetDate(-2)) },
-
-  // act-soon: 5人报名（含u_c_001）
-  { id: "ss-soon-1", volunteerId: "u_c_001", activityId: "act-soon", signUpTime: fmt(offsetDate(-1)) },
-  { id: "ss-soon-2", volunteerId: "sv-5", activityId: "act-soon", signUpTime: fmt(offsetDate(-1)) },
-  { id: "ss-soon-3", volunteerId: "sv-6", activityId: "act-soon", signUpTime: fmt(offsetDate(-1)) },
-  { id: "ss-soon-4", volunteerId: "sv-7", activityId: "act-soon", signUpTime: fmt(offsetDate(-1)) },
-
-  // act-hot: 7人报名（名额8，热招）
-  { id: "ss-ht-1", volunteerId: "u_c_001", activityId: "act-hot", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-ht-2", volunteerId: "sv-2", activityId: "act-hot", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-ht-3", volunteerId: "sv-3", activityId: "act-hot", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-ht-4", volunteerId: "sv-4", activityId: "act-hot", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-ht-5", volunteerId: "sv-5", activityId: "act-hot", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-ht-6", volunteerId: "sv-6", activityId: "act-hot", signUpTime: fmt(offsetDate(-2)) },
-  { id: "ss-ht-7", volunteerId: "sv-7", activityId: "act-hot", signUpTime: fmt(offsetDate(-2)) },
-
-  // act-multi（多天即将开始）: 4人报名
-  { id: "ss-mu-1", volunteerId: "u_c_001", activityId: "act-multi", signUpTime: fmt(offsetDate(-1)) },
-  { id: "ss-mu-2", volunteerId: "sv-4", activityId: "act-multi", signUpTime: fmt(offsetDate(-1)) },
-  { id: "ss-mu-3", volunteerId: "sv-6", activityId: "act-multi", signUpTime: fmt(offsetDate(-1)) },
-  { id: "ss-mu-4", volunteerId: "sv-7", activityId: "act-multi", signUpTime: fmt(offsetDate(-1)) },
-
-  // act-multi-ongoing: 3人报名
-  { id: "ss-mg-1", volunteerId: "u_c_001", activityId: "act-multi-ongoing", signUpTime: fmt(offsetDate(-3)) },
-  { id: "ss-mg-2", volunteerId: "sv-2", activityId: "act-multi-ongoing", signUpTime: fmt(offsetDate(-3)) },
-  { id: "ss-mg-3", volunteerId: "sv-4", activityId: "act-multi-ongoing", signUpTime: fmt(offsetDate(-3)) },
-
-  // act-ended-ok: 4人，全部正常
-  { id: "ss-ek-1", volunteerId: "u_c_001", activityId: "act-ended-ok", signUpTime: fmt(offsetDate(-4)) },
-  { id: "ss-ek-2", volunteerId: "sv-3", activityId: "act-ended-ok", signUpTime: fmt(offsetDate(-4)) },
-  { id: "ss-ek-3", volunteerId: "sv-5", activityId: "act-ended-ok", signUpTime: fmt(offsetDate(-4)) },
-  { id: "ss-ek-4", volunteerId: "sv-6", activityId: "act-ended-ok", signUpTime: fmt(offsetDate(-4)) },
-
-  // act-ended-abnormal: 4人，含异常
-  { id: "ss-ea-1", volunteerId: "u_c_001", activityId: "act-ended-abnormal", signUpTime: fmt(offsetDate(-3)) },
-  { id: "ss-ea-2", volunteerId: "sv-2", activityId: "act-ended-abnormal", signUpTime: fmt(offsetDate(-3)) },
-  { id: "ss-ea-3", volunteerId: "sv-5", activityId: "act-ended-abnormal", signUpTime: fmt(offsetDate(-3)) },
-  { id: "ss-ea-4", volunteerId: "sv-7", activityId: "act-ended-abnormal", signUpTime: fmt(offsetDate(-3)) },
-
-  // act-ended-multi（已结束多天）: 4人，混合状态
-  { id: "ss-em-1", volunteerId: "u_c_001", activityId: "act-ended-multi", signUpTime: fmt(offsetDate(-7)) },
-  { id: "ss-em-2", volunteerId: "sv-4", activityId: "act-ended-multi", signUpTime: fmt(offsetDate(-7)) },
-  { id: "ss-em-3", volunteerId: "sv-6", activityId: "act-ended-multi", signUpTime: fmt(offsetDate(-7)) },
-  { id: "ss-em-4", volunteerId: "sv-2", activityId: "act-ended-multi", signUpTime: fmt(offsetDate(-7)) },
-
-  // act-cancelled: 3人报名（用于测试取消后的展示）
-  { id: "ss-cl-1", volunteerId: "u_c_001", activityId: "act-cancelled", signUpTime: fmt(offsetDate(-3)) },
-  { id: "ss-cl-2", volunteerId: "sv-3", activityId: "act-cancelled", signUpTime: fmt(offsetDate(-3)) },
-  { id: "ss-cl-3", volunteerId: "sv-5", activityId: "act-cancelled", signUpTime: fmt(offsetDate(-3)) },
-]
+const seedSignUps: VolunteerSignUp[] = []
 
 function buildSeedDailyRecords(): VolunteerDailyRecord[] {
+  if (seedActivities.length === 0) return []
   const records: VolunteerDailyRecord[] = []
   let rid = 0
   const id = () => `dr-${++rid}`
