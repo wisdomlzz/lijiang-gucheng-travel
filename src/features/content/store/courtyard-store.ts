@@ -3,27 +3,28 @@ import { contentApi } from "@/api/client"
 import { syncAction } from "@/api/sync"
 import type { Courtyard } from "../../../shared/types/content-types"
 
-const DEFAULT: Courtyard[] = []
-
 type State = {
   courtyards: Courtyard[]
-  addCourtyard: (item: Courtyard) => void
-  updateCourtyard: (id: string, fields: Partial<Courtyard>) => void
-  deleteCourtyard: (id: string) => void
+  addCourtyard: (item: Courtyard) => Promise<void>
+  updateCourtyard: (id: string, fields: Partial<Courtyard>) => Promise<void>
+  deleteCourtyard: (id: string) => Promise<void>
 }
 
 export const useContentCourtyardStore = create<State>((set) => ({
   courtyards: [],
-  addCourtyard: (item) => {
-    syncAction("courtyard.add", () => contentApi.courtyards.create(item), () => {})
-    set((s) => ({ courtyards: [...s.courtyards, item] }))
+  addCourtyard: async (item) => {
+    await syncAction("courtyard.add", () => contentApi.courtyards.create(item), (result) => {
+      set((s) => ({ courtyards: [result, ...s.courtyards] }))
+    })
   },
-  updateCourtyard: (id, fields) => {
-    syncAction("courtyard.update", () => contentApi.courtyards.update(id, fields), () => {})
-    set((s) => ({ courtyards: s.courtyards.map((c) => (c.id === id ? { ...c, ...fields } : c)) }))
+  updateCourtyard: async (id, fields) => {
+    await syncAction("courtyard.update", () => contentApi.courtyards.update(id, fields), (result) => {
+      set((s) => ({ courtyards: s.courtyards.map((c) => (c.id === id ? result : c)) }))
+    })
   },
-  deleteCourtyard: (id) => {
-    syncAction("courtyard.delete", () => contentApi.courtyards.remove(id), () => {})
-    set((s) => ({ courtyards: s.courtyards.filter((c) => c.id !== id) }))
+  deleteCourtyard: async (id) => {
+    await syncAction("courtyard.delete", () => contentApi.courtyards.remove(id), () => {
+      set((s) => ({ courtyards: s.courtyards.filter((c) => c.id !== id) }))
+    })
   },
 }))

@@ -15,25 +15,26 @@ export interface HousingItem {
 
 interface HousingState {
   houses: HousingItem[]
-  addHouse: (item: HousingItem) => void
-  updateHouse: (id: number, fields: Partial<HousingItem>) => void
-  deleteHouse: (id: number) => void
+  addHouse: (item: HousingItem) => Promise<void>
+  updateHouse: (id: number, fields: Partial<HousingItem>) => Promise<void>
+  deleteHouse: (id: number) => Promise<void>
 }
-
-const SEED: HousingItem[] = []
 
 export const useHousingStore = create<HousingState>((set) => ({
   houses: [],
-  addHouse: (item) => {
-    syncAction("house.add", () => contentApi.housing.create(item), () => {})
-    set((s) => ({ houses: [...s.houses, item] }))
+  addHouse: async (item) => {
+    await syncAction("house.add", () => contentApi.housing.create(item), (result) => {
+      set((s) => ({ houses: [result, ...s.houses] }))
+    })
   },
-  updateHouse: (id, fields) => {
-    syncAction("house.update", () => contentApi.housing.update(id, fields), () => {})
-    set((s) => ({ houses: s.houses.map((h) => (h.id === id ? { ...h, ...fields } : h)) }))
+  updateHouse: async (id, fields) => {
+    await syncAction("house.update", () => contentApi.housing.update(id, fields), (result) => {
+      set((s) => ({ houses: s.houses.map((h) => (h.id === id ? result : h)) }))
+    })
   },
-  deleteHouse: (id) => {
-    syncAction("house.delete", () => contentApi.housing.remove(id), () => {})
-    set((s) => ({ houses: s.houses.filter((h) => h.id !== id) }))
+  deleteHouse: async (id) => {
+    await syncAction("house.delete", () => contentApi.housing.remove(id), () => {
+      set((s) => ({ houses: s.houses.filter((h) => h.id !== id) }))
+    })
   },
 }))

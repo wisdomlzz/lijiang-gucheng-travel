@@ -3,27 +3,28 @@ import { contentApi } from "@/api/client"
 import { syncAction } from "@/api/sync"
 import type { Merchant } from "../../../shared/types/content-types"
 
-const DEFAULT: Merchant[] = []
-
 type State = {
   merchants: Merchant[]
-  addMerchant: (item: Merchant) => void
-  updateMerchant: (id: string, fields: Partial<Merchant>) => void
-  deleteMerchant: (id: string) => void
+  addMerchant: (item: Merchant) => Promise<void>
+  updateMerchant: (id: string, fields: Partial<Merchant>) => Promise<void>
+  deleteMerchant: (id: string) => Promise<void>
 }
 
 export const useContentMerchantStore = create<State>((set) => ({
   merchants: [],
-  addMerchant: (item) => {
-    syncAction("merchant.add", () => contentApi.merchants.create(item), () => {})
-    set((s) => ({ merchants: [...s.merchants, item] }))
+  addMerchant: async (item) => {
+    await syncAction("merchant.add", () => contentApi.merchants.create(item), (result) => {
+      set((s) => ({ merchants: [result, ...s.merchants] }))
+    })
   },
-  updateMerchant: (id, fields) => {
-    syncAction("merchant.update", () => contentApi.merchants.update(id, fields), () => {})
-    set((s) => ({ merchants: s.merchants.map((m) => (m.id === id ? { ...m, ...fields } : m)) }))
+  updateMerchant: async (id, fields) => {
+    await syncAction("merchant.update", () => contentApi.merchants.update(id, fields), (result) => {
+      set((s) => ({ merchants: s.merchants.map((m) => (m.id === id ? result : m)) }))
+    })
   },
-  deleteMerchant: (id) => {
-    syncAction("merchant.delete", () => contentApi.merchants.remove(id), () => {})
-    set((s) => ({ merchants: s.merchants.filter((m) => m.id !== id) }))
+  deleteMerchant: async (id) => {
+    await syncAction("merchant.delete", () => contentApi.merchants.remove(id), () => {
+      set((s) => ({ merchants: s.merchants.filter((m) => m.id !== id) }))
+    })
   },
 }))
