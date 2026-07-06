@@ -6,6 +6,7 @@ import { MiniProgramFrame } from "./MiniProgramFrame"
 import { useAuthStore } from "@/platform/auth"
 import { seedUsers } from "../types/seed-users"
 import type { User } from "../types"
+import { api } from "@/api/client"
 
 const HERO_IMG = "https://images.unsplash.com/photo-1683825093397-5bbc64e496e6?auto=format&fit=crop&w=800&q=70"
 
@@ -26,17 +27,28 @@ export function LoginPageB() {
 
   const getRolePath = (_role: string) => "service"
 
-  const confirmWechatUser = (user: User) => {
-    login(user, "b")
+  const confirmWechatUser = async (user: User) => {
+    try {
+      const { token, user: serverUser } = await api.login(user.phone)
+      login(serverUser, "b", token)
+    } catch {
+      login(user, "b", "mock-token-" + user.id)
+    }
     navigate(`/b/${getRolePath(user.roles[0] ?? "service")}`)
   }
 
-  const handlePasswordLogin = () => {
+  const handlePasswordLogin = async () => {
     if (!phone) return
-    const user = seedUsers.find((u) => u.platform.includes("b") && u.roles.includes("service") && u.phone === phone)
-    if (user) {
-      login(user, "b")
+    try {
+      const { token, user } = await api.login(phone)
+      login(user, "b", token)
       navigate(`/b/${getRolePath(user.roles[0] ?? "service")}`)
+    } catch {
+      const user = seedUsers.find((u) => u.platform.includes("b") && u.roles.includes("service") && u.phone === phone)
+      if (user) {
+        login(user, "b", "mock-token-" + user.id)
+        navigate(`/b/${getRolePath(user.roles[0] ?? "service")}`)
+      }
     }
   }
 

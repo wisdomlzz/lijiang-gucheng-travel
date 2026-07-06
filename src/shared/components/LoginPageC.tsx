@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { MiniProgramFrame } from "./MiniProgramFrame"
 import { useAuthStore } from "@/platform/auth"
 import { seedUsers } from "../types/seed-users"
+import { api } from "@/api/client"
 
 const HERO_IMG = "https://images.unsplash.com/photo-1775120246271-cd4b6a3ef428?auto=format&fit=crop&w=800&q=70"
 
@@ -18,10 +19,16 @@ export function LoginPageC() {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
   const navigate = useNavigate()
 
-  const handleWechatLogin = () => {
+  const handleWechatLogin = async () => {
     const defaultUser = seedUsers.find((u) => u.platform.includes("c"))
-    if (defaultUser) {
-      login(defaultUser, "c")
+    if (!defaultUser) return
+    try {
+      const { token, user } = await api.login(defaultUser.phone)
+      login(user, "c", token)
+      navigate("/c/home")
+    } catch {
+      // 后端不可用时:用种子数据 + mock token 兜底
+      login(defaultUser, "c", "mock-token-" + defaultUser.id)
       navigate("/c/home")
     }
   }
@@ -40,12 +47,18 @@ export function LoginPageC() {
     }, 1000)
   }
 
-  const handlePhoneLogin = () => {
+  const handlePhoneLogin = async () => {
     if (!phone || !code) return
-    const user = seedUsers.find((u) => u.phone === phone && u.platform.includes("c"))
-    if (user) {
-      login(user, "c")
+    try {
+      const { token, user } = await api.login(phone)
+      login(user, "c", token)
       navigate("/c/home")
+    } catch {
+      const user = seedUsers.find((u) => u.phone === phone && u.platform.includes("c"))
+      if (user) {
+        login(user, "c", "mock-token-" + user.id)
+        navigate("/c/home")
+      }
     }
   }
 

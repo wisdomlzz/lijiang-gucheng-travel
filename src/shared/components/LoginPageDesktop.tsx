@@ -5,6 +5,7 @@ import { useAuthStore } from "@/platform/auth"
 import { seedUsers } from "../types/seed-users"
 import { Shield, Store, ChevronRight, User, Smartphone, Eye, EyeOff } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../constants"
+import { api } from "@/api/client"
 
 const ADMIN_USER = seedUsers.find((u) => u.roles.includes("platform_admin"))!
 const SUPPLIER_USER = seedUsers.find((u) => u.roles.includes("supplier") && u.platform.includes("desktop"))!
@@ -43,12 +44,17 @@ export function LoginPageDesktop() {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
   const navigate = useNavigate()
 
-  const doLogin = (u: typeof ADMIN_USER) => {
+  const doLogin = async (u: typeof ADMIN_USER) => {
     if (u.roles.includes("supplier")) {
       window.open(CRMEB_ADMIN_URL, "_blank")
       return
     }
-    login(u, "desktop")
+    try {
+      const { token, user } = await api.login(u.phone)
+      login(user, "desktop", token)
+    } catch {
+      login(u, "desktop", "mock-token-" + u.id)
+    }
     navigate("/desktop/workbench")
   }
 
