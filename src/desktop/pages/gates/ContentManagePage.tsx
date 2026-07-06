@@ -6,6 +6,7 @@ import { RouteManageContent } from "./content/RouteManageContent"
 import { CourtyardManageContent } from "./content/CourtyardManageContent"
 import { MerchantManageContent } from "./content/MerchantManageContent"
 import { POIManageContent } from "./content/POIManageContent"
+import { HousingManageContent } from "./content/HousingManageContent"
 
 export default function ContentManagePage() {
   const [tab, setTab] = useState("news")
@@ -19,6 +20,7 @@ export default function ContentManagePage() {
           <TabsTrigger value="courtyards">文化院落</TabsTrigger>
           <TabsTrigger value="merchants">购在古城·商户</TabsTrigger>
           <TabsTrigger value="poi">导览地图POI</TabsTrigger>
+          <TabsTrigger value="housing">公房信息</TabsTrigger>
         </TabsList>
 
         <TabsContent value="news"><NewsManageContent /></TabsContent>
@@ -26,6 +28,7 @@ export default function ContentManagePage() {
         <TabsContent value="courtyards"><CourtyardManageContent /></TabsContent>
         <TabsContent value="merchants"><MerchantManageContent /></TabsContent>
         <TabsContent value="poi"><POIManageContent /></TabsContent>
+        <TabsContent value="housing"><HousingManageContent /></TabsContent>
       </Tabs>
     </PageLayout>
   )
