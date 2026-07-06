@@ -8,6 +8,13 @@ const DATA_DIR = join(__dirname, "data")
 
 if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true })
 
+// 如果数据文件已存在，跳过 seed（防止重启覆盖用户数据）
+const dataFile = join(DATA_DIR, "convenience_orders.json")
+if (existsSync(dataFile)) {
+  console.log("🌱 数据文件已存在，跳过 seed")
+  process.exit(0)
+}
+
 function writeTable(name, data) {
   writeFileSync(join(DATA_DIR, `${name}.json`), JSON.stringify(data, null, 2), "utf-8")
 }

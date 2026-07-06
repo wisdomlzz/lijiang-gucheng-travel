@@ -7,6 +7,7 @@ import "./shared/styles/index.css"
 import { LandingPage } from "./LandingPage"
 import { DemoSwitcher } from "./DemoSwitcher"
 import { useZoomStore } from "./shared/stores/zoom-store"
+import { AppInit } from "./api/AppInit"
 
 const CApp = lazy(() => import("./c-end/App").then((m) => ({ default: m.CApp })))
 const BApp = lazy(() => import("./b-end/App").then((m) => ({ default: m.BApp })))
@@ -69,6 +70,7 @@ createRoot(document.getElementById("root")!).render(
       </Routes>
     </Suspense>
     <Toaster position="top-center" richColors />
+    <AppInit />
     <DemoSwitcher />
     <ZoomControl />
   </BrowserRouter>

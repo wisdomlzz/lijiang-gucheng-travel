@@ -1,92 +1,78 @@
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 import { api } from "./client"
-import { useConvenienceStore } from "@/features/convenience/store"
-import { useStaffStore } from "@/features/convenience/store"
-import { useZoneStore } from "@/features/convenience/store"
-import { useContentNewsStore } from "@/features/content/store"
-import { useContentGuideStore } from "@/features/content/store"
-import { useContentCourtyardStore } from "@/features/content/store"
-import { useContentMerchantStore } from "@/features/content/store"
-import { useContentPOIStore } from "@/features/content/store"
+import { useConvenienceStore, useStaffStore, useZoneStore, useReviewStore } from "@/features/convenience/store"
+import { useContentNewsStore, useContentGuideStore, useContentCourtyardStore, useContentMerchantStore, useContentPOIStore } from "@/features/content/store"
 import { useHousingStore } from "@/features/housing/store/housing-store"
 import { useComplaintStore } from "@/features/complaints/store"
-import { useReviewStore } from "@/features/convenience/store"
 import { usePointsStore } from "@/features/points/store"
-import { useTrustScoreStore } from "@/features/trust-score/store"
 import { useRulesStore } from "@/features/trust-score/store"
-import { useVolunteerStore } from "@/features/volunteer/store"
-import { useContentNewsStore as useAIKnowledgeStore } from "@/features/content/store"
 import { useHomepageConfigStore } from "@/features/homepage/store"
-import { useConvenienceStore as useSettlementStore } from "@/features/convenience/store"
 
-// 从 API 加载所有数据到 zustand stores
+// 不依赖 API 的 store 直接从 seed 加载，不需要 hydrate
+// 本函数只加载需要从 API 同步的 store
+
 export function useApiHydrate() {
-  const [loaded, setLoaded] = useState(false)
-  const [error, setError] = useState(null)
+  const [status, setStatus] = useState<"loading" | "online" | "offline">("loading")
 
   useEffect(() => {
     let cancelled = false
+
     async function hydrate() {
       try {
-        // Test connection
-        await api.list("auth/login")
+        // 测试连接
+        await api.list("staff", { pageSize: 1 })
 
-        // Load convenience orders
-        const ordersRes = await api.list("orders", { pageSize: 200 })
-        if (ordersRes?.items) useConvenienceStore.setState({ orders: ordersRes.items })
+        // 并行加载所有数据
+        const [staffRes, ordersRes, zonesRes, compRes, revRes, prRes, srRes, newsRes, routesRes, courtsRes, merchRes, poisRes, housesRes] = await Promise.allSettled([
+          api.list("staff", { pageSize: 200 }),
+          api.list("orders", { pageSize: 200 }),
+          api.list("zones", { pageSize: 200 }),
+          api.list("complaints", { pageSize: 200 }),
+          api.list("reviews", { pageSize: 200 }),
+          api.list("points/rules", { pageSize: 200 }),
+          api.list("trust-scores/rules", { pageSize: 200 }),
+          api.list("content/news", { pageSize: 200 }),
+          api.list("content/routes", { pageSize: 200 }),
+          api.list("content/courtyards", { pageSize: 200 }),
+          api.list("content/merchants", { pageSize: 200 }),
+          api.list("content/pois", { pageSize: 200 }),
+          api.list("content/housing", { pageSize: 200 }),
+        ])
 
-        // Load staff
-        const staffRes = await api.list("staff", { pageSize: 200 })
-        if (staffRes?.items) useStaffStore.setState({ staff: staffRes.items })
+        if (cancelled) return
 
-        // Load zones
-        const zonesRes = await api.list("zones", { pageSize: 200 })
-        if (zonesRes?.items) useZoneStore.setState({ zones: zonesRes.items })
+        // 每个资源独立处理：成功则覆盖 seed，失败则保留 seed
+        if (staffRes.status === "fulfilled" && staffRes.value?.items) useStaffStore.setState({ staff: staffRes.value.items })
+        if (ordersRes.status === "fulfilled" && ordersRes.value?.items) useConvenienceStore.setState({ orders: ordersRes.value.items })
+        if (zonesRes.status === "fulfilled" && zonesRes.value?.items) useZoneStore.setState({ zones: zonesRes.value.items })
+        if (compRes.status === "fulfilled" && compRes.value?.items) useComplaintStore.setState({ complaints: compRes.value.items })
+        if (revRes.status === "fulfilled" && revRes.value?.items) useReviewStore.setState({ reviews: revRes.value.items })
+        if (prRes.status === "fulfilled" && prRes.value?.items) usePointsStore.setState({ rules: prRes.value.items })
+        if (srRes.status === "fulfilled" && srRes.value?.items) useRulesStore.setState({ rules: srRes.value.items })
+        if (newsRes.status === "fulfilled" && newsRes.value?.items) useContentNewsStore.setState({ news: newsRes.value.items })
+        if (routesRes.status === "fulfilled" && routesRes.value?.items) useContentGuideStore.setState({ guides: routesRes.value.items })
+        if (courtsRes.status === "fulfilled" && courtsRes.value?.items) useContentCourtyardStore.setState({ courtyards: courtsRes.value.items })
+        if (merchRes.status === "fulfilled" && merchRes.value?.items) useContentMerchantStore.setState({ merchants: merchRes.value.items })
+        if (poisRes.status === "fulfilled" && poisRes.value?.items) useContentPOIStore.setState({ pois: poisRes.value.items })
+        if (housesRes.status === "fulfilled" && housesRes.value?.items) useHousingStore.setState({ houses: housesRes.value.items })
 
-        // Load content
-        const loadContent = async (store, endpoint) => {
-          const res = await api.list(endpoint, { pageSize: 200 })
-          if (res?.items) {
-            if (endpoint === "content/news") store.setState({ news: res.items })
-            else if (endpoint === "content/routes") store.setState({ guides: res.items })
-            else if (endpoint === "content/courtyards") store.setState({ courtyards: res.items })
-            else if (endpoint === "content/merchants") store.setState({ merchants: res.items })
-            else if (endpoint === "content/pois") store.setState({ pois: res.items })
-            else if (endpoint === "content/housing") store.setState({ houses: res.items })
-          }
+        if (!cancelled) {
+          setStatus("online")
+          toast.success("已连接到后端服务")
         }
-        await loadContent(useContentNewsStore, "content/news")
-        await loadContent(useContentGuideStore, "content/routes")
-        await loadContent(useContentCourtyardStore, "content/courtyards")
-        await loadContent(useContentMerchantStore, "content/merchants")
-        await loadContent(useContentPOIStore, "content/pois")
-        await loadContent(useHousingStore, "content/housing")
-
-        // Load complaints
-        const compRes = await api.list("complaints", { pageSize: 200 })
-        if (compRes?.items) useComplaintStore.setState({ complaints: compRes.items })
-
-        // Load reviews
-        const revRes = await api.list("reviews", { pageSize: 200 })
-        if (revRes?.items) useReviewStore.setState({ reviews: revRes.items })
-
-        // Load points rules
-        const prRes = await api.list("points/rules", { pageSize: 200 })
-        if (prRes?.items) usePointsStore.setState({ rules: prRes.items })
-
-        // Load score rules
-        const srRes = await api.list("trust-scores/rules", { pageSize: 200 })
-        if (srRes?.items) useRulesStore.setState({ rules: srRes.items })
-
-        if (!cancelled) setLoaded(true)
       } catch (e) {
-        console.warn("API not available, using seed data:", e.message)
-        if (!cancelled) { setLoaded(true); setError(e.message) }
+        console.warn("后端服务不可用，使用浏览器本地数据（seed）：", e.message)
+        if (!cancelled) {
+          setStatus("offline")
+          toast.warning("后端服务未启动，使用本地演示数据", { duration: 4000 })
+        }
       }
     }
+
     hydrate()
     return () => { cancelled = true }
   }, [])
 
-  return { loaded, error }
+  return status
 }
