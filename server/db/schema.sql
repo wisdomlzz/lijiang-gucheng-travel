@@ -1,179 +1,195 @@
--- Convenience Orders
-CREATE TABLE convenience_orders (
+-- Users
+CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  service_type TEXT NOT NULL,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL UNIQUE,
+  avatar TEXT,
+  roles TEXT DEFAULT '[]',
+  platform TEXT DEFAULT '[]',
+  staffType TEXT,
+  supplierId TEXT,
+  staffId TEXT,
+  roleTag TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Convenience Orders
+CREATE TABLE IF NOT EXISTS convenience_orders (
+  id TEXT PRIMARY KEY,
+  userId TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  serviceType TEXT NOT NULL,
   address TEXT NOT NULL,
-  address_to TEXT,
+  addressTo TEXT,
   images TEXT DEFAULT '[]',
   note TEXT DEFAULT '',
-  preferred_time TEXT NOT NULL,
+  preferredTime TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'S10',
-  price_quote REAL,
-  ref_price REAL,
-  pay_method TEXT,
-  staff_id TEXT,
-  staff_name TEXT,
-  staff_phone TEXT,
-  complaint_id TEXT,
-  payment_proof TEXT,
-  completion_photos TEXT DEFAULT '[]',
+  priceQuote REAL,
+  refPrice REAL,
+  payMethod TEXT,
+  staffId TEXT REFERENCES staff(id) ON DELETE SET NULL,
+  staffName TEXT,
+  staffPhone TEXT,
+  complaintId TEXT,
+  paymentProof TEXT,
+  completionPhotos TEXT DEFAULT '[]',
   rating INTEGER,
-  rated_at TEXT,
-  completed_at TEXT,
-  cancel_requested INTEGER DEFAULT 0,
+  ratedAt TEXT,
+  completedAt TEXT,
+  cancelRequested INTEGER DEFAULT 0,
   lat REAL,
   lng REAL,
-  arbitration_remark TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  arbitrationRemark TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_orders_user ON convenience_orders(user_id);
-CREATE INDEX idx_orders_staff ON convenience_orders(staff_id);
-CREATE INDEX idx_orders_status ON convenience_orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_user ON convenience_orders(userId);
+CREATE INDEX IF NOT EXISTS idx_orders_staff ON convenience_orders(staffId);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON convenience_orders(status);
 
 -- Staff
-CREATE TABLE staff (
+CREATE TABLE IF NOT EXISTS staff (
   id TEXT PRIMARY KEY,
-  supplier_id TEXT NOT NULL,
+  supplierId TEXT NOT NULL,
   name TEXT NOT NULL,
   phone TEXT NOT NULL,
   enabled INTEGER DEFAULT 1,
   status TEXT DEFAULT 'online',
-  assigned_orders INTEGER DEFAULT 0,
-  joined_at TEXT,
-  service_types TEXT DEFAULT '[]',
-  zone_ids TEXT DEFAULT '[]',
+  assignedOrders INTEGER DEFAULT 0,
+  joinedAt TEXT,
+  serviceTypes TEXT DEFAULT '[]',
+  zoneIds TEXT DEFAULT '[]',
   lat REAL,
   lng REAL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Zones
-CREATE TABLE zones (
+CREATE TABLE IF NOT EXISTS zones (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   stations TEXT DEFAULT '[]',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Dispatch Config
-CREATE TABLE dispatch_configs (
+CREATE TABLE IF NOT EXISTS dispatch_configs (
   id INTEGER PRIMARY KEY CHECK (id = 1),
-  auto_dispatch_enabled INTEGER DEFAULT 1,
-  max_retries INTEGER DEFAULT 3,
-  dispatch_timeout_seconds INTEGER DEFAULT 300,
-  zone_mode TEXT DEFAULT 'prefer',
+  autoDispatchEnabled INTEGER DEFAULT 1,
+  maxRetries INTEGER DEFAULT 3,
+  dispatchTimeoutSeconds INTEGER DEFAULT 300,
+  zoneMode TEXT DEFAULT 'prefer',
   data TEXT DEFAULT '{}',
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Income Records
-CREATE TABLE income_records (
+CREATE TABLE IF NOT EXISTS income_records (
   id TEXT PRIMARY KEY,
-  order_id TEXT NOT NULL,
-  staff_id TEXT NOT NULL,
-  staff_name TEXT NOT NULL,
-  service_type TEXT NOT NULL,
+  orderId TEXT NOT NULL,
+  staffId TEXT NOT NULL,
+  staffName TEXT NOT NULL,
+  serviceType TEXT NOT NULL,
   amount REAL NOT NULL,
-  pay_method TEXT NOT NULL,
-  completed_at TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  payMethod TEXT NOT NULL,
+  completedAt TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_income_staff ON income_records(staff_id);
+CREATE INDEX IF NOT EXISTS idx_income_staff ON income_records(staffId);
 
 -- Withdrawal Requests
-CREATE TABLE withdrawal_requests (
+CREATE TABLE IF NOT EXISTS withdrawal_requests (
   id TEXT PRIMARY KEY,
-  staff_id TEXT NOT NULL,
-  staff_name TEXT NOT NULL,
+  staffId TEXT NOT NULL,
+  staffName TEXT NOT NULL,
   amount REAL NOT NULL,
   status TEXT DEFAULT 'pending',
-  reviewed_at TEXT,
+  reviewedAt TEXT,
   reviewer TEXT,
-  reject_reason TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  rejectReason TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Reviews
-CREATE TABLE reviews (
+CREATE TABLE IF NOT EXISTS reviews (
   id TEXT PRIMARY KEY,
-  order_id TEXT NOT NULL,
-  service_type TEXT NOT NULL,
-  staff_id TEXT NOT NULL,
-  staff_name TEXT NOT NULL,
-  user_id TEXT NOT NULL,
-  user_name TEXT NOT NULL,
+  orderId TEXT NOT NULL,
+  serviceType TEXT NOT NULL,
+  staffId TEXT NOT NULL,
+  staffName TEXT NOT NULL,
+  userId TEXT NOT NULL,
+  userName TEXT NOT NULL,
   rating INTEGER NOT NULL,
   content TEXT NOT NULL,
   images TEXT DEFAULT '[]',
-  reply_content TEXT,
-  replied_at TEXT,
-  auto_rated INTEGER DEFAULT 0,
-  follow_up INTEGER DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  replyContent TEXT,
+  repliedAt TEXT,
+  autoRated INTEGER DEFAULT 0,
+  followUp INTEGER DEFAULT 0,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Service Configs
-CREATE TABLE service_configs (
+CREATE TABLE IF NOT EXISTS service_configs (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   type TEXT NOT NULL,
   emoji TEXT NOT NULL,
   unit TEXT NOT NULL,
   enabled INTEGER DEFAULT 1,
-  order INTEGER DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  "order" INTEGER DEFAULT 0,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Complaints
-CREATE TABLE complaints (
+CREATE TABLE IF NOT EXISTS complaints (
   id TEXT PRIMARY KEY,
-  order_id TEXT NOT NULL,
-  user_id TEXT NOT NULL,
+  orderId TEXT NOT NULL,
+  userId TEXT NOT NULL,
   type TEXT NOT NULL,
   content TEXT NOT NULL,
   images TEXT DEFAULT '[]',
   status TEXT NOT NULL DEFAULT 'C10',
-  target_name TEXT,
-  reporter_type TEXT,
-  reporter_name TEXT,
-  reporter_gender TEXT,
-  reporter_phone TEXT,
-  object_type TEXT,
-  incident_area TEXT,
-  incident_location TEXT,
+  targetName TEXT,
+  reporterType TEXT,
+  reporterName TEXT,
+  reporterGender TEXT,
+  reporterPhone TEXT,
+  objectType TEXT,
+  incidentArea TEXT,
+  incidentLocation TEXT,
   doorplate TEXT,
-  channel_note TEXT,
+  channelNote TEXT,
   result TEXT,
-  handled_at TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  handledAt TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_complaints_status ON complaints(status);
+CREATE INDEX IF NOT EXISTS idx_complaints_status ON complaints(status);
 
 -- Content: News
-CREATE TABLE content_news (
+CREATE TABLE IF NOT EXISTS content_news (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
   summary TEXT DEFAULT '',
   category TEXT DEFAULT '其它',
   tag TEXT DEFAULT '',
-  tag_color TEXT DEFAULT '#64748B',
-  image_url TEXT DEFAULT '',
+  tagColor TEXT DEFAULT '#64748B',
+  imageUrl TEXT DEFAULT '',
   date TEXT,
-  hero_title TEXT,
+  heroTitle TEXT,
   body TEXT DEFAULT '[]',
-  sub_image TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  subImage TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Content: Routes
-CREATE TABLE content_routes (
+CREATE TABLE IF NOT EXISTS content_routes (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   tags TEXT DEFAULT '[]',
@@ -181,45 +197,45 @@ CREATE TABLE content_routes (
   difficulty TEXT DEFAULT '中等',
   stops INTEGER DEFAULT 0,
   distance TEXT,
-  spot_names TEXT DEFAULT '[]',
+  spotNames TEXT DEFAULT '[]',
   description TEXT DEFAULT '',
   cover TEXT DEFAULT '',
   spots TEXT DEFAULT '[]',
-  has_video INTEGER DEFAULT 0,
-  video_url TEXT,
-  video_cover_url TEXT,
-  video_duration TEXT,
-  content_blocks TEXT DEFAULT '[]',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  hasVideo INTEGER DEFAULT 0,
+  videoUrl TEXT,
+  videoCoverUrl TEXT,
+  videoDuration TEXT,
+  contentBlocks TEXT DEFAULT '[]',
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Content: Courtyards
-CREATE TABLE content_courtyards (
+CREATE TABLE IF NOT EXISTS content_courtyards (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   title TEXT,
   tags TEXT DEFAULT '[]',
-  tag_content TEXT,
+  tagContent TEXT,
   summary TEXT,
   description TEXT DEFAULT '',
   location TEXT,
   hours TEXT,
-  image_url TEXT DEFAULT '',
+  imageUrl TEXT DEFAULT '',
   phone TEXT,
-  vr_image_url TEXT,
-  audio_guide_url TEXT,
+  vrImageUrl TEXT,
+  audioGuideUrl TEXT,
   remark TEXT,
   gallery TEXT DEFAULT '[]',
   lat REAL,
   lng REAL,
-  content_blocks TEXT DEFAULT '[]',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  contentBlocks TEXT DEFAULT '[]',
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Content: Merchants
-CREATE TABLE content_merchants (
+CREATE TABLE IF NOT EXISTS content_merchants (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   category TEXT DEFAULT '餐饮',
@@ -234,347 +250,362 @@ CREATE TABLE content_merchants (
   lng REAL,
   tags TEXT DEFAULT '[]',
   rating REAL DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Content: POIs
-CREATE TABLE content_pois (
+CREATE TABLE IF NOT EXISTS content_pois (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   category TEXT DEFAULT 'scenic_spot',
   address TEXT DEFAULT '',
   lat REAL NOT NULL,
   lng REAL NOT NULL,
-  image_url TEXT,
+  imageUrl TEXT,
   phone TEXT,
   hours TEXT,
   description TEXT,
   tags TEXT DEFAULT '[]',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Content: Housing
-CREATE TABLE content_housing (
+CREATE TABLE IF NOT EXISTS content_housing (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   addr TEXT NOT NULL,
   status TEXT DEFAULT 'rented',
-  status_text TEXT DEFAULT '出租',
+  statusText TEXT DEFAULT '出租',
   area TEXT DEFAULT 'gucheng',
-  area_name TEXT DEFAULT '古城区',
+  areaName TEXT DEFAULT '古城区',
   meta TEXT DEFAULT '[]',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Banners
-CREATE TABLE banners (
+CREATE TABLE IF NOT EXISTS banners (
   id TEXT PRIMARY KEY,
-  image_url TEXT NOT NULL,
+  imageUrl TEXT NOT NULL,
   title TEXT DEFAULT '',
   link TEXT DEFAULT '',
   scene TEXT DEFAULT 'home',
   enabled INTEGER DEFAULT 1,
   "order" INTEGER DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Grid Items
-CREATE TABLE grid_items (
+CREATE TABLE IF NOT EXISTS grid_items (
   id TEXT PRIMARY KEY,
-  image_url TEXT DEFAULT '',
+  imageUrl TEXT DEFAULT '',
   label TEXT NOT NULL,
   route TEXT DEFAULT '',
   page INTEGER DEFAULT 0,
   visible INTEGER DEFAULT 1,
   "order" INTEGER DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Checkins
-CREATE TABLE checkins (
+CREATE TABLE IF NOT EXISTS checkins (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  courtyard_id TEXT NOT NULL,
-  image_url TEXT DEFAULT '',
+  userId TEXT NOT NULL,
+  courtyardId TEXT NOT NULL,
+  imageUrl TEXT DEFAULT '',
   note TEXT DEFAULT '',
   lat REAL,
   lng REAL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_checkins_user ON checkins(user_id);
+CREATE INDEX IF NOT EXISTS idx_checkins_user ON checkins(userId);
 
 -- Naxi Checkins
-CREATE TABLE naxi_checkins (
+CREATE TABLE IF NOT EXISTS naxi_checkins (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  image_url TEXT DEFAULT '',
+  userId TEXT NOT NULL,
+  imageUrl TEXT DEFAULT '',
   note TEXT DEFAULT '',
+  location TEXT,
   lat REAL,
   lng REAL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
--- Users
-CREATE TABLE users (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  phone TEXT NOT NULL UNIQUE,
-  avatar TEXT,
-  roles TEXT DEFAULT '[]',
-  platform TEXT DEFAULT '[]',
-  staff_type TEXT,
-  supplier_id TEXT,
-  staff_id TEXT,
-  role_tag TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Addresses
-CREATE TABLE addresses (
+CREATE TABLE IF NOT EXISTS addresses (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
+  userId TEXT NOT NULL,
   province TEXT DEFAULT '',
   city TEXT DEFAULT '',
   district TEXT DEFAULT '',
   detail TEXT NOT NULL,
-  is_default INTEGER DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  isDefault INTEGER DEFAULT 0,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_addresses_user ON addresses(user_id);
+CREATE INDEX IF NOT EXISTS idx_addresses_user ON addresses(userId);
 
 -- Favorites
-CREATE TABLE favorites (
+CREATE TABLE IF NOT EXISTS favorites (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  target_type TEXT NOT NULL,
-  target_id TEXT NOT NULL,
+  userId TEXT NOT NULL,
+  targetType TEXT NOT NULL,
+  targetId TEXT NOT NULL,
   title TEXT,
-  image_url TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  imageUrl TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_favorites_user ON favorites(user_id);
+CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(userId);
 
 -- Volunteers
-CREATE TABLE volunteers (
+CREATE TABLE IF NOT EXISTS volunteers (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
+  userId TEXT NOT NULL,
   name TEXT NOT NULL,
   phone TEXT NOT NULL,
-  political_status TEXT,
-  work_unit TEXT,
-  credential_images TEXT DEFAULT '[]',
+  politicalStatus TEXT,
+  workUnit TEXT,
+  credentialImages TEXT DEFAULT '[]',
   status TEXT DEFAULT 'pending',
-  review_note TEXT,
+  reviewNote TEXT,
   score INTEGER DEFAULT 0,
-  review_history TEXT DEFAULT '[]',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  reviewHistory TEXT DEFAULT '[]',
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Volunteer Activities
-CREATE TABLE volunteer_activities (
+CREATE TABLE IF NOT EXISTS volunteer_activities (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
   description TEXT DEFAULT '',
   location TEXT DEFAULT '',
-  start_time TEXT,
-  end_time TEXT,
-  max_participants INTEGER DEFAULT 0,
-  current_participants INTEGER DEFAULT 0,
+  startTime TEXT,
+  endTime TEXT,
+  timeMode TEXT DEFAULT 'single',
+  dailyStartTime TEXT,
+  dailyEndTime TEXT,
+  maxParticipants INTEGER DEFAULT 0,
+  currentParticipants INTEGER DEFAULT 0,
   status TEXT DEFAULT 'draft',
-  image_url TEXT,
+  imageUrl TEXT,
   tags TEXT DEFAULT '[]',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Volunteer Daily Records
-CREATE TABLE volunteer_daily_records (
+CREATE TABLE IF NOT EXISTS volunteer_daily_records (
   id TEXT PRIMARY KEY,
-  volunteer_id TEXT NOT NULL,
-  activity_id TEXT NOT NULL,
-  check_in_time TEXT,
-  check_out_time TEXT,
-  duration_minutes INTEGER DEFAULT 0,
+  volunteerId TEXT NOT NULL,
+  activityId TEXT NOT NULL,
+  checkInTime TEXT,
+  checkOutTime TEXT,
+  durationMinutes INTEGER DEFAULT 0,
   status TEXT DEFAULT 'pending',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Points Accounts
-CREATE TABLE points_accounts (
-  user_id TEXT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS points_accounts (
+  userId TEXT PRIMARY KEY,
   balance REAL DEFAULT 0,
-  total_earned REAL DEFAULT 0,
-  total_used REAL DEFAULT 0,
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  totalEarned REAL DEFAULT 0,
+  totalUsed REAL DEFAULT 0,
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Points Ledgers
-CREATE TABLE points_ledgers (
+CREATE TABLE IF NOT EXISTS points_ledgers (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
+  userId TEXT NOT NULL,
   direction TEXT NOT NULL,
   delta REAL NOT NULL,
-  source_code TEXT NOT NULL,
-  source_label TEXT NOT NULL,
-  ref_id TEXT,
-  balance_after REAL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  sourceCode TEXT NOT NULL,
+  sourceLabel TEXT NOT NULL,
+  refId TEXT,
+  balanceAfter REAL,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_ledgers_user ON points_ledgers(user_id);
+CREATE INDEX IF NOT EXISTS idx_ledgers_user ON points_ledgers(userId);
 
 -- Points Rules
-CREATE TABLE points_rules (
+CREATE TABLE IF NOT EXISTS points_rules (
   code TEXT PRIMARY KEY,
   label TEXT NOT NULL,
   points REAL NOT NULL,
-  daily_limit INTEGER,
+  dailyLimit INTEGER,
   direction TEXT NOT NULL,
   enabled INTEGER DEFAULT 1,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Trust Scores
-CREATE TABLE trust_scores (
-  staff_id TEXT PRIMARY KEY,
-  supplier_id TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS trust_scores (
+  staffId TEXT PRIMARY KEY,
+  supplierId TEXT NOT NULL,
   name TEXT NOT NULL,
-  role_tag TEXT DEFAULT '',
-  trust_score REAL DEFAULT 100,
+  roleTag TEXT DEFAULT '',
+  trustScore REAL DEFAULT 100,
   status TEXT DEFAULT '正常',
-  total_orders INTEGER DEFAULT 0,
-  total_ratings INTEGER DEFAULT 0,
-  rating5_count INTEGER DEFAULT 0,
-  rating4_count INTEGER DEFAULT 0,
-  rating3_count INTEGER DEFAULT 0,
-  rating2_count INTEGER DEFAULT 0,
-  rating1_count INTEGER DEFAULT 0,
-  complaint_count INTEGER DEFAULT 0,
-  rejection_count INTEGER DEFAULT 0,
-  observation_start_at TEXT,
-  last_complaint_at TEXT,
-  score_history TEXT DEFAULT '[]',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  totalOrders INTEGER DEFAULT 0,
+  totalRatings INTEGER DEFAULT 0,
+  rating5Count INTEGER DEFAULT 0,
+  rating4Count INTEGER DEFAULT 0,
+  rating3Count INTEGER DEFAULT 0,
+  rating2Count INTEGER DEFAULT 0,
+  rating1Count INTEGER DEFAULT 0,
+  complaintCount INTEGER DEFAULT 0,
+  rejectionCount INTEGER DEFAULT 0,
+  observationStartAt TEXT,
+  lastComplaintAt TEXT,
+  scoreHistory TEXT DEFAULT '[]',
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Score Rules
-CREATE TABLE score_rules (
+CREATE TABLE IF NOT EXISTS score_rules (
   id TEXT PRIMARY KEY,
   type TEXT NOT NULL,
   name TEXT NOT NULL,
   condition TEXT DEFAULT '',
-  score_change REAL NOT NULL,
+  scoreChange REAL NOT NULL,
   enabled INTEGER DEFAULT 1,
   description TEXT DEFAULT '',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Trust Threshold
-CREATE TABLE trust_thresholds (
+CREATE TABLE IF NOT EXISTS trust_thresholds (
   id INTEGER PRIMARY KEY CHECK (id = 1),
-  default_score REAL DEFAULT 100,
-  delinquent_threshold REAL DEFAULT 60,
-  auto_recover INTEGER DEFAULT 1,
-  recover_score REAL DEFAULT 70,
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  defaultScore REAL DEFAULT 100,
+  delinquentThreshold REAL DEFAULT 60,
+  autoRecover INTEGER DEFAULT 1,
+  recoverScore REAL DEFAULT 70,
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Supplier Applications
-CREATE TABLE supplier_applications (
+CREATE TABLE IF NOT EXISTS supplier_applications (
   id TEXT PRIMARY KEY,
-  company_name TEXT NOT NULL,
-  contact_name TEXT NOT NULL,
-  contact_phone TEXT NOT NULL,
-  business_license TEXT DEFAULT '',
+  companyName TEXT NOT NULL,
+  contactName TEXT NOT NULL,
+  contactPhone TEXT NOT NULL,
+  businessLicense TEXT DEFAULT '',
   status TEXT DEFAULT 'pending',
   remark TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Merchant Registrations
-CREATE TABLE merchant_registrations (
+CREATE TABLE IF NOT EXISTS merchant_registrations (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  merchant_name TEXT NOT NULL,
+  userId TEXT NOT NULL,
+  merchantName TEXT NOT NULL,
   category TEXT DEFAULT '',
   address TEXT DEFAULT '',
-  contact_name TEXT DEFAULT '',
-  contact_phone TEXT DEFAULT '',
+  contactName TEXT DEFAULT '',
+  contactPhone TEXT DEFAULT '',
   images TEXT DEFAULT '[]',
   status TEXT DEFAULT 'pending',
   remark TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Merchant Reviews
-CREATE TABLE merchant_reviews (
+CREATE TABLE IF NOT EXISTS merchant_reviews (
   id TEXT PRIMARY KEY,
-  merchant_id TEXT NOT NULL,
-  user_id TEXT NOT NULL,
+  merchantId TEXT NOT NULL,
+  userId TEXT NOT NULL,
   fields TEXT DEFAULT '[]',
   status TEXT DEFAULT 'pending',
   remark TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- AI Knowledge
-CREATE TABLE ai_knowledge (
+CREATE TABLE IF NOT EXISTS ai_knowledge (
   id TEXT PRIMARY KEY,
   question TEXT NOT NULL,
   answer TEXT NOT NULL,
   category TEXT DEFAULT '',
   tags TEXT DEFAULT '[]',
   enabled INTEGER DEFAULT 1,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- Bookings
-CREATE TABLE bookings (
+-- Bookings (extended with more fields)
+CREATE TABLE IF NOT EXISTS bookings (
   id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  courtyard_id TEXT NOT NULL,
+  userId TEXT NOT NULL,
+  courtyardId TEXT NOT NULL,
+  courtyardName TEXT,
+  userName TEXT,
+  userPhone TEXT,
   date TEXT NOT NULL,
-  time_slot TEXT NOT NULL,
+  timeSlot TEXT,
+  slot TEXT,
+  visitors INTEGER DEFAULT 1,
+  code TEXT,
   status TEXT DEFAULT 'pending',
-  qr_code TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  checkedAt TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Suppliers
-CREATE TABLE suppliers (
+CREATE TABLE IF NOT EXISTS suppliers (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
-  contact_name TEXT,
-  contact_phone TEXT,
+  contactName TEXT,
+  contactPhone TEXT,
   address TEXT,
   status TEXT DEFAULT 'active',
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 -- Dispatch Logs
-CREATE TABLE dispatch_logs (
+CREATE TABLE IF NOT EXISTS dispatch_logs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  order_id TEXT NOT NULL,
+  orderId TEXT NOT NULL,
   type TEXT NOT NULL,
-  staff_id TEXT,
-  staff_name TEXT,
+  staffId TEXT,
+  staffName TEXT,
   reason TEXT,
   timestamp TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Announcements (new)
+CREATE TABLE IF NOT EXISTS announcements (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT DEFAULT '',
+  type TEXT DEFAULT 'system',
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Flow Warnings (new)
+CREATE TABLE IF NOT EXISTS flow_warnings (
+  id TEXT PRIMARY KEY,
+  area TEXT NOT NULL,
+  level TEXT DEFAULT 'normal',
+  currentCount INTEGER DEFAULT 0,
+  threshold INTEGER DEFAULT 1000,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
