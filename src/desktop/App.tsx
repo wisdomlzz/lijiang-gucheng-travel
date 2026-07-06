@@ -28,6 +28,7 @@ const GridSettingsPage = lazy(() =>
 const ComplaintPage = lazy(() => import("../features/complaints/desktop/pages/ComplaintPage"))
 const PhotoRecordsList = lazy(() => import("./pages/photo-records/list"))
 const PhotoRecordShow = lazy(() => import("./pages/photo-records/show"))
+const ContentManagePage = lazy(() => import("./pages/gates/ContentManagePage").then((m) => ({ default: m.ContentManagePage })))
 const VolunteerManagePage = lazy(() =>
   import("../features/volunteer/desktop/pages/VolunteerManagePage").then((m) => ({ default: m.VolunteerManagePage }))
 )
@@ -91,6 +92,7 @@ export function DesktopApp() {
           <Route path="grid-settings" element={<GridSettingsPage />} />
           <Route path="photo-records" element={<PhotoRecordsList />} />
           <Route path="photo-records/:id" element={<PhotoRecordShow />} />
+          <Route path="content-manage" element={<ContentManagePage />} />
           <Route path="point-rules" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<PointRulesPage />} />} />
           <Route path="complaints" element={<ComplaintPage />} />
           <Route path="volunteer" element={<VolunteerManagePage />} />

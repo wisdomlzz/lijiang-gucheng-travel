@@ -172,6 +172,7 @@ export function DesktopLayout() {
                 heritage: "遗产知识",
                 "ai-knowledge": "AI知识库",
                 volunteer: "志愿服务",
+                "content-manage": "内容管理",
 
                 // 内容管理占位页
                 "service-center": "服务中心",

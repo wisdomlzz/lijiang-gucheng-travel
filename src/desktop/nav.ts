@@ -7,7 +7,6 @@ import {
   Store,
   LayoutGrid,
   MessageCircleWarning,
-  ScrollText,
   ExternalLink,
   Camera,
   Image,
@@ -17,6 +16,7 @@ import {
   Heart,
   Star,
   Award,
+  Newspaper,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../shared/constants"
@@ -43,6 +43,7 @@ export const navGroups: NavGroup[] = [
       { key: "point-rules", label: "积分规则配置", icon: Gift, permissionCode: "content" },
       { key: "complaints", label: "投诉管理", icon: MessageCircleWarning, permissionCode: "complaint" },
       { key: "volunteer", label: "志愿服务", icon: Heart, permissionCode: "content" },
+      { key: "content-manage", label: "内容管理", icon: Newspaper, permissionCode: "content" },
     ],
   },
   {
