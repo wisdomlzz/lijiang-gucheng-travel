@@ -30,7 +30,15 @@ function serializeInput(data) {
 
 export function crudRoutes(table, options = {}) {
   const router = Router()
-  const { searchField, filters = [], sortDefault = "createdAt" } = options
+  const { searchField, filters = [], sortDefault = "createdAt", pkField = "id" } = options
+  const pk = `"${pkField}"`
+
+  // 探测表列(用于智能处理 createdAt/updatedAt)
+  const tableCols = db.prepare(`PRAGMA table_info("${table}")`).all().map(c => c.name)
+  const hasCreatedAt = tableCols.includes("createdAt")
+  const hasUpdatedAt = tableCols.includes("updatedAt")
+  // 兜底 sort key(如果表没有 createdAt,fallback 到 pk)
+  const effectiveSort = tableCols.includes(sortDefault.replace(/^-/, "")) ? sortDefault : `-${pkField}`
 
   // GET /
   router.get("/", (req, res) => {
@@ -50,8 +58,8 @@ export function crudRoutes(table, options = {}) {
       }
       if (where.length) sql += " WHERE " + where.join(" AND ")
 
-      const sort = (req.query.sort || sortDefault).replace(/^-/, "")
-      const dir = (req.query.sort || sortDefault).startsWith("-") ? "DESC" : "ASC"
+      const sort = (req.query.sort || effectiveSort).replace(/^-/, "")
+      const dir = (req.query.sort || effectiveSort).startsWith("-") ? "DESC" : "ASC"
       sql += ` ORDER BY "${sort}" ${dir}`
 
       const rows = db.prepare(sql).all(...params)
@@ -74,7 +82,7 @@ export function crudRoutes(table, options = {}) {
   // GET /:id
   router.get("/:id", (req, res) => {
     try {
-      const row = db.prepare(`SELECT * FROM "${table}" WHERE id = ?`).get(req.params.id)
+      const row = db.prepare(`SELECT * FROM "${table}" WHERE ${pk} = ?`).get(req.params.id)
       if (!row) return res.json(fail("Not found", 404))
       res.json(ok(deserializeRow(row)))
     } catch (e) {
@@ -85,18 +93,26 @@ export function crudRoutes(table, options = {}) {
   // POST /
   router.post("/", (req, res) => {
     try {
-      const { id: _id, createdAt: _c, updatedAt: _u, ...data } = req.body
-      const item = serializeInput(data)
-      if (!item.id) item.id = `${table}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+      const bodyCopy = { ...req.body }
+      delete bodyCopy.createdAt
+      delete bodyCopy.updatedAt
+      const item = serializeInput(bodyCopy)
+      if (pkField === "id" && !item.id) {
+        item.id = `${table}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+      }
       const now = new Date().toISOString()
-      item.createdAt = now
-      item.updatedAt = now
+      if (hasCreatedAt) item.createdAt = now
+      if (hasUpdatedAt) item.updatedAt = now
+      // 只保留表实际存在的字段
+      for (const k of Object.keys(item)) {
+        if (!tableCols.includes(k)) delete item[k]
+      }
       const cols = Object.keys(item)
       const quotedCols = cols.map(c => `"${c}"`)
       const placeholders = cols.map(() => "?").join(", ")
       db.prepare(`INSERT INTO "${table}" (${quotedCols.join(", ")}) VALUES (${placeholders})`)
         .run(...cols.map(c => item[c]))
-      const row = db.prepare(`SELECT * FROM "${table}" WHERE id = ?`).get(item.id)
+      const row = db.prepare(`SELECT * FROM "${table}" WHERE ${pk} = ?`).get(item[pkField])
       res.json(ok(deserializeRow(row)))
     } catch (e) {
       res.json(fail(e.message))
@@ -106,15 +122,22 @@ export function crudRoutes(table, options = {}) {
   // PATCH /:id
   router.patch("/:id", (req, res) => {
     try {
-      const { id: _id, createdAt: _c, ...data } = req.body
-      const item = serializeInput(data)
-      item.updatedAt = new Date().toISOString()
+      const bodyCopy = { ...req.body }
+      delete bodyCopy[pkField]
+      delete bodyCopy.createdAt
+      const item = serializeInput(bodyCopy)
+      if (hasUpdatedAt) item.updatedAt = new Date().toISOString()
+      // 只保留表实际存在的字段
+      for (const k of Object.keys(item)) {
+        if (!tableCols.includes(k)) delete item[k]
+      }
       const cols = Object.keys(item)
+      if (cols.length === 0) return res.json(fail("No fields to update"))
       const setClause = cols.map(c => `"${c}" = ?`).join(", ")
-      const result = db.prepare(`UPDATE "${table}" SET ${setClause} WHERE id = ?`)
+      const result = db.prepare(`UPDATE "${table}" SET ${setClause} WHERE ${pk} = ?`)
         .run(...cols.map(c => item[c]), req.params.id)
       if (result.changes === 0) return res.json(fail("Not found", 404))
-      const row = db.prepare(`SELECT * FROM "${table}" WHERE id = ?`).get(req.params.id)
+      const row = db.prepare(`SELECT * FROM "${table}" WHERE ${pk} = ?`).get(req.params.id)
       res.json(ok(deserializeRow(row)))
     } catch (e) {
       res.json(fail(e.message))
@@ -124,7 +147,7 @@ export function crudRoutes(table, options = {}) {
   // DELETE /:id
   router.delete("/:id", (req, res) => {
     try {
-      db.prepare(`DELETE FROM "${table}" WHERE id = ?`).run(req.params.id)
+      db.prepare(`DELETE FROM "${table}" WHERE ${pk} = ?`).run(req.params.id)
       res.json(ok(null, "Deleted"))
     } catch (e) {
       res.json(fail(e.message))

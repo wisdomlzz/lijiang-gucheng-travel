@@ -77,7 +77,7 @@ app.use("/api/v1/favorites", crudRoutes("favorites", { filters: ["userId", "targ
 app.use("/api/v1/volunteers", crudRoutes("volunteers", { filters: ["status", "userId"] }))
 app.use("/api/v1/volunteer-activities", crudRoutes("volunteer_activities", { filters: ["status"] }))
 app.use("/api/v1/volunteer-records", crudRoutes("volunteer_daily_records", { filters: ["volunteerId", "activityId"] }))
-app.use("/api/v1/points/rules", crudRoutes("points_rules"))
+app.use("/api/v1/points/rules", crudRoutes("points_rules", { pkField: "code" }))
 app.use("/api/v1/supplier-applications", crudRoutes("supplier_applications", { filters: ["status"] }))
 app.use("/api/v1/merchant-registrations", crudRoutes("merchant_registrations", { filters: ["status", "userId"] }))
 app.use("/api/v1/merchant-reviews", crudRoutes("merchant_reviews", { filters: ["status", "userId"] }))

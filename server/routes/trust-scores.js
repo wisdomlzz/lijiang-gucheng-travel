@@ -30,7 +30,7 @@ router.post("/threshold", (req, res) => {
 // /rules 子路由
 router.use("/rules", crudRoutes("score_rules"))
 
-// trust_scores CRUD
-router.use("/", crudRoutes("trust_scores"))
+// trust_scores CRUD(主键是 staffId)
+router.use("/", crudRoutes("trust_scores", { pkField: "staffId" }))
 
 export default router
