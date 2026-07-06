@@ -9,9 +9,7 @@ import { usePointsStore } from "@/features/points/store"
 import { useRulesStore } from "@/features/trust-score/store"
 import { useHomepageConfigStore } from "@/features/homepage/store"
 
-// 不依赖 API 的 store 直接从 seed 加载，不需要 hydrate
-// 本函数只加载需要从 API 同步的 store
-
+// 从 API 加载所有数据，失败则清空 store（不 fallback seed）
 export function useApiHydrate() {
   const [status, setStatus] = useState<"loading" | "online" | "offline">("loading")
 
@@ -20,10 +18,8 @@ export function useApiHydrate() {
 
     async function hydrate() {
       try {
-        // 测试连接
         await api.list("staff", { pageSize: 1 })
 
-        // 并行加载所有数据
         const [staffRes, ordersRes, zonesRes, compRes, revRes, prRes, srRes, newsRes, routesRes, courtsRes, merchRes, poisRes, housesRes] = await Promise.allSettled([
           api.list("staff", { pageSize: 200 }),
           api.list("orders", { pageSize: 200 }),
@@ -42,30 +38,40 @@ export function useApiHydrate() {
 
         if (cancelled) return
 
-        // 每个资源独立处理：成功则覆盖 seed，失败则保留 seed
+        // 成功的数据覆盖 store，失败的保持空
         if (staffRes.status === "fulfilled" && staffRes.value?.items) useStaffStore.setState({ staff: staffRes.value.items })
+        else useStaffStore.setState({ staff: [] })
         if (ordersRes.status === "fulfilled" && ordersRes.value?.items) useConvenienceStore.setState({ orders: ordersRes.value.items })
+        else useConvenienceStore.setState({ orders: [] })
         if (zonesRes.status === "fulfilled" && zonesRes.value?.items) useZoneStore.setState({ zones: zonesRes.value.items })
+        else useZoneStore.setState({ zones: [] })
         if (compRes.status === "fulfilled" && compRes.value?.items) useComplaintStore.setState({ complaints: compRes.value.items })
+        else useComplaintStore.setState({ complaints: [] })
         if (revRes.status === "fulfilled" && revRes.value?.items) useReviewStore.setState({ reviews: revRes.value.items })
+        else useReviewStore.setState({ reviews: [] })
         if (prRes.status === "fulfilled" && prRes.value?.items) usePointsStore.setState({ rules: prRes.value.items })
+        else usePointsStore.setState({ rules: [] })
         if (srRes.status === "fulfilled" && srRes.value?.items) useRulesStore.setState({ rules: srRes.value.items })
+        else useRulesStore.setState({ rules: [] })
         if (newsRes.status === "fulfilled" && newsRes.value?.items) useContentNewsStore.setState({ news: newsRes.value.items })
+        else useContentNewsStore.setState({ news: [] })
         if (routesRes.status === "fulfilled" && routesRes.value?.items) useContentGuideStore.setState({ guides: routesRes.value.items })
+        else useContentGuideStore.setState({ guides: [] })
         if (courtsRes.status === "fulfilled" && courtsRes.value?.items) useContentCourtyardStore.setState({ courtyards: courtsRes.value.items })
+        else useContentCourtyardStore.setState({ courtyards: [] })
         if (merchRes.status === "fulfilled" && merchRes.value?.items) useContentMerchantStore.setState({ merchants: merchRes.value.items })
+        else useContentMerchantStore.setState({ merchants: [] })
         if (poisRes.status === "fulfilled" && poisRes.value?.items) useContentPOIStore.setState({ pois: poisRes.value.items })
+        else useContentPOIStore.setState({ pois: [] })
         if (housesRes.status === "fulfilled" && housesRes.value?.items) useHousingStore.setState({ houses: housesRes.value.items })
+        else useHousingStore.setState({ houses: [] })
 
-        if (!cancelled) {
-          setStatus("online")
-          toast.success("已连接到后端服务")
-        }
+        if (!cancelled) setStatus("online")
       } catch (e) {
-        console.warn("后端服务不可用，使用浏览器本地数据（seed）：", e.message)
+        console.error("后端服务不可用，请启动后端：cd server && npm run dev")
         if (!cancelled) {
           setStatus("offline")
-          toast.warning("后端服务未启动，使用本地演示数据", { duration: 4000 })
+          toast.error("无法连接到后端服务，请启动 server", { duration: 8000 })
         }
       }
     }

@@ -1,13 +1,14 @@
-// 异步动作辅助：先调 API，成功后更新本地 store；API 不可用时回退纯本地
+import { toast } from "sonner"
+
+// 异步动作辅助：调 API，成功后更新本地 store；失败时 toast 报错
 export async function syncAction(name, apiCall, localUpdate) {
   try {
     const result = await apiCall()
     localUpdate(result)
     return result
   } catch (e) {
-    // API 不可用或失败时，回退纯本地（Demo 友好降级）
-    console.warn(`[sync] ${name} API failed, fallback to local:`, e.message)
-    localUpdate()
+    console.error(`[sync] ${name} failed:`, e.message)
+    toast.error(`操作失败: ${e.message}`, { duration: 4000 })
     return null
   }
 }
