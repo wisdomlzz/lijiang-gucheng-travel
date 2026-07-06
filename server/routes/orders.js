@@ -16,9 +16,20 @@ router.post("/:id/dispatch", (req, res) => {
     let staff = null
     if (mode === "manual" && staffId) {
       staff = db.prepare("SELECT * FROM staff WHERE id = ?").get(staffId)
+      if (staff) {
+        staff.serviceTypes = JSON.parse(staff.serviceTypes || "[]")
+        staff.zoneIds = JSON.parse(staff.zoneIds || "[]")
+      }
     } else {
-      const allStaff = db.prepare("SELECT * FROM staff").all()
-      const zones = db.prepare("SELECT * FROM zones").all()
+      const allStaff = db.prepare("SELECT * FROM staff").all().map(s => ({
+        ...s,
+        serviceTypes: JSON.parse(s.serviceTypes || "[]"),
+        zoneIds: JSON.parse(s.zoneIds || "[]"),
+      }))
+      const zones = db.prepare("SELECT * FROM zones").all().map(z => ({
+        ...z,
+        stations: JSON.parse(z.stations || "[]"),
+      }))
       staff = pickStaff(allStaff, order.serviceType, order.lat, order.lng, zones)
     }
     if (!staff) return res.json(fail("无可用服务人员"))
