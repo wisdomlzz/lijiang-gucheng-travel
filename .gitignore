@@ -19,3 +19,8 @@ skills-lock.json
 docs/「需求新增」*.html
 .superpowers/
 .claude/
+
+# server SQLite DB + uploads
+server/db/data.db
+server/db/data.db-journal
+server/uploads/
