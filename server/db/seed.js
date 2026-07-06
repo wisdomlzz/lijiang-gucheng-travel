@@ -10,10 +10,7 @@ if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true })
 
 // 如果数据文件已存在，跳过 seed（防止重启覆盖用户数据）
 const dataFile = join(DATA_DIR, "convenience_orders.json")
-if (existsSync(dataFile)) {
-  console.log("🌱 数据文件已存在，跳过 seed")
-  process.exit(0)
-}
+const shouldSkip = existsSync(dataFile)
 
 function writeTable(name, data) {
   writeFileSync(join(DATA_DIR, `${name}.json`), JSON.stringify(data, null, 2), "utf-8")
@@ -179,4 +176,6 @@ export function seed() {
   console.log("🌱 Seed data written to", DATA_DIR)
 }
 
-seed()
+// 直接执行时 seed，被 import 时不自动运行
+const isDirectRun = typeof process !== "undefined" && process.argv[1]?.endsWith("seed.js")
+if (isDirectRun && !shouldSkip) seed()
