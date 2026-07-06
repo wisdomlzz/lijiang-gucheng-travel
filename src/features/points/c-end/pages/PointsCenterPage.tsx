@@ -31,8 +31,8 @@ export function PointsCenterPage() {
   )
 
   // 模拟商城消费赚积分（Demo：CRMEB 外链，此处模拟回调）
-  const simulateMallEarn = () => {
-    const result = transact(userId, "mall_purchase", `mock-mall-${Date.now()}`, 10)
+  const simulateMallEarn = async () => {
+    const result = await transact(userId, "mall_purchase", `mock-mall-${Date.now()}`, 10)
     result.ok ? toast.success(result.msg) : toast.error(result.msg)
   }
 

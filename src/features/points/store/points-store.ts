@@ -18,8 +18,6 @@ export interface PointRule {
   enabled: boolean
 }
 
-const SEED_RULES: PointRule[] = []
-
 // ---- ② 积分账户（当前状态）----
 export interface PointAccount {
   userId: string
@@ -56,16 +54,12 @@ type PointsState = {
     sourceCode: string,
     refId?: string,
     customDelta?: number
-  ) => { ok: boolean; msg: string; delta?: number }
+  ) => Promise<{ ok: boolean; msg: string; delta?: number }>
 
   // 规则管理（PC 端）
-  addRule: (rule: PointRule) => void
-  updateRule: (code: string, patch: Partial<PointRule>) => void
-  removeRule: (code: string) => void
-}
-
-function today(): string {
-  return new Date().toISOString().slice(0, 10)
+  addRule: (rule: PointRule) => Promise<void>
+  updateRule: (code: string, patch: Partial<PointRule>) => Promise<void>
+  removeRule: (code: string) => Promise<void>
 }
 
 export const usePointsStore = create<PointsState>((set, get) => ({
@@ -76,78 +70,46 @@ export const usePointsStore = create<PointsState>((set, get) => ({
   getAccount: (userId) => get().accounts[userId] ?? { userId, balance: 0, totalEarned: 0, totalUsed: 0 },
   getLedgers: (userId) => get().ledgers.filter((l) => l.userId === userId),
 
-  // ★ 核心入口：查规则 → 校验上限 → 写流水 → 更新账户
-  transact: (userId, sourceCode, refId, customDelta) => {
-    const rule = get().rules.find((r) => r.code === sourceCode && r.enabled)
-    if (!rule) return { ok: false, msg: `积分规则 ${sourceCode} 不存在或已停用` }
-
-    // 每日上限校验（防刷）
-    if (rule.dailyLimit) {
-      const todayStr = today()
-      const todayUsed = get()
-        .ledgers.filter((l) => l.userId === userId && l.sourceCode === sourceCode && l.createdAt.startsWith(todayStr))
-        .reduce((sum, l) => sum + l.delta, 0)
-      if (todayUsed >= rule.dailyLimit) return { ok: false, msg: `今日「${rule.label}」已达上限` }
+  // ★ 核心入口：服务端 authoritative,server 校验规则/上限/余额并返回更新后的账户
+  transact: async (userId, sourceCode, refId, customDelta) => {
+    const result = await syncAction(
+      "points.transact",
+      () => pointsApi.transact({ userId, sourceCode, refId, customDelta }),
+      (account) => {
+        set((s) => ({ accounts: { ...s.accounts, [userId]: account } }))
+      }
+    )
+    if (!result) return { ok: false, msg: "积分操作失败" }
+    // 服务端 transact 只返回 account,ledger 通过重查 account 端点获取
+    try {
+      const accountWithLedgers: any = await pointsApi.account(userId)
+      set((s) => ({
+        accounts: { ...s.accounts, [userId]: accountWithLedgers },
+        ledgers: accountWithLedgers.ledgers || s.ledgers,
+      }))
+      const msg =
+        (accountWithLedgers.lastDelta ?? 0) >= 0
+          ? `获得 ${Math.abs(accountWithLedgers.lastDelta ?? 0)} 积分`
+          : `消耗 ${Math.abs(accountWithLedgers.lastDelta ?? 0)} 积分`
+      return { ok: true, msg, delta: (result as any).balance }
+    } catch {
+      return { ok: true, msg: "积分操作成功", delta: (result as any).balance }
     }
-
-    // 计算实际变动
-    let delta = customDelta ?? rule.points
-    if (rule.direction === "OUT") delta = -Math.abs(delta)
-    else delta = Math.abs(delta)
-
-    const account = get().getAccount(userId)
-    if (rule.direction === "OUT" && account.balance + delta < 0) {
-      return { ok: false, msg: "积分余额不足" }
-    }
-
-    const newBalance = account.balance + delta
-    const ledger: PointLedger = {
-      id: `pl${Date.now()}`,
-      userId,
-      direction: rule.direction,
-      delta: Math.abs(delta),
-      sourceCode,
-      sourceLabel: rule.label,
-      refId,
-      balanceAfter: newBalance,
-      createdAt: new Date().toLocaleString("zh-CN"),
-    }
-
-    syncAction("transact", () => pointsApi.transact({
-      userId,
-      sourceCode,
-      refId,
-      delta: Math.abs(delta),
-      direction: rule.direction,
-      balanceAfter: newBalance,
-    }), () => {})
-
-    set((s) => ({
-      ledgers: [ledger, ...s.ledgers],
-      accounts: {
-        ...s.accounts,
-        [userId]: {
-          userId,
-          balance: newBalance,
-          totalEarned: account.totalEarned + (delta > 0 ? delta : 0),
-          totalUsed: account.totalUsed + (delta < 0 ? Math.abs(delta) : 0),
-        },
-      },
-    }))
-
-    return { ok: true, msg: `${delta > 0 ? "获得" : "消耗"} ${Math.abs(delta)} 积分`, delta }
   },
 
-  addRule: (rule) => {
-    syncAction("addRule", () => pointsApi.rules.create(rule), () => {})
-    set((s) => ({ rules: [...s.rules.filter((r) => r.code !== rule.code), rule] }))
+  addRule: async (rule) => {
+    await syncAction("points.addRule", () => pointsApi.rules.create(rule), (result) => {
+      set((s) => ({ rules: [...s.rules.filter((r) => r.code !== (result as PointRule).code), result] }))
+    })
   },
-  updateRule: (code, patch) => {
-    syncAction("updateRule", () => pointsApi.rules.update(code, patch), () => {})
-    set((s) => ({ rules: s.rules.map((r) => (r.code === code ? { ...r, ...patch } : r)) }))
+  updateRule: async (code, patch) => {
+    await syncAction("points.updateRule", () => pointsApi.rules.update(code, patch), (result) => {
+      set((s) => ({ rules: s.rules.map((r) => (r.code === code ? result : r)) }))
+    })
   },
-  removeRule: (code) => {
-    syncAction("removeRule", () => pointsApi.rules.remove(code), () => {})
-    set((s) => ({ rules: s.rules.filter((r) => r.code !== code) }))
+  removeRule: async (code) => {
+    await syncAction("points.removeRule", () => pointsApi.rules.remove(code), () => {
+      set((s) => ({ rules: s.rules.filter((r) => r.code !== code) }))
+    })
   },
 }))

@@ -55,8 +55,6 @@ export interface TrustScore {
   scoreHistory?: ScoreChangeRecord[]
 }
 
-const SEED_SCORES: TrustScore[] = []
-
 // ====== Supplier rating data (merged from supplier-rating.ts) ======
 type SupplierRatingData = {
   totalRatings: number

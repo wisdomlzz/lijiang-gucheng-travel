@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { trustApi } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 // ====== Types ======
 export interface ScoreRule {
@@ -26,9 +28,6 @@ export const DEFAULT_THRESHOLD: TrustThreshold = {
   recoverScore: 70,
 }
 
-// ====== Seed Rules ======
-const SEED_RULES: ScoreRule[] = []
-
 // ====== Store ======
 type RulesStoreState = {
   rules: ScoreRule[]
@@ -37,13 +36,13 @@ type RulesStoreState = {
   getRules: () => ScoreRule[]
   getEnabledRules: () => ScoreRule[]
 
-  addRule: (rule: Omit<ScoreRule, "id">) => void
-  updateRule: (id: string, patch: Partial<ScoreRule>) => void
-  removeRule: (id: string) => void
-  toggleRule: (id: string) => void
+  addRule: (rule: Omit<ScoreRule, "id">) => Promise<void>
+  updateRule: (id: string, patch: Partial<ScoreRule>) => Promise<void>
+  removeRule: (id: string) => Promise<void>
+  toggleRule: (id: string) => Promise<void>
 
-  updateThreshold: (patch: Partial<TrustThreshold>) => void
-  resetThreshold: () => void
+  updateThreshold: (patch: Partial<TrustThreshold>) => Promise<void>
+  resetThreshold: () => Promise<void>
   resetRules: () => void
 }
 
@@ -54,31 +53,57 @@ export const useRulesStore = create<RulesStoreState>((set, get) => ({
   getRules: () => get().rules,
   getEnabledRules: () => get().rules.filter((r) => r.enabled),
 
-  addRule: (rule) =>
-    set((s) => ({
-      rules: [...s.rules, { ...rule, id: `rule_${Date.now()}` }],
-    })),
+  addRule: async (rule) => {
+    await syncAction("trust.addRule", () => trustApi.rules.create(rule), (result) => {
+      set((s) => ({ rules: [...s.rules, result] }))
+    })
+  },
 
-  updateRule: (id, patch) =>
-    set((s) => ({
-      rules: s.rules.map((r) => (r.id === id ? { ...r, ...patch } : r)),
-    })),
+  updateRule: async (id, patch) => {
+    await syncAction("trust.updateRule", () => trustApi.rules.update(id, patch), (result) => {
+      set((s) => ({ rules: s.rules.map((r) => (r.id === id ? result : r)) }))
+    })
+  },
 
-  removeRule: (id) =>
-    set((s) => ({
-      rules: s.rules.filter((r) => r.id !== id),
-    })),
+  removeRule: async (id) => {
+    await syncAction("trust.removeRule", () => trustApi.rules.remove(id), () => {
+      set((s) => ({ rules: s.rules.filter((r) => r.id !== id) }))
+    })
+  },
 
-  toggleRule: (id) =>
-    set((s) => ({
-      rules: s.rules.map((r) => (r.id === id ? { ...r, enabled: !r.enabled } : r)),
-    })),
+  toggleRule: async (id) => {
+    const current = get().rules.find((r) => r.id === id)
+    if (!current) return
+    await syncAction(
+      "trust.toggleRule",
+      () => trustApi.rules.update(id, { enabled: !current.enabled }),
+      (result) => {
+        set((s) => ({ rules: s.rules.map((r) => (r.id === id ? result : r)) }))
+      }
+    )
+  },
 
-  updateThreshold: (patch) =>
-    set((s) => ({
-      threshold: { ...s.threshold, ...patch },
-    })),
+  updateThreshold: async (patch) => {
+    await syncAction("trust.updateThreshold", () => trustApi.threshold.update(patch), (result) => {
+      set({ threshold: result })
+    })
+  },
 
-  resetThreshold: () => set({ threshold: { ...DEFAULT_THRESHOLD } }),
-  resetRules: () => set({ rules: SEED_RULES }),
+  resetThreshold: async () => {
+    await syncAction(
+      "trust.resetThreshold",
+      () =>
+        trustApi.threshold.update({
+          defaultScore: 100,
+          delinquentThreshold: 60,
+          autoRecover: true,
+          recoverScore: 70,
+        }),
+      (result) => {
+        set({ threshold: result })
+      }
+    )
+  },
+
+  resetRules: () => set({ rules: [] }),
 }))
