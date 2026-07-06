@@ -1,81 +1,39 @@
 import { create } from "zustand"
 import type { SupplierApplication } from "../../../shared/types"
 import { useNotificationStore } from "@/platform/notification"
-import { supplierApi } from "@/api/client"
+import { api, supplierApi } from "@/api/client"
 import { syncAction } from "@/api/sync"
 
 type SupplierState = {
   applications: SupplierApplication[]
-  addApplication: (app: Omit<SupplierApplication, "id" | "submittedAt" | "status">) => void
-  updateStatus: (id: string, status: SupplierApplication["status"], reviewer: string, rejectReason?: string) => void
+  addApplication: (app: Omit<SupplierApplication, "id" | "submittedAt" | "status">) => Promise<void>
+  updateStatus: (id: string, status: SupplierApplication["status"], reviewer: string, rejectReason?: string) => Promise<void>
   getByPhone: (phone: string) => SupplierApplication[]
 }
 
 export const useSupplierStore = create<SupplierState>((set, get) => ({
-  applications: [
-    {
-      id: "app-1",
-      companyName: "丽江云味餐厅",
-      contactName: "李明",
-      phone: "13988888801",
-      businessType: "餐饮",
-      address: "丽江市古城区五一街101号",
-      licenseNo: "91530702MA6K123456",
-      licenseImg: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=70",
-      description: "主营纳西特色餐饮，传承纳西传统美食技艺",
-      status: "approved",
-      submittedAt: "2026-05-10 09:30",
-      reviewedAt: "2026-05-11 14:20",
-      reviewer: "管理员",
-    },
-    {
-      id: "app-2",
-      companyName: "古城客栈·雪山观景",
-      contactName: "王芳",
-      phone: "13988888802",
-      businessType: "住宿",
-      address: "丽江市古城区新华街68号",
-      licenseNo: "91530702MA6K234567",
-      licenseImg: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=70",
-      description: "精品民宿，位于古城核心区，观景绝佳",
-      status: "pending",
-      submittedAt: "2026-05-18 10:15",
-    },
-    {
-      id: "app-3",
-      companyName: "纳西手工艺品坊",
-      contactName: "张伟",
-      phone: "13988888803",
-      businessType: "文创",
-      address: "丽江市古城区七一街22号",
-      licenseNo: "91530702MA6K345678",
-      licenseImg: "https://images.unsplash.com/photo-1589283952229-4c02add31e82?w=600&q=70",
-      description: "手工纳西特色工艺品，东巴文化创意产品",
-      status: "pending",
-      submittedAt: "2026-05-19 16:45",
-    },
-  ],
-  addApplication: (app) => {
-    const item = { ...app, id: `app-${Date.now()}`, submittedAt: new Date().toLocaleString("zh-CN"), status: "pending" as const }
-    syncAction("addApplication", () => supplierApi.create(item), () => {})
-    set((s) => ({
-      applications: [item as SupplierApplication, ...s.applications],
-    }))
+  applications: [],
+  addApplication: async (app) => {
+    const payload = { ...app, status: "pending" as const }
+    await syncAction("addApplication", () => supplierApi.create(payload), (result) => {
+      set((s) => ({ applications: [result as SupplierApplication, ...s.applications] }))
+    })
   },
-  updateStatus: (id, status, reviewer, rejectReason) => {
-    set((s) => ({
-      applications: s.applications.map((a) =>
-        a.id === id
-          ? {
-              ...a,
-              status,
-              reviewedAt: new Date().toLocaleString("zh-CN"),
-              reviewer,
-              rejectReason: status === "rejected" ? rejectReason : undefined,
-            }
-          : a
-      ),
-    }))
+  updateStatus: async (id, status, reviewer, rejectReason) => {
+    const patch = {
+      status,
+      reviewer,
+      rejectReason: status === "rejected" ? rejectReason : undefined,
+    }
+    await syncAction(
+      "updateSupplierStatus",
+      () => api.update("supplier-applications", id, patch),
+      (result) => {
+        set((s) => ({
+          applications: s.applications.map((a) => (a.id === id ? result : a)),
+        }))
+      },
+    )
 
     if (status === "approved" || status === "rejected") {
       const app = get().applications.find((a) => a.id === id)

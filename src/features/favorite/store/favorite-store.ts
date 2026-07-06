@@ -7,9 +7,9 @@ type FavoriteState = {
   favorites: FavoriteItem[]
   getByUser: (userId: string) => FavoriteItem[]
   isFavorited: (userId: string, type: FavoriteItem["type"], itemId: number | string) => boolean
-  add: (item: Omit<FavoriteItem, "id" | "savedAt">) => void
-  remove: (id: string) => void
-  toggle: (item: Omit<FavoriteItem, "id" | "savedAt">) => void
+  add: (item: Omit<FavoriteItem, "id" | "savedAt">) => Promise<void>
+  remove: (id: string) => Promise<void>
+  toggle: (item: Omit<FavoriteItem, "id" | "savedAt">) => Promise<void>
 }
 
 export const useFavoriteStore = create<FavoriteState>((set, get) => ({
@@ -20,25 +20,29 @@ export const useFavoriteStore = create<FavoriteState>((set, get) => ({
     const numId = typeof itemId === "string" ? Number(itemId) : itemId
     return get().favorites.some((f) => f.userId === userId && f.type === type && f.itemId === numId)
   },
-  add: (item) => {
-    const fav: FavoriteItem = {
+  add: async (item) => {
+    const payload = {
       ...item,
       itemId: typeof item.itemId === "string" ? Number(item.itemId) : item.itemId,
-      id: `fav_${Date.now()}`,
-      savedAt: new Date().toISOString().slice(0, 10),
     }
-    syncAction("addFavorite", () => favoritesApi.create(fav), () => {})
-    set((s) => ({ favorites: [fav, ...s.favorites] }))
+    await syncAction("addFavorite", () => favoritesApi.create(payload), (result) => {
+      set((s) => ({ favorites: [result, ...s.favorites] }))
+    })
   },
-  remove: (id) => {
-    syncAction("removeFavorite", () => favoritesApi.remove(id), () => {})
-    set((s) => ({ favorites: s.favorites.filter((f) => f.id !== id) }))
+  remove: async (id) => {
+    await syncAction("removeFavorite", () => favoritesApi.remove(id), () => {
+      set((s) => ({ favorites: s.favorites.filter((f) => f.id !== id) }))
+    })
   },
-  toggle: (item) => {
+  toggle: async (item) => {
     const state = get()
     const numId = typeof item.itemId === "string" ? Number(item.itemId) : item.itemId
     const existing = state.favorites.find((f) => f.userId === item.userId && f.type === item.type && f.itemId === numId)
-    existing ? state.remove(existing.id) : state.add(item)
+    if (existing) {
+      await state.remove(existing.id)
+    } else {
+      await state.add(item)
+    }
   },
 }))
 

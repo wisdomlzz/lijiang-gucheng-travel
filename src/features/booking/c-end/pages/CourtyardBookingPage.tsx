@@ -35,8 +35,8 @@ export function CourtyardBookingPage() {
 
   if (!courtyard) return <div className="p-4 text-center text-text-tertiary">院落不存在</div>
 
-  const handleBooking = () => {
-    const result = createBooking({
+  const handleBooking = async () => {
+    const result = await createBooking({
       courtyardId: courtyard.id,
       courtyardName: courtyard.name,
       userId,

@@ -2,7 +2,7 @@ import { create } from "zustand"
 import { useAuthStore } from "@/platform/auth"
 import { useContentMerchantStore } from "../../content/store/merchant-store"
 import { useNotificationStore } from "@/platform/notification"
-import { merchantRegApi } from "@/api/client"
+import { api, merchantRegApi } from "@/api/client"
 import { syncAction } from "@/api/sync"
 
 // ============================================================
@@ -48,7 +48,7 @@ type RegistrationState = {
     userPhone: string
     claimedShopId: string
     claimedShopName: string
-  }) => void
+  }) => Promise<void>
   /** 提交入驻申请（店铺不存在，新建） */
   submitRegistration: (input: {
     userId: string
@@ -60,9 +60,9 @@ type RegistrationState = {
     newPhone: string
     newDescription: string
     newHours: string
-  }) => void
-  approveRegistration: (id: string, reviewer: string) => void
-  rejectRegistration: (id: string, reviewer: string, reason: string) => void
+  }) => Promise<void>
+  approveRegistration: (id: string, reviewer: string) => Promise<void>
+  rejectRegistration: (id: string, reviewer: string, reason: string) => Promise<void>
 }
 
 export const useMerchantRegistrationStore = create<RegistrationState>((set, get) => ({
@@ -72,26 +72,24 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
 
   getByUserId: (userId) => get().requests.filter((r) => r.userId === userId),
 
-  submitClaim: (input) => {
-    const item: ShopClaimRequest = {
-      id: `claim_${Date.now()}`,
-      type: "claim",
+  submitClaim: async (input) => {
+    const payload = {
+      type: "claim" as const,
       userId: input.userId,
       userName: input.userName,
       userPhone: input.userPhone,
       claimedShopId: input.claimedShopId,
       claimedShopName: input.claimedShopName,
-      status: "pending",
-      submittedAt: new Date().toLocaleString("zh-CN"),
+      status: "pending" as const,
     }
-    syncAction("submitClaim", () => merchantRegApi.create(item), () => {})
-    set((s) => ({ requests: [item, ...s.requests] }))
+    await syncAction("submitClaim", () => merchantRegApi.create(payload), (result) => {
+      set((s) => ({ requests: [result, ...s.requests] }))
+    })
   },
 
-  submitRegistration: (input) => {
-    const item: ShopClaimRequest = {
-      id: `reg_${Date.now()}`,
-      type: "new_shop",
+  submitRegistration: async (input) => {
+    const payload = {
+      type: "new_shop" as const,
       userId: input.userId,
       userName: input.userName,
       userPhone: input.userPhone,
@@ -101,23 +99,27 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
       newPhone: input.newPhone,
       newDescription: input.newDescription,
       newHours: input.newHours,
-      status: "pending",
-      submittedAt: new Date().toLocaleString("zh-CN"),
+      status: "pending" as const,
     }
-    syncAction("submitRegistration", () => merchantRegApi.create(item), () => {})
-    set((s) => ({ requests: [item, ...s.requests] }))
+    await syncAction("submitRegistration", () => merchantRegApi.create(payload), (result) => {
+      set((s) => ({ requests: [result, ...s.requests] }))
+    })
   },
 
-  approveRegistration: (id, reviewer) => {
+  approveRegistration: async (id, reviewer) => {
     const req = get().requests.find((r) => r.id === id)
     if (!req) return
 
-    // 1. 更新申请状态
-    set((s) => ({
-      requests: s.requests.map((r) =>
-        r.id === id ? { ...r, status: "approved", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer } : r
-      ),
-    }))
+    // 1. 更新申请状态（走 API）
+    await syncAction(
+      "approveRegistration",
+      () => api.update("merchant-registrations", id, { status: "approved", reviewer }),
+      (result) => {
+        set((s) => ({
+          requests: s.requests.map((r) => (r.id === id ? result : r)),
+        }))
+      },
+    )
 
     // 2. 认领场景：更新已有商家的认领状态
     const merchantStore = useContentMerchantStore.getState()
@@ -180,14 +182,16 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
     })
   },
 
-  rejectRegistration: (id, reviewer, reason) => {
-    set((s) => ({
-      requests: s.requests.map((r) =>
-        r.id === id
-          ? { ...r, status: "rejected", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer, rejectReason: reason }
-          : r
-      ),
-    }))
+  rejectRegistration: async (id, reviewer, reason) => {
+    await syncAction(
+      "rejectRegistration",
+      () => api.update("merchant-registrations", id, { status: "rejected", reviewer, rejectReason: reason }),
+      (result) => {
+        set((s) => ({
+          requests: s.requests.map((r) => (r.id === id ? result : r)),
+        }))
+      },
+    )
 
     const req = get().requests.find((r) => r.id === id)
     if (req) {

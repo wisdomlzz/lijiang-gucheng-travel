@@ -31,14 +31,14 @@ type BookingState = {
   getBooking: (id: string) => Booking | undefined
   getBookingsByCourtyard: (courtyardId: string, date: string) => Booking[]
   // 预约入口
-  createBooking: (input: Omit<Booking, "id" | "code" | "status" | "createdAt">) => {
+  createBooking: (input: Omit<Booking, "id" | "code" | "status" | "createdAt">) => Promise<{
     ok: boolean
     msg: string
     booking?: Booking
-  }
+  }>
   // 核销
-  checkByCode: (code: string) => { ok: boolean; msg: string }
-  cancelBooking: (id: string) => void
+  checkByCode: (code: string) => Promise<{ ok: boolean; msg: string }>
+  cancelBooking: (id: string) => Promise<void>
 }
 
 function genCode(): string {
@@ -53,7 +53,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
   getBookingsByCourtyard: (courtyardId, date) =>
     get().bookings.filter((b) => b.courtyardId === courtyardId && b.date === date && b.status !== "cancelled"),
 
-  createBooking: (input) => {
+  createBooking: async (input) => {
     // 同日同时段容量校验（Demo：每时段最多 20 人）
     const sameSlot = get()
       .getBookingsByCourtyard(input.courtyardId, input.date)
@@ -61,31 +61,38 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     const used = sameSlot.reduce((s, b) => s + b.visitors, 0)
     if (used + input.visitors > 20) return { ok: false, msg: "该时段已约满" }
 
-    const booking: Booking = {
+    const payload = {
       ...input,
-      id: `bk${Date.now()}`,
       code: genCode(),
-      status: "pending",
-      createdAt: new Date().toLocaleString("zh-CN"),
+      status: "pending" as const,
     }
-    syncAction("createBooking", () => bookingsApi.create(booking), () => {})
-    set((s) => ({ bookings: [booking, ...s.bookings] }))
-    return { ok: true, msg: "预约成功", booking }
+    const result = await syncAction("createBooking", () => bookingsApi.create(payload), (r) => {
+      set((s) => ({ bookings: [r, ...s.bookings] }))
+    })
+    if (!result) return { ok: false, msg: "预约失败" }
+    return { ok: true, msg: "预约成功", booking: result }
   },
 
-  checkByCode: (code) => {
+  checkByCode: async (code) => {
     const booking = get().bookings.find((b) => b.code === code)
     if (!booking) return { ok: false, msg: "核销码无效" }
     if (booking.status === "checked") return { ok: false, msg: "该预约已核销" }
     if (booking.status === "cancelled") return { ok: false, msg: "该预约已取消" }
-    set((s) => ({
-      bookings: s.bookings.map((b) =>
-        b.id === booking.id ? { ...b, status: "checked", checkedAt: new Date().toLocaleString("zh-CN") } : b
-      ),
-    }))
+
+    const result = await syncAction("checkBooking", () => bookingsApi.check(code), (r) => {
+      set((s) => ({ bookings: s.bookings.map((b) => (b.id === r.id ? r : b)) }))
+    })
+    if (!result) return { ok: false, msg: "核销失败" }
     return { ok: true, msg: `${booking.courtyardName} 核销成功` }
   },
 
-  cancelBooking: (id) =>
-    set((s) => ({ bookings: s.bookings.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b)) })),
+  cancelBooking: async (id) => {
+    await syncAction(
+      "cancelBooking",
+      () => bookingsApi.update(id, { status: "cancelled" }),
+      (result) => {
+        set((s) => ({ bookings: s.bookings.map((b) => (b.id === id ? result : b)) }))
+      },
+    )
+  },
 }))

@@ -7,50 +7,41 @@ import { syncAction } from "@/api/sync"
 type ComplaintState = {
   complaints: ComplaintType[]
   complaintPhone: string
-  createComplaint: (complaint: Omit<ComplaintType, "id" | "createdAt" | "status">) => void
+  createComplaint: (complaint: Omit<ComplaintType, "id" | "createdAt" | "status">) => Promise<void>
   updateComplaintPhone: (phone: string) => void
-  resolveWithResult: (id: string, result: string) => void
-  reject: (id: string, reason: string) => void
+  resolveWithResult: (id: string, result: string) => Promise<void>
+  reject: (id: string, reason: string) => Promise<void>
 }
-
-const SEED: ComplaintType[] =[]
 
 export const useComplaintStore = create<ComplaintState>((set, get) => ({
   complaints: [],
   complaintPhone: "0888-123456",
-  createComplaint: (c) => {
-    const item = { ...c, id: `CP${Date.now()}`, status: "C10" as ComplaintStatus, createdAt: new Date().toISOString() }
-    syncAction("createComplaint", () => complaintsApi.create(item), () => {})
-    set((s) => ({ complaints: [item, ...s.complaints] }))
+  createComplaint: async (c) => {
+    const item = { ...c, status: "C10" as ComplaintStatus }
+    await syncAction("createComplaint", () => complaintsApi.create(item), (result) => {
+      set((s) => ({ complaints: [result, ...s.complaints] }))
+    })
   },
   updateComplaintPhone: (phone) => set({ complaintPhone: phone }),
-  resolveWithResult: (id, result) => {
-    set((s) => ({
-      complaints: s.complaints.map((c) =>
-        c.id === id
-          ? { ...c, status: "C40" as ComplaintStatus, result, handledAt: new Date().toLocaleString("zh-CN") }
-          : c
-      ),
-    }))
+  resolveWithResult: async (id, result_text) => {
+    await syncAction("complaint.resolve", () => complaintsApi.resolve(id, result_text), (result) => {
+      set((s) => ({ complaints: s.complaints.map((c) => (c.id === id ? result : c)) }))
+    })
 
     const complaint = get().complaints.find((c) => c.id === id)
     if (complaint) {
       useNotificationStore.getState().addNotification({
         type: "system",
         title: "投诉已处理",
-        summary: `您的投诉「${complaint.type}」已处理完成。处理结果：${result}`,
+        summary: `您的投诉「${complaint.type}」已处理完成。处理结果：${result_text}`,
         targetUrl: `/c/complaints/${id}`,
       })
     }
   },
-  reject: (id, reason) => {
-    set((s) => ({
-      complaints: s.complaints.map((c) =>
-        c.id === id
-          ? { ...c, status: "CR" as ComplaintStatus, result: reason, handledAt: new Date().toLocaleString("zh-CN") }
-          : c
-      ),
-    }))
+  reject: async (id, reason) => {
+    await syncAction("complaint.reject", () => complaintsApi.reject(id, reason), (result) => {
+      set((s) => ({ complaints: s.complaints.map((c) => (c.id === id ? result : c)) }))
+    })
 
     const complaint = get().complaints.find((c) => c.id === id)
     if (complaint) {

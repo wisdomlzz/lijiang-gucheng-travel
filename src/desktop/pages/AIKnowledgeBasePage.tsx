@@ -90,14 +90,14 @@ export function AIKnowledgeBasePage() {
     reader.readAsText(file)
   }
 
-  const handleImport = () => {
+  const handleImport = async () => {
     try {
       const data = JSON.parse(importText)
       if (!Array.isArray(data)) {
         toast.error("格式错误：需要 JSON 数组 [{question, answer}, ...]")
         return
       }
-      const result = batchImport(data)
+      const result = await batchImport(data)
       toast.success(`导入完成：成功 ${result.success} 条${result.failed > 0 ? `，失败 ${result.failed} 条` : ""}`)
       setImportOpen(false)
       setImportText("")

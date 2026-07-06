@@ -1,6 +1,8 @@
 import { create } from "zustand"
 import { useContentMerchantStore } from "../../content/store/merchant-store"
 import { useNotificationStore } from "@/platform/notification"
+import { api } from "@/api/client"
+import { syncAction } from "@/api/sync"
 
 // ============================================================
 // 商家信息审核 —— 商户自助提交店铺变更 + PC 审核
@@ -26,76 +28,41 @@ type MerchantReviewState = {
   getPending: () => MerchantChangeRequest[]
   getBySupplier: (supplierId: string) => MerchantChangeRequest[]
   /** 商户提交变更（C端我的店铺调用） */
-  submitChange: (input: Omit<MerchantChangeRequest, "id" | "status" | "submittedAt">) => void
+  submitChange: (input: Omit<MerchantChangeRequest, "id" | "status" | "submittedAt">) => Promise<void>
   /** 审核通过：更新请求状态 + 将变更应用到 merchant-store */
-  approve: (id: string, reviewer: string) => void
-  reject: (id: string, reviewer: string, reason: string) => void
+  approve: (id: string, reviewer: string) => Promise<void>
+  reject: (id: string, reviewer: string, reason: string) => Promise<void>
 }
 
-const SEED: MerchantChangeRequest[] = [
-  {
-    id: "mcr1",
-    supplierId: "sup_001",
-    supplierName: "古城文创·王老板",
-    merchantName: "古城文创集合店",
-    fields: [
-      { field: "hours", label: "营业时间", oldValue: "09:00-22:00", newValue: "08:30-23:00" },
-      { field: "phone", label: "联系电话", oldValue: "139-8888-3456", newValue: "139-8888-9999" },
-    ],
-    status: "pending",
-    submittedAt: "2026-06-27 15:30",
-  },
-  {
-    id: "mcr2",
-    supplierId: "sup_002",
-    supplierName: "丽江云味餐厅",
-    merchantName: "纳西人家餐厅",
-    fields: [
-      {
-        field: "description",
-        label: "店铺简介",
-        oldValue: "主营纳西特色餐饮",
-        newValue: "主营纳西特色餐饮，新增腊排骨火锅套餐",
-      },
-    ],
-    status: "pending",
-    submittedAt: "2026-06-28 10:00",
-  },
-  {
-    id: "mcr3",
-    supplierId: "sup_001",
-    supplierName: "古城文创·王老板",
-    merchantName: "雪山清吧",
-    fields: [{ field: "barType", label: "酒吧类型", oldValue: "民谣清吧", newValue: "民谣驻唱+精酿啤酒" }],
-    status: "approved",
-    submittedAt: "2026-06-20 11:00",
-    reviewedAt: "2026-06-21 09:30",
-    reviewer: "管理员",
-  },
-]
-
 export const useMerchantReviewStore = create<MerchantReviewState>((set, get) => ({
-  requests: SEED,
+  requests: [],
   getPending: () => get().requests.filter((r) => r.status === "pending"),
   getBySupplier: (supplierId) => get().requests.filter((r) => r.supplierId === supplierId),
-  submitChange: (input) =>
-    set((s) => ({
-      requests: [
-        { ...input, id: `mcr${Date.now()}`, status: "pending", submittedAt: new Date().toLocaleString("zh-CN") },
-        ...s.requests,
-      ],
-    })),
+  submitChange: async (input) => {
+    const payload = { ...input, status: "pending" as const }
+    await syncAction(
+      "submitMerchantChange",
+      () => api.create("merchant-reviews", payload),
+      (result) => {
+        set((s) => ({ requests: [result, ...s.requests] }))
+      },
+    )
+  },
 
-  approve: (id, reviewer) => {
+  approve: async (id, reviewer) => {
     const req = get().requests.find((r) => r.id === id)
     if (!req) return
 
     // 1. 更新请求状态
-    set((s) => ({
-      requests: s.requests.map((r) =>
-        r.id === id ? { ...r, status: "approved", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer } : r
-      ),
-    }))
+    await syncAction(
+      "approveMerchantChange",
+      () => api.update("merchant-reviews", id, { status: "approved", reviewer }),
+      (result) => {
+        set((s) => ({
+          requests: s.requests.map((r) => (r.id === id ? result : r)),
+        }))
+      },
+    )
 
     // 2. 将变更应用到 merchant-store
     const merchantStore = useContentMerchantStore.getState()
@@ -109,24 +76,24 @@ export const useMerchantReviewStore = create<MerchantReviewState>((set, get) => 
     }
 
     // 3. 通知申请人
-    if (req) {
-      useNotificationStore.getState().addNotification({
-        type: "system",
-        title: "店铺信息变更已通过",
-        summary: `您提交的「${req.merchantName}」信息变更已审核通过。`,
-        targetUrl: "/c/my-shop",
-      })
-    }
+    useNotificationStore.getState().addNotification({
+      type: "system",
+      title: "店铺信息变更已通过",
+      summary: `您提交的「${req.merchantName}」信息变更已审核通过。`,
+      targetUrl: "/c/my-shop",
+    })
   },
 
-  reject: (id, reviewer, reason) => {
-    set((s) => ({
-      requests: s.requests.map((r) =>
-        r.id === id
-          ? { ...r, status: "rejected", reviewedAt: new Date().toLocaleString("zh-CN"), reviewer, rejectReason: reason }
-          : r
-      ),
-    }))
+  reject: async (id, reviewer, reason) => {
+    await syncAction(
+      "rejectMerchantChange",
+      () => api.update("merchant-reviews", id, { status: "rejected", reviewer, rejectReason: reason }),
+      (result) => {
+        set((s) => ({
+          requests: s.requests.map((r) => (r.id === id ? result : r)),
+        }))
+      },
+    )
 
     const req = get().requests.find((r) => r.id === id)
     if (req) {
