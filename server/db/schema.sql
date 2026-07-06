@@ -290,9 +290,12 @@ CREATE TABLE IF NOT EXISTS banners (
   id TEXT PRIMARY KEY,
   imageUrl TEXT NOT NULL,
   title TEXT DEFAULT '',
+  subtitle TEXT DEFAULT '',
+  badge TEXT DEFAULT '',
   link TEXT DEFAULT '',
   scene TEXT DEFAULT 'home',
   enabled INTEGER DEFAULT 1,
+  visible INTEGER DEFAULT 1,
   "order" INTEGER DEFAULT 0,
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
@@ -304,6 +307,7 @@ CREATE TABLE IF NOT EXISTS grid_items (
   imageUrl TEXT DEFAULT '',
   label TEXT NOT NULL,
   route TEXT DEFAULT '',
+  search TEXT DEFAULT '',
   page INTEGER DEFAULT 0,
   visible INTEGER DEFAULT 1,
   "order" INTEGER DEFAULT 0,
@@ -594,7 +598,10 @@ CREATE TABLE IF NOT EXISTS announcements (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
   content TEXT DEFAULT '',
+  images TEXT DEFAULT '[]',
   type TEXT DEFAULT 'system',
+  publishTime TEXT,
+  status TEXT DEFAULT 'published',
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
