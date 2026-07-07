@@ -52,6 +52,26 @@ export const api = {
     request("POST", `/${resource}${path}`, data),
 }
 
+function crudApi<T = any, O extends Record<string, (...args: any[]) => Promise<T>> = {}>(
+  resource: string,
+  overrides?: O
+): {
+  list: (params?: ListParams) => Promise<Paginated<T[]>>
+  get: (id: string | number) => Promise<T>
+  create: (data: unknown) => Promise<T>
+  update: (id: string | number, data: unknown) => Promise<T>
+  remove: (id: string | number) => Promise<null>
+} & O {
+  return {
+    list: (params?: ListParams) => api.list<T[]>(resource, params),
+    get: (id: string | number) => api.get<T>(resource, id),
+    create: (data: unknown) => api.create<T>(resource, data),
+    update: (id: string | number, data: unknown) => api.update<T>(resource, id, data),
+    remove: (id: string | number) => api.remove(resource, id),
+    ...overrides,
+  } as any
+}
+
 // 文件上传 helper
 export async function uploadFile(file: File): Promise<string> {
   const token = useAuthStore.getState().token
@@ -95,19 +115,9 @@ export const ordersApi = {
     api.post("orders", `/${id}/restore-quote`, { adminId }),
 }
 
-export const staffApi = {
-  list: (p?: ListParams) => api.list("staff", p),
-  create: (d: any) => api.create("staff", d),
-  update: (id: string, d: any) => api.update("staff", id, d),
-  remove: (id: string) => api.remove("staff", id),
-}
+export const staffApi = crudApi("staff")
 
-export const reviewsApi = {
-  list: (p?: ListParams) => api.list("reviews", p),
-  stats: () => api.get("reviews", "stats"),
-  create: (d: any) => api.create("reviews", d),
-  update: (id: string, d: any) => api.update("reviews", id, d),
-}
+export const reviewsApi = crudApi("reviews", { stats: () => api.get("reviews", "stats") })
 
 export const complaintsApi = {
   list: (p?: ListParams) => api.list("complaints", p),
@@ -143,56 +153,17 @@ export const trustApi = {
 }
 
 export const contentApi = {
-  news: {
-    list: (p?: ListParams) => api.list("content/news", p),
-    create: (d: any) => api.create("content/news", d),
-    update: (id: string, d: any) => api.update("content/news", id, d),
-    remove: (id: string) => api.remove("content/news", id),
-  },
-  routes: {
-    list: (p?: ListParams) => api.list("content/routes", p),
-    create: (d: any) => api.create("content/routes", d),
-    update: (id: string, d: any) => api.update("content/routes", id, d),
-    remove: (id: string) => api.remove("content/routes", id),
-  },
-  courtyards: {
-    list: (p?: ListParams) => api.list("content/courtyards", p),
-    create: (d: any) => api.create("content/courtyards", d),
-    update: (id: string, d: any) => api.update("content/courtyards", id, d),
-    remove: (id: string) => api.remove("content/courtyards", id),
-  },
-  merchants: {
-    list: (p?: ListParams) => api.list("content/merchants", p),
-    create: (d: any) => api.create("content/merchants", d),
-    update: (id: string, d: any) => api.update("content/merchants", id, d),
-    remove: (id: string) => api.remove("content/merchants", id),
-  },
-  pois: {
-    list: (p?: ListParams) => api.list("content/pois", p),
-    create: (d: any) => api.create("content/pois", d),
-    update: (id: string, d: any) => api.update("content/pois", id, d),
-    remove: (id: string) => api.remove("content/pois", id),
-  },
-  housing: {
-    list: (p?: ListParams) => api.list("content/housing", p),
-    create: (d: any) => api.create("content/housing", d),
-    update: (id: string | number, d: any) => api.update("content/housing", id, d),
-    remove: (id: string | number) => api.remove("content/housing", id),
-  },
+  news: crudApi("content/news"),
+  routes: crudApi("content/routes"),
+  courtyards: crudApi("content/courtyards"),
+  merchants: crudApi("content/merchants"),
+  pois: crudApi("content/pois"),
+  housing: crudApi("content/housing"),
 }
 
-export const bannersApi = {
-  list: (p?: ListParams) => api.list("banners", p),
-  create: (d: any) => api.create("banners", d),
-  update: (id: string, d: any) => api.update("banners", id, d),
-  remove: (id: string) => api.remove("banners", id),
-  reorder: (ids: string[]) => api.post("banners", "/reorder", { ids }),
-}
+export const bannersApi = crudApi("banners", { reorder: (ids: string[]) => api.post("banners", "/reorder", { ids }) })
 
-export const gridApi = {
-  list: (p?: ListParams) => api.list("grid-items", p),
-  update: (id: string, d: any) => api.update("grid-items", id, d),
-}
+export const gridApi = crudApi("grid-items")
 
 export const volunteerApi = {
   list: (p?: ListParams) => api.list("volunteers", p),
@@ -202,39 +173,14 @@ export const volunteerApi = {
   },
 }
 
-export const aiKnowledgeApi = {
-  list: (p?: ListParams) => api.list("ai-knowledge", p),
-  create: (d: any) => api.create("ai-knowledge", d),
-  update: (id: string, d: any) => api.update("ai-knowledge", id, d),
-  remove: (id: string) => api.remove("ai-knowledge", id),
-}
+export const aiKnowledgeApi = crudApi("ai-knowledge")
 
-export const bookingsApi = {
-  list: (p?: ListParams) => api.list("bookings", p),
-  create: (d: any) => api.create("bookings", d),
-  update: (id: string, d: any) => api.update("bookings", id, d),
-  check: (code: string) => api.post("bookings", "/check", { code }),
-}
+export const bookingsApi = crudApi("bookings", { check: (code: string) => api.post("bookings", "/check", { code }) })
 
-export const addressesApi = {
-  list: (p?: ListParams) => api.list("addresses", p),
-  create: (d: any) => api.create("addresses", d),
-  update: (id: string, d: any) => api.update("addresses", id, d),
-  remove: (id: string) => api.remove("addresses", id),
-}
+export const addressesApi = crudApi("addresses")
 
-export const favoritesApi = {
-  list: (p?: ListParams) => api.list("favorites", p),
-  create: (d: any) => api.create("favorites", d),
-  remove: (id: string) => api.remove("favorites", id),
-}
+export const favoritesApi = crudApi("favorites")
 
-export const supplierApi = {
-  list: (p?: ListParams) => api.list("supplier-applications", p),
-  create: (d: any) => api.create("supplier-applications", d),
-}
+export const supplierApi = crudApi("supplier-applications")
 
-export const merchantRegApi = {
-  list: (p?: ListParams) => api.list("merchant-registrations", p),
-  create: (d: any) => api.create("merchant-registrations", d),
-}
+export const merchantRegApi = crudApi("merchant-registrations")

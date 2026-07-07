@@ -3,227 +3,103 @@ import { useParams } from "react-router"
 import { AppLayout } from "./pages/AppLayout"
 import { RedirectTo } from "../shared/components/RedirectTo"
 
+function lazyImport<T extends { [key: string]: any }>(importFn: () => Promise<T>, name: keyof T) {
+  return lazy(() => importFn().then((m) => ({ default: m[name] })))
+}
+
 function ServiceDetailRedirect() {
   const { id } = useParams()
   return <RedirectTo to={`/c/orders/${id}`} />
 }
 
 // ── 懒加载：首页 & 个人 ──
-const HomePage = lazy(() => import("../features/homepage/c-end/pages/HomePage").then((m) => ({ default: m.HomePage })))
-const AIChatPage = lazy(() =>
-  import("../features/ai-knowledge/c-end/pages/AIChatPage").then((m) => ({ default: m.AIChatPage }))
-)
-const ProfilePage = lazy(() =>
-  import("../features/profile/c-end/pages/ProfilePage").then((m) => ({ default: m.ProfilePage }))
-)
-const VisitorServicesPage = lazy(() =>
-  import("../features/homepage/c-end/pages/VisitorServicesPage").then((m) => ({ default: m.VisitorServicesPage }))
-)
+const HomePage = lazyImport(() => import("../features/homepage/c-end/pages/HomePage"), "HomePage")
+const AIChatPage = lazyImport(() => import("../features/ai-knowledge/c-end/pages/AIChatPage"), "AIChatPage")
+const ProfilePage = lazyImport(() => import("../features/profile/c-end/pages/ProfilePage"), "ProfilePage")
+const VisitorServicesPage = lazyImport(() => import("../features/homepage/c-end/pages/VisitorServicesPage"), "VisitorServicesPage")
 
 // ── 懒加载：便民服务 ──
-const ServicesPage = lazy(() =>
-  import("../features/convenience/c-end/pages/ServicesPage").then((m) => ({ default: m.ServicesPage }))
-)
-const ServiceTrackingPage = lazy(() =>
-  import("../features/convenience/c-end/pages/ServiceTrackingPage").then((m) => ({ default: m.ServiceTrackingPage }))
-)
-const OrderListPage = lazy(() =>
-  import("../features/convenience/c-end/pages/OrderListPage").then((m) => ({ default: m.OrderListPage }))
-)
-const OrderDetailPage = lazy(() =>
-  import("../features/convenience/c-end/pages/OrderDetailPage").then((m) => ({ default: m.OrderDetailPage }))
-)
+const ServicesPage = lazyImport(() => import("../features/convenience/c-end/pages/ServicesPage"), "ServicesPage")
+const ServiceTrackingPage = lazyImport(() => import("../features/convenience/c-end/pages/ServiceTrackingPage"), "ServiceTrackingPage")
+const OrderListPage = lazyImport(() => import("../features/convenience/c-end/pages/OrderListPage"), "OrderListPage")
+const OrderDetailPage = lazyImport(() => import("../features/convenience/c-end/pages/OrderDetailPage"), "OrderDetailPage")
 
 // ── 懒加载：地址管理 ──
-const AddressListPage = lazy(() =>
-  import("../features/address/c-end/pages/AddressListPage").then((m) => ({ default: m.AddressListPage }))
-)
-const AddressEditPage = lazy(() =>
-  import("../features/address/c-end/pages/AddressEditPage").then((m) => ({ default: m.AddressEditPage }))
-)
+const AddressListPage = lazyImport(() => import("../features/address/c-end/pages/AddressListPage"), "AddressListPage")
+const AddressEditPage = lazyImport(() => import("../features/address/c-end/pages/AddressEditPage"), "AddressEditPage")
 
 // ── 懒加载：商户 ──
-const MerchantListPage = lazy(() =>
-  import("../features/content/c-end/pages/MerchantListPage").then((m) => ({ default: m.MerchantListPage }))
-)
-const MerchantDetailPage = lazy(() =>
-  import("../features/content/c-end/pages/MerchantDetailPage").then((m) => ({ default: m.MerchantDetailPage }))
-)
-const MerchantServicesPage = lazy(() =>
-  import("../features/merchant-review/c-end/pages/MerchantServicesPage").then((m) => ({
-    default: m.MerchantServicesPage,
-  }))
-)
-const MyShopPage = lazy(() =>
-  import("../features/merchant-review/c-end/pages/MyShopPage").then((m) => ({ default: m.MyShopPage }))
-)
-const MerchantRegistrationPage = lazy(() =>
-  import("../features/merchant-review/c-end/pages/MerchantRegistrationPage").then((m) => ({
-    default: m.MerchantRegistrationPage,
-  }))
-)
-const SupplierEntryPage = lazy(() =>
-  import("../features/supplier/c-end/pages/SupplierEntryPage").then((m) => ({ default: m.SupplierEntryPage }))
-)
+const MerchantListPage = lazyImport(() => import("../features/content/c-end/pages/MerchantListPage"), "MerchantListPage")
+const MerchantDetailPage = lazyImport(() => import("../features/content/c-end/pages/MerchantDetailPage"), "MerchantDetailPage")
+const MerchantServicesPage = lazyImport(() => import("../features/merchant-review/c-end/pages/MerchantServicesPage"), "MerchantServicesPage")
+const MyShopPage = lazyImport(() => import("../features/merchant-review/c-end/pages/MyShopPage"), "MyShopPage")
+const MerchantRegistrationPage = lazyImport(() => import("../features/merchant-review/c-end/pages/MerchantRegistrationPage"), "MerchantRegistrationPage")
+const SupplierEntryPage = lazyImport(() => import("../features/supplier/c-end/pages/SupplierEntryPage"), "SupplierEntryPage")
 
 // ── 懒加载：路线 & 遗产 ──
-const RoutesPage = lazy(() =>
-  import("../features/route/c-end/pages/RoutesPage").then((m) => ({ default: m.RoutesPage }))
-)
-const RouteDetailPage = lazy(() =>
-  import("../features/route/c-end/pages/RouteDetailPage").then((m) => ({ default: m.RouteDetailPage }))
-)
-const RoutePreviewPage = lazy(() =>
-  import("../features/route/c-end/pages/RoutePreviewPage").then((m) => ({ default: m.RoutePreviewPage }))
-)
-const HeritagePage = lazy(() =>
-  import("../features/heritage/c-end/pages/HeritagePage").then((m) => ({ default: m.HeritagePage }))
-)
+const RoutesPage = lazyImport(() => import("../features/route/c-end/pages/RoutesPage"), "RoutesPage")
+const RouteDetailPage = lazyImport(() => import("../features/route/c-end/pages/RouteDetailPage"), "RouteDetailPage")
+const RoutePreviewPage = lazyImport(() => import("../features/route/c-end/pages/RoutePreviewPage"), "RoutePreviewPage")
+const HeritagePage = lazyImport(() => import("../features/heritage/c-end/pages/HeritagePage"), "HeritagePage")
 
 // ── 懒加载：遗产详情（按类型分立） ──
-const RoadDetail = lazy(() =>
-  import("../features/heritage/c-end/pages/detail/RoadDetail").then((m) => ({ default: m.RoadDetail }))
-)
-const WaterDetail = lazy(() =>
-  import("../features/heritage/c-end/pages/detail/WaterDetail").then((m) => ({ default: m.WaterDetail }))
-)
-const WellDetail = lazy(() =>
-  import("../features/heritage/c-end/pages/detail/WellDetail").then((m) => ({ default: m.WellDetail }))
-)
-const BridgeDetail = lazy(() =>
-  import("../features/heritage/c-end/pages/detail/BridgeDetail").then((m) => ({ default: m.BridgeDetail }))
-)
-const AncientTreeDetail = lazy(() =>
-  import("../features/heritage/c-end/pages/detail/AncientTreeDetail").then((m) => ({ default: m.AncientTreeDetail }))
-)
-const ProtectedHouseDetail = lazy(() =>
-  import("../features/heritage/c-end/pages/detail/ProtectedHouseDetail").then((m) => ({
-    default: m.ProtectedHouseDetail,
-  }))
-)
-const HistoricBuildingDetail = lazy(() =>
-  import("../features/heritage/c-end/pages/detail/HistoricBuildingDetail").then((m) => ({
-    default: m.HistoricBuildingDetail,
-  }))
-)
-const HumanEnvironmentDetail = lazy(() =>
-  import("../features/heritage/c-end/pages/detail/HumanEnvironmentDetail").then((m) => ({
-    default: m.HumanEnvironmentDetail,
-  }))
-)
+const RoadDetail = lazyImport(() => import("../features/heritage/c-end/pages/detail/RoadDetail"), "RoadDetail")
+const WaterDetail = lazyImport(() => import("../features/heritage/c-end/pages/detail/WaterDetail"), "WaterDetail")
+const WellDetail = lazyImport(() => import("../features/heritage/c-end/pages/detail/WellDetail"), "WellDetail")
+const BridgeDetail = lazyImport(() => import("../features/heritage/c-end/pages/detail/BridgeDetail"), "BridgeDetail")
+const AncientTreeDetail = lazyImport(() => import("../features/heritage/c-end/pages/detail/AncientTreeDetail"), "AncientTreeDetail")
+const ProtectedHouseDetail = lazyImport(() => import("../features/heritage/c-end/pages/detail/ProtectedHouseDetail"), "ProtectedHouseDetail")
+const HistoricBuildingDetail = lazyImport(() => import("../features/heritage/c-end/pages/detail/HistoricBuildingDetail"), "HistoricBuildingDetail")
+const HumanEnvironmentDetail = lazyImport(() => import("../features/heritage/c-end/pages/detail/HumanEnvironmentDetail"), "HumanEnvironmentDetail")
 
 // ── 懒加载：地图 & VR ──
-const MapPage = lazy(() => import("../features/content/c-end/pages/MapPage").then((m) => ({ default: m.MapPage })))
-const VRTourPage = lazy(() =>
-  import("../features/content/c-end/pages/VRTourPage").then((m) => ({ default: m.VRTourPage }))
-)
+const MapPage = lazyImport(() => import("../features/content/c-end/pages/MapPage"), "MapPage")
+const VRTourPage = lazyImport(() => import("../features/content/c-end/pages/VRTourPage"), "VRTourPage")
 
 // ── 懒加载：资讯 & 公告 ──
-const InfoPage = lazy(() => import("../features/info/c-end/pages/InfoPage").then((m) => ({ default: m.InfoPage })))
-const InfoDetailPage = lazy(() =>
-  import("../features/info/c-end/pages/InfoDetailPage").then((m) => ({ default: m.InfoDetailPage }))
-)
-const NewsPage = lazy(() => import("../features/info/c-end/pages/NewsPage").then((m) => ({ default: m.NewsPage })))
-const MyPostsPage = lazy(() =>
-  import("../features/info/c-end/pages/MyPostsPage").then((m) => ({ default: m.MyPostsPage }))
-)
-const AnnouncementPage = lazy(() =>
-  import("../features/announcement/c-end/pages/AnnouncementPage").then((m) => ({ default: m.AnnouncementPage }))
-)
-const AnnouncementDetailPage = lazy(() =>
-  import("../features/announcement/c-end/pages/AnnouncementDetailPage").then((m) => ({
-    default: m.AnnouncementDetailPage,
-  }))
-)
+const InfoPage = lazyImport(() => import("../features/info/c-end/pages/InfoPage"), "InfoPage")
+const InfoDetailPage = lazyImport(() => import("../features/info/c-end/pages/InfoDetailPage"), "InfoDetailPage")
+const NewsPage = lazyImport(() => import("../features/info/c-end/pages/NewsPage"), "NewsPage")
+const MyPostsPage = lazyImport(() => import("../features/info/c-end/pages/MyPostsPage"), "MyPostsPage")
+const AnnouncementPage = lazyImport(() => import("../features/announcement/c-end/pages/AnnouncementPage"), "AnnouncementPage")
+const AnnouncementDetailPage = lazyImport(() => import("../features/announcement/c-end/pages/AnnouncementDetailPage"), "AnnouncementDetailPage")
 
 // ── 懒加载：通知 ──
-const NotificationsPage = lazy(() =>
-  import("../features/notification/c-end/pages/NotificationsPage").then((m) => ({ default: m.NotificationsPage }))
-)
+const NotificationsPage = lazyImport(() => import("../features/notification/c-end/pages/NotificationsPage"), "NotificationsPage")
 
 // ── 懒加载：积分 & 收藏 ──
-const PointsCenterPage = lazy(() =>
-  import("../features/points/c-end/pages/PointsCenterPage").then((m) => ({ default: m.PointsCenterPage }))
-)
-const FavoritesPage = lazy(() =>
-  import("../features/favorite/c-end/pages/FavoritesPage").then((m) => ({ default: m.FavoritesPage }))
-)
+const PointsCenterPage = lazyImport(() => import("../features/points/c-end/pages/PointsCenterPage"), "PointsCenterPage")
+const FavoritesPage = lazyImport(() => import("../features/favorite/c-end/pages/FavoritesPage"), "FavoritesPage")
 
 // ── 懒加载：文化院落 & 预约 ──
-const CulturalCourtyardsPage = lazy(() =>
-  import("../features/booking/c-end/pages/CulturalCourtyardsPage").then((m) => ({ default: m.CulturalCourtyardsPage }))
-)
-const CulturalCourtyardDetailPage = lazy(() =>
-  import("../features/booking/c-end/pages/CulturalCourtyardDetailPage").then((m) => ({
-    default: m.CulturalCourtyardDetailPage,
-  }))
-)
-const CulturalCourtyardVRPage = lazy(() =>
-  import("../features/booking/c-end/pages/CulturalCourtyardVRPage").then((m) => ({
-    default: m.CulturalCourtyardVRPage,
-  }))
-)
-const CourtyardBookingPage = lazy(() =>
-  import("../features/booking/c-end/pages/CourtyardBookingPage").then((m) => ({ default: m.CourtyardBookingPage }))
-)
-const MyBookingsPage = lazy(() =>
-  import("../features/booking/c-end/pages/MyBookingsPage").then((m) => ({ default: m.MyBookingsPage }))
-)
+const CulturalCourtyardsPage = lazyImport(() => import("../features/booking/c-end/pages/CulturalCourtyardsPage"), "CulturalCourtyardsPage")
+const CulturalCourtyardDetailPage = lazyImport(() => import("../features/booking/c-end/pages/CulturalCourtyardDetailPage"), "CulturalCourtyardDetailPage")
+const CulturalCourtyardVRPage = lazyImport(() => import("../features/booking/c-end/pages/CulturalCourtyardVRPage"), "CulturalCourtyardVRPage")
+const CourtyardBookingPage = lazyImport(() => import("../features/booking/c-end/pages/CourtyardBookingPage"), "CourtyardBookingPage")
+const MyBookingsPage = lazyImport(() => import("../features/booking/c-end/pages/MyBookingsPage"), "MyBookingsPage")
 
 // ── 懒加载：签到 & 打卡 ──
-const MyCheckinsPage = lazy(() =>
-  import("../features/checkin/c-end/pages/MyCheckinsPage").then((m) => ({ default: m.MyCheckinsPage }))
-)
-const PhotoRecordsPage = lazy(() =>
-  import("../features/checkin/c-end/pages/PhotoRecordsPage").then((m) => ({ default: m.PhotoRecordsPage }))
-)
-const PhotoReportPage = lazy(() =>
-  import("../features/checkin/c-end/pages/PhotoReportPage").then((m) => ({ default: m.PhotoReportPage }))
-)
-const PhotoRecordsDetailPage = lazy(() =>
-  import("../features/checkin/c-end/pages/PhotoRecordsDetailPage").then((m) => ({ default: m.PhotoRecordsDetailPage }))
-)
-const NaxiCheckInPage = lazy(() =>
-  import("../features/checkin/c-end/pages/NaxiCheckInPage").then((m) => ({ default: m.NaxiCheckInPage }))
-)
+const MyCheckinsPage = lazyImport(() => import("../features/checkin/c-end/pages/MyCheckinsPage"), "MyCheckinsPage")
+const PhotoRecordsPage = lazyImport(() => import("../features/checkin/c-end/pages/PhotoRecordsPage"), "PhotoRecordsPage")
+const PhotoReportPage = lazyImport(() => import("../features/checkin/c-end/pages/PhotoReportPage"), "PhotoReportPage")
+const PhotoRecordsDetailPage = lazyImport(() => import("../features/checkin/c-end/pages/PhotoRecordsDetailPage"), "PhotoRecordsDetailPage")
+const NaxiCheckInPage = lazyImport(() => import("../features/checkin/c-end/pages/NaxiCheckInPage"), "NaxiCheckInPage")
 
 // ── 懒加载：志愿服务 ──
-const VolunteerPlaceholderPage = lazy(() =>
-  import("../features/volunteer/c-end/pages/VolunteerPlaceholderPage").then((m) => ({
-    default: m.VolunteerPlaceholderPage,
-  }))
-)
-const VolunteerActivitiesPage = lazy(() =>
-  import("../features/volunteer/c-end/pages/VolunteerActivitiesPage").then((m) => ({
-    default: m.VolunteerActivitiesPage,
-  }))
-)
-const VolunteerActivityDetailPage = lazy(() =>
-  import("../features/volunteer/c-end/pages/VolunteerActivityDetailPage").then((m) => ({
-    default: m.VolunteerActivityDetailPage,
-  }))
-)
+const VolunteerPlaceholderPage = lazyImport(() => import("../features/volunteer/c-end/pages/VolunteerPlaceholderPage"), "VolunteerPlaceholderPage")
+const VolunteerActivitiesPage = lazyImport(() => import("../features/volunteer/c-end/pages/VolunteerActivitiesPage"), "VolunteerActivitiesPage")
+const VolunteerActivityDetailPage = lazyImport(() => import("../features/volunteer/c-end/pages/VolunteerActivityDetailPage"), "VolunteerActivityDetailPage")
 
 // ── 懒加载：投诉 ──
-const ComplaintFormPage = lazy(() =>
-  import("../features/complaints/c-end/pages/ComplaintFormPage").then((m) => ({ default: m.ComplaintFormPage }))
-)
-const MyComplaintsPage = lazy(() =>
-  import("../features/complaints/c-end/pages/MyComplaintsPage").then((m) => ({ default: m.MyComplaintsPage }))
-)
-const ComplaintDetailPage = lazy(() =>
-  import("../features/complaints/c-end/pages/ComplaintDetailPage").then((m) => ({ default: m.ComplaintDetailPage }))
-)
+const ComplaintFormPage = lazyImport(() => import("../features/complaints/c-end/pages/ComplaintFormPage"), "ComplaintFormPage")
+const MyComplaintsPage = lazyImport(() => import("../features/complaints/c-end/pages/MyComplaintsPage"), "MyComplaintsPage")
+const ComplaintDetailPage = lazyImport(() => import("../features/complaints/c-end/pages/ComplaintDetailPage"), "ComplaintDetailPage")
 
 // ── 懒加载：公房 ──
-const HousingPage = lazy(() =>
-  import("../features/housing/c-end/pages/HousingPage").then((m) => ({ default: m.HousingPage }))
-)
+const HousingPage = lazyImport(() => import("../features/housing/c-end/pages/HousingPage"), "HousingPage")
 
 // ── 懒加载：搜索结果 ──
-const SearchResultsPage = lazy(() =>
-  import("../features/homepage/c-end/pages/SearchResultsPage").then((m) => ({ default: m.SearchResultsPage }))
-)
+const SearchResultsPage = lazyImport(() => import("../features/homepage/c-end/pages/SearchResultsPage"), "SearchResultsPage")
 
 type CRoute =
   | { path: string; element: ReactNode }
