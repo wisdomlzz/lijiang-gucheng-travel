@@ -21,8 +21,17 @@ export function deserializeRow(row) {
 function serializeInput(data) {
   const out = { ...data }
   for (const k of Object.keys(out)) {
+    // JSON 字段:数组/对象序列化为 JSON 字符串
     if (JSON_FIELDS.has(k) && typeof out[k] !== "string") {
       out[k] = JSON.stringify(out[k])
+    }
+    // 布尔值:SQLite 不认识 true/false,转成 1/0
+    else if (typeof out[k] === "boolean") {
+      out[k] = out[k] ? 1 : 0
+    }
+    // undefined:转 null(SQLite 只接 numbers/strings/bigints/buffers/null)
+    else if (out[k] === undefined) {
+      out[k] = null
     }
   }
   return out
