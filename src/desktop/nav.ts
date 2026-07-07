@@ -19,6 +19,7 @@ import {
   Newspaper,
   Settings,
   AlertTriangle,
+  Calendar,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../shared/constants"
@@ -49,6 +50,7 @@ export const navGroups: NavGroup[] = [
       { key: "ai-knowledge", label: "AI知识库管理", icon: MessageCircleWarning, permissionCode: "content" },
       { key: "content-manage", label: "内容管理", icon: Newspaper, permissionCode: "content" },
       { key: "flow-warning", label: "人流量预警", icon: AlertTriangle, permissionCode: "content" },
+      { key: "bookings", label: "预约管理", icon: Calendar, permissionCode: "content" },
     ],
   },
   {
