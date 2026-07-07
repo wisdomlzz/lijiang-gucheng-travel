@@ -30,6 +30,12 @@ const DOC_LIST: DocItem[] = [
     version: "v1.0 · 2026-07-07",
   },
   {
+    name: "内容管理",
+    path: "/docs/requirements/content-requirements.md",
+    label: "内容管理模块产品需求文档",
+    version: "v1.0 · 2026-07-07",
+  },
+  {
     name: "投诉管理",
     path: "/docs/requirements/complaints-requirements.md",
     label: "投诉管理模块产品需求文档",
@@ -42,6 +48,12 @@ const DOC_LIST: DocItem[] = [
     version: "v1.0 · 2026-07-07",
   },
   {
+    name: "商户审核",
+    path: "/docs/requirements/merchant-review-requirements.md",
+    label: "商户审核模块产品需求文档",
+    version: "v1.0 · 2026-07-07",
+  },
+  {
     name: "院落预约",
     path: "/docs/requirements/bookings-requirements.md",
     label: "院落预约模块产品需求文档",
@@ -49,9 +61,9 @@ const DOC_LIST: DocItem[] = [
   },
   {
     name: "志愿服务",
-    path: "/docs/志愿服务功能需求说明.md",
-    label: "志愿服务功能需求说明",
-    version: "V2.0 · 2026-07-02",
+    path: "/docs/requirements/volunteer-requirements.md",
+    label: "志愿服务模块产品需求文档",
+    version: "v1.0 · 2026-07-07",
   },
   { name: "综合系统", path: "/docs/requirement.md", label: "综合系统需求说明书", version: "V2.2 · 2026-05-28" },
 ]
