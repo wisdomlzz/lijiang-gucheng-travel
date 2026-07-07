@@ -28,15 +28,17 @@ import {
   Eye,
   Ban,
   Image as ImageIcon,
+  Undo2,
 } from "lucide-react"
 import { toast } from "sonner"
 import type { ConvenienceServiceType, ConvenienceOrder } from "../../../../shared/types"
 
 // ====== Tab label config ======
-type TabKey = "all" | "pending-review" | "cancel-approval" | "price-review" | "payment-proof"
+type TabKey = "all" | "pending-review" | "manual" | "cancel-approval" | "price-review" | "payment-proof"
 const TABS: { key: TabKey; label: string }[] = [
   { key: "all", label: "全部订单" },
   { key: "pending-review", label: "待派单" },
+  { key: "manual", label: "人工处理" },
   { key: "cancel-approval", label: "取消审批" },
   { key: "price-review", label: "报价审核" },
   { key: "payment-proof", label: "付款凭证" },
@@ -56,6 +58,8 @@ export default function ConveniencePage() {
   const rejectPaymentProof = useConvenienceStore((s) => s.rejectPaymentProof)
   const reDispatch = useConvenienceStore((s) => s.reDispatch)
   const forceCancel = useConvenienceStore((s) => s.forceCancel)
+  const forceCancelWithReason = useConvenienceStore((s) => s.forceCancelWithReason)
+  const restoreQuote = useConvenienceStore((s) => s.restoreQuote)
 
   const [activeTab, setActiveTab] = useState<TabKey>("all")
   const [searchQuery, setSearchQuery] = useState("")
@@ -70,9 +74,14 @@ export default function ConveniencePage() {
   const [rejectReason, setRejectReason] = useState("")
   const [detailOrderId, setDetailOrderId] = useState<string | null>(null)
 
+  // Force cancel dialog
+  const [forceCancelTarget, setForceCancelTarget] = useState<string | null>(null)
+  const [forceCancelReason, setForceCancelReason] = useState("")
+
   // ---- Derived data ----
   const allOrders = orders
   const pendingReviewOrders = useMemo(() => orders.filter((o) => o.status === "S90" || o.status === "S10" || o.status === "A10"), [orders])
+  const manualOrders = useMemo(() => orders.filter((o) => o.status === "S90"), [orders])
   const cancelRequestOrders = useMemo(() => orders.filter((o) => o.cancelRequested), [orders])
   const priceReviewOrders = useMemo(() => orders.filter((o) => o.status === "A35" && !o.cancelRequested), [orders])
   const paymentProofOrders = useMemo(() => orders.filter((o) => o.paymentProof && o.status !== "S40" && o.status !== "S50"), [orders])
@@ -80,6 +89,7 @@ export default function ConveniencePage() {
   const getActiveOrders = (): ConvenienceOrder[] => {
     switch (activeTab) {
       case "pending-review": return pendingReviewOrders
+      case "manual": return manualOrders
       case "cancel-approval": return cancelRequestOrders
       case "price-review": return priceReviewOrders
       case "payment-proof": return paymentProofOrders
@@ -168,6 +178,20 @@ export default function ConveniencePage() {
     }
   }
 
+  const handleForceCancel = () => {
+    if (!forceCancelTarget) return
+    if (!forceCancelReason.trim()) { toast.error("请输入取消理由"); return }
+    forceCancelWithReason(forceCancelTarget, forceCancelReason)
+    setForceCancelTarget(null)
+    setForceCancelReason("")
+    toast.success("已强制取消")
+  }
+
+  const handleRestoreQuote = (orderId: string) => {
+    restoreQuote(orderId)
+    toast.success("已恢复报价状态")
+  }
+
   // Manual dispatch candidates
   const manualCandidates = useMemo(() => {
     if (!manualTarget) return []
@@ -201,6 +225,7 @@ export default function ConveniencePage() {
   const tabBadge = (key: TabKey): number | undefined => {
     switch (key) {
       case "pending-review": return pendingReviewOrders.length || undefined
+      case "manual": return manualOrders.length || undefined
       case "cancel-approval": return cancelRequestOrders.length || undefined
       case "price-review": return priceReviewOrders.length || undefined
       case "payment-proof": return paymentProofOrders.length || undefined
@@ -271,6 +296,13 @@ export default function ConveniencePage() {
                             <RefreshCw className="size-3.5" />
                           </Button>
                         </>
+                      )}
+                      {(o.status !== "S40" && o.status !== "S50") && (
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-rose-600"
+                          onClick={() => { setForceCancelTarget(o.id); setForceCancelReason("") }}
+                          title="强制取消">
+                          <Ban className="size-3.5" />
+                        </Button>
                       )}
                     </div>
                   </TableCell>
@@ -554,6 +586,78 @@ export default function ConveniencePage() {
         </Card>
       )}
 
+      {/* ===== Tab 6: 人工处理 ===== */}
+      {activeTab === "manual" && (
+        <Card className="p-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>订单号</TableHead>
+                <TableHead>服务类型</TableHead>
+                <TableHead>异常原因</TableHead>
+                <TableHead>进入前状态</TableHead>
+                <TableHead>服务人员</TableHead>
+                <TableHead>金额</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pagination.paginatedItems.map((o) => (
+                <TableRow key={o.id}>
+                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
+                  <TableCell>{o.serviceType}</TableCell>
+                  <TableCell>
+                    <Badge variant="destructive">
+                      {o.manualReason === "dispatch_failed" ? "派单失败" :
+                       o.manualReason === "quote_rejected" ? "报价争议" :
+                       o.manualReason === "pay_timeout" ? "支付超时" : o.manualReason || "未知"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{o.beforeManualStatus || "-"}</TableCell>
+                  <TableCell>{o.staffName || "-"}</TableCell>
+                  <TableCell>{o.priceQuote ? `¥${o.priceQuote}` : "-"}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-1 justify-end">
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
+                        onClick={() => handleAutoRetry(o.id)}>
+                        <RefreshCw className="size-3 mr-1" /> 重试
+                      </Button>
+                      {o.manualReason === "quote_rejected" && (
+                        <Button variant="outline" size="sm" className="h-7 text-xs text-blue-600 border-blue-200"
+                          onClick={() => handleRestoreQuote(o.id)}>
+                          <Undo2 className="size-3 mr-1" /> 恢复
+                        </Button>
+                      )}
+                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
+                        onClick={() => { setForceCancelTarget(o.id); setForceCancelReason("") }}>
+                        <Ban className="size-3 mr-1" /> 强制取消
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredOrders.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无人工处理订单
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="mt-3 border-t pt-3">
+            <PaginationBar
+              page={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.setCurrentPage}
+              pageSize={10}
+              onPageSizeChange={() => {}}
+              total={pagination.total}
+            />
+          </div>
+        </Card>
+      )}
+
       {/* 手动派单弹窗 */}
       <Dialog open={manualDialogOpen} onOpenChange={(open) => { setManualDialogOpen(open); if (!open) setStaffSearch("") }}>
         <DialogContent>
@@ -671,6 +775,26 @@ export default function ConveniencePage() {
               )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* 强制取消弹窗 */}
+      <Dialog open={forceCancelTarget !== null} onOpenChange={(open) => !open && setForceCancelTarget(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>强制取消订单</DialogTitle>
+            <DialogDescription>此操作不可撤销，请输入取消理由</DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={forceCancelReason}
+            onChange={(e) => setForceCancelReason(e.target.value)}
+            placeholder="取消理由（必填）"
+            rows={3}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setForceCancelTarget(null)}>取消</Button>
+            <Button variant="destructive" onClick={handleForceCancel}>确认强制取消</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </PageLayout>

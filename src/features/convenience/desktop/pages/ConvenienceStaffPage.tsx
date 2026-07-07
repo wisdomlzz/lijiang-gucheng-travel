@@ -27,11 +27,12 @@ import {
 } from "../../../../shared/components/ui/alert-dialog"
 import { PageLayout } from "../../../../desktop/components/common/PageLayout"
 import { useStaffStore, useZoneStore } from "../../store"
+import { useConvenienceStore } from "../../store"
 import type { StaffItem } from "../../store/staff-store"
-import type { ConvenienceServiceType } from "../../../../shared/types"
+import type { ConvenienceServiceType, ConvenienceOrder } from "../../../../shared/types"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
-import { Users, Search, Wifi, Coffee, Clock, PowerOff, Dot, Plus, Pencil, Trash2 } from "lucide-react"
+import { Users, Search, Wifi, Coffee, Clock, PowerOff, Dot, Plus, Pencil, Trash2, Ban } from "lucide-react"
 import { toast } from "sonner"
 
 const STATUS_MAP: Record<string, { label: string; className: string; dotColor: string }> = {
@@ -80,6 +81,7 @@ export default function ConvenienceStaffPage() {
   const staff = useStaffStore((s) => s.staff)
   const zones = useZoneStore((s) => s.zones)
   const { toggleEnabled, addStaff, updateStaff, removeStaff } = useStaffStore.getState()
+  const forceCancelWithReason = useConvenienceStore((s) => s.forceCancelWithReason)
   const [activeTab, setActiveTab] = useState("list")
   const [filter, setFilter] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
@@ -93,6 +95,12 @@ export default function ConvenienceStaffPage() {
   const [submitting, setSubmitting] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<StaffItem | null>(null)
   const [deleting, setDeleting] = useState(false)
+
+  // 禁用 staff 弹窗:进行中订单
+  const [activeOrdersDialog, setActiveOrdersDialog] = useState<{
+    staffId: string
+    orders: ConvenienceOrder[]
+  } | null>(null)
 
   const convenienceStaff = useMemo(() => staff.filter((s) => s.serviceTypes && s.serviceTypes.length > 0), [staff])
 
@@ -218,6 +226,53 @@ export default function ConvenienceStaffPage() {
       toast.error(`保存失败：${(err as Error).message ?? "未知错误"}`)
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleDisable = async (staff: StaffItem) => {
+    if (!staff.enabled) {
+      // 启用直接调 store
+      toggleEnabled(staff.id)
+      toast.success(`${staff.name} 已启用`)
+      return
+    }
+    // 禁用:先调 server 检查进行中订单
+    try {
+      const res = await fetch(`http://localhost:3001/api/v1/staff/${staff.id}/disable`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      })
+      const data = await res.json()
+      if (data.data?.needConfirm) {
+        setActiveOrdersDialog({ staffId: staff.id, orders: data.data.activeOrders })
+      } else {
+        // 无进行中订单,直接禁用
+        toggleEnabled(staff.id)
+        toast.success(`${staff.name} 已禁用`)
+      }
+    } catch {
+      toast.error("禁用失败,请重试")
+    }
+  }
+
+  const handleForceDisable = async () => {
+    if (!activeOrdersDialog) return
+    try {
+      const res = await fetch(`http://localhost:3001/api/v1/staff/${activeOrdersDialog.staffId}/disable`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ force: true }),
+      })
+      const data = await res.json()
+      if (data.data?.disabled) {
+        toggleEnabled(activeOrdersDialog.staffId)
+        toast.success("已强制禁用")
+      }
+    } catch {
+      toast.error("强制禁用失败")
+    } finally {
+      setActiveOrdersDialog(null)
     }
   }
 
@@ -370,12 +425,9 @@ export default function ConvenienceStaffPage() {
                         <Button
                           variant={s.enabled ? "default" : "outline"}
                           size="sm"
-                          onClick={() => {
-                            toggleEnabled(s.id)
-                            toast.success(`${s.name} ${s.enabled ? "已禁用" : "已启用"}`)
-                          }}
+                          onClick={() => handleDisable(s)}
                         >
-                          {s.enabled ? "启用" : "禁用"}
+                          {s.enabled ? "禁用" : "启用"}
                         </Button>
                       </TableCell>
                       <TableCell className="text-right">
@@ -697,6 +749,56 @@ export default function ConvenienceStaffPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ===== 禁用 staff — 进行中订单处理 Dialog ===== */}
+      <Dialog open={activeOrdersDialog !== null} onOpenChange={(open) => !open && setActiveOrdersDialog(null)}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              禁用 {activeOrdersDialog?.staffId} — 发现 {activeOrdersDialog?.orders.length} 个进行中订单
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-sm text-muted-foreground mb-3">请先处理这些订单,再禁用 staff</div>
+          {activeOrdersDialog && (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>订单号</TableHead>
+                  <TableHead>状态</TableHead>
+                  <TableHead>操作</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {activeOrdersDialog.orders.map((o) => (
+                  <TableRow key={o.id}>
+                    <TableCell className="font-mono text-xs">{o.id}</TableCell>
+                    <TableCell><Badge>{o.status}</Badge></TableCell>
+                    <TableCell>
+                      <Button size="sm" variant="destructive" className="h-7 text-xs"
+                        onClick={() => {
+                          forceCancelWithReason(o.id, "staff 被禁用")
+                          setActiveOrdersDialog({
+                            ...activeOrdersDialog,
+                            orders: activeOrdersDialog.orders.filter((x) => x.id !== o.id),
+                          })
+                          toast.success(`已强制取消 ${o.id}`)
+                        }}>
+                        <Ban className="size-3 mr-1" /> 强制取消
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActiveOrdersDialog(null)}>取消</Button>
+            <Button variant="destructive" onClick={handleForceDisable}>
+              强制禁用(不处理订单)
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageLayout>
   )
 }
