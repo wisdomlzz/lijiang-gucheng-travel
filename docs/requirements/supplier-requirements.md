@@ -423,7 +423,7 @@ DesktopLayout 展示逻辑：
 ### 6.4 数据一致性验收
 
 - [x] 前端 submit → API POST → 后端写入 DB → 返回结果 → 前端更新 store，流程完整
-- [x] 所有 API 操作通过 syncAction 保证数据一致性，不做乐观更新
+- [x] 所有 API 调用通过 syncAction 包装（含 `syncAction("addApplication", …)` 和 `syncAction("updateSupplierStatus", …)`），先调 API 再根据返回结果更新 store，不做前端乐观预估
 - [x] 页面刷新后数据从 API 重新加载，不丢失
 
 ### 6.5 未实现（技术债/待完善）
@@ -439,4 +439,4 @@ DesktopLayout 展示逻辑：
 - [ ] 没有申请进度查询页面（用户只能看到提交成功页，不能回来查状态）
 - [ ] 没有审核操作日志记录
 - [ ] 驳回后重新提交没有线上流程（需重新填写完整表单）
-- [ ] 导航菜单的 permissionCode "mall" 在 seed 权限数据中未定义（可能不可见）
+- [ ] `supplier-applications` 和 `crmeb-admin` 导航菜单使用 `permissionCode: "mall"`，桌面端权限过滤采用前缀匹配（`rolePerms.some(code => code.startsWith("mall."))`），与 `role_supplier` 的 `"mall.admin.open"` 和 `"mall.supplier.view"` 权限码匹配正常。但 `supplier` 角色用户在 DesktopApp.tsx 中被重定向至仅含 `supplier-entry` 和 `login` 路由的独立路由块，不会进入完整的 DesktopLayout，因此此权限配置当前仅影响 admin 路径
