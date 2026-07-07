@@ -17,6 +17,7 @@ import {
   Star,
   Award,
   Newspaper,
+  Settings,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../shared/constants"
@@ -76,6 +77,12 @@ export const navGroups: NavGroup[] = [
     title: "诚信管理",
     items: [
       { key: "trust-score-config", label: "诚信评分配置", icon: Award, permissionCode: "convenience" },
+    ],
+  },
+  {
+    title: "系统管理",
+    items: [
+      { key: "system-config", label: "系统配置", icon: Settings, permissionCode: "convenience" },
     ],
   },
 ]

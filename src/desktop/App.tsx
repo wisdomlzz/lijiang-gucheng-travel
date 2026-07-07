@@ -45,6 +45,7 @@ const ReviewManagementPage = lazy(() =>
 const TrustScoreConfigPage = lazy(() =>
   import("../features/trust-score/desktop/pages/TrustScoreConfigPage").then((m) => ({ default: m.TrustScoreConfigPage }))
 )
+const SystemConfigPage = lazy(() => import("./pages/SystemConfigPage"))
 
 function Loading() {
   return <div className="flex items-center justify-center h-screen">加载中...</div>
@@ -134,6 +135,10 @@ export function DesktopApp() {
           <Route
             path="trust-score-config"
             element={<ProtectedRoute isAllowed={isSuperAdmin} element={<TrustScoreConfigPage />} />}
+          />
+          <Route
+            path="system-config"
+            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<SystemConfigPage />} />}
           />
 
           <Route path="*" element={<RedirectTo to="/desktop/workbench" />} />
