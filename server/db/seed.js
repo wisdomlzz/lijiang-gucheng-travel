@@ -428,6 +428,18 @@ export function seedIfNeeded() {
     ], status: "approved", remark: "管理员审核通过 2026-06-21", createdAt: "2026-06-18 09:00", updatedAt: "2026-06-21 14:30" },
   ])
 
+  // ====== System Configs (MVP) ======
+  insertMany("system_configs", [
+    { id: "cfg_cancel_fee", configKey: "cancelFeeRules", configValue: JSON.stringify({ beforeAccept: 0, afterAccept: 0.1, afterPay: 0.2, minAmount: 5, maxAmount: 50 }), description: "取消扣费规则", updatedBy: "system" },
+    { id: "cfg_dispatch_retry", configKey: "dispatchRetryTimes", configValue: "3", description: "派单重试次数", updatedBy: "system" },
+    { id: "cfg_accept_timeout", configKey: "acceptTimeoutMinutes", configValue: "5", description: "接单超时(分钟)", updatedBy: "system" },
+    { id: "cfg_pay_timeout", configKey: "payTimeoutMinutes", configValue: "30", description: "支付超时(分钟)", updatedBy: "system" },
+    { id: "cfg_auto_confirm", configKey: "autoConfirmHours", configValue: "24", description: "自动确认完工(小时)", updatedBy: "system" },
+    { id: "cfg_settlement_t", configKey: "settlementTDays", configValue: "7", description: "结算 T+N 天", updatedBy: "system" },
+    { id: "cfg_min_withdraw", configKey: "minWithdrawalAmount", configValue: "100", description: "最低提现金额", updatedBy: "system" },
+    { id: "cfg_daily_limit", configKey: "dailyOrderLimit", configValue: "20", description: "每日接单上限", updatedBy: "system" },
+  ])
+
   console.log("🌱 Seed 完成")
   return true
 }
