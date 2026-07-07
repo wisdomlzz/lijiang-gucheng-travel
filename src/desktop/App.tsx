@@ -51,7 +51,6 @@ const TrustScoreConfigPage = lazy(() =>
 const SystemConfigPage = lazy(() => import("./pages/SystemConfigPage"))
 const AnnouncementManagePage = lazy(() => import("./pages/gates/AnnouncementManagePage").then((m) => ({ default: m.AnnouncementManagePage })))
 const AIKnowledgeBasePage = lazy(() => import("./pages/AIKnowledgeBasePage").then((m) => ({ default: m.AIKnowledgeBasePage })))
-const FlowWarningPage = lazy(() => import("../features/convenience/desktop/pages/FlowWarningPage"))
 const BookingManagePage = lazy(() => import("../features/booking/desktop/pages/BookingManagePage"))
 
 function Loading() {
@@ -106,7 +105,6 @@ export function DesktopApp() {
           <Route path="volunteer" element={<VolunteerManagePage />} />
           <Route path="announcement-manage" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<AnnouncementManagePage />} />} />
           <Route path="ai-knowledge" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<AIKnowledgeBasePage />} />} />
-          <Route path="flow-warning" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<FlowWarningPage />} />} />
           <Route path="bookings" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<BookingManagePage />} />} />
 
           {/* ===== 商户与供应商管理 ===== */}

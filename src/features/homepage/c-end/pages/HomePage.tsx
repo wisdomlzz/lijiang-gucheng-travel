@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import { useNavigate } from "react-router"
 import { motion, AnimatePresence } from "motion/react"
-import { Search, ScanLine, Sparkles, Newspaper } from "lucide-react"
+import { Search, ScanLine, Sparkles, Newspaper, Users } from "lucide-react"
 import { SectionHeader } from "@/shared/components/mobile/SectionHeader"
 import { GridIcon } from "@/shared/components/mobile/GridIcon"
 import { InfoListItem } from "@/shared/components/mobile/InfoListItem"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { useHomepageConfigStore } from "../../store"
 import { useAnnouncementStore } from "@/features/announcement/store"
+import { useFlowWarningStore } from "@/features/flow-warning/store"
+import { LEVEL_META } from "@/features/flow-warning/store"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import { CRMEB_C_URL } from "@/shared/constants"
 import { recommendRoutes } from "@/features/route/shared/routes-data"
@@ -48,6 +50,8 @@ export function HomePage() {
         .sort((a, b) => new Date(b.publishTime).getTime() - new Date(a.publishTime).getTime()),
     [allAnnouncements]
   )
+
+  const areas = useFlowWarningStore((s) => s.areas)
 
   const {
     visible: infoVisible,
@@ -175,6 +179,33 @@ export function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* 古城人流实时状态 */}
+      {areas.length > 0 && (
+        <div className="px-4 mt-5">
+          <div className="bg-white rounded-2xl p-4 shadow-elevated">
+            <div className="flex items-center gap-2 mb-3">
+              <Users size={16} className="text-primary" />
+              <span className="text-[14px] font-medium text-text-heading">古城人流实时状态</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {areas.slice(0, 6).map((a) => {
+                const meta = LEVEL_META[a.level]
+                const pct = Math.round((a.current / a.capacity) * 100)
+                return (
+                  <div key={a.id} className="flex items-center gap-2 p-2 rounded-xl bg-surface-page">
+                    <div className={`size-2 rounded-full shrink-0 ${a.level === "green" ? "bg-emerald-500" : a.level === "yellow" ? "bg-amber-500" : a.level === "orange" ? "bg-orange-500" : "bg-red-500"}`} />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[12px] text-text-heading truncate">{a.name}</div>
+                      <div className="text-[10px] text-text-tertiary">{meta.label} · {pct}%</div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 8-grid with swipe pagination */}
       <div
