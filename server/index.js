@@ -5,6 +5,7 @@ import { fileURLToPath } from "url"
 import db from "./db/connection.js"
 import { seedIfNeeded } from "./db/seed.js"
 import { startScheduler } from "./logic/scheduler.js"
+import staffRoutes from "./routes/staff.js"
 import { ok, fail } from "./middleware/response.js"
 import { crudRoutes } from "./routes/crud.js"
 import authRoutes from "./routes/auth.js"
@@ -66,7 +67,7 @@ app.use("/api/v1/announcements", announcementsRoutes)
 app.use("/api/v1/flow-warnings", flowWarningsRoutes)
 
 // ====== 其他 CRUD 资源(直接用 crudRoutes)======
-app.use("/api/v1/staff", crudRoutes("staff", { filters: ["status", "enabled"] }))
+app.use("/api/v1/staff", staffRoutes)
 app.use("/api/v1/zones", crudRoutes("zones"))
 app.use("/api/v1/dispatch-config", crudRoutes("dispatch_configs"))
 app.use("/api/v1/incomes", crudRoutes("income_records", { filters: ["staffId"] }))
