@@ -30,6 +30,24 @@ const DOC_LIST: DocItem[] = [
     version: "v1.0 · 2026-07-07",
   },
   {
+    name: "投诉管理",
+    path: "/docs/requirements/complaints-requirements.md",
+    label: "投诉管理模块产品需求文档",
+    version: "v1.0 · 2026-07-07",
+  },
+  {
+    name: "诚信评分",
+    path: "/docs/requirements/trust-score-requirements.md",
+    label: "诚信评分配置模块产品需求文档",
+    version: "v1.0 · 2026-07-07",
+  },
+  {
+    name: "院落预约",
+    path: "/docs/requirements/bookings-requirements.md",
+    label: "院落预约模块产品需求文档",
+    version: "v1.0 · 2026-07-07",
+  },
+  {
     name: "志愿服务",
     path: "/docs/志愿服务功能需求说明.md",
     label: "志愿服务功能需求说明",
