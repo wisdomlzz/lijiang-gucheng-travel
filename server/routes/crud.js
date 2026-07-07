@@ -7,7 +7,15 @@ const JSON_FIELDS = new Set([
   "images", "completionPhotos", "serviceTypes", "zoneIds", "tags", "stations",
   "body", "spots", "spotNames", "contentBlocks", "gallery", "meta",
   "scoreHistory", "reviewHistory", "credentialImages", "fields", "roles", "platform", "data",
+  "evidenceUrls",
 ])
+
+/** 写 order_operation_logs。所有 transition 端点应调用。 */
+export function logOperation(orderId, operatorType, operatorId, action, fromStatus, toStatus, remark = null) {
+  db.prepare(
+    `INSERT INTO order_operation_logs (orderId, operatorType, operatorId, action, fromStatus, toStatus, remark) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  ).run(orderId, operatorType, operatorId || null, action, fromStatus, toStatus, remark)
+}
 
 export function deserializeRow(row) {
   if (!row) return null
