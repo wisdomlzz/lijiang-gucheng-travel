@@ -4,6 +4,7 @@ import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { EmptyState } from "@/shared/components/mobile/EmptyState"
 import { Clock, CheckCircle, XCircle, ChevronRight } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import { useAuthStore } from "@/platform/auth"
 import { useComplaintStore } from "../../store"
 import { ComplaintStatusLabel } from "../../../../shared/types"
 import { useSearch } from "../../../../shared/hooks/useSearch"
@@ -25,10 +26,11 @@ const TABS: { key: string; label: string }[] = [
 export function MyComplaintsPage() {
   const navigate = useNavigate()
   const complaints = useComplaintStore((s) => s.complaints)
+  const userId = useAuthStore((s) => s.user?.id) ?? ""
   const [tab, setTab] = useState("all")
   const [pageSize, setPageSize] = useState(10)
 
-  const myComplaints = complaints.filter((c) => c.userId === "u_c_001")
+  const myComplaints = complaints.filter((c) => c.userId === userId)
 
   const tabFiltered = tab === "all" ? myComplaints : myComplaints.filter((c) => c.status === tab)
 
@@ -46,7 +48,7 @@ export function MyComplaintsPage() {
 
       <div className="px-3 py-4 space-y-3">
         {myComplaints.length === 0 ? (
-          <EmptyState title="暂无投诉记录" description="遇到问题可在此提交投诉" action={{ label: "提交投诉", onClick: () => navigate("/c/complaints/new") }} />
+          <EmptyState title="暂无投诉记录" description="遇到问题可在此提交投诉" action={{ label: "提交投诉", onClick: () => navigate("/c/complaint") }} />
         ) : (
           <>
             <div className="flex gap-2 overflow-x-auto pb-2">

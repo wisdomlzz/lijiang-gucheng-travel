@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import { useNavigate } from "react-router"
 import { ChevronLeft, Camera, X, Phone, ChevronDown } from "lucide-react"
 import { useComplaintStore } from "../../store"
+import { useAuthStore } from "@/platform/auth"
 import { BottomSheetPicker } from "../../../../shared/components/ui/bottom-sheet-picker"
 import { toast } from "sonner"
 
@@ -18,6 +19,8 @@ type ReporterType = (typeof reporterTypes)[number]
 
 export function ComplaintFormPage() {
   const navigate = useNavigate()
+  const currentUser = useAuthStore((s) => s.user)
+  const userId = currentUser?.id ?? "u_c_001"
   const createComplaint = useComplaintStore((s) => s.createComplaint)
   const complaintPhone = useComplaintStore((s) => s.complaintPhone)
   const [reporterType, setReporterType] = useState<ReporterType>("游客")
@@ -75,7 +78,7 @@ export function ComplaintFormPage() {
     if (!validate()) return
     createComplaint({
       orderId: "",
-      userId: "u_c_001",
+      userId: userId,
       type: issueType,
       content,
       images,
