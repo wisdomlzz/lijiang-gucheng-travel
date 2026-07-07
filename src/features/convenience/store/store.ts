@@ -5,7 +5,6 @@ import type { ConvenienceOrder, ConvenienceStatus, DispatchLogEntry } from "../.
 import { transition } from "./transitions"
 import { setTimer, clearTimer } from "./timers"
 import { notifyConvenience } from "./notification"
-import { useSettlementStore } from "./settlement-store"
 import { usePointsStore } from "@/features/points/store"
 
 // ---- Store types ----
@@ -32,16 +31,26 @@ type ConvenienceState = {
   startService: (orderId: string) => Promise<void>
   completeService: (orderId: string, photos: string[]) => Promise<void>
   confirmComplete: (orderId: string) => Promise<void>
-  rateOrder: (orderId: string, rating: number) => Promise<void>
+  rateOrder: (orderId: string, rating: number, content?: string, images?: string[]) => Promise<void>
 
   // Cancel
   requestCancel: (orderId: string) => Promise<void>
   approveCancelRequest: (orderId: string) => Promise<void>
   rejectCancelRequest: (orderId: string) => Promise<void>
   forceCancel: (orderId: string) => Promise<void>
+  forceCancelWithReason: (orderId: string, reason: string) => Promise<void>
   reDispatch: (orderId: string) => Promise<void>
+  rejectOrder: (orderId: string, reason: string) => Promise<void>
 
   uploadPaymentProof: (orderId: string, url: string) => Promise<void>
+
+  // MVP 新增
+  arriveCheckin: (orderId: string) => Promise<void>
+  lockPayment: (orderId: string, paymentMethod: "online" | "cash") => Promise<void>
+  payOnline: (orderId: string) => Promise<void>
+  confirmCash: (orderId: string) => Promise<void>
+  rejectQuote: (orderId: string, reason: string) => Promise<void>
+  restoreQuote: (orderId: string) => Promise<void>
 
   // Admin review actions
   approvePriceQuote: (orderId: string) => Promise<void>
@@ -238,26 +247,17 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
       () => ordersApi.transition(orderId, "confirm"),
       (result) => {
         set((s) => ({ orders: replaceOrder(s.orders, orderId, result) }))
-        if (o.priceQuote && o.staffId) {
-          useSettlementStore.getState().recordIncome({
-            orderId: o.id,
-            staffId: o.staffId,
-            staffName: o.staffName ?? "",
-            serviceType: String(o.serviceType),
-            amount: o.priceQuote,
-            payMethod: o.payMethod ?? "online",
-          })
-        }
+        // recordIncome 已由 server 在 transition 到 S40 时自动生成
         notify(o, "订单已完成", "服务已完成，欢迎评价", `/c/orders/${orderId}`)
         usePointsStore.getState().transact(o.userId, "mall_purchase", orderId)
       },
     )
   },
 
-  rateOrder: async (orderId, rating) => {
+  rateOrder: async (orderId, rating, content, images) => {
     await syncAction<ConvenienceOrder>(
       "rateOrder",
-      () => ordersApi.update(orderId, { rating, ratedAt: new Date().toISOString() }),
+      () => ordersApi.rate(orderId, { rating, content, images }),
       (result) => {
         set((s) => ({ orders: replaceOrder(s.orders, orderId, result) }))
       },
@@ -341,6 +341,71 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     )
   },
 
+  // ---- MVP 新增 actions ----
+  arriveCheckin: async (orderId) => {
+    await syncAction<ConvenienceOrder>(
+      "arriveCheckin",
+      () => ordersApi.arriveCheckin(orderId),
+      (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
+    )
+  },
+
+  lockPayment: async (orderId, paymentMethod) => {
+    await syncAction<ConvenienceOrder>(
+      "lockPayment",
+      () => ordersApi.lockPayment(orderId, paymentMethod),
+      (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
+    )
+  },
+
+  payOnline: async (orderId) => {
+    await syncAction<ConvenienceOrder>(
+      "payOnline",
+      () => ordersApi.payOnline(orderId),
+      (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
+    )
+  },
+
+  confirmCash: async (orderId) => {
+    await syncAction<ConvenienceOrder>(
+      "confirmCash",
+      () => ordersApi.confirmCash(orderId),
+      (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
+    )
+  },
+
+  rejectQuote: async (orderId, reason) => {
+    await syncAction<ConvenienceOrder>(
+      "rejectQuote",
+      () => ordersApi.rejectQuote(orderId, reason),
+      (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
+    )
+  },
+
+  restoreQuote: async (orderId) => {
+    await syncAction<ConvenienceOrder>(
+      "restoreQuote",
+      () => ordersApi.restoreQuote(orderId),
+      (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
+    )
+  },
+
+  rejectOrder: async (orderId, reason) => {
+    await syncAction<ConvenienceOrder>(
+      "rejectOrder",
+      () => ordersApi.transition(orderId, "reject", { reason }),
+      (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
+    )
+  },
+
+  forceCancelWithReason: async (orderId, reason) => {
+    await syncAction<ConvenienceOrder>(
+      "forceCancel",
+      () => ordersApi.transition(orderId, "forceCancel", { arbitrationRemark: reason }),
+      (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
+    )
+  },
+
   // ---- Admin review actions ----
   approvePriceQuote: async (orderId) => {
     const o = get().orders.find((x) => x.id === orderId)
@@ -376,16 +441,7 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
       () => ordersApi.transition(orderId, "confirmPayment"),
       (result) => {
         set((s) => ({ orders: replaceOrder(s.orders, orderId, result) }))
-        if (o.priceQuote && o.staffId) {
-          useSettlementStore.getState().recordIncome({
-            orderId: o.id,
-            staffId: o.staffId,
-            staffName: o.staffName ?? "",
-            serviceType: String(o.serviceType),
-            amount: o.priceQuote,
-            payMethod: o.payMethod ?? "online",
-          })
-        }
+        // recordIncome 已由 server 在 transition 到 S40 时自动生成
         notify(o, "付款凭证已确认", `${o.serviceType}订单收款确认，订单已完成`, `/c/orders/${orderId}`)
       },
     )

@@ -78,6 +78,21 @@ export const ordersApi = {
     api.post("orders", `/${id}/transition`, { action, ...fields }),
   dispatch: (id: string, mode: "auto" | "manual", staffId?: string) =>
     api.post("orders", `/${id}/dispatch`, { mode, staffId }),
+  // MVP 新增
+  arriveCheckin: (id: string, staffId?: string) =>
+    api.post("orders", `/${id}/arrive-checkin`, { staffId }),
+  lockPayment: (id: string, paymentMethod: "online" | "cash", userId?: string) =>
+    api.post("orders", `/${id}/lock-payment`, { paymentMethod, userId }),
+  payOnline: (id: string, userId?: string) =>
+    api.post("orders", `/${id}/pay-online`, { userId }),
+  confirmCash: (id: string, staffId?: string) =>
+    api.post("orders", `/${id}/confirm-cash`, { staffId }),
+  rate: (id: string, data: { rating: number; content?: string; images?: string[]; userId?: string; userName?: string }) =>
+    api.post("orders", `/${id}/rate`, data),
+  rejectQuote: (id: string, reason: string, userId?: string) =>
+    api.post("orders", `/${id}/reject-quote`, { reason, userId }),
+  restoreQuote: (id: string, adminId?: string) =>
+    api.post("orders", `/${id}/restore-quote`, { adminId }),
 }
 
 export const staffApi = {
