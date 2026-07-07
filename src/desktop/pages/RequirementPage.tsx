@@ -17,54 +17,16 @@ interface DocItem {
 }
 
 const DOC_LIST: DocItem[] = [
-  {
-    name: "便民服务 MVP 需求文档",
-    path: "/docs/requirements/convenience-service-mvp-requirements.md",
-    label: "便民服务平台 MVP 1.0 产品设计文档",
-    version: "v1.2 · 2026-07-07",
-  },
-  {
-    name: "便民服务 MVP 设计文档",
-    path: "/docs/requirements/convenience-service-mvp-design.md",
-    label: "便民服务 MVP 改造设计方案",
-    version: "v1.0 · 2026-07-07",
-  },
-  {
-    name: "内容管理",
-    path: "/docs/requirements/content-requirements.md",
-    label: "内容管理模块产品需求文档",
-    version: "v1.0 · 2026-07-07",
-  },
-  {
-    name: "投诉管理",
-    path: "/docs/requirements/complaints-requirements.md",
-    label: "投诉管理模块产品需求文档",
-    version: "v1.0 · 2026-07-07",
-  },
-  {
-    name: "诚信评分",
-    path: "/docs/requirements/trust-score-requirements.md",
-    label: "诚信评分配置模块产品需求文档",
-    version: "v1.0 · 2026-07-07",
-  },
-  {
-    name: "商户审核",
-    path: "/docs/requirements/merchant-review-requirements.md",
-    label: "商户审核模块产品需求文档",
-    version: "v1.0 · 2026-07-07",
-  },
-  {
-    name: "院落预约",
-    path: "/docs/requirements/bookings-requirements.md",
-    label: "院落预约模块产品需求文档",
-    version: "v1.0 · 2026-07-07",
-  },
-  {
-    name: "志愿服务",
-    path: "/docs/requirements/volunteer-requirements.md",
-    label: "志愿服务模块产品需求文档",
-    version: "v1.0 · 2026-07-07",
-  },
+  { name: "便民服务 MVP 需求", path: "/docs/requirements/convenience-service-mvp-requirements.md", label: "便民服务平台 MVP 1.0 产品设计文档", version: "v1.2 · 2026-07-07" },
+  { name: "便民服务 MVP 设计", path: "/docs/requirements/convenience-service-mvp-design.md", label: "便民服务 MVP 改造设计方案", version: "v1.0 · 2026-07-07" },
+  { name: "内容管理", path: "/docs/requirements/content-requirements.md", label: "内容管理模块产品需求文档", version: "v1.0 · 2026-07-07" },
+  { name: "投诉管理", path: "/docs/requirements/complaints-requirements.md", label: "投诉管理模块产品需求文档", version: "v1.0 · 2026-07-07" },
+  { name: "诚信评分", path: "/docs/requirements/trust-score-requirements.md", label: "诚信评分配置模块产品需求文档", version: "v1.0 · 2026-07-07" },
+  { name: "商户审核", path: "/docs/requirements/merchant-review-requirements.md", label: "商户审核模块产品需求文档", version: "v1.0 · 2026-07-07" },
+  { name: "院落预约", path: "/docs/requirements/bookings-requirements.md", label: "院落预约模块产品需求文档", version: "v1.0 · 2026-07-07" },
+  { name: "志愿服务", path: "/docs/requirements/volunteer-requirements.md", label: "志愿服务模块产品需求文档", version: "v1.0 · 2026-07-07" },
+  { name: "签到打卡", path: "/docs/requirements/checkin-requirements.md", label: "签到打卡模块产品需求文档", version: "v1.0 · 2026-07-07" },
+  { name: "供应商管理", path: "/docs/requirements/supplier-requirements.md", label: "供应商管理模块产品需求文档", version: "v1.0 · 2026-07-07" },
   { name: "综合系统", path: "/docs/requirement.md", label: "综合系统需求说明书", version: "V2.2 · 2026-05-28" },
 ]
 
