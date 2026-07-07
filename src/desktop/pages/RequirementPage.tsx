@@ -18,6 +18,18 @@ interface DocItem {
 
 const DOC_LIST: DocItem[] = [
   {
+    name: "便民服务 MVP 需求文档",
+    path: "/docs/requirements/convenience-service-mvp-requirements.md",
+    label: "便民服务平台 MVP 1.0 产品设计文档",
+    version: "v1.2 · 2026-07-07",
+  },
+  {
+    name: "便民服务 MVP 设计文档",
+    path: "/docs/requirements/convenience-service-mvp-design.md",
+    label: "便民服务 MVP 改造设计方案",
+    version: "v1.0 · 2026-07-07",
+  },
+  {
     name: "志愿服务",
     path: "/docs/志愿服务功能需求说明.md",
     label: "志愿服务功能需求说明",
