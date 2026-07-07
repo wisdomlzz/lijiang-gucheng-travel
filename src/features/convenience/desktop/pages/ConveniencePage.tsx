@@ -36,7 +36,7 @@ import type { ConvenienceServiceType, ConvenienceOrder } from "../../../../share
 type TabKey = "all" | "pending-review" | "cancel-approval" | "price-review" | "payment-proof"
 const TABS: { key: TabKey; label: string }[] = [
   { key: "all", label: "全部订单" },
-  { key: "pending-review", label: "待审核" },
+  { key: "pending-review", label: "待派单" },
   { key: "cancel-approval", label: "取消审批" },
   { key: "price-review", label: "报价审核" },
   { key: "payment-proof", label: "付款凭证" },

@@ -125,7 +125,7 @@ export default function ConvenienceStaffPage() {
       return (order[a.status] ?? 4) - (order[b.status] ?? 4)
     })
     if (statusTypeFilter !== "all") {
-      list = list.filter((s) => s.serviceTypes?.includes(statusTypeFilter))
+      list = list.filter((s) => s.serviceTypes?.includes(statusTypeFilter as ConvenienceServiceType))
     }
     return list
   }, [convenienceStaff, statusTypeFilter])
