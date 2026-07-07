@@ -49,6 +49,9 @@ const TrustScoreConfigPage = lazy(() =>
   import("../features/trust-score/desktop/pages/TrustScoreConfigPage").then((m) => ({ default: m.TrustScoreConfigPage }))
 )
 const SystemConfigPage = lazy(() => import("./pages/SystemConfigPage"))
+const AnnouncementManagePage = lazy(() => import("./pages/gates/AnnouncementManagePage").then((m) => ({ default: m.AnnouncementManagePage })))
+const AIKnowledgeBasePage = lazy(() => import("./pages/AIKnowledgeBasePage").then((m) => ({ default: m.AIKnowledgeBasePage })))
+const FlowWarningPage = lazy(() => import("../features/convenience/desktop/pages/FlowWarningPage"))
 
 function Loading() {
   return <div className="flex items-center justify-center h-screen">加载中...</div>
@@ -100,6 +103,9 @@ export function DesktopApp() {
           <Route path="point-rules" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<PointRulesPage />} />} />
           <Route path="complaints" element={<ComplaintPage />} />
           <Route path="volunteer" element={<VolunteerManagePage />} />
+          <Route path="announcement-manage" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<AnnouncementManagePage />} />} />
+          <Route path="ai-knowledge" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<AIKnowledgeBasePage />} />} />
+          <Route path="flow-warning" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<FlowWarningPage />} />} />
 
           {/* ===== 商户与供应商管理 ===== */}
           <Route path="merchant-review" element={<ProtectedRoute isAllowed={isSuperAdmin} element={<MerchantReviewPage />} />} />

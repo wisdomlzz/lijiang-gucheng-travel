@@ -18,6 +18,7 @@ import {
   Award,
   Newspaper,
   Settings,
+  AlertTriangle,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { CRMEB_ADMIN_URL } from "../shared/constants"
@@ -44,7 +45,10 @@ export const navGroups: NavGroup[] = [
       { key: "point-rules", label: "积分规则配置", icon: Gift, permissionCode: "content" },
       { key: "complaints", label: "投诉管理", icon: MessageCircleWarning, permissionCode: "complaint" },
       { key: "volunteer", label: "志愿服务", icon: Heart, permissionCode: "content" },
+      { key: "announcement-manage", label: "公告管理", icon: Newspaper, permissionCode: "content" },
+      { key: "ai-knowledge", label: "AI知识库管理", icon: MessageCircleWarning, permissionCode: "content" },
       { key: "content-manage", label: "内容管理", icon: Newspaper, permissionCode: "content" },
+      { key: "flow-warning", label: "人流量预警", icon: AlertTriangle, permissionCode: "content" },
     ],
   },
   {
