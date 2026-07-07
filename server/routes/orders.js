@@ -352,6 +352,31 @@ router.post("/:id/transition", (req, res) => {
   }
 })
 
+// GET /gmv-stats — 按日/周/月统计线上/现金 GMV
+router.get("/gmv-stats", (req, res) => {
+  try {
+    const { period = "month" } = req.query // day | week | month
+    let dateFilter = ""
+    const now = new Date()
+    if (period === "day") {
+      const start = now.toISOString().slice(0, 10)
+      dateFilter = `AND createdAt >= '${start}'`
+    } else if (period === "week") {
+      const start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+      dateFilter = `AND createdAt >= '${start}'`
+    } else {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+      dateFilter = `AND createdAt >= '${start}'`
+    }
+    const rows = db.prepare(`SELECT paymentMethod, COUNT(*) as orderCount, SUM(amount) as totalAmount FROM payment_records WHERE status='success' ${dateFilter} GROUP BY paymentMethod`).all()
+    const online = rows.find(r => r.paymentMethod === "online") || { orderCount: 0, totalAmount: 0 }
+    const cash = rows.find(r => r.paymentMethod === "cash") || { orderCount: 0, totalAmount: 0 }
+    res.json(ok({ period, online: { count: online.orderCount, amount: online.totalAmount || 0 }, cash: { count: cash.orderCount, amount: cash.totalAmount || 0 }, total: { count: (online.orderCount||0) + (cash.orderCount||0), amount: (online.totalAmount||0) + (cash.totalAmount||0) } }))
+  } catch (e) {
+    res.json(fail(e.message))
+  }
+})
+
 // CRUD
 router.use("/", crudRoutes("convenience_orders", {
   filters: ["status", "serviceType", "userId", "staffId"],

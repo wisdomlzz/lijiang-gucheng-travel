@@ -5,6 +5,7 @@ import { ServiceWorkbench } from "./ServiceWorkbench"
 import { ServiceTasks } from "./ServiceTasks"
 import { ServiceHistory } from "./ServiceHistory"
 import { ServiceProfile } from "./ServiceProfile"
+import { StaffRegister } from "./StaffRegister"
 import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow"
 import { BNotificationsPage } from "./BNotificationsPage"
 import { RedirectTo } from "../../../../shared/components/RedirectTo"
@@ -25,6 +26,7 @@ export function ServiceApp() {
           <Route path="tasks" element={<ServiceTasks />} />
           <Route path="history" element={<ServiceHistory />} />
           <Route path="profile" element={<ServiceProfile />} />
+          <Route path="register" element={<StaffRegister />} />
           <Route path="quote" element={<QuoteAndPhotoFlow {...({} as any)} />} />
           <Route path="notifications" element={<BNotificationsPage />} />
           <Route path="*" element={<RedirectTo to="/b/service/workbench" />} />

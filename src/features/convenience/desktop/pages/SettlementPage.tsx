@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { PageLayout } from "../../../../desktop/components/common/PageLayout"
 import { Button } from "../../../../shared/components/ui/button"
 import { Badge } from "../../../../shared/components/ui/badge"
@@ -12,6 +12,16 @@ import type { WithdrawalRequest } from "../../store/settlement-store"
 import { useStaffStore } from "../../store"
 
 export function SettlementPage() {
+  const [gmvStats, setGmvStats] = useState<any>(null)
+  const [gmvPeriod, setGmvPeriod] = useState("month")
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/api/v1/orders/gmv-stats?period=${gmvPeriod}`)
+      .then((r) => r.json())
+      .then((d) => setGmvStats(d.data))
+      .catch(() => {})
+  }, [gmvPeriod])
+
   const incomes = useSettlementStore((s) => s.incomes)
   const withdrawals = useSettlementStore((s) => s.withdrawals)
   const getStaffSummary = useSettlementStore((s) => s.getStaffSummary)
@@ -77,6 +87,58 @@ export function SettlementPage() {
             <p className={`text-[22px] font-bold mt-1 ${color}`}>{value}</p>
           </div>
         ))}
+      </div>
+
+      {/* GMV 统计（线上/现金） */}
+      <div className="bg-white rounded-lg border border-border-light p-4 mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-[14px] font-medium text-text-heading">GMV 统计</h3>
+          <div className="flex gap-1">
+            {["day", "week", "month"].map((p) => (
+              <button
+                key={p}
+                onClick={() => setGmvPeriod(p)}
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                  gmvPeriod === p ? "bg-primary text-white" : "bg-gray-100 text-text-secondary hover:bg-gray-200"
+                }`}
+              >
+                {p === "day" ? "日" : p === "week" ? "周" : "月"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg border border-border-light p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Smartphone className="size-4 text-primary" />
+              <span className="text-xs text-muted-foreground">线上支付</span>
+            </div>
+            <div className="text-lg font-semibold text-primary">
+              ¥{(gmvStats?.online?.amount ?? 0).toLocaleString()}
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">{(gmvStats?.online?.count ?? 0)} 笔订单</div>
+          </div>
+          <div className="bg-white rounded-lg border border-border-light p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Banknote className="size-4 text-amber-500" />
+              <span className="text-xs text-muted-foreground">现金支付</span>
+            </div>
+            <div className="text-lg font-semibold text-amber-600">
+              ¥{(gmvStats?.cash?.amount ?? 0).toLocaleString()}
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">{(gmvStats?.cash?.count ?? 0)} 笔订单</div>
+          </div>
+          <div className="bg-white rounded-lg border border-border-light p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Wallet className="size-4 text-emerald-500" />
+              <span className="text-xs text-muted-foreground">总计</span>
+            </div>
+            <div className="text-lg font-semibold text-emerald-600">
+              ¥{(gmvStats?.total?.amount ?? 0).toLocaleString()}
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">{(gmvStats?.total?.count ?? 0)} 笔订单</div>
+          </div>
+        </div>
       </div>
 
       <Tabs defaultValue="income">

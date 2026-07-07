@@ -71,6 +71,7 @@ export const navGroups: NavGroup[] = [
       { key: "convenience", label: "订单管理", icon: LayoutList, permissionCode: "convenience" },
       { key: "settlement", label: "结算管理", icon: Wallet, permissionCode: "convenience" },
       { key: "review-management", label: "评价管理", icon: Star, permissionCode: "convenience" },
+      { key: "staff-review", label: "入驻审核", icon: ShieldCheck, permissionCode: "convenience" },
     ],
   },
   {

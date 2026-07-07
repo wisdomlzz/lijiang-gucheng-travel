@@ -42,6 +42,9 @@ const MerchantReviewPage = lazy(() =>
 const ReviewManagementPage = lazy(() =>
   import("../features/convenience/desktop/pages/ReviewManagementPage").then((m) => ({ default: m.ReviewManagementPage }))
 )
+const StaffReviewPage = lazy(() =>
+  import("../features/convenience/desktop/pages/StaffReviewPage")
+)
 const TrustScoreConfigPage = lazy(() =>
   import("../features/trust-score/desktop/pages/TrustScoreConfigPage").then((m) => ({ default: m.TrustScoreConfigPage }))
 )
@@ -129,6 +132,10 @@ export function DesktopApp() {
           <Route
             path="review-management"
             element={<ProtectedRoute isAllowed={isSuperAdmin} element={<ReviewManagementPage />} />}
+          />
+          <Route
+            path="staff-review"
+            element={<ProtectedRoute isAllowed={isSuperAdmin} element={<StaffReviewPage />} />}
           />
 
           {/* ===== 诚信管理 ===== */}

@@ -268,6 +268,7 @@ export function ServiceProfile() {
           <Row icon={<Settings />} tint="#64748B" label="个人资料" onClick={() => {}} />
           <Row icon={<ShieldCheck />} tint="#0891B2" label="资质证件" extra="健康证已上传" onClick={() => {}} />
           <Row icon={<HelpCircle />} tint="#7A93AE" label="帮助中心" onClick={() => {}} />
+          <Row icon={<ShieldCheck />} tint="#F59E0B" label="入驻申请" extra="注册新账号" onClick={() => navigate("/b/service/register")} />
         </div>
       </div>
 
