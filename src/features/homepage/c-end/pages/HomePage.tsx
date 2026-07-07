@@ -12,7 +12,7 @@ import { useFlowWarningStore } from "@/features/flow-warning/store/flow-warning-
 import { LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import { CRMEB_C_URL } from "@/shared/constants"
-import { recommendRoutes } from "@/features/route/shared/routes-data"
+import { useContentGuideStore } from "@/features/content/store/guide-store"
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -52,6 +52,11 @@ export function HomePage() {
   )
 
   const areas = useFlowWarningStore((s) => s.areas)
+  const loadAreas = useFlowWarningStore((s) => s.loadAreas)
+  const allGuides = useContentGuideStore((s) => s.guides)
+  const featuredRoutes = useMemo(() => allGuides.filter((g: any) => g.isFeatured), [allGuides])
+
+  useEffect(() => { loadAreas() }, [loadAreas])
 
   const {
     visible: infoVisible,
@@ -301,23 +306,23 @@ export function HomePage() {
         <div className="bg-white rounded-2xl p-4 shadow-card">
           <SectionHeader icon={Sparkles} title="推荐攻略" action={{ label: "查看更多", to: "/c/routes" }} />
           <div className="mt-3 grid grid-cols-2 gap-3">
-            {recommendRoutes.map((r) => (
+            {featuredRoutes.map((r: any) => (
               <button
                 key={r.id}
-                onClick={() => navigate(`/c/routes/${r.routeId}`)}
+                onClick={() => navigate(`/c/routes/${r.id}`)}
                 className="text-left active:scale-[0.98] transition-transform"
               >
                 <div className="relative rounded-xl overflow-hidden aspect-[16/10] shadow-sm">
-                  <ImageWithFallback src={r.img} alt={r.name} className="w-full h-full object-cover" />
+                  <ImageWithFallback src={r.cover} alt={r.name} className="w-full h-full object-cover" />
                   <span
                     className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] text-white font-medium shadow"
-                    style={{ backgroundColor: r.tagColor }}
+                    style={{ backgroundColor: r.tagColor || "#3B82F6" }}
                   >
-                    {r.tag}
+                    {r.tags?.[0] || "推荐"}
                   </span>
                 </div>
                 <p className="mt-2 text-[14px] font-medium text-text-heading line-clamp-1">{r.name}</p>
-                <p className="text-[11px] text-text-caption mt-0.5 line-clamp-1">{r.subtitle}</p>
+                <p className="text-[11px] text-text-caption mt-0.5 line-clamp-1">{r.subtitle || r.spotNames?.join(" · ") || ""}</p>
               </button>
             ))}
           </div>

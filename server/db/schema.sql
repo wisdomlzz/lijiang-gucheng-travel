@@ -642,6 +642,18 @@ CREATE TABLE IF NOT EXISTS flow_warnings (
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS flow_areas (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  capacity INTEGER DEFAULT 1000,
+  current INTEGER DEFAULT 0,
+  level TEXT DEFAULT 'green',
+  lng REAL,
+  lat REAL,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
+);
 -- MVP: Order Operation Logs (审计)
 CREATE TABLE IF NOT EXISTS order_operation_logs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -680,3 +692,8 @@ CREATE TABLE IF NOT EXISTS system_configs (
   updatedBy TEXT,
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+-- ====== 迁移：新增字段 ======
+ALTER TABLE content_routes ADD COLUMN isFeatured INTEGER DEFAULT 0;
+ALTER TABLE content_routes ADD COLUMN subtitle TEXT DEFAULT '';
+ALTER TABLE content_routes ADD COLUMN tagColor TEXT DEFAULT '#3B82F6';

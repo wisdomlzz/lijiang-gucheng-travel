@@ -4,8 +4,8 @@ import { useState } from "react"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { EmptyState } from "@/shared/components/mobile/EmptyState"
 import { useContentMerchantStore } from "@/features/content/store/merchant-store"
+import { useContentGuideStore } from "@/features/content/store/guide-store"
 import { useAnnouncementStore } from "@/features/announcement/store/announcement-store"
-import { recommendRoutes } from "@/features/route/shared/routes-data"
 
 export function SearchResultsPage() {
   const [params] = useSearchParams()
@@ -15,6 +15,7 @@ export function SearchResultsPage() {
 
   const merchants = useContentMerchantStore((s) => s.merchants)
   const announcements = useAnnouncementStore((s) => s.announcements)
+  const guides = useContentGuideStore((s) => s.guides)
 
   const keyword = q.trim().toLowerCase()
   const matchedMerchants = keyword
@@ -28,7 +29,7 @@ export function SearchResultsPage() {
       )
     : []
   const matchedRoutes = keyword
-    ? recommendRoutes.filter((r) => r.name.toLowerCase().includes(keyword) || r.subtitle.toLowerCase().includes(keyword))
+    ? guides.filter((r: any) => r.name.toLowerCase().includes(keyword) || (r.subtitle || "").toLowerCase().includes(keyword))
     : []
 
   const total = matchedMerchants.length + matchedAnnouncements.length + matchedRoutes.length
@@ -81,14 +82,14 @@ export function SearchResultsPage() {
           <section className="mt-4">
             <h3 className="text-[13px] font-semibold text-text-body px-1 mb-2">路线（{matchedRoutes.length}）</h3>
             <div className="space-y-2">
-              {matchedRoutes.map((r) => (
+              {matchedRoutes.map((r: any) => (
                 <button
                   key={r.id}
-                  onClick={() => navigate(`/c/routes/${r.routeId}`)}
+                  onClick={() => navigate(`/c/routes/${r.id}`)}
                   className="w-full bg-white rounded-2xl p-3 shadow-card text-left active:scale-[0.99] transition-transform"
                 >
                   <p className="text-[14px] font-medium text-text-heading">{r.name}</p>
-                  <p className="text-[12px] text-text-tertiary mt-1">{r.subtitle}</p>
+                  <p className="text-[12px] text-text-tertiary mt-1">{r.subtitle || r.spotNames?.join(" · ") || ""}</p>
                 </button>
               ))}
             </div>

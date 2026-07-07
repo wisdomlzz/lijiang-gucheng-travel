@@ -157,8 +157,8 @@ export function seedIfNeeded() {
 
   // ====== Content: Routes (2 items — source only had minimal card list) ======
   insertMany("content_routes", [
-    { id: "r1", name: "古城漫步·非遗之旅", tags: ["深度游", "步行"], duration: "4小时", difficulty: "中等", stops: 6, distance: "3.5km", spotNames: ["大水车", "四方街", "木府", "万古楼"], description: "从大水车启程，穿过四方街，深入木府领略纳西文化，登上万古楼俯瞰古城全景。", cover: "https://images.unsplash.com/photo-1663609968423-657ff4f0dd5a?auto=format&fit=crop&w=600&q=70", spots: [], contentBlocks: [] },
-    { id: "r2", name: "寻味古城·美食地图", tags: ["吃货必选", "美食"], duration: "半天", difficulty: "简单", stops: 8, distance: "2.0km", spotNames: ["忠义市场", "五一街", "樱花美食广场"], description: "从忠义市场感受本地烟火气，一路寻味到樱花美食广场，尝遍腊排骨、鸡豆凉粉、丽江粑粑。", cover: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=70", spots: [], contentBlocks: [] },
+    { id: "r1", name: "古城漫步·非遗之旅", subtitle: "大水车 · 四方街 · 万古楼", tags: ["深度游", "步行"], duration: "4小时", difficulty: "中等", stops: 6, distance: "3.5km", spotNames: ["大水车", "四方街", "木府", "万古楼"], description: "从大水车启程，穿过四方街，深入木府领略纳西文化，登上万古楼俯瞰古城全景。", cover: "https://images.unsplash.com/photo-1663609968423-657ff4f0dd5a?auto=format&fit=crop&w=600&q=70", spots: [], contentBlocks: [], isFeatured: 1, tagColor: "#3B82F6" },
+    { id: "r2", name: "寻味古城·美食地图", subtitle: "忠义市场 · 五一街 · 樱花美食广场", tags: ["吃货必选", "美食"], duration: "半天", difficulty: "简单", stops: 8, distance: "2.0km", spotNames: ["忠义市场", "五一街", "樱花美食广场"], description: "从忠义市场感受本地烟火气，一路寻味到樱花美食广场，尝遍腊排骨、鸡豆凉粉、丽江粑粑。", cover: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=70", spots: [], contentBlocks: [], isFeatured: 1, tagColor: "#0EA5E9" },
   ])
 
   // ====== Content: Courtyards (4 items) ======
@@ -438,6 +438,16 @@ export function seedIfNeeded() {
     { id: "cfg_settlement_t", configKey: "settlementTDays", configValue: "7", description: "结算 T+N 天", updatedBy: "system" },
     { id: "cfg_min_withdraw", configKey: "minWithdrawalAmount", configValue: "100", description: "最低提现金额", updatedBy: "system" },
     { id: "cfg_daily_limit", configKey: "dailyOrderLimit", configValue: "20", description: "每日接单上限", updatedBy: "system" },
+  ])
+
+  // ====== Flow Areas (人流量区域数据) ======
+  insertMany("flow_areas", [
+    { id: "area_sq", name: "四方街", capacity: 3000, current: 1850, level: "yellow", lng: 100.2345, lat: 26.868 },
+    { id: "area_yh", name: "玉河广场", capacity: 2000, current: 1650, level: "orange", lng: 100.232, lat: 26.872 },
+    { id: "area_mf", name: "木府", capacity: 1500, current: 420, level: "green", lng: 100.228, lat: 26.867 },
+    { id: "area_nm", name: "古城南门", capacity: 2500, current: 2380, level: "red", lng: 100.237, lat: 26.865 },
+    { id: "area_bm", name: "古城北门", capacity: 2500, current: 1200, level: "yellow", lng: 100.2325, lat: 26.8735 },
+    { id: "area_sdj", name: "狮子山", capacity: 1000, current: 280, level: "green", lng: 100.229, lat: 26.87 },
   ])
 
   console.log("🌱 Seed 完成")

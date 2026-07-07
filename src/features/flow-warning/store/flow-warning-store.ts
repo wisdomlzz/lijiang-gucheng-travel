@@ -1,8 +1,8 @@
 import { create } from "zustand"
+import { api } from "@/api/client"
 
 // ============================================================
-// 人流量预警 —— 保留本地模拟数据(Demo 里人流由随机波动生成,非 CRUD 管理)
-// 实际生产:areas/rules 走 API,current/level 由后端实时监控推送
+// 人流量预警 —— 区域数据由后端 API 提供;模拟波动为 Demo 功能
 // ============================================================
 
 export type WarningLevel = "green" | "yellow" | "orange" | "red"
@@ -51,6 +51,7 @@ type FlowWarningState = {
   events: WarningEvent[]
 
   getAreaLevel: (areaId: string) => WarningLevel
+  loadAreas: () => Promise<void>
   // 模拟人流变化（Demo：刷新即随机波动）
   simulateFlow: () => void
   // 触发预警（超阈值自动生成事件）
@@ -128,9 +129,38 @@ const SEED_EVENTS: WarningEvent[] = [
 ]
 
 export const useFlowWarningStore = create<FlowWarningState>((set, get) => ({
-  areas: SEED_AREAS,
-  rules: SEED_RULES,
-  events: SEED_EVENTS,
+  areas: [],
+  rules: [],
+  events: [],
+
+  loadAreas: async () => {
+    try {
+      const data: any = await api.list("flow-areas", { pageSize: 50 })
+      if (data?.items) {
+        const areas = data.items.map((a: any) => ({
+          id: a.id,
+          name: a.name,
+          capacity: a.capacity,
+          current: a.current,
+          level: a.level as WarningLevel,
+          lng: a.lng,
+          lat: a.lat,
+        }))
+        const rules = areas.map((a: any) => ({
+          id: `rule_${a.id}`,
+          areaId: a.id,
+          areaName: a.name,
+          yellowThreshold: 60,
+          orangeThreshold: 80,
+          redThreshold: 95,
+          enabled: true,
+        }))
+        set({ areas, rules })
+      }
+    } catch {
+      // API 不可用时保持空数组
+    }
+  },
 
   getAreaLevel: (areaId) => {
     const area = get().areas.find((a) => a.id === areaId)
