@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react"
 import { useNavigate } from "react-router"
 import { Plus } from "lucide-react"
+import { toast } from "sonner"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useContentNewsStore } from "@/features/content/store/news-store"
@@ -105,7 +106,7 @@ export function InfoPage() {
 
       {/* FAB */}
       <button
-        onClick={() => navigate("/c/info/create")}
+        onClick={() => toast.info("发布功能即将上线")}
         className="fixed bottom-20 left-1/2 -translate-x-1/2 h-11 px-6 rounded-full bg-gradient-to-r from-primary to-primary text-white text-[14px] shadow-[0_6px_16px_rgba(60,120,200,0.3)] active:scale-95 transition-transform flex items-center gap-1.5 z-20"
       >
         <Plus size={16} />

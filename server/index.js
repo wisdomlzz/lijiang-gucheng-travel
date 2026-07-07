@@ -17,8 +17,6 @@ import reviewsRoutes from "./routes/reviews.js"
 import bookingsRoutes from "./routes/bookings.js"
 import contentRoutes from "./routes/content.js"
 import uploadsRoutes from "./routes/uploads.js"
-import announcementsRoutes from "./routes/announcements.js"
-import flowWarningsRoutes from "./routes/flow-warnings.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -63,8 +61,8 @@ app.use("/api/v1/bookings", bookingsRoutes)
 app.use("/api/v1/upload", uploadsRoutes)
 
 // ====== Announcements + Flow Warnings ======
-app.use("/api/v1/announcements", announcementsRoutes)
-app.use("/api/v1/flow-warnings", flowWarningsRoutes)
+app.use("/api/v1/announcements", crudRoutes("announcements"))
+app.use("/api/v1/flow-warnings", crudRoutes("flow_warnings"))
 
 // ====== 其他 CRUD 资源(直接用 crudRoutes)======
 app.use("/api/v1/staff", staffRoutes)
