@@ -4,6 +4,7 @@ import { ok, fail } from "../middleware/response.js"
 import { crudRoutes, deserializeRow, logOperation } from "./crud.js"
 import { transition, META_ACTIONS, APPROVE_CANCEL } from "../logic/transitions.js"
 import { pickStaff, lookupStaff } from "../logic/dispatch.js"
+import { calcCancelFee } from "../logic/pricing.js"
 
 const router = Router()
 
@@ -283,9 +284,11 @@ router.post("/:id/transition", (req, res) => {
 
     // ── approveCancel:清 cancelRequested + 状态转 S50 ──
     if (action === APPROVE_CANCEL) {
+      const { cancelFee: calculated } = calcCancelFee(order.status, order.priceQuote)
+      const cancelFee = extraFields.cancelFee ?? calculated
       db.prepare("UPDATE convenience_orders SET status=?, cancelRequested=0, cancelFee=?, updatedAt=? WHERE id=?")
-        .run("S50", extraFields.cancelFee ?? 0, now, order.id)
-      logOperation(order.id, "admin", req.body.adminId || null, "approveCancel", order.status, "S50", `批准取消,扣费 ¥${extraFields.cancelFee ?? 0}`)
+        .run("S50", cancelFee, now, order.id)
+      logOperation(order.id, "admin", req.body.adminId || null, "approveCancel", order.status, "S50", `批准取消,扣费 ¥${cancelFee}`)
       const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
       return res.json(ok(deserializeRow(updated)))
     }
@@ -327,6 +330,11 @@ router.post("/:id/transition", (req, res) => {
     // ── 副作用:reject → staff 计数维护 + dispatch_logs ──
     if (action === "reject" && next === "A10" && order.staffId) {
       db.prepare("UPDATE staff SET assignedOrders=MAX(0,assignedOrders-1), updatedAt=? WHERE id=?").run(now, order.staffId)
+    }
+    // ── 副作用:forceCancel → S50 → 自动计算扣费 ──
+    if (next === "S50" && action !== APPROVE_CANCEL) {
+      const { cancelFee: calculated } = calcCancelFee(order.status, order.priceQuote)
+      db.prepare("UPDATE convenience_orders SET cancelFee=? WHERE id=?").run(calculated, order.id)
     }
 
     logOperation(order.id, req.body.operatorType || "user", req.body.operatorId || null, action, order.status, next, req.body.remark || null)
