@@ -131,6 +131,20 @@ export type ConvenienceOrder = {
   lat?: number
   lng?: number
   arbitrationRemark?: string
+  // MVP 新增字段
+  orderNo?: string
+  paymentMethod?: "online" | "cash"
+  paymentMethodLocked?: boolean | number
+  quoteAmount?: number
+  paidAmount?: number
+  arrivedAt?: string
+  quotedAt?: string
+  dispatchAttempts?: number
+  reviewStatus?: "pending" | "done"
+  beforeManualStatus?: string
+  manualReason?: string
+  cancelFee?: number
+  rejectQuoteReason?: string
 }
 
 // ====== 投诉 ======

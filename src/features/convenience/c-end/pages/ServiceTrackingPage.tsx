@@ -5,6 +5,7 @@ import { StatusProgress } from "../components/StatusProgress"
 import { toast } from "sonner"
 import { Phone, Clock, AlertCircle, User, Star } from "lucide-react"
 import { useConvenienceStore } from "../../store"
+import { uploadFile } from "@/api/client"
 import type { ConvenienceStatus } from "../../../../shared/types"
 
 const STATUS_STEPS: ConvenienceStatus[] = ["S10", "A30", "A35", "A40", "S48", "S55", "S40"]
@@ -14,16 +15,15 @@ export function ServiceTrackingPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const order = useConvenienceStore((s) => s.orders.find((o) => o.id === id))
-  const markPaid = useConvenienceStore((s) => s.markPaid)
   const completeService = useConvenienceStore((s) => s.completeService)
   const requestCancel = useConvenienceStore((s) => s.requestCancel)
   const [countdown, setCountdown] = useState(15 * 60)
-  const [showPaymentMethod, setShowPaymentMethod] = useState(false)
-  const [showCashConfirm, setShowCashConfirm] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const [waitTime, setWaitTime] = useState(0)
   const [showRating, setShowRating] = useState(false)
   const [rating, setRating] = useState(0)
+  const [reviewContent, setReviewContent] = useState("")
+  const [reviewImages, setReviewImages] = useState<File[]>([])
 
   const statusSteps = useMemo(() => {
     const stateIdx = STATUS_STEPS.indexOf(order?.status ?? "S10")
@@ -97,25 +97,28 @@ export function ServiceTrackingPage() {
     toast.info(`正在拨号 ${order?.staffPhone || "139****6666"}...`)
   }
 
-  const handleConfirmPayment = () => {
-    setShowPaymentMethod(true)
+  const handleLockAndPayOnline = () => {
+    if (!order) return
+    useConvenienceStore.getState().lockPayment(order.id, "online")
+    toast.success("已确认报价，选择线上支付")
+  }
+
+  const handleLockAndPayCash = () => {
+    if (!order) return
+    useConvenienceStore.getState().lockPayment(order.id, "cash")
+    toast.success("已确认报价，请向服务人员支付现金")
   }
 
   const handlePayOnline = () => {
-    markPaid(order!.id, "online")
+    if (!order) return
+    useConvenienceStore.getState().payOnline(order.id)
     toast.success("支付成功")
-    setShowPaymentMethod(false)
   }
 
-  const handlePayCash = () => {
-    setShowPaymentMethod(false)
-    setShowCashConfirm(true)
-  }
-
-  const handleConfirmCashPay = () => {
-    markPaid(order!.id, "cash")
-    toast.success("已确认现金支付")
-    setShowCashConfirm(false)
+  const handleRejectQuote = () => {
+    if (!order) return
+    const reason = prompt("请输入拒绝原因") || "用户拒绝报价"
+    useConvenienceStore.getState().rejectQuote(order.id, reason)
   }
 
   const handleCancelOrder = () => {
@@ -140,10 +143,22 @@ export function ServiceTrackingPage() {
     if (order) setShowRating(true)
   }
 
-  const handleSubmitRating = (stars: number) => {
+  const handleSubmitRating = async (stars: number) => {
     if (!order) return
-    useConvenienceStore.getState().rateOrder(order.id, stars)
+    // 上传图片
+    const imageUrls: string[] = []
+    for (const file of reviewImages) {
+      try {
+        const url = await uploadFile(file)
+        imageUrls.push(url)
+      } catch {
+        // 上传失败继续
+      }
+    }
+    await useConvenienceStore.getState().rateOrder(order.id, stars, reviewContent, imageUrls)
     setShowRating(false)
+    setReviewContent("")
+    setReviewImages([])
     toast.success("评价成功")
   }
 
@@ -178,27 +193,47 @@ export function ServiceTrackingPage() {
       )
     }
     if (status === "A35") {
-      return (
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-3">
-            <button
-              onClick={handleApplyCancel}
-              className="flex-1 h-11 rounded-full border border-border-light text-text-body text-[14px] bg-white"
-            >
-              申请取消
-            </button>
-            <button
-              onClick={handleCallStaff}
-              className="flex-1 h-11 rounded-full border border-border-light text-text-body text-[14px] bg-white"
-            >
-              联系服务人员
+      // 未锁定支付方式:显示选择线上/现金 + 拒绝报价
+      if (!order?.paymentMethodLocked) {
+        return (
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-3">
+              <button
+                onClick={handleLockAndPayOnline}
+                className="flex-1 h-11 rounded-full bg-primary text-white text-[14px]"
+              >
+                线上支付 ¥{order?.priceQuote ?? 0}
+              </button>
+              <button
+                onClick={handleLockAndPayCash}
+                className="flex-1 h-11 rounded-full bg-amber-100 text-amber-700 text-[14px]"
+              >
+                现金支付 ¥{order?.priceQuote ?? 0}
+              </button>
+            </div>
+            <button onClick={handleRejectQuote} className="w-full text-[13px] text-rose-600 py-1">
+              拒绝报价(转人工处理)
             </button>
           </div>
-          <button onClick={handleConfirmPayment} className="w-full h-11 rounded-full bg-primary text-white text-[14px]">
-            完成支付（{formatCountdown(countdown)}）
+        )
+      }
+      // 锁定为 online:显示"立即支付"
+      if (order?.paymentMethodLocked && order?.paymentMethod === "online") {
+        return (
+          <button onClick={handlePayOnline} className="w-full h-11 rounded-full bg-primary text-white text-[14px]">
+            立即支付 ¥{order?.priceQuote ?? 0}（{formatCountdown(countdown)}）
           </button>
-        </div>
-      )
+        )
+      }
+      // 锁定为 cash:显示提示
+      if (order?.paymentMethodLocked && order?.paymentMethod === "cash") {
+        return (
+          <div className="text-center text-[14px] text-text-secondary py-2">
+            请向服务人员支付现金 ¥{order?.priceQuote ?? 0}
+          </div>
+        )
+      }
+      return null
     }
     if (["A40", "S48", "S55"].includes(status)) {
       return (
@@ -377,18 +412,41 @@ export function ServiceTrackingPage() {
 
             {/* Action buttons */}
             <div className="mt-4 space-y-3">
-              <button
-                onClick={handleConfirmPayment}
-                className="w-full h-11 rounded-full bg-primary text-white text-[14px] active:opacity-90 transition-opacity"
-              >
-                确认支付
-              </button>
-              <button
-                onClick={handleApplyCancel}
-                className="w-full h-11 rounded-full border border-border-light text-text-body text-[14px] bg-white active:bg-surface-page transition-colors"
-              >
-                申请取消
-              </button>
+              {!order?.paymentMethodLocked ? (
+                <>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleLockAndPayOnline}
+                      className="flex-1 h-11 rounded-full bg-primary text-white text-[14px] active:opacity-90 transition-opacity"
+                    >
+                      线上支付
+                    </button>
+                    <button
+                      onClick={handleLockAndPayCash}
+                      className="flex-1 h-11 rounded-full bg-amber-100 text-amber-700 text-[14px]"
+                    >
+                      现金支付
+                    </button>
+                  </div>
+                  <button
+                    onClick={handleRejectQuote}
+                    className="w-full text-[13px] text-rose-600 py-1"
+                  >
+                    拒绝报价(转人工处理)
+                  </button>
+                </>
+              ) : order?.paymentMethod === "online" ? (
+                <button
+                  onClick={handlePayOnline}
+                  className="w-full h-11 rounded-full bg-primary text-white text-[14px]"
+                >
+                  立即支付 ¥{order?.priceQuote ?? 0}
+                </button>
+              ) : (
+                <div className="text-center text-[14px] text-text-secondary py-2">
+                  请向服务人员支付现金 ¥{order?.priceQuote ?? 0}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -454,11 +512,26 @@ export function ServiceTrackingPage() {
                     </button>
                   ))}
                 </div>
+                <textarea
+                  value={reviewContent}
+                  onChange={(e) => setReviewContent(e.target.value)}
+                  placeholder="说说您的服务体验..."
+                  className="w-full h-24 rounded-xl border border-border-light p-3 text-[14px] resize-none mb-3"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => setReviewImages(Array.from(e.target.files || []))}
+                  className="w-full text-[13px] mb-4"
+                />
                 <div className="flex gap-3">
                   <button
                     onClick={() => {
                       setShowRating(false)
                       setRating(0)
+                      setReviewContent("")
+                      setReviewImages([])
                     }}
                     className="flex-1 h-11 rounded-full border border-border-light text-text-body text-[14px]"
                   >
@@ -477,62 +550,6 @@ export function ServiceTrackingPage() {
           </div>
         )}
 
-        {/* Payment method selection */}
-        {showPaymentMethod && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
-            <div className="bg-white rounded-t-2xl w-full overflow-hidden">
-              <div className="p-4 text-center border-b border-border-light">
-                <p className="text-[15px] text-text-body font-medium">选择支付方式</p>
-              </div>
-              <div className="p-4 space-y-3">
-                <button
-                  onClick={handlePayOnline}
-                  className="w-full h-12 rounded-xl bg-primary text-white text-[14px] flex items-center justify-center gap-2"
-                >
-                  <span className="text-lg">💳</span> 微信支付
-                </button>
-                <button
-                  onClick={handlePayCash}
-                  className="w-full h-12 rounded-xl bg-[#10B981] text-white text-[14px] flex items-center justify-center gap-2"
-                >
-                  <span className="text-lg">💵</span> 现金支付
-                </button>
-              </div>
-              <button
-                onClick={() => setShowPaymentMethod(false)}
-                className="w-full h-12 text-[14px] text-text-secondary border-t border-border-light"
-              >
-                取消
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Cash payment confirmation */}
-        {showCashConfirm && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden">
-              <div className="p-6 text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#D1FAE5] flex items-center justify-center">
-                  <span className="text-2xl">💵</span>
-                </div>
-                <h3 className="text-[17px] text-text-body font-medium mb-2">确认现金支付？</h3>
-                <p className="text-[14px] text-text-secondary">您将使用现金支付给服务人员，请确认收到服务后再支付</p>
-              </div>
-              <div className="flex border-t border-border-light">
-                <button
-                  onClick={() => setShowCashConfirm(false)}
-                  className="flex-1 h-12 text-[15px] text-text-secondary border-r border-border-light"
-                >
-                  再考虑
-                </button>
-                <button onClick={handleConfirmCashPay} className="flex-1 h-12 text-[15px] text-[#10B981] font-medium">
-                  确认现金支付
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Fixed bottom action bar */}
