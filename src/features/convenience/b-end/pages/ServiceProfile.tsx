@@ -16,17 +16,22 @@ import {
 } from "lucide-react"
 import { useAuthStore } from "@/platform/auth"
 import { useConvenienceStore } from "../../store"
+import { useSettlementStore } from "../../store/settlement-store"
 import { useTrustScoreStore } from "../../../trust-score/store"
 import { ConfirmModal } from "../components/Sheet"
+import { toast } from "sonner"
 
 export function ServiceProfile() {
   const [logoutConfirm, setLogoutConfirm] = useState(false)
+  const [withdrawOpen, setWithdrawOpen] = useState(false)
+  const [withdrawAmount, setWithdrawAmount] = useState("")
   const navigate = useNavigate()
   const currentUser = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
   const staffId = currentUser?.staffId ?? ""
   const storeTrustScore = useTrustScoreStore((s) => s.getScore(staffId))
   const convOrders = useConvenienceStore((s) => s.orders)
+  const staffBalance = 0 // MVP 简化:需要 API 获取 staff.balance,这里用 0 占位
 
   // Compute dynamic statistics from store
   const stats = useMemo(() => {
@@ -179,6 +184,64 @@ export function ServiceProfile() {
         <Stat tint="#FFD24A" label="平均评分" value={stats.avgRating} star />
         <Stat tint="#10B981" label="完单率" value={stats.completionRate} />
       </div>
+
+      {/* 提现卡片 */}
+      <div className="mx-4 mt-3 bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(60,120,200,0.08)]">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-[11px] text-text-caption">可提现余额</div>
+            <div className="text-[24px] font-bold text-emerald-600 mt-1">¥{staffBalance.toFixed(2)}</div>
+          </div>
+          <button
+            onClick={() => setWithdrawOpen(true)}
+            className="h-10 px-5 rounded-xl bg-primary text-white text-[13px] font-medium"
+          >
+            申请提现
+          </button>
+        </div>
+      </div>
+
+      {/* 提现弹窗 */}
+      {withdrawOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden p-6">
+            <h3 className="text-[17px] text-text-body font-medium mb-4">申请提现</h3>
+            <input
+              type="number"
+              value={withdrawAmount}
+              onChange={(e) => setWithdrawAmount(e.target.value)}
+              placeholder="输入提现金额"
+              className="w-full h-12 rounded-xl border border-border-light px-4 text-[16px]"
+            />
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => { setWithdrawOpen(false); setWithdrawAmount("") }}
+                className="flex-1 h-11 rounded-xl border border-border-light text-text-body text-[14px]"
+              >
+                取消
+              </button>
+              <button
+                onClick={async () => {
+                  const amt = Number(withdrawAmount)
+                  if (amt <= 0) { toast.error("请输入有效金额"); return }
+                  const { requestWithdrawal } = useSettlementStore.getState()
+                  const result = await requestWithdrawal(staffId, currentUser?.name || "", amt)
+                  if (result.ok) {
+                    toast.success(result.msg)
+                    setWithdrawOpen(false)
+                    setWithdrawAmount("")
+                  } else {
+                    toast.error(result.msg)
+                  }
+                }}
+                className="flex-1 h-11 rounded-xl bg-primary text-white text-[14px]"
+              >
+                确认提现
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="px-4 mt-3">
         <div className="bg-white rounded-2xl shadow-[0_4px_16px_rgba(60,120,200,0.08)] overflow-hidden">

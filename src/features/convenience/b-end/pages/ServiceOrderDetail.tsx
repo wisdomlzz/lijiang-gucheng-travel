@@ -121,7 +121,10 @@ export function ServiceOrderDetail({
         return (
           <div className="flex gap-2">
             <button
-              onClick={onClose}
+              onClick={() => {
+                useConvenienceStore.getState().rejectOrder(order.id, "")
+                onClose()
+              }}
               className="flex-1 h-11 rounded-2xl bg-white border border-slate-200 text-text-secondary text-[14px]"
             >
               暂不接单
@@ -138,19 +141,53 @@ export function ServiceOrderDetail({
 
       case "accepted":
         return (
-          <button
-            onClick={() => setFlow("quote")}
-            className="w-full h-11 rounded-2xl text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(245,158,11,0.32)]"
-            style={{ background: "#F59E0B" }}
-          >
-            录入金额 / 报价
-          </button>
+          <div className="flex flex-col gap-2">
+            {!liveOrder?.arrivedAt ? (
+              <button
+                onClick={() => {
+                  useConvenienceStore.getState().arriveCheckin(order.id)
+                  showToast("已到场打卡")
+                }}
+                className="w-full h-11 rounded-2xl text-white text-[14px] font-medium"
+                style={{ background: "#059669", boxShadow: "0 4px 12px rgba(5,150,105,0.32)" }}
+              >
+                <span className="inline-flex items-center gap-1.5">📍 到场打卡</span>
+              </button>
+            ) : (
+              <div className="text-[12px] text-emerald-600 text-center py-1">
+                已到场打卡 {new Date(liveOrder.arrivedAt).toLocaleString()}
+              </div>
+            )}
+            <button
+              onClick={() => setFlow("quote")}
+              className="w-full h-11 rounded-2xl text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(245,158,11,0.32)] disabled:opacity-40"
+              style={{ background: liveOrder?.arrivedAt ? "#F59E0B" : "#9CA3AF" }}
+              disabled={!liveOrder?.arrivedAt}
+            >
+              {liveOrder?.arrivedAt ? "录入金额 / 报价" : "请先到场打卡"}
+            </button>
+          </div>
         )
 
       case "quoted":
+        // 现金支付:显示确认收款按钮;线上支付:等待
+        if (liveOrder?.paymentMethod === "cash" || order.pay === "cash") {
+          return (
+            <button
+              onClick={() => {
+                useConvenienceStore.getState().confirmCash(order.id)
+                showToast("已确认现金收款")
+              }}
+              className="w-full h-11 rounded-2xl text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(16,185,129,0.32)]"
+              style={{ background: "#10B981" }}
+            >
+              <span className="inline-flex items-center gap-1.5">💵 确认现金已收 ¥{order.amount?.replace("¥", "") || liveOrder?.priceQuote || ""}</span>
+            </button>
+          )
+        }
         return (
           <div className="w-full h-11 rounded-2xl bg-gray-100 text-text-tertiary text-[14px] flex items-center justify-center">
-            等待用户支付
+            等待用户线上支付
           </div>
         )
 
