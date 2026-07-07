@@ -4,7 +4,7 @@ import { useState } from "react"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { EmptyState } from "@/shared/components/mobile/EmptyState"
 import { useContentMerchantStore } from "@/features/content/store/merchant-store"
-import { useAnnouncementStore } from "@/features/announcement/store"
+import { useAnnouncementStore } from "@/features/announcement/store/announcement-store"
 import { recommendRoutes } from "@/features/route/shared/routes-data"
 
 export function SearchResultsPage() {

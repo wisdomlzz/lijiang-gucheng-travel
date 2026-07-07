@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Switch } from "../../../shared/components/ui/switch"
 import { Plus, Settings2, TrendingUp, TrendingDown, Pencil, Trash2 } from "lucide-react"
 import { toast } from "sonner"
-import { usePointsStore, type PointRule } from "../../../features/points/store"
+import { usePointsStore, type PointRule } from "../../../features/points/store/points-store"
 
 export function PointRulesPage() {
   const rules = usePointsStore((s) => s.rules)

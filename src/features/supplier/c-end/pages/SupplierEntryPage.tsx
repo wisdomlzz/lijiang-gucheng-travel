@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
-import { useSupplierStore } from "../../../../features/supplier/store"
+import { useSupplierStore } from "../../../../features/supplier/store/supplier-store"
 import { Building2, User, Phone, MapPin, FileText, AlignLeft, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
 

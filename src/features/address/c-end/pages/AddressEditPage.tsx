@@ -2,8 +2,8 @@ import { useEffect, useState, type InputHTMLAttributes } from "react"
 import { useNavigate, useParams } from "react-router"
 import { toast } from "sonner"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
-import { useAddressStore } from "@/features/address/store"
-import type { Address } from "@/features/address/store"
+import { useAddressStore } from "@/features/address/store/address-store"
+import type { Address } from "@/shared/types"
 import { useAuthStore } from "@/platform/auth"
 
 const DEFAULT_REGION = {

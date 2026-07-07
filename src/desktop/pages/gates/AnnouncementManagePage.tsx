@@ -10,7 +10,7 @@ import { ConfirmDialog } from "../../components/common/ConfirmDialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Plus, Trash2, Upload, X, Search } from "lucide-react"
 import { toast } from "sonner"
-import { useAnnouncementStore, type Announcement } from "../../../features/announcement/store"
+import { useAnnouncementStore, type Announcement } from "../../../features/announcement/store/announcement-store"
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"]

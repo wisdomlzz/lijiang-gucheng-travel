@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { api } from "@/api/client"
 import { syncAction } from "@/api/sync"
-import { usePointsStore } from "../../points/store"
+import { usePointsStore } from "../../points/store/points-store"
 
 // ============================================================
 // 纳西人打卡 —— "今天我想做纳西人"活动

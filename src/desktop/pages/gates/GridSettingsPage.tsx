@@ -1,6 +1,6 @@
 import { useState, useRef } from "react"
 import { ChevronUp, ChevronDown, EyeOff, Pencil, Upload, X } from "lucide-react"
-import { useHomepageConfigStore } from "../../../features/homepage/store"
+import { useHomepageConfigStore } from "../../../features/homepage/store/homepage-store"
 import type { GridItemConfig } from "../../../shared/types"
 import { PageLayout } from "../../components/common/PageLayout"
 import { Button } from "../../../shared/components/ui/button"

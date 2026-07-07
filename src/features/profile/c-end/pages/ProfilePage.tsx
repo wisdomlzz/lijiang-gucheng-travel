@@ -17,7 +17,7 @@ import { useMemo } from "react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import userAvatar from "@/c-end/assets/ad6ed0a0-af1e-4e61-a615-ab7234c09411.png"
 import { useConvenienceStore } from "@/features/convenience/store"
-import { usePointsStore } from "@/features/points/store"
+import { usePointsStore } from "@/features/points/store/points-store"
 import { useAuthStore } from "@/platform/auth"
 import { useVolunteerStore } from "@/features/volunteer/store"
 

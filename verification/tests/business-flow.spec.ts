@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { useConvenienceStore } from "@/features/convenience/store"
 import { useMerchantRegistrationStore } from "@/features/merchant-review/store"
-import { usePointsStore } from "@/features/points/store"
+import { usePointsStore } from "@/features/points/store/points-store"
 
 describe("便民服务 store 冒烟测试", () => {
   it("store 初始化后有种子订单", () => {

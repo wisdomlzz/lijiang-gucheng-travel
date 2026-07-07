@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { EmptyState } from "@/shared/components/mobile/EmptyState"
-import { useBookingStore } from "@/features/booking/store"
+import { useBookingStore } from "@/features/booking/store/booking-store"
 import { useAuthStore } from "@/platform/auth"
 import { Calendar, Clock, Users, QrCode, CheckCircle2, XCircle } from "lucide-react"
 

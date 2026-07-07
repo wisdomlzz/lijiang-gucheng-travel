@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { api, volunteerApi } from "@/api/client"
 import { syncAction } from "@/api/sync"
-import { usePointsStore } from "@/features/points/store"
+import { usePointsStore } from "@/features/points/store/points-store"
 import { useNotificationStore } from "@/platform/notification"
 import type {
   Volunteer,

@@ -5,7 +5,7 @@ import type { ConvenienceOrder, ConvenienceStatus, DispatchLogEntry } from "../.
 import { transition } from "./transitions"
 import { setTimer, clearTimer } from "./timers"
 import { notifyConvenience } from "./notification"
-import { usePointsStore } from "@/features/points/store"
+import { usePointsStore } from "@/features/points/store/points-store"
 
 // ---- Store types ----
 type ConvenienceState = {

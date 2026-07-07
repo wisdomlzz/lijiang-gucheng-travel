@@ -2,7 +2,7 @@ import { create } from "zustand"
 import { api } from "@/api/client"
 import { syncAction } from "@/api/sync"
 import type { Checkin } from "../../../shared/types"
-import { usePointsStore } from "../../points/store"
+import { usePointsStore } from "../../points/store/points-store"
 
 type CheckinState = {
   checkins: Checkin[]

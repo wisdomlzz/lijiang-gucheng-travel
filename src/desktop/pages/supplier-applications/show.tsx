@@ -2,7 +2,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router"
 import { useState } from "react"
 import { PageLayout } from "../../components/common/PageLayout"
 import { Button } from "../../../shared/components/ui/button"
-import { useSupplierStore } from "../../../features/supplier/store"
+import { useSupplierStore } from "../../../features/supplier/store/supplier-store"
 import type { SupplierApplication } from "../../../shared/types"
 import { StatusBadge } from "@/shared/components/ui/status-badge"
 import {

@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from "react"
 import { useNavigate } from "react-router"
 import { ChevronLeft, Search } from "lucide-react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
-import { useAnnouncementStore } from "@/features/announcement/store"
+import { useAnnouncementStore } from "@/features/announcement/store/announcement-store"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import { Input } from "@/shared/components/ui/input"
 
