@@ -64,7 +64,6 @@ app.use("/api/v1/upload", uploadsRoutes)
 app.use("/api/v1/announcements", crudRoutes("announcements"))
 app.use("/api/v1/flow-warnings", crudRoutes("flow_warnings"))
 app.use("/api/v1/flow-areas", crudRoutes("flow_areas"))
-app.use("/api/v1/flow-events", crudRoutes("flow_events"))
 
 // ====== 其他 CRUD 资源(直接用 crudRoutes)======
 app.use("/api/v1/staff", staffRoutes)
