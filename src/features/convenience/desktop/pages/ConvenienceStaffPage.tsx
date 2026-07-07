@@ -5,11 +5,33 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "../../../../shared/components/ui/badge"
 import { Button } from "../../../../shared/components/ui/button"
 import { Input } from "../../../../shared/components/ui/input"
+import { Label } from "../../../../shared/components/ui/label"
+import { Checkbox } from "../../../../shared/components/ui/checkbox"
+import { Switch } from "../../../../shared/components/ui/switch"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "../../../../shared/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../../../../shared/components/ui/alert-dialog"
 import { PageLayout } from "../../../../desktop/components/common/PageLayout"
-import { useStaffStore } from "../../store"
+import { useStaffStore, useZoneStore } from "../../store"
+import type { StaffItem } from "../../store/staff-store"
+import type { ConvenienceServiceType } from "../../../../shared/types"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
-import { Users, Search, Wifi, Coffee, Clock, PowerOff, Dot } from "lucide-react"
+import { Users, Search, Wifi, Coffee, Clock, PowerOff, Dot, Plus, Pencil, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
 const STATUS_MAP: Record<string, { label: string; className: string; dotColor: string }> = {
@@ -19,17 +41,61 @@ const STATUS_MAP: Record<string, { label: string; className: string; dotColor: s
   offline: { label: "离线", className: "bg-slate-100 text-slate-700", dotColor: "text-slate-400" },
 }
 
+const SERVICE_TYPE_OPTIONS: ConvenienceServiceType[] = [
+  "送货服务",
+  "行李搬运",
+  "生活垃圾清运",
+  "建筑垃圾清运",
+  "送水服务",
+  "布草配送",
+]
+
+const STATUS_OPTIONS: StaffItem["status"][] = ["online", "busy", "rest", "offline"]
+
+const DEFAULT_SUPPLIER_ID = "sup_001"
+
+type StaffFormState = {
+  name: string
+  phone: string
+  supplierId: string
+  status: StaffItem["status"]
+  serviceTypes: ConvenienceServiceType[]
+  zoneIds: string[]
+  enabled: boolean
+  joinedAt: string
+}
+
+const emptyForm = (): StaffFormState => ({
+  name: "",
+  phone: "",
+  supplierId: DEFAULT_SUPPLIER_ID,
+  status: "offline",
+  serviceTypes: [],
+  zoneIds: [],
+  enabled: true,
+  joinedAt: new Date().toISOString().slice(0, 10),
+})
+
 export default function ConvenienceStaffPage() {
   const staff = useStaffStore((s) => s.staff)
-  const { toggleEnabled } = useStaffStore.getState()
+  const zones = useZoneStore((s) => s.zones)
+  const { toggleEnabled, addStaff, updateStaff, removeStaff } = useStaffStore.getState()
   const [activeTab, setActiveTab] = useState("list")
   const [filter, setFilter] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [statusTypeFilter, setStatusTypeFilter] = useState<string>("all")
 
+  // Dialog / CRUD state
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogMode, setDialogMode] = useState<"add" | "edit">("add")
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [form, setForm] = useState<StaffFormState>(emptyForm())
+  const [submitting, setSubmitting] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<StaffItem | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
   const convenienceStaff = useMemo(() => staff.filter((s) => s.serviceTypes && s.serviceTypes.length > 0), [staff])
 
-  // 人员列表数据
   const filteredList = useMemo(() => {
     let list = filter === "all" ? convenienceStaff : convenienceStaff.filter((s) => s.status === filter)
     if (searchQuery.trim()) {
@@ -53,7 +119,6 @@ export default function ConvenienceStaffPage() {
     }
   }, [convenienceStaff])
 
-  // 在线状态视图数据
   const statusViewStaff = useMemo(() => {
     let list = [...convenienceStaff].sort((a, b) => {
       const order = { online: 0, busy: 1, rest: 2, offline: 3 }
@@ -64,6 +129,111 @@ export default function ConvenienceStaffPage() {
     }
     return list
   }, [convenienceStaff, statusTypeFilter])
+
+  // Unique supplier IDs seen in staff, so the dropdown reflects real data.
+  const supplierOptions = useMemo(() => {
+    const set = new Set<string>()
+    set.add(DEFAULT_SUPPLIER_ID)
+    staff.forEach((s) => s.supplierId && set.add(s.supplierId))
+    return Array.from(set)
+  }, [staff])
+
+  const openAddDialog = () => {
+    setDialogMode("add")
+    setEditingId(null)
+    setForm(emptyForm())
+    setDialogOpen(true)
+  }
+
+  const openEditDialog = (s: StaffItem) => {
+    setDialogMode("edit")
+    setEditingId(s.id)
+    setForm({
+      name: s.name,
+      phone: s.phone,
+      supplierId: s.supplierId || DEFAULT_SUPPLIER_ID,
+      status: s.status,
+      serviceTypes: (s.serviceTypes ?? []) as ConvenienceServiceType[],
+      zoneIds: s.zoneIds ?? [],
+      enabled: s.enabled,
+      joinedAt: s.joinedAt || new Date().toISOString().slice(0, 10),
+    })
+    setDialogOpen(true)
+  }
+
+  const toggleFormServiceType = (type: ConvenienceServiceType) => {
+    setForm((f) => ({
+      ...f,
+      serviceTypes: f.serviceTypes.includes(type)
+        ? f.serviceTypes.filter((t) => t !== type)
+        : [...f.serviceTypes, type],
+    }))
+  }
+
+  const toggleFormZone = (zoneId: string) => {
+    setForm((f) => ({
+      ...f,
+      zoneIds: f.zoneIds.includes(zoneId) ? f.zoneIds.filter((z) => z !== zoneId) : [...f.zoneIds, zoneId],
+    }))
+  }
+
+  const handleSubmit = async () => {
+    if (!form.name.trim()) {
+      toast.error("请填写姓名")
+      return
+    }
+    if (!form.phone.trim()) {
+      toast.error("请填写手机号")
+      return
+    }
+    setSubmitting(true)
+    try {
+      if (dialogMode === "add") {
+        await addStaff({
+          supplierId: form.supplierId,
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          status: form.status,
+          serviceTypes: form.serviceTypes,
+          zoneIds: form.zoneIds,
+          enabled: form.enabled,
+          joinedAt: form.joinedAt,
+        })
+        toast.success(`已新增服务人员 ${form.name}`)
+      } else if (editingId) {
+        await updateStaff(editingId, {
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          supplierId: form.supplierId,
+          status: form.status,
+          serviceTypes: form.serviceTypes,
+          zoneIds: form.zoneIds,
+          enabled: form.enabled,
+          joinedAt: form.joinedAt,
+        })
+        toast.success(`已更新 ${form.name}`)
+      }
+      setDialogOpen(false)
+    } catch (err) {
+      toast.error(`保存失败：${(err as Error).message ?? "未知错误"}`)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    try {
+      await removeStaff(deleteTarget.id)
+      toast.success(`已删除 ${deleteTarget.name}`)
+      setDeleteTarget(null)
+    } catch (err) {
+      toast.error(`删除失败：${(err as Error).message ?? "未知错误"}`)
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   return (
     <PageLayout title="人员管理" description="便民服务人员管理与在线状态监控">
@@ -120,7 +290,7 @@ export default function ConvenienceStaffPage() {
             </Card>
           </div>
 
-          {/* 筛选栏 */}
+          {/* 筛选栏 + 新增按钮 */}
           <Card className="p-4">
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <div className="relative w-64">
@@ -143,6 +313,12 @@ export default function ConvenienceStaffPage() {
                   {f === "all" ? "全部" : (STATUS_MAP[f]?.label ?? f)}
                 </button>
               ))}
+              <div className="ml-auto">
+                <Button size="sm" onClick={openAddDialog} className="gap-1">
+                  <Plus className="size-4" />
+                  新增服务人员
+                </Button>
+              </div>
             </div>
 
             <Table>
@@ -156,6 +332,7 @@ export default function ConvenienceStaffPage() {
                   <TableHead>任务数</TableHead>
                   <TableHead>资质证件</TableHead>
                   <TableHead>启用</TableHead>
+                  <TableHead className="text-right">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -201,12 +378,34 @@ export default function ConvenienceStaffPage() {
                           {s.enabled ? "启用" : "禁用"}
                         </Button>
                       </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-2"
+                            onClick={() => openEditDialog(s)}
+                          >
+                            <Pencil className="size-4" />
+                            <span className="ml-1">编辑</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => setDeleteTarget(s)}
+                          >
+                            <Trash2 className="size-4" />
+                            <span className="ml-1">删除</span>
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   )
                 })}
                 {filteredList.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
                       {searchQuery.trim() ? "无匹配的服务人员" : "暂无数据"}
                     </TableCell>
                   </TableRow>
@@ -339,6 +538,165 @@ export default function ConvenienceStaffPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* ===== 新增/编辑 Dialog ===== */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[560px] max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{dialogMode === "add" ? "新增服务人员" : "编辑服务人员"}</DialogTitle>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label htmlFor="staff-name">
+                  姓名 <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="staff-name"
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder="请输入姓名"
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label htmlFor="staff-phone">
+                  手机号 <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="staff-phone"
+                  value={form.phone}
+                  onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                  placeholder="139-****-6666"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label htmlFor="staff-supplier">供应商</Label>
+                <select
+                  id="staff-supplier"
+                  value={form.supplierId}
+                  onChange={(e) => setForm((f) => ({ ...f, supplierId: e.target.value }))}
+                  className="h-9 rounded-md border border-input bg-input-background px-3 text-sm"
+                >
+                  {supplierOptions.map((sid) => (
+                    <option key={sid} value={sid}>
+                      {sid}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid gap-1.5">
+                <Label htmlFor="staff-status">状态</Label>
+                <select
+                  id="staff-status"
+                  value={form.status}
+                  onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as StaffItem["status"] }))}
+                  className="h-9 rounded-md border border-input bg-input-background px-3 text-sm"
+                >
+                  {STATUS_OPTIONS.map((st) => (
+                    <option key={st} value={st}>
+                      {STATUS_MAP[st]?.label ?? st}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid gap-1.5">
+              <Label>服务类型</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {SERVICE_TYPE_OPTIONS.map((t) => (
+                  <label key={t} className="flex items-center gap-2 text-sm cursor-pointer">
+                    <Checkbox
+                      checked={form.serviceTypes.includes(t)}
+                      onCheckedChange={() => toggleFormServiceType(t)}
+                    />
+                    <span>{t}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-1.5">
+              <Label>片区</Label>
+              {zones.length === 0 ? (
+                <div className="text-xs text-muted-foreground">暂无可分配的片区</div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  {zones.map((z) => (
+                    <label key={z.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                      <Checkbox
+                        checked={form.zoneIds.includes(z.id)}
+                        onCheckedChange={() => toggleFormZone(z.id)}
+                      />
+                      <span>{z.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label htmlFor="staff-joined">加入时间</Label>
+                <Input
+                  id="staff-joined"
+                  type="date"
+                  value={form.joinedAt}
+                  onChange={(e) => setForm((f) => ({ ...f, joinedAt: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>启用状态</Label>
+                <div className="flex items-center h-9 gap-2">
+                  <Switch
+                    checked={form.enabled}
+                    onCheckedChange={(v) => setForm((f) => ({ ...f, enabled: v }))}
+                  />
+                  <span className="text-sm text-muted-foreground">{form.enabled ? "已启用" : "已禁用"}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={submitting}>
+              取消
+            </Button>
+            <Button onClick={handleSubmit} disabled={submitting}>
+              {submitting ? "保存中..." : dialogMode === "add" ? "新增" : "保存"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ===== 删除确认 AlertDialog ===== */}
+      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认删除</AlertDialogTitle>
+            <AlertDialogDescription>
+              确认删除服务人员 <span className="font-semibold">{deleteTarget?.name}</span> 吗？此操作不可撤销。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                handleConfirmDelete()
+              }}
+              disabled={deleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleting ? "删除中..." : "确认删除"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageLayout>
   )
 }

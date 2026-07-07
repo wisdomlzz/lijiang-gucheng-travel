@@ -25,7 +25,8 @@ type StaffState = {
   getAvailable: (supplierId: string) => StaffItem[]
   getConvenienceStaffByType: (serviceType: ConvenienceServiceType) => StaffItem[]
   getConvenienceStaffByZone: (zoneId: string, serviceType: ConvenienceServiceType) => StaffItem[]
-  addStaff: (item: { supplierId: string; name: string; phone: string }) => Promise<void>
+  addStaff: (item: Partial<StaffItem> & { supplierId: string; name: string; phone: string }) => Promise<void>
+  updateStaff: (id: string, patch: Partial<StaffItem>) => Promise<void>
   toggleEnabled: (id: string) => Promise<void>
   setStaffStatus: (id: string, status: StaffItem["status"]) => Promise<void>
   removeStaff: (id: string) => Promise<void>
@@ -52,13 +53,24 @@ export const useStaffStore = create<StaffState>((set, get) => ({
           supplierId: item.supplierId,
           name: item.name,
           phone: item.phone,
-          enabled: true,
-          status: "offline",
+          enabled: item.enabled ?? true,
+          status: item.status ?? "offline",
           assignedOrders: 0,
-          joinedAt: new Date().toISOString().slice(0, 10),
+          joinedAt: item.joinedAt ?? new Date().toISOString().slice(0, 10),
+          serviceTypes: item.serviceTypes ?? [],
+          zoneIds: item.zoneIds ?? [],
         }),
       (result: StaffItem) => {
         set((s) => ({ staff: [...s.staff, result] }))
+      }
+    )
+  },
+  updateStaff: async (id, patch) => {
+    await syncAction(
+      "updateStaff",
+      () => staffApi.update(id, patch),
+      (result: StaffItem) => {
+        set((s) => ({ staff: s.staff.map((x) => (x.id === id ? result : x)) }))
       }
     )
   },
