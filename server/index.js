@@ -4,6 +4,7 @@ import { join, dirname } from "path"
 import { fileURLToPath } from "url"
 import db from "./db/connection.js"
 import { seedIfNeeded } from "./db/seed.js"
+import { startScheduler } from "./logic/scheduler.js"
 import { ok, fail } from "./middleware/response.js"
 import { crudRoutes } from "./routes/crud.js"
 import authRoutes from "./routes/auth.js"
@@ -30,6 +31,7 @@ app.use("/uploads", express.static(join(__dirname, "uploads")))
 
 // 初始化 DB + seed
 seedIfNeeded()
+startScheduler()
 
 // ====== Auth ======
 app.use("/api/v1/auth", authRoutes)
