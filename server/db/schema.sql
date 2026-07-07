@@ -41,6 +41,20 @@ CREATE TABLE IF NOT EXISTS convenience_orders (
   lat REAL,
   lng REAL,
   arbitrationRemark TEXT,
+  -- MVP 新增字段
+  orderNo TEXT,
+  paymentMethod TEXT,
+  paymentMethodLocked INTEGER DEFAULT 0,
+  quoteAmount REAL,
+  paidAmount REAL,
+  arrivedAt TEXT,
+  quotedAt TEXT,
+  dispatchAttempts INTEGER DEFAULT 0,
+  reviewStatus TEXT DEFAULT 'pending',
+  beforeManualStatus TEXT,
+  manualReason TEXT,
+  cancelFee REAL,
+  rejectQuoteReason TEXT,
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -62,6 +76,18 @@ CREATE TABLE IF NOT EXISTS staff (
   zoneIds TEXT DEFAULT '[]',
   lat REAL,
   lng REAL,
+  -- MVP 新增字段
+  staffType TEXT DEFAULT 'partner',
+  idCard TEXT,
+  idCardFront TEXT,
+  idCardBack TEXT,
+  todayOrders INTEGER DEFAULT 0,
+  goodRate REAL DEFAULT 1.0,
+  complaintCount INTEGER DEFAULT 0,
+  penaltyScore REAL DEFAULT 0,
+  balance REAL DEFAULT 0,
+  applyStatus TEXT DEFAULT 'approved',
+  rejectReason TEXT,
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -614,5 +640,43 @@ CREATE TABLE IF NOT EXISTS flow_warnings (
   currentCount INTEGER DEFAULT 0,
   threshold INTEGER DEFAULT 1000,
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
+);
+-- MVP: Order Operation Logs (审计)
+CREATE TABLE IF NOT EXISTS order_operation_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  orderId TEXT NOT NULL,
+  operatorType TEXT,
+  operatorId TEXT,
+  action TEXT NOT NULL,
+  fromStatus TEXT,
+  toStatus TEXT,
+  remark TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_oplogs_order ON order_operation_logs(orderId);
+
+-- MVP: Payment Records (支付流水)
+CREATE TABLE IF NOT EXISTS payment_records (
+  id TEXT PRIMARY KEY,
+  orderId TEXT NOT NULL,
+  originPaymentId TEXT,
+  paymentMethod TEXT NOT NULL,
+  amount REAL NOT NULL,
+  status TEXT DEFAULT 'success',
+  thirdTradeNo TEXT,
+  collectedByStaffId TEXT,
+  paidAt TEXT,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_pay_order ON payment_records(orderId);
+
+-- MVP: System Configs
+CREATE TABLE IF NOT EXISTS system_configs (
+  id TEXT PRIMARY KEY,
+  configKey TEXT UNIQUE NOT NULL,
+  configValue TEXT,
+  description TEXT,
+  updatedBy TEXT,
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
