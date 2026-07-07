@@ -1,6 +1,9 @@
 # 便民服务业务逻辑图
 
-> **配套文档**: `docs/superpowers/specs/2026-07-07-convenience-refinement-design.md`
+> ⚠️ **部分内容已被 `2026-07-07-convenience-mvp-design.md` 更新**(2026-07-07)
+> 图本身仍有参考价值,但状态判定(✅/⚠️/❌)以 MVP 设计文档为准。
+
+> **配套文档**: `docs/superpowers/specs/2026-07-07-convenience-mvp-design.md`(权威)
 > **形式**: Mermaid 流程图,3 张子图
 > **图例**: ✅=闭环 / ⚠️=半闭环 / ❌=断裂 / 💭=架构建议
 
