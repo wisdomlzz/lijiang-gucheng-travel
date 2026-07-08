@@ -1,12 +1,12 @@
 import { useState } from "react"
-import { PageLayout } from "../../components/common/PageLayout"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../shared/components/ui/tabs"
-import { NewsManageContent } from "./content/NewsManageContent"
-import { RouteManageContent } from "./content/RouteManageContent"
-import { CourtyardManageContent } from "./content/CourtyardManageContent"
-import { MerchantManageContent } from "./content/MerchantManageContent"
-import { POIManageContent } from "./content/POIManageContent"
-import { HousingManageContent } from "./content/HousingManageContent"
+import { PageLayout } from "../../../../desktop/components/common/PageLayout"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../../shared/components/ui/tabs"
+import { NewsManageContent } from "./NewsManageContent"
+import { RouteManageContent } from "./RouteManageContent"
+import { CourtyardManageContent } from "./CourtyardManageContent"
+import { MerchantManageContent } from "./MerchantManageContent"
+import { POIManageContent } from "./POIManageContent"
+import { HousingManageContent } from "./HousingManageContent"
 
 export default function ContentManagePage() {
   const [tab, setTab] = useState("news")

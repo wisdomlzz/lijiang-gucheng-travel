@@ -29,7 +29,7 @@ const GridSettingsPage = lazy(() =>
 const ComplaintPage = lazy(() => import("../features/complaints/desktop/pages/ComplaintPage"))
 const PhotoRecordsList = lazy(() => import("./pages/photo-records/list"))
 const PhotoRecordShow = lazy(() => import("./pages/photo-records/show"))
-const ContentManagePage = lazy(() => import("./pages/gates/ContentManagePage").then((m) => ({ default: m.ContentManagePage })))
+const ContentManagePage = lazy(() => import("../features/content/desktop/pages/ContentManagePage"))
 const VolunteerManagePage = lazy(() =>
   import("../features/volunteer/desktop/pages/VolunteerManagePage").then((m) => ({ default: m.VolunteerManagePage }))
 )
