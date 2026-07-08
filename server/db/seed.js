@@ -442,12 +442,13 @@ export function seedIfNeeded() {
 
   // ====== Flow Areas (人流量区域数据) ======
   insertMany("flow_areas", [
-    { id: "area_sq", name: "四方街", capacity: 3000, current: 1850, level: "yellow", lng: 100.2345, lat: 26.868 },
-    { id: "area_yh", name: "玉河广场", capacity: 2000, current: 1650, level: "orange", lng: 100.232, lat: 26.872 },
-    { id: "area_mf", name: "木府", capacity: 1500, current: 420, level: "green", lng: 100.228, lat: 26.867 },
-    { id: "area_nm", name: "古城南门", capacity: 2500, current: 2380, level: "red", lng: 100.237, lat: 26.865 },
-    { id: "area_bm", name: "古城北门", capacity: 2500, current: 1200, level: "yellow", lng: 100.2325, lat: 26.8735 },
-    { id: "area_sdj", name: "狮子山", capacity: 1000, current: 280, level: "green", lng: 100.229, lat: 26.87 },
+    { id: "area_xh", name: "新华街", capacity: 16105, current: 4177, level: "green", lng: 100.232, lat: 26.871 },
+    { id: "area_sz", name: "狮子山", capacity: 85869, current: 4481, level: "green", lng: 100.229, lat: 26.870 },
+    { id: "area_gy", name: "光义街", capacity: 25914, current: 2578, level: "green", lng: 100.234, lat: 26.868 },
+    { id: "area_xy", name: "新义街", capacity: 18146, current: 4604, level: "green", lng: 100.235, lat: 26.873 },
+    { id: "area_wy", name: "五一街", capacity: 16780, current: 5810, level: "yellow", lng: 100.236, lat: 26.874 },
+    { id: "area_qy", name: "七一街", capacity: 14430, current: 9009, level: "orange", lng: 100.237, lat: 26.872 },
+    { id: "area_nm", name: "南门", capacity: 23289, current: 7897, level: "yellow", lng: 100.238, lat: 26.865 },
   ])
 
   console.log("🌱 Seed 完成")

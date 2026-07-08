@@ -1,27 +1,16 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import { useNavigate } from "react-router"
 import { motion, AnimatePresence } from "motion/react"
-import { Search, ScanLine, Sparkles, Newspaper, Users, ChevronRight, MapPin } from "lucide-react"
+import { Search, ScanLine, Sparkles, Newspaper } from "lucide-react"
 import { SectionHeader } from "@/shared/components/mobile/SectionHeader"
 import { GridIcon } from "@/shared/components/mobile/GridIcon"
 import { InfoListItem } from "@/shared/components/mobile/InfoListItem"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { useHomepageConfigStore } from "../../store/homepage-store"
 import { useAnnouncementStore } from "@/features/announcement/store/announcement-store"
-import { useFlowWarningStore } from "@/features/flow-warning/store/flow-warning-store"
-import { LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import { CRMEB_C_URL } from "@/shared/constants"
 import { useContentGuideStore } from "@/features/content/store/guide-store"
-
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
-}
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
-}
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -60,12 +49,8 @@ export function HomePage() {
     [allAnnouncements]
   )
 
-  const areas = useFlowWarningStore((s) => s.areas)
-  const loadAreas = useFlowWarningStore((s) => s.loadAreas)
   const allGuides = useContentGuideStore((s) => s.guides)
   const featuredRoutes = useMemo(() => allGuides.filter((g: any) => g.isFeatured), [allGuides])
-
-  useEffect(() => { loadAreas() }, [loadAreas])
 
   const {
     visible: infoVisible,
@@ -193,68 +178,6 @@ export function HomePage() {
           </div>
         </div>
       </div>
-
-      <motion.div variants={container} initial="hidden" animate="show" className="px-0">
-        <motion.div variants={item}>
-          {/* 古城人流实时状态 */}
-      {areas.length > 0 && (
-        <div className="px-4 mt-5">
-          <div className="bg-white rounded-2xl p-4 shadow-elevated overflow-hidden">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <motion.div
-                  animate={{ scale: [1, 1.15, 1] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                >
-                  <Users size={16} className="text-primary" />
-                </motion.div>
-                <span className="text-[14px] font-medium text-text-heading">古城人流</span>
-              </div>
-              <span className="text-[10px] text-text-tertiary">
-                {areas.filter((a) => a.level === "red" || a.level === "orange").length > 0
-                  ? `${areas.filter((a) => a.level === "red" || a.level === "orange").length} 个区域拥挤`
-                  : "各区域通畅"}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {areas.slice(0, 6).map((a) => {
-                const meta = LEVEL_META[a.level]
-                const pct = Math.round((a.current / a.capacity) * 100)
-                return (
-                  <motion.div
-                    key={a.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center gap-2 p-2 rounded-xl bg-surface-page"
-                  >
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ repeat: Infinity, duration: 3, delay: Math.random() * 2 }}
-                      className={`size-2.5 rounded-full shrink-0 ${a.level === "green" ? "bg-emerald-500" : a.level === "yellow" ? "bg-amber-500" : a.level === "orange" ? "bg-orange-500" : "bg-red-500"}`}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[12px] text-text-heading truncate">{a.name}</span>
-                        <span className="text-[10px] font-medium ml-1" style={{ color: a.level === "green" ? "#059669" : a.level === "yellow" ? "#D97706" : a.level === "orange" ? "#EA580C" : "#DC2626" }}>{pct}%</span>
-                      </div>
-                      <div className="mt-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${pct}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                          className={`h-full rounded-full ${pct > 95 ? "bg-red-500" : pct > 80 ? "bg-orange-500" : pct > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-        </motion.div>
-      </motion.div>
 
       {/* 8-grid with swipe pagination */}
       <div
