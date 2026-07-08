@@ -1,16 +1,15 @@
 import { useState, useMemo } from "react"
 import { PageLayout } from "../../components/common/PageLayout"
+import { ReviewTableShell } from "../../components/common/ReviewTableShell"
 import { Button } from "../../../shared/components/ui/button"
 import { Badge } from "../../../shared/components/ui/badge"
-import { Input } from "../../../shared/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../shared/components/ui/dialog"
 import { Textarea } from "../../../shared/components/ui/textarea"
-import { Store, Check, X, UserPlus, Search } from "lucide-react"
+import { Store, Check, X, UserPlus } from "lucide-react"
 import { merchantCategoryLabels } from "@/shared/constants/content-config"
 import { toast } from "sonner"
 import { usePagination } from "@/shared/hooks/usePagination"
-import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import {
   useMerchantReviewStore,
   useMerchantRegistrationStore,
@@ -113,22 +112,19 @@ function ClaimReview() {
 
   return (
     <>
-      <div className="flex items-center gap-2 mb-4 text-[13px] text-text-secondary">
-        <UserPlus size={15} /> 共 {claimRequests.length} 条认领申请
-        {pendingCount > 0 && <Badge className="bg-rose-500">待审核 {pendingCount}</Badge>}
-      </div>
-
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-        <Input
-          placeholder="搜索店铺名称、申请人、电话..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 h-9 max-w-xs"
-        />
-      </div>
-
-      <div className="bg-white rounded-lg border border-border-light overflow-hidden">
+      <ReviewTableShell
+        summaryIcon={<UserPlus size={15} />}
+        summaryLabel="共 {count} 条认领申请"
+        totalCount={claimRequests.length}
+        pendingCount={pendingCount}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="搜索店铺名称、申请人、电话..."
+        page={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={pagination.setCurrentPage}
+        total={pagination.total}
+      >
         <Table>
           <TableHeader>
             <TableRow>
@@ -190,16 +186,7 @@ function ClaimReview() {
             )}
           </TableBody>
         </Table>
-      </div>
-
-      <PaginationBar
-        page={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        onPageChange={pagination.setCurrentPage}
-        pageSize={10}
-        onPageSizeChange={() => {}}
-        total={pagination.total}
-      />
+      </ReviewTableShell>
 
       {/* 详情弹窗 */}
       <Dialog open={!!detail} onOpenChange={(o) => { if (!o) setDetail(null) }}>
@@ -361,22 +348,19 @@ function NewShopReview() {
 
   return (
     <>
-      <div className="flex items-center gap-2 mb-4 text-[13px] text-text-secondary">
-        <UserPlus size={15} /> 共 {newShopRequests.length} 条入驻申请
-        {pendingCount > 0 && <Badge className="bg-rose-500">待审核 {pendingCount}</Badge>}
-      </div>
-
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-        <Input
-          placeholder="搜索店铺名称、申请人、电话..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 h-9 max-w-xs"
-        />
-      </div>
-
-      <div className="bg-white rounded-lg border border-border-light overflow-hidden">
+      <ReviewTableShell
+        summaryIcon={<UserPlus size={15} />}
+        summaryLabel="共 {count} 条入驻申请"
+        totalCount={newShopRequests.length}
+        pendingCount={pendingCount}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="搜索店铺名称、申请人、电话..."
+        page={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={pagination.setCurrentPage}
+        total={pagination.total}
+      >
         <Table>
           <TableHeader>
             <TableRow>
@@ -444,16 +428,7 @@ function NewShopReview() {
             )}
           </TableBody>
         </Table>
-      </div>
-
-      <PaginationBar
-        page={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        onPageChange={pagination.setCurrentPage}
-        pageSize={10}
-        onPageSizeChange={() => {}}
-        total={pagination.total}
-      />
+      </ReviewTableShell>
 
       {/* 详情弹窗 */}
       <Dialog open={!!detail} onOpenChange={(o) => { if (!o) setDetail(null) }}>
