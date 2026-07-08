@@ -7,7 +7,7 @@ const JSON_FIELDS = new Set([
   "images", "completionPhotos", "serviceTypes", "zoneIds", "tags", "stations",
   "body", "spots", "spotNames", "contentBlocks", "gallery", "meta",
   "scoreHistory", "reviewHistory", "credentialImages", "fields", "roles", "platform", "data",
-  "evidenceUrls",
+  "evidenceUrls", "detailImages",
 ])
 
 /** 写 order_operation_logs。所有 transition 端点应调用。 */

@@ -144,6 +144,12 @@ export interface Merchant {
   claimStatus?: "unclaimed" | "pending" | "claimed"
   claimedBy?: string // 认领者的 userId
   claimedAt?: string // 认领时间
+
+  // === 店铺详细信息 ===
+  businessLicense?: string
+  contactName?: string
+  contactPhone?: string
+  detailImages?: string[]
 }
 
 export type MapPOICategory = "scenic_spot" | "facility" | "service" | "other"

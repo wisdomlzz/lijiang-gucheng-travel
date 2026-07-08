@@ -277,6 +277,11 @@ CREATE TABLE IF NOT EXISTS content_merchants (
   lng REAL,
   tags TEXT DEFAULT '[]',
   rating REAL DEFAULT 0,
+  claimStatus TEXT DEFAULT 'unclaimed',
+  businessLicense TEXT DEFAULT '',
+  contactName TEXT DEFAULT '',
+  contactPhone TEXT DEFAULT '',
+  detailImages TEXT DEFAULT '[]',
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -547,6 +552,9 @@ CREATE TABLE IF NOT EXISTS merchant_registrations (
   address TEXT DEFAULT '',
   contactName TEXT DEFAULT '',
   contactPhone TEXT DEFAULT '',
+  lat REAL,
+  lng REAL,
+  credentialImages TEXT DEFAULT '[]',
   images TEXT DEFAULT '[]',
   status TEXT DEFAULT 'pending',
   remark TEXT,
