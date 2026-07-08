@@ -1,0 +1,2 @@
+-- 000_baseline: 初始 schema（已通过 schema.sql 创建）
+-- migrate.js 会跳过此文件，只记录为已执行
