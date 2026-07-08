@@ -199,23 +199,54 @@ export function HomePage() {
           {/* 古城人流实时状态 */}
       {areas.length > 0 && (
         <div className="px-4 mt-5">
-          <div className="bg-white rounded-2xl p-4 shadow-elevated">
-            <div className="flex items-center gap-2 mb-3">
-              <Users size={16} className="text-primary" />
-              <span className="text-[14px] font-medium text-text-heading">古城人流实时状态</span>
+          <div className="bg-white rounded-2xl p-4 shadow-elevated overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <motion.div
+                  animate={{ scale: [1, 1.15, 1] }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                >
+                  <Users size={16} className="text-primary" />
+                </motion.div>
+                <span className="text-[14px] font-medium text-text-heading">古城人流</span>
+              </div>
+              <span className="text-[10px] text-text-tertiary">
+                {areas.filter((a) => a.level === "red" || a.level === "orange").length > 0
+                  ? `${areas.filter((a) => a.level === "red" || a.level === "orange").length} 个区域拥挤`
+                  : "各区域通畅"}
+              </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {areas.slice(0, 6).map((a) => {
                 const meta = LEVEL_META[a.level]
                 const pct = Math.round((a.current / a.capacity) * 100)
                 return (
-                  <div key={a.id} className="flex items-center gap-2 p-2 rounded-xl bg-surface-page">
-                    <div className={`size-2 rounded-full shrink-0 ${a.level === "green" ? "bg-emerald-500" : a.level === "yellow" ? "bg-amber-500" : a.level === "orange" ? "bg-orange-500" : "bg-red-500"}`} />
+                  <motion.div
+                    key={a.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center gap-2 p-2 rounded-xl bg-surface-page"
+                  >
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 3, delay: Math.random() * 2 }}
+                      className={`size-2.5 rounded-full shrink-0 ${a.level === "green" ? "bg-emerald-500" : a.level === "yellow" ? "bg-amber-500" : a.level === "orange" ? "bg-orange-500" : "bg-red-500"}`}
+                    />
                     <div className="flex-1 min-w-0">
-                      <div className="text-[12px] text-text-heading truncate">{a.name}</div>
-                      <div className="text-[10px] text-text-tertiary">{meta.label} · {pct}%</div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[12px] text-text-heading truncate">{a.name}</span>
+                        <span className="text-[10px] font-medium ml-1" style={{ color: a.level === "green" ? "#059669" : a.level === "yellow" ? "#D97706" : a.level === "orange" ? "#EA580C" : "#DC2626" }}>{pct}%</span>
+                      </div>
+                      <div className="mt-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                          className={`h-full rounded-full ${pct > 95 ? "bg-red-500" : pct > 80 ? "bg-orange-500" : pct > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )
               })}
             </div>
