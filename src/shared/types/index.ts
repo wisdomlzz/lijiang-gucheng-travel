@@ -381,6 +381,9 @@ export type VolunteerActivity = {
   description: string
   images: string[]
   location: string
+  lat?: number
+  lng?: number
+  geoRadius?: number
   startTime: string // 单天=活动开始 / 多天=首日开始时刻
   endTime: string // 单天=活动结束 / 多天=末日结束时刻
   timeMode: "single" | "multi"
@@ -412,6 +415,10 @@ export type VolunteerDailyRecord = {
   dayEndTime: string // 该天活动结束时刻（完整 datetime）
   checkInTime?: string
   checkOutTime?: string
+  checkInLat?: number
+  checkInLng?: number
+  checkOutLat?: number
+  checkOutLng?: number
   serviceHours?: number
   status: VolunteerDailyStatus
   isLate?: boolean
