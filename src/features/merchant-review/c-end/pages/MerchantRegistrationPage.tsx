@@ -6,15 +6,12 @@ import { useMerchantRegistrationStore } from "../../store/registration-store"
 import { useContentMerchantStore } from "../../../../platform/content/merchant-store"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { Search, Store, User, Phone, MapPin, Clock, AlignLeft, CheckCircle, Shield, Camera } from "lucide-react"
+import { PHONE_REGEX } from "@/shared/utils/validation"
+import { merchantCategoryLabels } from "@/shared/constants/content-config"
 import { toast } from "sonner"
 import type { Merchant } from "../../../../shared/types/content-types"
 
-const CATEGORIES = [
-  { key: "food", label: "餐饮" },
-  { key: "hotel", label: "住宿" },
-  { key: "bar", label: "酒吧" },
-  { key: "shopping", label: "购物" },
-]
+const CATEGORIES = Object.entries(merchantCategoryLabels).map(([key, label]) => ({ key, label }))
 
 type PagePhase = "list" | "claim" | "new-shop" | "success"
 
@@ -106,7 +103,7 @@ export function MerchantRegistrationPage() {
     const errs: Record<string, string> = {}
     if (!claimForm.contactName.trim()) errs.contactName = "请输入联系人"
     if (!claimForm.contactPhone.trim()) errs.contactPhone = "请输入联系电话"
-    else if (!/^1[3-9]\d{9}$/.test(claimForm.contactPhone)) errs.contactPhone = "手机号格式不正确"
+    else if (!PHONE_REGEX.test(claimForm.contactPhone)) errs.contactPhone = "手机号格式不正确"
     if (!claimForm.category) errs.category = "请选择经营类型"
     if (credentialImages.length === 0) errs.credentialImages = "请上传至少一张资质证明"
     return errs
@@ -117,7 +114,7 @@ export function MerchantRegistrationPage() {
     if (!form.shopName.trim()) errs.shopName = "请输入店铺名称"
     if (!form.contactName.trim()) errs.contactName = "请输入联系人"
     if (!form.contactPhone.trim()) errs.contactPhone = "请输入联系电话"
-    else if (!/^1[3-9]\d{9}$/.test(form.contactPhone)) errs.contactPhone = "手机号格式不正确"
+    else if (!PHONE_REGEX.test(form.contactPhone)) errs.contactPhone = "手机号格式不正确"
     if (!form.category) errs.category = "请选择经营类型"
     if (!form.address.trim()) errs.address = "请填写店铺地址"
     if (!form.phone.trim()) errs.phone = "请填写店铺联系电话"

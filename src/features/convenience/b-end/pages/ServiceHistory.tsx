@@ -7,7 +7,7 @@ import { useAuthStore } from "@/platform/auth"
 import { useSearch } from "@/shared/hooks/useSearch"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import type { ConvenienceOrder } from "../../../../shared/types"
-import { convToBState } from "../../shared/service-state"
+import { convToBState, SERVICE_COLORS } from "../../shared/service-state"
 
 const TABS = ["全部", "已完成", "已取消"] as const
 
@@ -16,13 +16,6 @@ const TIME_FILTERS = [
   { label: "近 30 天", days: 30 },
   { label: "近 90 天", days: 90 },
 ] as const
-
-const SERVICE_COLORS: Record<string, string> = {
-  行李搬运: "#F59E0B",
-  垃圾清运: "#0891B2",
-  送水服务: "#3B82F6",
-  布草配送: "#7C3AED",
-}
 
 function mapConv(o: ConvenienceOrder): ServiceOrder {
   const state = convToBState(o.status)

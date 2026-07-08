@@ -8,6 +8,7 @@ import {
   Store, Phone, FileText, Power, CheckCircle2, Clock3, XCircle,
   BadgeCheck, X, Image, Tag, Edit3, MapPin, Shield, Camera, User,
 } from "lucide-react"
+import { PHONE_REGEX } from "@/shared/utils/validation"
 import { toast } from "sonner"
 
 const STATUS_META = {
@@ -449,7 +450,7 @@ export function MyShopPage() {
                   toast.error("请输入联系电话")
                   return
                 }
-                if (!/^1[3-9]\d{9}$/.test(sheetValue.trim())) {
+                if (!PHONE_REGEX.test(sheetValue.trim())) {
                   toast.error("手机号格式不正确")
                   return
                 }

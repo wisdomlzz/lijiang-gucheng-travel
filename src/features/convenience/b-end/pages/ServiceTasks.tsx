@@ -8,16 +8,10 @@ import { useAuthStore } from "@/platform/auth"
 import { useSearch } from "@/shared/hooks/useSearch"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import type { ConvenienceOrder } from "../../../../shared/types"
-import { convToBState, B_SERVICE_STATE_META } from "../../shared/service-state"
+import { convToBState, B_SERVICE_STATE_META, SERVICE_COLORS } from "../../shared/service-state"
 
 const TABS = ["已指派", "进行中", "已完成", "已取消"] as const
 
-const SERVICE_COLORS: Record<string, string> = {
-  行李搬运: "#F59E0B",
-  垃圾清运: "#0891B2",
-  送水服务: "#3B82F6",
-  布草配送: "#7C3AED",
-}
 function mapConv(o: ConvenienceOrder, idx: number): ServiceOrder {
   const state = convToBState(o.status)
   return {

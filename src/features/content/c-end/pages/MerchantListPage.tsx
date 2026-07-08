@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useContentMerchantStore } from "@/features/content/store/merchant-store"
-import { normalizeMerchantCategory } from "@/shared/constants/content-config"
+import { normalizeMerchantCategory, merchantCategoryLabels } from "@/shared/constants/content-config"
 import { useSearch } from "@/shared/hooks/useSearch"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import { haversineDistance } from "@/shared/utils/geo"
@@ -14,10 +14,10 @@ type MerchantCategory = "all" | "food" | "hotel" | "bar" | "shopping"
 
 const categories: { key: MerchantCategory; label: string }[] = [
   { key: "all", label: "全部" },
-  { key: "food", label: "餐饮" },
-  { key: "hotel", label: "住宿" },
-  { key: "bar", label: "酒吧" },
-  { key: "shopping", label: "购物" },
+  ...Object.entries(merchantCategoryLabels).map(([key, label]) => ({
+    key: key as MerchantCategory,
+    label,
+  })),
 ]
 
 export function MerchantListPage() {

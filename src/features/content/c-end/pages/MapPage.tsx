@@ -28,6 +28,7 @@ import {
   ArrowLeftRight,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import { merchantCategoryLabels } from "@/shared/constants/content-config"
 import { haversineDistance, formatDistance } from "@/shared/utils/geo"
 
 type Category = {
@@ -46,9 +47,9 @@ const categories: Category[] = [
   { key: "handwash", label: "洗手台", icon: Droplets, color: "#14B8A6", count: 10 },
   { key: "toilet", label: "厕所", icon: Toilet, color: "#64748B", count: 15 },
   { key: "shelter", label: "应急避难", icon: Umbrella, color: "#EF4444", count: 6 },
-  { key: "food", label: "餐饮", icon: Utensils, color: "#3B82F6", count: 58 },
-  { key: "hotel", label: "住宿", icon: Hotel, color: "#6A5ACD", count: 74 },
-  { key: "bar", label: "酒吧", icon: Coffee, color: "#3B82F6", count: 21 },
+  { key: "food", label: merchantCategoryLabels.food, icon: Utensils, color: "#3B82F6", count: 58 },
+  { key: "hotel", label: merchantCategoryLabels.hotel, icon: Hotel, color: "#6A5ACD", count: 74 },
+  { key: "bar", label: merchantCategoryLabels.bar, icon: Coffee, color: "#3B82F6", count: 21 },
   { key: "entrance", label: "出入口", icon: ArrowLeftRight, color: "#10B981", count: 9 },
 ]
 

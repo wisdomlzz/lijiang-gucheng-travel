@@ -5,6 +5,7 @@ import { ChevronLeft, Camera, X, Phone, ChevronDown } from "lucide-react"
 import { useComplaintStore } from "../../store"
 import { useAuthStore } from "@/platform/auth"
 import { BottomSheetPicker } from "../../../../shared/components/ui/bottom-sheet-picker"
+import { PHONE_REGEX } from "@/shared/utils/validation"
 import { toast } from "sonner"
 
 const reporterTypes = ["工作人员", "本地居民", "游客"] as const
@@ -49,7 +50,7 @@ export function ComplaintFormPage() {
     if (!reporterName.trim()) next.reporterName = "请填写上报人"
     if (!gender) next.gender = "请选择性别"
     if (!phone.trim()) next.phone = "请填写联系电话"
-    else if (!/^1[3-9]\d{9}$/.test(phone)) next.phone = "请输入正确的手机号码"
+    else if (!PHONE_REGEX.test(phone)) next.phone = "请输入正确的手机号码"
     if (!objectType) next.objectType = "请选择对象类型"
     if (!targetName.trim()) next.targetName = "请填写当事对象"
     if (!area) next.area = "请选择片区"

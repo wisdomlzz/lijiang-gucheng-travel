@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../shared/components/ui/dialog"
 import { Textarea } from "../../../shared/components/ui/textarea"
 import { Store, Check, X, UserPlus, Search } from "lucide-react"
+import { merchantCategoryLabels } from "@/shared/constants/content-config"
 import { toast } from "sonner"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
@@ -21,8 +22,7 @@ import { useContentMerchantStore } from "../../../platform/content/merchant-stor
 type Tab = "claim" | "new-shop" | "info-change"
 
 function categoryLabel(val: string): string {
-  const labels: Record<string, string> = { food: "餐饮", hotel: "住宿", bar: "酒吧", shopping: "购物" }
-  return labels[val] ?? val
+  return merchantCategoryLabels[val as keyof typeof merchantCategoryLabels] ?? val
 }
 
 export function MerchantReviewPage() {

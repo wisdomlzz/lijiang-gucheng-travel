@@ -3,6 +3,7 @@ import { useNavigate } from "react-router"
 import { Building2, User, Phone, MapPin, FileText, AlignLeft, Check } from "lucide-react"
 import { toast } from "sonner"
 import { useSupplierStore } from "../../store/supplier-store"
+import { PHONE_REGEX } from "@/shared/utils/validation"
 import { ImageUpload } from "../../../../shared/components/ui/image-upload"
 
 const BUSINESS_TYPES = ["餐饮", "住宿", "酒吧", "文创", "手工艺", "服装", "其他"]
@@ -28,7 +29,7 @@ export function SupplierEntryDesktop() {
     if (!form.companyName.trim()) errs.companyName = "请填写公司名称"
     if (!form.contactName.trim()) errs.contactName = "请填写联系人"
     if (!form.phone.trim()) errs.phone = "请填写联系电话"
-    else if (!/^1[3-9]\d{9}$/.test(form.phone)) errs.phone = "手机号格式不正确"
+    else if (!PHONE_REGEX.test(form.phone)) errs.phone = "手机号格式不正确"
     if (!form.businessType) errs.businessType = "请选择经营类型"
     if (!form.address.trim()) errs.address = "请填写经营地址"
     if (!form.licenseNo.trim()) errs.licenseNo = "请填写营业执照号"

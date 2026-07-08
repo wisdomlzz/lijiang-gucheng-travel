@@ -82,3 +82,11 @@ export const B_SERVICE_STAGES: { key: BServiceState; label: string }[] = [
   { key: "confirming", label: "待确认" },
   { key: "done", label: "已完成" },
 ]
+
+/** 便民服务类型 → 标签色（B端页面统一使用） */
+export const SERVICE_COLORS: Record<string, string> = {
+  行李搬运: "#F59E0B",
+  垃圾清运: "#0891B2",
+  送水服务: "#3B82F6",
+  布草配送: "#7C3AED",
+}
