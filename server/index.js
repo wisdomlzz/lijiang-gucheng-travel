@@ -19,6 +19,7 @@ import contentRoutes from "./routes/content.js"
 import uploadsRoutes from "./routes/uploads.js"
 import notificationsRoutes from "./routes/notifications.js"
 import pointsRoutes from "./routes/points.js"
+import { errorHandler, AppError } from "./middleware/errorHandler.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -95,10 +96,7 @@ app.use("/api/v1/suppliers", crudRoutes("suppliers"))
 app.use("/api/v1/points", pointsRoutes)
 
 // ====== Error handler ======
-app.use((err, req, res, _next) => {
-  console.error(err)
-  res.status(500).json(fail(err.message))
-})
+app.use(errorHandler)
 
 // ====== Start ======
 app.listen(PORT, () => {
