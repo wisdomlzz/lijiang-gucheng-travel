@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
-import { ChevronRight, Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { ChevronRight, ArrowLeft, Phone, ShieldCheck } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 import { MiniProgramFrame } from "./MiniProgramFrame"
 import { useAuthStore } from "@/platform/auth"
@@ -10,115 +10,44 @@ import { api } from "@/api/client"
 
 const HERO_IMG = "https://images.unsplash.com/photo-1683825093397-5bbc64e496e6?auto=format&fit=crop&w=800&q=70"
 
+/** B-end staff users available for quick-select login */
+const B_STAFF_USERS: User[] = seedUsers.filter(
+  (u) => u.platform.includes("b") && (u.roles.includes("service") || u.roles.includes("platform_admin"))
+)
+
 export function LoginPageB() {
-  const [mode, setMode] = useState<"wechat" | "password">("wechat")
-  const [showWechatAuth, setShowWechatAuth] = useState(false)
+  const [showPhone, setShowPhone] = useState(false)
   const [phone, setPhone] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPwd, setShowPwd] = useState(false)
   const login = useAuthStore((s) => s.login)
   const currentUser = useAuthStore((s) => s.user)
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
   const navigate = useNavigate()
 
-  const handleWechatLogin = () => {
-    setShowWechatAuth(true)
-  }
-
-  const getRolePath = (_role: string) => "service"
-
-  const confirmWechatUser = async (user: User) => {
+  const handleStaffLogin = async (user: User) => {
     try {
       const { token, user: serverUser } = await api.login(user.phone)
       login(serverUser, "b", token)
     } catch {
+      // Backend unavailable: fall back to seed user + mock token
       login(user, "b", "mock-token-" + user.id)
     }
-    navigate(`/b/${getRolePath(user.roles[0] ?? "service")}`)
+    navigate("/b/service/workbench")
   }
 
-  const handlePasswordLogin = async () => {
+  const handlePhoneLogin = async () => {
     if (!phone) return
-    try {
-      const { token, user } = await api.login(phone)
-      login(user, "b", token)
-      navigate(`/b/${getRolePath(user.roles[0] ?? "service")}`)
-    } catch {
-      const user = seedUsers.find((u) => u.platform.includes("b") && u.roles.includes("service") && u.phone === phone)
-      if (user) {
-        login(user, "b", "mock-token-" + user.id)
-        navigate(`/b/${getRolePath(user.roles[0] ?? "service")}`)
-      }
-    }
-  }
-
-  const bUsers = seedUsers.filter((u) => u.platform.includes("b") && u.roles.includes("service"))
-
-  // WeChat auth — role selection screen
-  if (showWechatAuth) {
-    return (
-      <MiniProgramFrame>
-        <div className="flex flex-col min-h-full bg-white">
-          {/* Compact header */}
-          <div className="relative h-[160px] overflow-hidden shrink-0">
-            <img src={HERO_IMG} alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-indigo-900/60 to-white" />
-          </div>
-
-          <div className="relative -mt-16 bg-white rounded-t-[28px] flex-1 px-6 pt-6">
-            <button
-              onClick={() => setShowWechatAuth(false)}
-              className="mb-4 flex items-center gap-1 text-[13px] text-text-tertiary"
-            >
-              <ArrowLeft size={16} /> 返回
-            </button>
-
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mx-auto mb-3">
-                <span className="text-2xl">👤</span>
-              </div>
-              <h2 className="text-[17px] text-text-heading font-medium">微信授权登录</h2>
-              <p className="text-[12px] text-text-tertiary mt-1">选择要登录的便民服务人员账号</p>
-            </div>
-
-            <div className="space-y-2.5">
-              {bUsers.map((user, i) => (
-                <motion.button
-                  key={user.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.08 }}
-                  onClick={() => confirmWechatUser(user)}
-                  className="w-full flex items-center gap-3.5 p-4 rounded-2xl bg-[#F8F9FF] border border-indigo-100 active:scale-[0.98] hover:bg-indigo-50 transition-all text-left"
-                >
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-[15px] shadow-sm">
-                    {user.name[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-medium text-text-heading">{user.name}</p>
-                    <p className="text-[11px] text-text-tertiary mt-0.5">
-                      {user.roleTag ?? "服务人员"}
-                      <span className="mx-1.5">·</span>
-                      {user.phone}
-                    </p>
-                  </div>
-                  <ChevronRight size={16} className="text-text-tertiary shrink-0" />
-                </motion.button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </MiniProgramFrame>
-    )
+    const matched = seedUsers.find((u) => u.phone === phone && u.platform.includes("b"))
+    if (!matched) return
+    await handleStaffLogin(matched)
   }
 
   return (
     <MiniProgramFrame>
       <div className="flex flex-col min-h-full bg-white">
-        {/* Hero */}
+        {/* ── Hero image ── */}
         <div className="relative shrink-0 h-[260px] overflow-hidden">
           <img src={HERO_IMG} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-indigo-950/50 to-indigo-950/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-blue-950/50 to-blue-950/90" />
 
           <div className="absolute inset-0 flex flex-col items-center justify-end pb-8">
             <motion.div
@@ -136,97 +65,177 @@ export function LoginPageB() {
           </div>
         </div>
 
-        {/* Content */}
+        {/* ── Card area ── */}
         <div className="relative -mt-6 bg-white rounded-t-[28px] flex-1 px-6 pt-7 pb-4">
+          {/* Role badges */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
             className="flex justify-center gap-2.5 mb-7"
           >
-            <div className="flex-1 max-w-[160px] rounded-xl border border-amber-100 bg-amber-50 text-amber-600 px-3 py-2.5 text-center">
+            <div className="flex-1 max-w-[160px] rounded-xl border border-blue-100 bg-blue-50 text-blue-600 px-3 py-2.5 text-center">
               <div className="text-[13px] font-medium">服务人员</div>
               <div className="text-[10px] opacity-60 mt-0.5">接单 · 报价 · 服务</div>
             </div>
+            <div className="flex-1 max-w-[160px] rounded-xl border border-blue-100 bg-blue-50 text-blue-600 px-3 py-2.5 text-center">
+              <div className="text-[13px] font-medium">平台管理员</div>
+              <div className="text-[10px] opacity-60 mt-0.5">管理 · 监控 · 配置</div>
+            </div>
           </motion.div>
 
-          {mode === "wechat" ? (
-            <>
-              <motion.button
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-                onClick={handleWechatLogin}
-                className="w-full h-[50px] rounded-2xl bg-[#07C160] text-white font-medium text-[15px] flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all shadow-lg shadow-[#07C160]/25 hover:shadow-xl hover:shadow-[#07C160]/30"
-              >
-                <svg viewBox="0 0 24 24" className="size-5 fill-current">
-                  <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18z" />
-                </svg>
-                微信一键登录
-              </motion.button>
-
+          <AnimatePresence mode="wait">
+            {!showPhone ? (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-                className="mt-5"
+                key="staff-select"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
               >
-                <button
-                  onClick={() => setMode("password")}
-                  className="mx-auto flex items-center gap-1.5 text-[13px] text-text-tertiary hover:text-text-body transition-colors"
+                {/* Section title */}
+                <div className="text-center mb-5">
+                  <h2 className="text-[16px] text-text-heading font-medium">选择账号登录</h2>
+                  <p className="text-[12px] text-text-tertiary mt-1">点击下方账号即可快速登录</p>
+                </div>
+
+                {/* Staff account cards */}
+                <div className="space-y-2.5">
+                  {B_STAFF_USERS.map((user, i) => {
+                    const isAdmin = user.roles.includes("platform_admin")
+                    return (
+                      <motion.button
+                        key={user.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.1 + i * 0.1 }}
+                        onClick={() => handleStaffLogin(user)}
+                        className="w-full flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-gray-100 active:scale-[0.98] hover:bg-blue-50/50 hover:border-blue-100 transition-all text-left"
+                        style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
+                      >
+                        <div
+                          className={`w-11 h-11 rounded-xl flex items-center justify-center text-white font-semibold text-[15px] shadow-sm ${
+                            isAdmin
+                              ? "bg-gradient-to-br from-blue-600 to-indigo-700"
+                              : "bg-gradient-to-br from-emerald-500 to-emerald-600"
+                          }`}
+                        >
+                          {user.name[0]}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[14px] font-medium text-text-heading">{user.name}</p>
+                          <p className="text-[11px] text-text-tertiary mt-0.5 flex items-center gap-1">
+                            {isAdmin ? (
+                              <>
+                                <ShieldCheck size={11} className="text-blue-500" />
+                                <span className="text-blue-500">平台管理员</span>
+                              </>
+                            ) : (
+                              <span>便民服务人员</span>
+                            )}
+                            <span className="mx-1">·</span>
+                            {user.phone}
+                          </p>
+                        </div>
+                        <ChevronRight size={16} className="text-text-tertiary shrink-0" />
+                      </motion.button>
+                    )
+                  })}
+                </div>
+
+                {/* Other login method */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                  className="mt-5"
                 >
-                  账号密码登录
-                  <ChevronRight size={14} />
-                </button>
+                  <button
+                    onClick={() => setShowPhone(true)}
+                    className="mx-auto flex items-center gap-1.5 text-[13px] text-text-tertiary hover:text-primary transition-colors"
+                  >
+                    <Phone size={13} />
+                    手机号登录
+                    <ChevronRight size={14} />
+                  </button>
+                </motion.div>
               </motion.div>
-            </>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-3.5"
-            >
-              <div>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  maxLength={11}
-                  placeholder="手机号"
-                  className="w-full h-[48px] rounded-xl bg-[#F5F5F5] px-4 text-[14px] outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 border border-transparent transition-all"
-                />
-              </div>
-              <div className="relative">
-                <input
-                  type={showPwd ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="密码"
-                  className="w-full h-[48px] rounded-xl bg-[#F5F5F5] px-4 pr-12 text-[14px] outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 border border-transparent transition-all"
-                />
+            ) : (
+              <motion.div
+                key="phone-login"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+              >
+                {/* Back button */}
                 <button
-                  onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-tertiary"
+                  onClick={() => {
+                    setShowPhone(false)
+                    setPhone("")
+                  }}
+                  className="mb-4 flex items-center gap-1 text-[13px] text-text-tertiary"
                 >
-                  {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+                  <ArrowLeft size={16} /> 返回账号选择
                 </button>
-              </div>
-              <button
-                onClick={handlePasswordLogin}
-                disabled={!phone}
-                className="w-full h-[48px] rounded-xl bg-indigo-600 text-white font-medium text-[15px] active:scale-[0.98] transition-all disabled:opacity-40 shadow-lg shadow-indigo-600/25"
-              >
-                登录
-              </button>
-              <button
-                onClick={() => setMode("wechat")}
-                className="w-full text-center text-[12px] text-text-tertiary hover:text-indigo-600 transition-colors py-1"
-              >
-                返回微信登录
-              </button>
-            </motion.div>
-          )}
+
+                <div className="text-center mb-5">
+                  <h2 className="text-[16px] text-text-heading font-medium">手机号登录</h2>
+                  <p className="text-[12px] text-text-tertiary mt-1">输入已注册的手机号直接登录</p>
+                </div>
+
+                <div className="space-y-3.5">
+                  <div>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.slice(0, 11))}
+                      maxLength={11}
+                      placeholder="请输入手机号"
+                      className="w-full h-[48px] rounded-xl bg-[#F5F5F5] px-4 text-[14px] outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary border border-transparent transition-all"
+                    />
+                  </div>
+                  <button
+                    onClick={handlePhoneLogin}
+                    disabled={!phone}
+                    className="w-full h-[48px] rounded-xl bg-primary text-white font-medium text-[15px] active:scale-[0.98] transition-all disabled:opacity-40 shadow-lg shadow-primary/20"
+                  >
+                    登录
+                  </button>
+                </div>
+
+                {/* Quick-select for matched phone */}
+                {phone.length === 11 && (() => {
+                  const matched = seedUsers.find((u) => u.phone === phone && u.platform.includes("b"))
+                  return matched ? (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 p-3.5 rounded-2xl bg-blue-50/60 border border-blue-100 flex items-center gap-3"
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-semibold text-[14px] shadow-sm ${
+                          matched.roles.includes("platform_admin")
+                            ? "bg-gradient-to-br from-blue-600 to-indigo-700"
+                            : "bg-gradient-to-br from-emerald-500 to-emerald-600"
+                        }`}
+                      >
+                        {matched.name[0]}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-[13px] font-medium text-text-heading">{matched.name}</p>
+                        <p className="text-[11px] text-text-tertiary">{matched.roleTag ?? (matched.roles.includes("platform_admin") ? "平台管理员" : "便民服务人员")}</p>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <p className="mt-3 text-[11px] text-text-tertiary text-center">
+                      未找到该手机号对应的服务人员账号
+                    </p>
+                  )
+                })()}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Bottom links */}
           <div className="mt-6 pt-4 border-t border-[#F3F3F3] space-y-2">
