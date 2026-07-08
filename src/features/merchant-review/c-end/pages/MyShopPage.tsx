@@ -4,13 +4,48 @@ import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useContentMerchantStore } from "@/platform/content/merchant-store"
 import { useMerchantReviewStore } from "@/features/merchant-review/store"
 import { useAuthStore } from "@/platform/auth"
-import { Store, Clock, Phone, FileText, Power, CheckCircle2, Clock3, XCircle, BadgeCheck } from "lucide-react"
+import {
+  Store, Phone, FileText, Power, CheckCircle2, Clock3, XCircle,
+  BadgeCheck, X, Image, Tag, Edit3,
+} from "lucide-react"
 import { toast } from "sonner"
 
 const STATUS_META = {
   pending: { label: "审核中", icon: Clock3, color: "text-amber-600", bg: "bg-amber-50" },
   approved: { label: "已通过", icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
   rejected: { label: "已驳回", icon: XCircle, color: "text-rose-500", bg: "bg-rose-50" },
+}
+
+type SheetType = "cover" | "description" | "detailImages" | "name" | "address" | "phone" | "category" | null
+
+function Sheet({
+  open,
+  onClose,
+  title,
+  children,
+}: {
+  open: boolean
+  onClose: () => void
+  title: string
+  children: React.ReactNode
+}) {
+  if (!open) return null
+  return (
+    <div className="fixed inset-0 bg-black/40 z-[70] flex items-end" onClick={onClose}>
+      <div
+        className="bg-white w-full rounded-t-[20px] max-h-[70vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between shrink-0">
+          <h3 className="text-[16px] text-text-body font-medium">{title}</h3>
+          <button onClick={onClose} className="p-1">
+            <X size={20} className="text-text-tertiary" />
+          </button>
+        </div>
+        <div className="overflow-y-auto p-4 space-y-4 pb-8">{children}</div>
+      </div>
+    </div>
+  )
 }
 
 export function MyShopPage() {
@@ -51,43 +86,217 @@ export function MyShopPage() {
 
   const merchant = useMemo(
     () => merchants.find((m) => m.relatedUser === supplierName) ?? merchants[0],
-    [merchants, supplierName]
+    [merchants, supplierName],
   )
-  const myRequests = useMemo(() => allRequests.filter((r) => r.supplierId === supplierId), [allRequests, supplierId])
+  const myRequests = useMemo(
+    () => allRequests.filter((r) => r.supplierId === supplierId),
+    [allRequests, supplierId],
+  )
+  const pendingCount = useMemo(
+    () => myRequests.filter((r) => r.status === "pending").length,
+    [myRequests],
+  )
 
-  const [editing, setEditing] = useState(false)
-  const [open, setOpen] = useState(true) // 营业状态
-  const [form, setForm] = useState({
-    hours: merchant?.hours ?? "09:00-22:00",
-    phone: merchant?.phone ?? "",
-    description: merchant?.description ?? "",
-  })
+  const [shopOpen, setShopOpen] = useState(true)
+  const [activeSheet, setActiveSheet] = useState<SheetType>(null)
+  const [sheetValue, setSheetValue] = useState("")
 
   if (!merchant) return <div className="p-4 text-center text-text-tertiary">暂无店铺信息</div>
 
-  const handleSubmit = () => {
-    const fields = []
-    if (form.hours !== merchant.hours)
-      fields.push({ field: "hours", label: "营业时间", oldValue: merchant.hours, newValue: form.hours })
-    if (form.phone !== merchant.phone)
-      fields.push({ field: "phone", label: "联系电话", oldValue: merchant.phone, newValue: form.phone })
-    if (form.description !== merchant.description)
-      fields.push({
-        field: "description",
-        label: "店铺简介",
-        oldValue: merchant.description,
-        newValue: form.description,
-      })
-    if (fields.length === 0) {
-      toast.info("未修改任何信息")
+  const closeSheet = () => {
+    setActiveSheet(null)
+    setSheetValue("")
+  }
+
+  const handleDirectSave = async (field: string, value: string) => {
+    try {
+      await useContentMerchantStore.getState().updateMerchant(merchant.id, { [field]: value })
+      toast.success("修改已保存")
+      closeSheet()
+    } catch {
+      toast.error("保存失败")
+    }
+  }
+
+  const handleDetailImagesSave = async (value: string) => {
+    const urls = value.split("\n").map((s) => s.trim()).filter(Boolean)
+    if (urls.length === 0) {
+      toast.error("请输入至少一张图片链接")
       return
     }
-    submitChange({ supplierId, supplierName, merchantName: merchant.name, fields })
-    toast.success("变更已提交，等待平台审核")
-    setEditing(false)
+    try {
+      await useContentMerchantStore.getState().updateMerchant(merchant.id, { detailImages: urls })
+      toast.success("图片已更新")
+      closeSheet()
+    } catch {
+      toast.error("保存失败")
+    }
+  }
+
+  const handleChangeRequest = async (field: string, label: string, newValue: string) => {
+    if (!newValue.trim()) {
+      toast.error("请输入新值")
+      return
+    }
+    try {
+      await submitChange({
+        supplierId,
+        supplierName,
+        merchantName: merchant.name,
+        fields: [
+          {
+            field,
+            label,
+            oldValue: String((merchant as any)[field] ?? ""),
+            newValue: newValue.trim(),
+          },
+        ],
+      })
+      toast.success("修改申请已提交，等待审核")
+      closeSheet()
+    } catch {
+      toast.error("提交失败")
+    }
   }
 
   const latestRequest = myRequests[0]
+
+  // ── Bottom sheet content ──
+  const renderSheet = () => {
+    if (!activeSheet) return null
+
+    // 封面（直接编辑）
+    if (activeSheet === "cover") {
+      return (
+        <Sheet open onClose={closeSheet} title="修改封面图">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <img src={merchant.cover} alt="" className="w-20 h-14 rounded-lg object-cover" />
+              <span className="text-[12px] text-text-tertiary">当前封面</span>
+            </div>
+            <input
+              value={sheetValue}
+              onChange={(e) => setSheetValue(e.target.value)}
+              placeholder="输入新的图片链接"
+              className="w-full h-10 px-3 rounded-xl bg-gray-50 text-[13px] outline-none"
+            />
+            <button
+              onClick={() => handleDirectSave("cover", sheetValue)}
+              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
+            >
+              保存
+            </button>
+          </div>
+        </Sheet>
+      )
+    }
+
+    // 简介（直接编辑）
+    if (activeSheet === "description") {
+      return (
+        <Sheet open onClose={closeSheet} title="修改店铺简介">
+          <div className="space-y-3">
+            <p className="text-[12px] text-text-tertiary">当前简介</p>
+            <p className="text-[13px] text-text-body bg-gray-50 rounded-xl p-3">{merchant.description}</p>
+            <textarea
+              value={sheetValue}
+              onChange={(e) => setSheetValue(e.target.value)}
+              placeholder="输入新的简介"
+              rows={4}
+              className="w-full text-[13px] outline-none bg-gray-50 rounded-xl p-3 resize-none"
+            />
+            <button
+              onClick={() => handleDirectSave("description", sheetValue)}
+              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
+            >
+              保存
+            </button>
+          </div>
+        </Sheet>
+      )
+    }
+
+    // 详情图片（直接编辑）
+    if (activeSheet === "detailImages") {
+      const currentImages = merchant.detailImages ?? []
+      return (
+        <Sheet open onClose={closeSheet} title="修改详情图片">
+          <div className="space-y-3">
+            <p className="text-[12px] text-text-tertiary">
+              当前图片（{currentImages.length} 张）
+            </p>
+            {currentImages.length > 0 ? (
+              <div className="flex gap-2 flex-wrap">
+                {currentImages.map((url, i) => (
+                  <img key={i} src={url} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                ))}
+              </div>
+            ) : (
+              <p className="text-[12px] text-text-tertiary">暂无图片</p>
+            )}
+            <p className="text-[12px] text-text-tertiary">新图片链接（每行一个）</p>
+            <textarea
+              value={sheetValue}
+              onChange={(e) => setSheetValue(e.target.value)}
+              placeholder="https://example.com/image1.jpg"
+              rows={4}
+              className="w-full text-[13px] outline-none bg-gray-50 rounded-xl p-3 resize-none"
+            />
+            <button
+              onClick={() => handleDetailImagesSave(sheetValue)}
+              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
+            >
+              保存
+            </button>
+          </div>
+        </Sheet>
+      )
+    }
+
+    // 审核类字段（需提交审核）
+    const CRITICAL_META: Record<string, { label: string }> = {
+      name: { label: "店铺名称" },
+      address: { label: "店铺地址" },
+      phone: { label: "联系电话" },
+      category: { label: "店铺分类" },
+    }
+    const meta = CRITICAL_META[activeSheet]
+    if (meta) {
+      const currentValue = String((merchant as any)[activeSheet] ?? "")
+      return (
+        <Sheet open onClose={closeSheet} title={`修改${meta.label}`}>
+          <div className="space-y-3">
+            <div>
+              <p className="text-[12px] text-text-tertiary mb-1">当前值</p>
+              <p className="text-[13px] text-text-body bg-gray-50 rounded-xl p-3">
+                {currentValue || "未设置"}
+              </p>
+            </div>
+            <div>
+              <p className="text-[12px] text-text-tertiary mb-1">新值</p>
+              <input
+                value={sheetValue}
+                onChange={(e) => setSheetValue(e.target.value)}
+                placeholder={`输入新的${meta.label}`}
+                className="w-full h-10 px-3 rounded-xl bg-gray-50 text-[13px] outline-none"
+              />
+            </div>
+            <p className="text-[11px] text-amber-600 flex items-center gap-1">
+              <Clock3 size={12} /> 修改需平台审核通过后生效
+            </p>
+            <button
+              onClick={() => handleChangeRequest(activeSheet, meta.label, sheetValue)}
+              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
+            >
+              提交申请
+            </button>
+          </div>
+        </Sheet>
+      )
+    }
+
+    return null
+  }
 
   return (
     <div className="min-h-full bg-surface-page pb-6">
@@ -99,24 +308,67 @@ export function MyShopPage() {
         <span className="text-[12px] text-emerald-700">已验证商户</span>
       </div>
 
+      {/* 待审核提醒 */}
+      {pendingCount > 0 && (
+        <div className="mx-4 mt-3 px-4 py-3 rounded-xl bg-amber-50 flex items-center gap-2">
+          <Clock3 size={16} className="text-amber-600 shrink-0" />
+          <span className="text-[12px] text-amber-700">
+            您有 {pendingCount} 个修改申请正在审核中
+          </span>
+        </div>
+      )}
+
       {/* 店铺头 */}
       <div className="px-4 pt-4">
         <div className="bg-white rounded-2xl overflow-hidden">
-          <img src={merchant.cover} alt={merchant.name} className="w-full h-32 object-cover" />
+          <div className="relative">
+            <img src={merchant.cover} alt={merchant.name} className="w-full h-32 object-cover" />
+            <button
+              onClick={() => {
+                setSheetValue(merchant.cover)
+                setActiveSheet("cover")
+              }}
+              className="absolute top-2 right-2 size-8 rounded-full bg-black/40 flex items-center justify-center active:bg-black/60"
+            >
+              <Edit3 size={14} className="text-white" />
+            </button>
+          </div>
           <div className="p-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <p className="text-[17px] font-semibold text-text-heading">{merchant.name}</p>
+              <div className="flex items-center gap-2 min-w-0">
+                <p className="text-[17px] font-semibold text-text-heading truncate">
+                  {merchant.name}
+                </p>
                 <button
-                  onClick={() => setOpen(!open)}
-                  className={`text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1 ${open ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-text-tertiary"}`}
+                  onClick={() => {
+                    setSheetValue(merchant.name)
+                    setActiveSheet("name")
+                  }}
+                  className="text-[11px] text-primary shrink-0"
                 >
-                  <Power size={11} /> {open ? "营业中" : "休息中"}
+                  申请修改
+                </button>
+                <button
+                  onClick={() => setShopOpen(!shopOpen)}
+                  className={`text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 ${shopOpen ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-text-tertiary"}`}
+                >
+                  <Power size={11} /> {shopOpen ? "营业中" : "休息中"}
                 </button>
               </div>
-              <span className="text-[12px] text-amber-500">⭐ {merchant.rating}</span>
+              <span className="text-[12px] text-amber-500 shrink-0">⭐ {merchant.rating}</span>
             </div>
-            <p className="text-[12px] text-text-tertiary mt-1">{merchant.address}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-[12px] text-text-tertiary truncate">{merchant.address}</p>
+              <button
+                onClick={() => {
+                  setSheetValue(merchant.address)
+                  setActiveSheet("address")
+                }}
+                className="text-[11px] text-primary shrink-0"
+              >
+                申请修改
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -124,7 +376,9 @@ export function MyShopPage() {
       {/* 审核状态提示 */}
       {latestRequest && (
         <div className="px-4 mt-3">
-          <div className={`rounded-xl p-3 flex items-center gap-2 ${STATUS_META[latestRequest.status].bg}`}>
+          <div
+            className={`rounded-xl p-3 flex items-center gap-2 ${STATUS_META[latestRequest.status].bg}`}
+          >
             {(() => {
               const Icon = STATUS_META[latestRequest.status].icon
               return <Icon size={16} className={STATUS_META[latestRequest.status].color} />
@@ -134,84 +388,116 @@ export function MyShopPage() {
                 最近变更：{STATUS_META[latestRequest.status].label}
               </p>
               <p className="text-[11px] text-text-tertiary mt-0.5">
-                {latestRequest.fields.map((f) => f.label).join("、")} · {latestRequest.submittedAt}
+                {latestRequest.fields.map((f) => f.label).join("、")} ·{" "}
+                {latestRequest.submittedAt}
               </p>
             </div>
           </div>
         </div>
       )}
 
-      {/* 店铺信息编辑 */}
+      {/* 店铺信息 */}
       <div className="px-4 mt-3">
         <div className="bg-white rounded-2xl p-4">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-[14px] font-semibold text-text-heading flex items-center gap-1.5">
-              <Store size={16} /> 店铺信息
-            </p>
-            {!editing && (
-              <button onClick={() => setEditing(true)} className="text-[12px] text-primary">
-                编辑
-              </button>
-            )}
+          <p className="text-[14px] font-semibold text-text-heading flex items-center gap-1.5 mb-2">
+            <Store size={16} /> 店铺信息
+          </p>
+
+          {/* 分类 */}
+          <div className="flex items-center gap-3 py-3 border-b border-gray-50">
+            <Tag size={16} className="text-text-tertiary shrink-0" />
+            <span className="text-[13px] text-text-secondary w-16">店铺分类</span>
+            <span className="flex-1 text-[13px] text-text-heading text-right">
+              {merchant.category}
+            </span>
+            <button
+              onClick={() => {
+                setSheetValue(merchant.category)
+                setActiveSheet("category")
+              }}
+              className="text-[12px] text-primary shrink-0"
+            >
+              申请修改
+            </button>
           </div>
 
-          {[
-            { icon: Clock, label: "营业时间", key: "hours" as const },
-            { icon: Phone, label: "联系电话", key: "phone" as const },
-          ].map(({ icon: Icon, label, key }) => (
-            <div key={key} className="flex items-center gap-3 py-3 border-b border-gray-50 last:border-0">
-              <Icon size={16} className="text-text-tertiary shrink-0" />
-              <span className="text-[13px] text-text-secondary w-20">{label}</span>
-              {editing ? (
-                <input
-                  value={form[key]}
-                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="flex-1 text-[13px] text-right outline-none bg-gray-50 rounded px-2 py-1"
-                />
-              ) : (
-                <span className="flex-1 text-[13px] text-text-heading text-right">{form[key]}</span>
-              )}
-            </div>
-          ))}
-
-          <div className="py-3">
-            <div className="flex items-center gap-3 mb-2">
-              <FileText size={16} className="text-text-tertiary shrink-0" />
-              <span className="text-[13px] text-text-secondary">店铺简介</span>
-            </div>
-            {editing ? (
-              <textarea
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                rows={3}
-                className="w-full text-[13px] outline-none bg-gray-50 rounded-lg p-2 resize-none"
-              />
-            ) : (
-              <p className="text-[13px] text-text-body leading-relaxed">{form.description}</p>
-            )}
+          {/* 电话 */}
+          <div className="flex items-center gap-3 py-3 border-b border-gray-50">
+            <Phone size={16} className="text-text-tertiary shrink-0" />
+            <span className="text-[13px] text-text-secondary w-16">联系电话</span>
+            <span className="flex-1 text-[13px] text-text-heading text-right">
+              {merchant.phone}
+            </span>
+            <button
+              onClick={() => {
+                setSheetValue(merchant.phone)
+                setActiveSheet("phone")
+              }}
+              className="text-[12px] text-primary shrink-0"
+            >
+              申请修改
+            </button>
           </div>
 
-          {editing && (
-            <div className="flex gap-2 mt-2">
+          {/* 简介 */}
+          <div className="py-3 border-b border-gray-50">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <FileText size={16} className="text-text-tertiary shrink-0" />
+                <span className="text-[13px] text-text-secondary">店铺简介</span>
+              </div>
               <button
                 onClick={() => {
-                  setForm({ hours: merchant.hours, phone: merchant.phone, description: merchant.description })
-                  setEditing(false)
+                  setSheetValue(merchant.description)
+                  setActiveSheet("description")
                 }}
-                className="flex-1 h-10 rounded-xl bg-gray-100 text-text-body text-[13px]"
+                className="text-[12px] text-primary"
               >
-                取消
-              </button>
-              <button
-                onClick={handleSubmit}
-                className="flex-1 h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
-              >
-                提交审核
+                编辑
               </button>
             </div>
-          )}
+            <p className="text-[13px] text-text-body leading-relaxed mt-1">
+              {merchant.description}
+            </p>
+          </div>
+
+          {/* 详情图片 */}
+          <div className="py-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Image size={16} className="text-text-tertiary shrink-0" />
+                <span className="text-[13px] text-text-secondary">详情图片</span>
+              </div>
+              <button
+                onClick={() => {
+                  setSheetValue((merchant.detailImages ?? []).join("\n"))
+                  setActiveSheet("detailImages")
+                }}
+                className="text-[12px] text-primary"
+              >
+                编辑
+              </button>
+            </div>
+            {(merchant.detailImages ?? []).length > 0 ? (
+              <div className="flex gap-2 flex-wrap mt-1">
+                {merchant.detailImages!.slice(0, 4).map((url, i) => (
+                  <img key={i} src={url} alt="" className="w-14 h-14 rounded-lg object-cover" />
+                ))}
+                {merchant.detailImages!.length > 4 && (
+                  <span className="w-14 h-14 rounded-lg bg-gray-50 flex items-center justify-center text-[12px] text-text-tertiary">
+                    +{merchant.detailImages!.length - 4}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <p className="text-[12px] text-text-tertiary">暂无详情图片</p>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Bottom sheets */}
+      {renderSheet()}
 
       <p className="text-center text-[11px] text-text-quaternary mt-4 px-8">
         店铺信息变更需平台审核通过后生效，保障古城商铺信息准确

@@ -1,16 +1,10 @@
 import { useState, useMemo, useEffect } from "react"
-import { ChevronLeft, Share2, MapPin, Phone, Navigation, Shield, BadgeCheck, Award, ChevronRight } from "lucide-react"
+import { ChevronLeft, Share2, MapPin, Phone, Navigation, ChevronRight } from "lucide-react"
 import { useNavigate, useParams } from "react-router"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { toast } from "sonner"
 import { useContentMerchantStore } from "@/features/content/store/merchant-store"
 import { useFlowWarningStore, LEVEL_META } from "@/platform/flow-warning/flow-warning-store"
-
-const qualificationBadges = [
-  { icon: BadgeCheck, label: "实名认证", color: "#27AE60" },
-  { icon: Shield, label: "诚信商户", color: "#3B82F6" },
-  { icon: Award, label: "品质保证", color: "#3B82F6" },
-]
 
 function openMerchantNavigation(merchant: { name: string; lat?: number; lng?: number; address?: string }) {
   if (merchant.lat && merchant.lng) {
@@ -131,26 +125,34 @@ export function MerchantDetailPage() {
       )}
 
       {/* 商家资质 */}
-      <div className="mx-3 mt-3 bg-white rounded-2xl p-4 shadow-[0_4px_14px_rgba(60,120,200,0.08)]">
-        <h3 className="text-[14px] text-text-body flex items-center gap-1.5 mb-3">
-          <span className="w-1 h-3.5 bg-[#27AE60] rounded-full" />
-          商家资质
-        </h3>
-        <div className="grid grid-cols-3 gap-2">
-          {qualificationBadges.map((badge) => {
-            const Icon = badge.icon
-            return (
-              <div
-                key={badge.label}
-                className="flex flex-col items-center py-2.5 rounded-xl bg-gradient-to-br from-surface-page to-primary-100"
-              >
-                <Icon size={20} style={{ color: badge.color }} />
-                <span className="text-[11px] text-text-heading mt-1">{badge.label}</span>
-              </div>
-            )
-          })}
+      {merchant.businessLicense && (
+        <div className="mx-3 mt-3 bg-white rounded-2xl p-4 shadow-[0_4px_14px_rgba(60,120,200,0.08)]">
+          <h3 className="text-[14px] text-text-body flex items-center gap-1.5 mb-3">
+            <span className="w-1 h-3.5 bg-[#27AE60] rounded-full" />
+            商家资质
+          </h3>
+          <div className="aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
+            <img src={merchant.businessLicense} alt="资质凭证" className="w-full h-full object-cover" />
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* 详情 */}
+      {merchant.detailImages?.length > 0 && (
+        <div className="mx-3 mt-3 bg-white rounded-2xl p-4 shadow-[0_4px_14px_rgba(60,120,200,0.08)]">
+          <h3 className="text-[14px] text-text-body flex items-center gap-1.5 mb-3">
+            <span className="w-1 h-3.5 bg-primary rounded-full" />
+            详情
+          </h3>
+          <div className="grid grid-cols-2 gap-2">
+            {merchant.detailImages.map((img, i) => (
+              <div key={i} className="aspect-video rounded-xl overflow-hidden bg-gray-100">
+                <img src={img} alt={`详情 ${i + 1}`} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Bottom bar */}
       <div className="fixed left-0 right-0 bottom-0 bg-white border-t border-border-light px-3 h-[64px] flex items-center gap-3 pb-[env(safe-area-inset-bottom)]">
