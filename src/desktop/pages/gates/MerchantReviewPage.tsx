@@ -18,6 +18,7 @@ import {
 } from "../../../features/merchant-review/store"
 import { useContentMerchantStore } from "../../../platform/content/merchant-store"
 import { RejectDialog } from "../../../shared/components/ui/RejectDialog"
+import { ReviewDetailDialog } from "../../components/common/ReviewDetailDialog"
 
 type Tab = "claim" | "new-shop" | "info-change"
 
@@ -189,103 +190,69 @@ function ClaimReview() {
       </ReviewTableShell>
 
       {/* 详情弹窗 */}
-      <Dialog open={!!detail} onOpenChange={(o) => { if (!o) setDetail(null) }}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{detail?.claimedShopName} - 认领申请详情</DialogTitle>
-          </DialogHeader>
-          {detail && (
-            <div className="space-y-4 py-2">
-              {/* 申请人信息 */}
-              <p className="text-[12px] text-text-tertiary">
-                申请人：{detail.userName} · {detail.userPhone}
-              </p>
-
-              {/* 资质证明图片（3 列网格） */}
-              {detail.credentialImages && detail.credentialImages.length > 0 && (
-                <div>
-                  <p className="text-[13px] font-medium text-text-heading mb-2">资质证明</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {detail.credentialImages.map((img, i) => (
-                      <img
-                        key={i}
-                        src={img}
-                        alt={`资质证明 ${i + 1}`}
-                        className="w-full h-24 object-cover rounded-lg border border-border-light"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 店铺信息确认 / Diff 表 */}
-              <div>
-                <p className="text-[13px] font-medium text-text-heading mb-2">店铺信息确认</p>
-                <div className="border border-border-light rounded-lg overflow-hidden">
-                  <table className="w-full text-[12px]">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="text-left px-3 py-2 text-text-tertiary font-medium w-[120px]">字段</th>
-                        <th className="text-left px-3 py-2 text-text-tertiary font-medium">当前值</th>
+      {detail && (
+        <ReviewDetailDialog
+          open={!!detail}
+          onOpenChange={(o) => { if (!o) setDetail(null) }}
+          title={`${detail.claimedShopName} - 认领申请详情`}
+          applicant={{ name: detail.userName ?? "", phone: detail.userPhone ?? "" }}
+          credentialImages={detail.credentialImages}
+          status={detail.status}
+          rejectReason={detail.rejectReason}
+          reviewedAt={detail.reviewedAt}
+          onApprove={() => handleApprove(detail)}
+          onReject={() => { setRejectTarget(detail); setRejectReason("") }}
+          approveLabel="通过（追加商户身份）"
+        >
+          {/* 店铺信息确认 / Diff 表 */}
+          <div>
+            <p className="text-[13px] font-medium text-text-heading mb-2">店铺信息确认</p>
+            <div className="border border-border-light rounded-lg overflow-hidden">
+              <table className="w-full text-[12px]">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left px-3 py-2 text-text-tertiary font-medium w-[120px]">字段</th>
+                    <th className="text-left px-3 py-2 text-text-tertiary font-medium">当前值</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const merchant = detail.claimedShopId ? allMerchants.find((m) => m.id === detail.claimedShopId) : null
+                    if (!merchant) {
+                      return (
+                        <tr>
+                          <td colSpan={2} className="px-3 py-4 text-center text-text-tertiary">
+                            未找到对应店铺信息
+                          </td>
+                        </tr>
+                      )
+                    }
+                    const rows: { label: string; value: string }[] = [
+                      { label: "店铺名称", value: merchant.name },
+                      { label: "经营类型", value: categoryLabel(merchant.category) },
+                      { label: "店铺地址", value: merchant.address },
+                      { label: "联系电话", value: merchant.phone },
+                      {
+                        label: "坐标",
+                        value:
+                          merchant.lat != null && merchant.lng != null
+                            ? `${merchant.lat}, ${merchant.lng}`
+                            : "未设置",
+                      },
+                    ]
+                    return rows.map((row, i) => (
+                      <tr key={i} className="border-t border-border-light">
+                        <td className="px-3 py-2 text-text-tertiary">{row.label}</td>
+                        <td className="px-3 py-2 text-text-body">{row.value}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {(() => {
-                        const merchant = detail.claimedShopId ? allMerchants.find((m) => m.id === detail.claimedShopId) : null
-                        if (!merchant) {
-                          return (
-                            <tr>
-                              <td colSpan={2} className="px-3 py-4 text-center text-text-tertiary">
-                                未找到对应店铺信息
-                              </td>
-                            </tr>
-                          )
-                        }
-                        const rows: { label: string; value: string }[] = [
-                          { label: "店铺名称", value: merchant.name },
-                          { label: "经营类型", value: categoryLabel(merchant.category) },
-                          { label: "店铺地址", value: merchant.address },
-                          { label: "联系电话", value: merchant.phone },
-                          {
-                            label: "坐标",
-                            value:
-                              merchant.lat != null && merchant.lng != null
-                                ? `${merchant.lat}, ${merchant.lng}`
-                                : "未设置",
-                          },
-                        ]
-                        return rows.map((row, i) => (
-                          <tr key={i} className="border-t border-border-light">
-                            <td className="px-3 py-2 text-text-tertiary">{row.label}</td>
-                            <td className="px-3 py-2 text-text-body">{row.value}</td>
-                          </tr>
-                        ))
-                      })()}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* 审核信息 */}
-              {detail.status !== "pending" && (
-                <p className="text-[12px] text-text-tertiary">
-                  {detail.status === "approved" ? "已通过" : `已驳回：${detail.rejectReason}`} · {detail.reviewedAt}
-                </p>
-              )}
+                    ))
+                  })()}
+                </tbody>
+              </table>
             </div>
-          )}
-          <DialogFooter>
-            {detail?.status === "pending" && (
-              <>
-                <Button variant="outline" onClick={() => { setRejectTarget(detail); setRejectReason("") }}>
-                  驳回
-                </Button>
-                <Button onClick={() => handleApprove(detail)}>通过（追加商户身份）</Button>
-              </>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+        </ReviewDetailDialog>
+      )}
 
       {/* 驳回弹窗 */}
       <RejectDialog
@@ -431,87 +398,53 @@ function NewShopReview() {
       </ReviewTableShell>
 
       {/* 详情弹窗 */}
-      <Dialog open={!!detail} onOpenChange={(o) => { if (!o) setDetail(null) }}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{detail?.newShopName} - 入驻申请详情</DialogTitle>
-          </DialogHeader>
-          {detail && (
-            <div className="space-y-4 py-2">
-              {/* 申请人信息 */}
-              <p className="text-[12px] text-text-tertiary">
-                申请人：{detail.userName} · {detail.userPhone}
-              </p>
-
-              {/* 资质证明图片（3 列网格） */}
-              {detail.credentialImages && detail.credentialImages.length > 0 && (
-                <div>
-                  <p className="text-[13px] font-medium text-text-heading mb-2">资质证明</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {detail.credentialImages.map((img, i) => (
-                      <img
-                        key={i}
-                        src={img}
-                        alt={`资质证明 ${i + 1}`}
-                        className="w-full h-24 object-cover rounded-lg border border-border-light"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 提交的店铺信息 */}
-              <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                <div className="flex justify-between text-[12px]">
-                  <span className="text-text-tertiary">店铺名称</span>
-                  <span className="text-text-body font-medium">{detail.newShopName}</span>
-                </div>
-                <div className="flex justify-between text-[12px]">
-                  <span className="text-text-tertiary">经营类型</span>
-                  <span className="text-text-body">{categoryLabel(detail.newCategory ?? "")}</span>
-                </div>
-                <div className="flex justify-between text-[12px]">
-                  <span className="text-text-tertiary">店铺地址</span>
-                  <span className="text-text-body">{detail.newAddress}</span>
-                </div>
-                <div className="flex justify-between text-[12px]">
-                  <span className="text-text-tertiary">店铺电话</span>
-                  <span className="text-text-body">{detail.newPhone}</span>
-                </div>
-                {detail.newLat != null && detail.newLng != null && (
-                  <div className="flex justify-between text-[12px]">
-                    <span className="text-text-tertiary">坐标</span>
-                    <span className="text-text-body">
-                      {detail.newLat}, {detail.newLng}
-                    </span>
-                  </div>
-                )}
-                <div className="text-[12px]">
-                  <span className="text-text-tertiary">店铺简介</span>
-                  <p className="text-text-body mt-1">{detail.newDescription}</p>
-                </div>
-              </div>
-
-              {/* 审核信息 */}
-              {detail.status !== "pending" && (
-                <p className="text-[12px] text-text-tertiary">
-                  {detail.status === "approved" ? "已通过" : `已驳回：${detail.rejectReason}`} · {detail.reviewedAt}
-                </p>
-              )}
+      {detail && (
+        <ReviewDetailDialog
+          open={!!detail}
+          onOpenChange={(o) => { if (!o) setDetail(null) }}
+          title={`${detail.newShopName} - 入驻申请详情`}
+          applicant={{ name: detail.userName ?? "", phone: detail.userPhone ?? "" }}
+          credentialImages={detail.credentialImages}
+          status={detail.status}
+          rejectReason={detail.rejectReason}
+          reviewedAt={detail.reviewedAt}
+          onApprove={() => handleApprove(detail)}
+          onReject={() => { setRejectTarget(detail); setRejectReason("") }}
+          approveLabel="通过（追加商户身份）"
+        >
+          {/* 提交的店铺信息 */}
+          <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+            <div className="flex justify-between text-[12px]">
+              <span className="text-text-tertiary">店铺名称</span>
+              <span className="text-text-body font-medium">{detail.newShopName}</span>
             </div>
-          )}
-          <DialogFooter>
-            {detail?.status === "pending" && (
-              <>
-                <Button variant="outline" onClick={() => { setRejectTarget(detail); setRejectReason("") }}>
-                  驳回
-                </Button>
-                <Button onClick={() => handleApprove(detail)}>通过（追加商户身份）</Button>
-              </>
+            <div className="flex justify-between text-[12px]">
+              <span className="text-text-tertiary">经营类型</span>
+              <span className="text-text-body">{categoryLabel(detail.newCategory ?? "")}</span>
+            </div>
+            <div className="flex justify-between text-[12px]">
+              <span className="text-text-tertiary">店铺地址</span>
+              <span className="text-text-body">{detail.newAddress}</span>
+            </div>
+            <div className="flex justify-between text-[12px]">
+              <span className="text-text-tertiary">店铺电话</span>
+              <span className="text-text-body">{detail.newPhone}</span>
+            </div>
+            {detail.newLat != null && detail.newLng != null && (
+              <div className="flex justify-between text-[12px]">
+                <span className="text-text-tertiary">坐标</span>
+                <span className="text-text-body">
+                  {detail.newLat}, {detail.newLng}
+                </span>
+              </div>
             )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <div className="text-[12px]">
+              <span className="text-text-tertiary">店铺简介</span>
+              <p className="text-text-body mt-1">{detail.newDescription}</p>
+            </div>
+          </div>
+        </ReviewDetailDialog>
+      )}
 
       {/* 驳回弹窗 */}
       <RejectDialog
