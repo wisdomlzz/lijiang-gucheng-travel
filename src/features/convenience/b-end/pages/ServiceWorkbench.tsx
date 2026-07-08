@@ -193,7 +193,7 @@ export function ServiceWorkbench() {
             <div className="text-[12px] text-text-tertiary">暂无进行中的订单</div>
           </div>
         ) : (
-          activeOrders.slice(0, 1).map((o) => (
+          activeOrders.map((o) => (
             <div key={o.id} className="bg-white rounded-2xl p-3.5 shadow-[0_4px_16px_rgba(60,120,200,0.08)]">
               <div className="flex items-center justify-between mb-1.5">
                 <div
@@ -218,7 +218,7 @@ export function ServiceWorkbench() {
               </div>
               <div className="mt-3 flex items-center gap-2 border-t border-[#F0F0F0] pt-2.5">
                 <button
-                  onClick={() => window.open(`tel:${staffItem?.phone || "13800000000"}`)}
+                  onClick={() => location.href = `tel:${staffItem?.phone || "13800001001"}`}
                   className="size-8 rounded-full bg-primary-50 flex items-center justify-center"
                 >
                   <Phone className="size-4 text-primary" />
@@ -238,7 +238,7 @@ export function ServiceWorkbench() {
       </div>
 
       <div className="px-4">
-        <SectionHeader title="最近订单" />
+        <SectionHeader title="最新通知" />
         {recentOrders.length === 0 ? (
           <div className="bg-white rounded-2xl p-6 shadow-[0_4px_16px_rgba(60,120,200,0.08)] text-center">
             <div className="text-[12px] text-text-tertiary">暂无最近订单</div>
