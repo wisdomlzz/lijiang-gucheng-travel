@@ -236,22 +236,31 @@ export function VolunteerActivityDetailPage() {
     setLoading("")
   }
 
-  const handleCheckIn = () => {
+  const handleCheckIn = async () => {
     if (!activeDaily) return
-    setLoading("checkin")
-    const res = doCheckIn(activeDaily.id)
-    if (res.ok) toast.success(res.msg)
-    else toast.error(res.msg)
-    setLoading("")
+    toast.info("签到需要获取您的位置信息以验证在活动范围内")
+    try {
+      setLoading("checkin")
+      const msg = await doCheckIn(activeDaily.id)
+      toast.success(msg)
+    } catch (err: any) {
+      toast.error(err.message || "签到失败")
+    } finally {
+      setLoading("")
+    }
   }
 
-  const handleCheckOut = () => {
+  const handleCheckOut = async () => {
     if (!activeDaily) return
-    setLoading("checkout")
-    const res = doCheckOut(activeDaily.id)
-    if (res.ok) toast.success(res.msg)
-    else toast.error(res.msg)
-    setLoading("")
+    try {
+      setLoading("checkout")
+      const msg = await doCheckOut(activeDaily.id)
+      toast.success(msg)
+    } catch (err: any) {
+      toast.error(err.message || "签退失败")
+    } finally {
+      setLoading("")
+    }
   }
 
   // ── 时间模式文案 ──
