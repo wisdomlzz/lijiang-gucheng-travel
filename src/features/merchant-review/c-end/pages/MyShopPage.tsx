@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useContentMerchantStore } from "@/platform/content/merchant-store"
@@ -6,7 +6,7 @@ import { useMerchantReviewStore } from "@/features/merchant-review/store"
 import { useAuthStore } from "@/platform/auth"
 import {
   Store, Phone, FileText, Power, CheckCircle2, Clock3, XCircle,
-  BadgeCheck, X, Image, Tag, Edit3,
+  BadgeCheck, X, Image, Tag, Edit3, MapPin, Shield, Camera, User,
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -16,7 +16,7 @@ const STATUS_META = {
   rejected: { label: "已驳回", icon: XCircle, color: "text-rose-500", bg: "bg-rose-50" },
 }
 
-type SheetType = "cover" | "description" | "detailImages" | "name" | "address" | "phone" | "category" | null
+type SheetType = "cover" | "description" | "detailImages" | "name" | "address" | "phone" | "category" | "lat" | "contactName" | "contactPhone" | "businessLicense" | null
 
 function Sheet({
   open,
@@ -97,15 +97,26 @@ export function MyShopPage() {
     [myRequests],
   )
 
-  const [shopOpen, setShopOpen] = useState(true)
+  const [shopOpen, setShopOpen] = useState(merchant.status !== "closed")
   const [activeSheet, setActiveSheet] = useState<SheetType>(null)
   const [sheetValue, setSheetValue] = useState("")
+
+  // Refs for image upload (Finding 4)
+  const businessLicenseInputRef = useRef<HTMLInputElement>(null)
+  const [businessLicenseUpload, setBusinessLicenseUpload] = useState<string>("")
+
+  // Lat/Lng state for edit (Finding 4)
+  const [sheetLat, setSheetLat] = useState("")
+  const [sheetLng, setSheetLng] = useState("")
 
   if (!merchant) return <div className="p-4 text-center text-text-tertiary">暂无店铺信息</div>
 
   const closeSheet = () => {
     setActiveSheet(null)
     setSheetValue("")
+    setBusinessLicenseUpload("")
+    setSheetLat("")
+    setSheetLng("")
   }
 
   const handleDirectSave = async (field: string, value: string) => {
@@ -253,12 +264,213 @@ export function MyShopPage() {
       )
     }
 
+    // 坐标修改（两个输入框）
+    if (activeSheet === "lat") {
+      return (
+        <Sheet open onClose={closeSheet} title="修改坐标">
+          <div className="space-y-3">
+            <div>
+              <p className="text-[12px] text-text-tertiary mb-1">当前坐标</p>
+              <p className="text-[13px] text-text-body bg-gray-50 rounded-xl p-3">
+                纬度: {merchant.lat ?? "未设置"} / 经度: {merchant.lng ?? "未设置"}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-[12px] text-text-tertiary mb-1">纬度</p>
+                <input
+                  value={sheetLat}
+                  onChange={(e) => setSheetLat(e.target.value)}
+                  placeholder="如 26.8723"
+                  type="number"
+                  step="any"
+                  className="w-full h-10 px-3 rounded-xl bg-gray-50 text-[13px] outline-none"
+                />
+              </div>
+              <div>
+                <p className="text-[12px] text-text-tertiary mb-1">经度</p>
+                <input
+                  value={sheetLng}
+                  onChange={(e) => setSheetLng(e.target.value)}
+                  placeholder="如 100.2299"
+                  type="number"
+                  step="any"
+                  className="w-full h-10 px-3 rounded-xl bg-gray-50 text-[13px] outline-none"
+                />
+              </div>
+            </div>
+            <p className="text-[11px] text-amber-600 flex items-center gap-1">
+              <Clock3 size={12} /> 修改需平台审核通过后生效
+            </p>
+            <button
+              onClick={async () => {
+                if (!sheetLat.trim() && !sheetLng.trim()) {
+                  toast.error("请至少输入一个坐标值")
+                  return
+                }
+                const fields = []
+                if (sheetLat.trim()) fields.push({ field: "lat" as const, label: "纬度" as const, oldValue: String(merchant.lat ?? ""), newValue: sheetLat.trim() })
+                if (sheetLng.trim()) fields.push({ field: "lng" as const, label: "经度" as const, oldValue: String(merchant.lng ?? ""), newValue: sheetLng.trim() })
+                try {
+                  await submitChange({
+                    supplierId,
+                    supplierName,
+                    merchantName: merchant.name,
+                    fields: fields.map((f) => ({ ...f, status: undefined })),
+                  })
+                  toast.success("修改申请已提交，等待审核")
+                  closeSheet()
+                } catch {
+                  toast.error("提交失败")
+                }
+              }}
+              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
+            >
+              提交申请
+            </button>
+          </div>
+        </Sheet>
+      )
+    }
+
+    // 营业执照修改（图片上传）
+    if (activeSheet === "businessLicense") {
+      return (
+        <Sheet open onClose={closeSheet} title="修改营业执照">
+          <div className="space-y-3">
+            <div>
+              <p className="text-[12px] text-text-tertiary mb-1">当前营业执照</p>
+              {merchant.businessLicense ? (
+                <img src={merchant.businessLicense} alt="营业执照" className="w-full h-28 rounded-xl object-cover bg-gray-50" />
+              ) : (
+                <p className="text-[13px] text-text-body bg-gray-50 rounded-xl p-3">未设置</p>
+              )}
+            </div>
+            <div>
+              <p className="text-[12px] text-text-tertiary mb-1">上传新营业执照</p>
+              {businessLicenseUpload ? (
+                <div className="relative h-28 rounded-xl overflow-hidden bg-gray-100">
+                  <img src={businessLicenseUpload} alt="新营业执照" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setBusinessLicenseUpload("")}
+                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 text-white flex items-center justify-center text-[12px]"
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => businessLicenseInputRef.current?.click()}
+                  className="w-full h-28 rounded-xl border-2 border-dashed border-border-light flex flex-col items-center justify-center gap-1 text-text-muted hover:border-primary hover:text-primary transition-colors"
+                >
+                  <Camera size={28} />
+                  <span className="text-[12px]">点击上传营业执照</span>
+                </button>
+              )}
+              <input ref={businessLicenseInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                const reader = new FileReader()
+                reader.onload = (ev) => {
+                  if (ev.target?.result) setBusinessLicenseUpload(ev.target.result as string)
+                }
+                reader.readAsDataURL(file)
+                e.target.value = ""
+              }} />
+            </div>
+            <p className="text-[11px] text-amber-600 flex items-center gap-1">
+              <Clock3 size={12} /> 修改需平台审核通过后生效
+            </p>
+            <button
+              onClick={async () => {
+                if (!businessLicenseUpload) {
+                  toast.error("请上传营业执照图片")
+                  return
+                }
+                try {
+                  await submitChange({
+                    supplierId,
+                    supplierName,
+                    merchantName: merchant.name,
+                    fields: [
+                      {
+                        field: "businessLicense",
+                        label: "营业执照",
+                        oldValue: merchant.businessLicense ?? "",
+                        newValue: businessLicenseUpload,
+                      },
+                    ],
+                  })
+                  toast.success("修改申请已提交，等待审核")
+                  closeSheet()
+                } catch {
+                  toast.error("提交失败")
+                }
+              }}
+              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
+            >
+              提交申请
+            </button>
+          </div>
+        </Sheet>
+      )
+    }
+
+    // 联系电话修改（带手机号验证）
+    if (activeSheet === "contactPhone") {
+      const currentValue = String(merchant.contactPhone ?? "")
+      return (
+        <Sheet open onClose={closeSheet} title="修改联系电话">
+          <div className="space-y-3">
+            <div>
+              <p className="text-[12px] text-text-tertiary mb-1">当前值</p>
+              <p className="text-[13px] text-text-body bg-gray-50 rounded-xl p-3">
+                {currentValue || "未设置"}
+              </p>
+            </div>
+            <div>
+              <p className="text-[12px] text-text-tertiary mb-1">新值</p>
+              <input
+                value={sheetValue}
+                onChange={(e) => setSheetValue(e.target.value)}
+                placeholder="输入新的联系电话"
+                type="tel"
+                className="w-full h-10 px-3 rounded-xl bg-gray-50 text-[13px] outline-none"
+              />
+            </div>
+            <p className="text-[11px] text-amber-600 flex items-center gap-1">
+              <Clock3 size={12} /> 修改需平台审核通过后生效
+            </p>
+            <button
+              onClick={() => {
+                if (!sheetValue.trim()) {
+                  toast.error("请输入联系电话")
+                  return
+                }
+                if (!/^1[3-9]\d{9}$/.test(sheetValue.trim())) {
+                  toast.error("手机号格式不正确")
+                  return
+                }
+                handleChangeRequest("contactPhone", "联系电话", sheetValue.trim())
+              }}
+              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
+            >
+              提交申请
+            </button>
+          </div>
+        </Sheet>
+      )
+    }
+
     // 审核类字段（需提交审核）
     const CRITICAL_META: Record<string, { label: string }> = {
       name: { label: "店铺名称" },
       address: { label: "店铺地址" },
       phone: { label: "联系电话" },
       category: { label: "店铺分类" },
+      contactName: { label: "联系人" },
     }
     const meta = CRITICAL_META[activeSheet]
     if (meta) {
@@ -349,7 +561,16 @@ export function MyShopPage() {
                   申请修改
                 </button>
                 <button
-                  onClick={() => setShopOpen(!shopOpen)}
+                  onClick={async () => {
+                    const newStatus = shopOpen ? "closed" : "open"
+                    try {
+                      await useContentMerchantStore.getState().updateMerchant(merchant.id, { status: newStatus })
+                      setShopOpen(!shopOpen)
+                      toast.success(newStatus === "open" ? "店铺已恢复营业" : "店铺已暂停营业")
+                    } catch {
+                      toast.error("操作失败")
+                    }
+                  }}
                   className={`text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 ${shopOpen ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-text-tertiary"}`}
                 >
                   <Power size={11} /> {shopOpen ? "营业中" : "休息中"}
@@ -439,6 +660,61 @@ export function MyShopPage() {
             </button>
           </div>
 
+          {/* 联系人 */}
+          <div className="flex items-center gap-3 py-3 border-b border-gray-50">
+            <User size={16} className="text-text-tertiary shrink-0" />
+            <span className="text-[13px] text-text-secondary w-16">联系人</span>
+            <span className="flex-1 text-[13px] text-text-heading text-right">
+              {merchant.contactName || "未设置"}
+            </span>
+            <button
+              onClick={() => {
+                setSheetValue(merchant.contactName ?? "")
+                setActiveSheet("contactName")
+              }}
+              className="text-[12px] text-primary shrink-0"
+            >
+              申请修改
+            </button>
+          </div>
+
+          {/* 联系电话（商户） */}
+          <div className="flex items-center gap-3 py-3 border-b border-gray-50">
+            <Phone size={16} className="text-text-tertiary shrink-0" />
+            <span className="text-[13px] text-text-secondary w-16">联系手机</span>
+            <span className="flex-1 text-[13px] text-text-heading text-right">
+              {merchant.contactPhone || "未设置"}
+            </span>
+            <button
+              onClick={() => {
+                setSheetValue(merchant.contactPhone ?? "")
+                setActiveSheet("contactPhone")
+              }}
+              className="text-[12px] text-primary shrink-0"
+            >
+              申请修改
+            </button>
+          </div>
+
+          {/* 坐标 */}
+          <div className="flex items-center gap-3 py-3 border-b border-gray-50">
+            <MapPin size={16} className="text-text-tertiary shrink-0" />
+            <span className="text-[13px] text-text-secondary w-16">坐标</span>
+            <span className="flex-1 text-[13px] text-text-heading text-right">
+              {merchant.lat != null ? `${merchant.lat}, ${merchant.lng ?? "-"}` : "未设置"}
+            </span>
+            <button
+              onClick={() => {
+                setSheetLat(String(merchant.lat ?? ""))
+                setSheetLng(String(merchant.lng ?? ""))
+                setActiveSheet("lat")
+              }}
+              className="text-[12px] text-primary shrink-0"
+            >
+              申请修改
+            </button>
+          </div>
+
           {/* 简介 */}
           <div className="py-3 border-b border-gray-50">
             <div className="flex items-center justify-between mb-1">
@@ -491,6 +767,29 @@ export function MyShopPage() {
               </div>
             ) : (
               <p className="text-[12px] text-text-tertiary">暂无详情图片</p>
+            )}
+          </div>
+
+          {/* 营业执照 */}
+          <div className="py-3 border-t border-gray-50">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Shield size={16} className="text-text-tertiary shrink-0" />
+                <span className="text-[13px] text-text-secondary">营业执照</span>
+              </div>
+              <button
+                onClick={() => {
+                  setActiveSheet("businessLicense")
+                }}
+                className="text-[12px] text-primary"
+              >
+                申请修改
+              </button>
+            </div>
+            {merchant.businessLicense ? (
+              <img src={merchant.businessLicense} alt="营业执照" className="w-full h-28 rounded-xl object-cover bg-gray-50" />
+            ) : (
+              <p className="text-[12px] text-text-tertiary">未上传</p>
             )}
           </div>
         </div>

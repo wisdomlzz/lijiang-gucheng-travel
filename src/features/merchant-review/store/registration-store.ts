@@ -21,6 +21,11 @@ export interface ShopClaimRequest {
   claimedShopId?: string
   claimedShopName?: string
 
+  // claim 场景：用户编辑的字段（FINDING 1）
+  claimedCategory?: string
+  claimedPhone?: string
+  claimedDesc?: string
+
   // new_shop 场景：用户提交的新店铺信息
   newShopName?: string
   newCategory?: string
@@ -32,6 +37,9 @@ export interface ShopClaimRequest {
   credentialImages?: string[]
   newLat?: number
   newLng?: number
+
+  // new_shop 封面（FINDING 2）
+  newCoverImage?: string
 
   // 审核信息
   status: "pending" | "approved" | "rejected"
@@ -53,6 +61,9 @@ type RegistrationState = {
     claimedShopId: string
     claimedShopName: string
     credentialImages?: string[]
+    claimedCategory?: string
+    claimedPhone?: string
+    claimedDesc?: string
   }) => Promise<void>
   /** 提交入驻申请（店铺不存在，新建） */
   submitRegistration: (input: {
@@ -67,6 +78,7 @@ type RegistrationState = {
     credentialImages?: string[]
     newLat?: number
     newLng?: number
+    newCoverImage?: string
   }) => Promise<void>
   approveRegistration: (id: string, reviewer: string) => Promise<void>
   rejectRegistration: (id: string, reviewer: string, reason: string) => Promise<void>
@@ -88,6 +100,9 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
       claimedShopId: input.claimedShopId,
       claimedShopName: input.claimedShopName,
       credentialImages: input.credentialImages,
+      claimedCategory: input.claimedCategory,
+      claimedPhone: input.claimedPhone,
+      claimedDesc: input.claimedDesc,
       status: "pending" as const,
     }
     await syncAction("submitClaim", () => merchantRegApi.create(payload), (result) => {
@@ -109,6 +124,7 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
       credentialImages: input.credentialImages,
       newLat: input.newLat,
       newLng: input.newLng,
+      newCoverImage: input.newCoverImage,
       status: "pending" as const,
     }
     await syncAction("submitRegistration", () => merchantRegApi.create(payload), (result) => {
@@ -155,7 +171,7 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
         reviewStatus: "通过",
         publishedAt: new Date().toLocaleString("zh-CN"),
         logo: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&h=200&fit=crop",
-        cover: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&h=400&fit=crop",
+        cover: req.newCoverImage || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&h=400&fit=crop",
         description: req.newDescription ?? "",
         address: req.newAddress ?? "",
         phone: req.newPhone ?? "",
@@ -170,6 +186,10 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
         claimStatus: "claimed",
         claimedBy: req.userId,
         claimedAt: new Date().toLocaleString("zh-CN"),
+        contactName: req.userName,
+        contactPhone: req.userPhone,
+        businessLicense: req.credentialImages?.[0],
+        detailImages: [],
       })
     }
 

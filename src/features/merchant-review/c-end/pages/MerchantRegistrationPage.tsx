@@ -61,6 +61,10 @@ export function MerchantRegistrationPage() {
   const [newShopCover, setNewShopCover] = useState<string>("")
   const coverInputRef = useRef<HTMLInputElement>(null)
 
+  // Claim cover upload (Finding 7)
+  const [claimCover, setClaimCover] = useState<string>("")
+  const claimCoverInputRef = useRef<HTMLInputElement>(null)
+
   // Unclaimed merchants only
   const unclaimedMerchants = useMemo(() => storeMerchants.filter((m) => m.claimStatus !== "claimed"), [storeMerchants])
 
@@ -98,12 +102,23 @@ export function MerchantRegistrationPage() {
     e.target.value = ""
   }
 
+  const handleClaimCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      if (ev.target?.result) setClaimCover(ev.target.result as string)
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ""
+  }
+
   const validateClaim = () => {
     const errs: Record<string, string> = {}
     if (!claimForm.contactName.trim()) errs.contactName = "请输入联系人"
     if (!claimForm.contactPhone.trim()) errs.contactPhone = "请输入联系电话"
     else if (!/^1[3-9]\d{9}$/.test(claimForm.contactPhone)) errs.contactPhone = "手机号格式不正确"
-    if (!(claimForm as any).category) errs.category = "请选择经营类型"
+    if (!claimForm.category) errs.category = "请选择经营类型"
     if (credentialImages.length === 0) errs.credentialImages = "请上传至少一张资质证明"
     return errs
   }
@@ -139,6 +154,9 @@ export function MerchantRegistrationPage() {
       claimedShopId: selectedShop.id,
       claimedShopName: selectedShop.name,
       credentialImages,
+      claimedCategory: claimForm.category,
+      claimedPhone: claimForm.shopPhone,
+      claimedDesc: claimForm.shopDesc,
     })
 
     setPhase("success")
@@ -165,6 +183,7 @@ export function MerchantRegistrationPage() {
       credentialImages,
       newLat: form.lat ? parseFloat(form.lat) : undefined,
       newLng: form.lng ? parseFloat(form.lng) : undefined,
+      newCoverImage: newShopCover || undefined,
     })
 
     setPhase("success")
@@ -182,6 +201,7 @@ export function MerchantRegistrationPage() {
     })
     setClaimErrors({})
     setCredentialImages([])
+    setClaimCover("")
     setPhase("claim")
   }
 
@@ -248,11 +268,26 @@ export function MerchantRegistrationPage() {
 
             <form onSubmit={handleClaimSubmit} className="space-y-4">
               {/* 店铺封面 */}
-              {selectedShop.cover && (
-                <div className="h-28 rounded-xl overflow-hidden bg-gray-100">
-                  <img src={selectedShop.cover} alt={selectedShop.name} className="w-full h-full object-cover" />
+              <div>
+                <label className="flex items-center gap-1 text-[13px] text-text-body mb-1.5">
+                  <Camera size={14} className="text-primary" /> 店铺封面
+                </label>
+                <div className="relative h-28 rounded-xl overflow-hidden bg-gray-100">
+                  <img
+                    src={claimCover || selectedShop.cover}
+                    alt={selectedShop.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => claimCoverInputRef.current?.click()}
+                    className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center active:bg-black/70"
+                  >
+                    <Camera size={16} />
+                  </button>
                 </div>
-              )}
+                <input ref={claimCoverInputRef} type="file" accept="image/*" className="hidden" onChange={handleClaimCoverUpload} />
+              </div>
 
               {/* 店铺名称（只读） */}
               <div>
@@ -273,7 +308,7 @@ export function MerchantRegistrationPage() {
                       key={cat.key}
                       type="button"
                       onClick={() => { setClaimForm({ ...claimForm, category: cat.key }); setClaimErrors({ ...claimErrors, category: "" }) }}
-                      className={`px-4 h-9 rounded-full text-[12px] transition-all ${(claimForm as any).category === cat.key ? "bg-primary text-white" : "bg-surface-page text-text-secondary"}`}
+                      className={`px-4 h-9 rounded-full text-[12px] transition-all ${claimForm.category === cat.key ? "bg-primary text-white" : "bg-surface-page text-text-secondary"}`}
                     >
                       {cat.label}
                     </button>
@@ -306,7 +341,7 @@ export function MerchantRegistrationPage() {
                   <Phone size={14} className="text-primary" /> 店铺电话
                 </label>
                 <input
-                  value={(claimForm as any).shopPhone ?? selectedShop.phone ?? ""}
+                  value={claimForm.shopPhone ?? selectedShop.phone ?? ""}
                   onChange={(e) => setClaimForm({ ...claimForm, shopPhone: e.target.value })}
                   placeholder="游客咨询电话"
                   className="w-full h-11 px-4 rounded-xl border border-border-light text-[13px] outline-none focus:border-primary"
@@ -319,7 +354,7 @@ export function MerchantRegistrationPage() {
                   <AlignLeft size={14} className="text-primary" /> 店铺简介
                 </label>
                 <textarea
-                  value={(claimForm as any).shopDesc ?? selectedShop.description ?? ""}
+                  value={claimForm.shopDesc ?? selectedShop.description ?? ""}
                   onChange={(e) => setClaimForm({ ...claimForm, shopDesc: e.target.value })}
                   placeholder="简要描述您的店铺特色和服务"
                   rows={3}
@@ -365,7 +400,7 @@ export function MerchantRegistrationPage() {
                   <User size={14} className="text-primary" /> 联系人 <span className="text-red-500">*</span>
                 </label>
                 <input
-                  value={(claimForm as any).contactName ?? ""}
+                  value={claimForm.contactName ?? ""}
                   onChange={(e) => setClaimForm({ ...claimForm, contactName: e.target.value })}
                   placeholder="您的姓名"
                   className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${claimErrors.contactName ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
@@ -379,7 +414,7 @@ export function MerchantRegistrationPage() {
                   <Phone size={14} className="text-primary" /> 联系电话 <span className="text-red-500">*</span>
                 </label>
                 <input
-                  value={(claimForm as any).contactPhone ?? ""}
+                  value={claimForm.contactPhone ?? ""}
                   onChange={(e) => setClaimForm({ ...claimForm, contactPhone: e.target.value })}
                   placeholder="手机号"
                   className={`w-full h-11 px-4 rounded-xl border text-[13px] outline-none ${claimErrors.contactPhone ? "border-red-300 bg-red-50" : "border-border-light focus:border-primary focus:ring-2 focus:ring-primary/20"}`}

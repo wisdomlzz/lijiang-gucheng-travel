@@ -150,6 +150,7 @@ export interface Merchant {
   contactName?: string
   contactPhone?: string
   detailImages?: string[]
+  status?: "open" | "closed"
 }
 
 export type MapPOICategory = "scenic_spot" | "facility" | "service" | "other"
