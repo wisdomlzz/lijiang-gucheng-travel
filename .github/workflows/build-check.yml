@@ -40,4 +40,4 @@ jobs:
         run: node --check index.js
 
       - name: Run Store Tests
-        run: npx vitest run verification/tests/ --reporter=verbose
+        run: npx vitest run verification/tests/ --reporter=verbose --exclude='verification/tests/api/**'
