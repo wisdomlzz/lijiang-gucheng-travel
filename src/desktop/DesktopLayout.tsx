@@ -80,10 +80,10 @@ export function DesktopLayout() {
   }, [roleId, rolePerms, complaintCount, totalMerchantPending])
 
   return (
-    <div className="h-screen flex bg-gray-50">
+    <div className="h-screen flex bg-[#F5F7FA]">
       {/* Sidebar */}
-      <aside className="w-60 bg-white border-r border-border-light flex flex-col shrink-0">
-        <div className="h-14 flex items-center gap-2 px-5 border-b border-border-light">
+      <aside className="w-60 bg-white border-r border-[#E5E6EB] flex flex-col shrink-0">
+        <div className="h-14 flex items-center gap-2 px-5 border-b border-[#E5E6EB]">
           <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-white text-xs font-bold">
             丽
           </div>
@@ -93,7 +93,7 @@ export function DesktopLayout() {
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           {filteredGroups.map((group) => (
             <div key={group.title}>
-              <p className="px-2 py-1.5 text-[10px] font-medium text-text-tertiary uppercase tracking-wider">
+              <p className="px-2 py-1.5 text-[10px] font-medium text-[#86909C] uppercase tracking-wider">
                 {group.title}
               </p>
               {group.items.map((item) => {
@@ -111,7 +111,7 @@ export function DesktopLayout() {
                       }
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                      active ? "bg-primary-50 text-primary font-medium" : "text-text-body hover:bg-gray-50"
+                      active ? "bg-primary-50 text-primary font-medium" : "text-[#4E5969] hover:bg-[#F5F7FA]"
                     }`}
                   >
                     <Icon className="size-4" />
@@ -128,14 +128,14 @@ export function DesktopLayout() {
           ))}
         </nav>
 
-        <div className="p-3 border-t border-border-light">
+        <div className="p-3 border-t border-[#E5E6EB]">
           <div className="flex items-center gap-2 px-3 py-2">
             <div className="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center text-xs font-medium text-primary">
               {user?.name?.[0] ?? "?"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-text-heading truncate">{user?.name}</p>
-              <p className="text-[10px] text-text-tertiary">
+              <p className="text-xs font-medium text-[#1D2129] truncate">{user?.name}</p>
+              <p className="text-[10px] text-[#86909C]">
                 {user?.roles?.includes("platform_admin") ? "平台管理员" : "运营人员"}
               </p>
             </div>
@@ -145,8 +145,8 @@ export function DesktopLayout() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 border-b border-border-light bg-white flex items-center px-6 gap-4 shrink-0">
-          <div className="text-sm font-medium text-text-heading">
+        <header className="h-14 border-b border-[#E5E6EB] bg-white flex items-center px-6 gap-4 shrink-0">
+          <div className="text-sm font-medium text-[#1D2129]">
             {(() => {
               const labelMap: Record<string, string> = {
                 workbench: "平台运营工作台",
@@ -157,24 +157,19 @@ export function DesktopLayout() {
                 "convenience-staff": "人员管理",
                 "review-management": "评价管理",
                 "supplier-applications": "供应商入驻审核",
-                // 内容管理
                 "scenic-news": "景区资讯",
                 "travel-guides": "古城攻略",
                 "photo-records": "文化院落打卡记录",
                 banner: "Banner管理",
                 "grid-settings": "首页宫格管理",
-                // 系统管理
                 users: "账号管理",
                 "role-management": "角色管理",
                 complaints: "投诉管理",
                 audit: "操作审计",
-                // 新增功能
                 heritage: "遗产知识",
                 "ai-knowledge": "AI知识库",
                 volunteer: "志愿服务",
                 "content-manage": "内容管理",
-
-                // 内容管理占位页
                 "service-center": "服务中心",
                 policies: "政策法规",
                 "protection-guide": "保护指南",
@@ -186,7 +181,6 @@ export function DesktopLayout() {
                 videos: "古城视频",
                 "featured-routes": "精选线路",
                 "recommended-routes": "推荐线路",
-                // 新增模块
                 settlement: "结算管理",
                 "point-rules": "积分规则配置",
                 "merchant-review": "古城商户审核",
@@ -198,7 +192,7 @@ export function DesktopLayout() {
           </div>
           <div className="ml-6 relative w-80">
             <Search
-              className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary cursor-pointer"
+              className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#86909C] cursor-pointer"
               onClick={() => toast.info("输入功能、账号或手机号搜索")}
             />
             <Input
