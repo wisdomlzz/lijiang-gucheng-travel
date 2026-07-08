@@ -53,38 +53,54 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   },
 
   markRead: async (id) => {
-    const { notifications } = get()
-    // 乐观已读（避免闪烁）
+    const { notifications, unreadCount } = get()
+    // 乐观已读
     set({
       notifications: notifications.map((n) => (n.id === id ? { ...n, isRead: 1 } : n)),
-      unreadCount: Math.max(0, get().unreadCount - 1),
+      unreadCount: Math.max(0, unreadCount - 1),
     })
-    await syncAction("markRead", () => api.post("notifications", `/${id}/read`), () => {})
+    const ok = await syncAction("markRead", () => api.post("notifications", `/${id}/read`), () => {})
+    if (!ok) {
+      // API失败→回滚
+      set({
+        notifications: get().notifications.map((n) => (n.id === id ? { ...n, isRead: 0 } : n)),
+        unreadCount: get().unreadCount + 1,
+      })
+    }
   },
 
   markAllRead: async (staffId) => {
     if (!staffId) return
+    const prev = get().notifications
+    const prevUnread = get().unreadCount
     set({
-      notifications: get().notifications.map((n) => ({ ...n, isRead: 1 })),
+      notifications: prev.map((n) => ({ ...n, isRead: 1 })),
       unreadCount: 0,
     })
-    await syncAction("markAllRead", () =>
+    const ok = await syncAction("markAllRead", () =>
       api.post("notifications", `/read-all`, { staffId }),
       () => {}
     )
+    if (!ok) {
+      set({ notifications: prev, unreadCount: prevUnread })
+    }
   },
 
   deleteNotification: async (id) => {
     const prev = get().notifications
+    const prevUnread = get().unreadCount
     const deleted = prev.find((n) => n.id === id)
     set({
       notifications: prev.filter((n) => n.id !== id),
-      unreadCount: deleted && !deleted.isRead ? get().unreadCount - 1 : get().unreadCount,
+      unreadCount: deleted && !deleted.isRead ? prevUnread - 1 : prevUnread,
     })
-    await syncAction("deleteNotification", () =>
+    const ok = await syncAction("deleteNotification", () =>
       api.remove("notifications", id),
       () => {}
     )
+    if (!ok) {
+      set({ notifications: prev, unreadCount: prevUnread })
+    }
   },
 
   addNotification: (n) => {

@@ -71,9 +71,6 @@ export function ServiceWorkbench() {
   const activeOrders = staffOrders.filter((o) => activeConvStatuses.includes(o.status))
   const assignedCount = staffOrders.filter((o) => o.status === "A20").length
 
-  // Recent orders (last 3)
-  const recentOrders = [...staffOrders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 3)
-
   // Staff skills derived from order history
   const staffSkills = [...new Set(staffOrders.map((o) => o.serviceType))].join(" / ")
 
@@ -238,41 +235,29 @@ export function ServiceWorkbench() {
       </div>
 
       <div className="px-4">
-        <SectionHeader title="最新通知" />
-        {recentOrders.length === 0 ? (
-          <div className="bg-white rounded-2xl p-6 shadow-[0_4px_16px_rgba(60,120,200,0.08)] text-center">
-            <div className="text-[12px] text-text-tertiary">暂无最近订单</div>
+        <SectionHeader title="最新通知" extra="查看全部" onExtra={() => navigate("/b/service/notifications")} />
+        {unreadCount > 0 ? (
+          <div
+            onClick={() => navigate("/b/service/notifications")}
+            className="bg-white rounded-2xl p-3.5 shadow-[0_4px_16px_rgba(60,120,200,0.08)] flex items-center gap-3 cursor-pointer active:scale-[0.99] transition"
+          >
+            <div
+              className="size-10 rounded-full flex items-center justify-center"
+              style={{ background: "#F59E0B14", color: "#F59E0B" }}
+            >
+              <Bell className="size-5" />
+            </div>
+            <div className="flex-1">
+              <div className="text-[13px] text-text-heading">
+                您有 <span className="text-[#EF4444] font-semibold">{unreadCount}</span> 条未读消息
+              </div>
+              <div className="text-[11px] text-text-tertiary mt-0.5">点击查看订单通知和系统公告</div>
+            </div>
+            <ChevronRight className="size-4 text-text-tertiary" />
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-[0_4px_16px_rgba(60,120,200,0.08)] overflow-hidden">
-            {recentOrders.map((o, i, arr) => {
-              const isDone = o.status === "S40"
-              const isCancelled = o.status === "S50"
-              const kind = isDone ? ("done" as const) : isCancelled ? ("closed" as const) : ("pending" as const)
-              const label = isDone ? "已完成" : isCancelled ? "已取消" : "进行中"
-              const fee = o.priceQuote ? `¥${o.priceQuote}` : "—"
-              return (
-                <div
-                  key={o.id}
-                  onClick={() => navigate(`/b/service/tasks`)}
-                  className={`flex items-center gap-3 px-4 py-3 active:bg-primary-50/40 cursor-pointer ${
-                    i !== arr.length - 1 ? "border-b border-[#F0F0F0]" : ""
-                  }`}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[13px] text-text-heading truncate">{o.serviceType}</span>
-                      <StatusBadge kind={kind}>{label}</StatusBadge>
-                    </div>
-                    <div className="text-[11px] text-text-tertiary mt-0.5 truncate">
-                      {o.addressTo ? `${o.address} → ${o.addressTo}` : o.address} · {o.createdAt}
-                    </div>
-                  </div>
-                  <div className="text-[13px] text-text-heading">{fee}</div>
-                  <ChevronRight className="size-4 text-text-tertiary" />
-                </div>
-              )
-            })}
+          <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(60,120,200,0.08)] text-center">
+            <div className="text-[12px] text-text-tertiary">暂无新通知</div>
           </div>
         )}
       </div>

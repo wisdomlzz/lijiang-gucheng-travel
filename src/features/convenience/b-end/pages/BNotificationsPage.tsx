@@ -52,7 +52,6 @@ export function BNotificationsPage() {
     notifications,
     unreadCount,
     loading,
-    fetchNotifications,
     markRead,
     markAllRead,
     deleteNotification,
@@ -61,11 +60,7 @@ export function BNotificationsPage() {
   const [filterTab, setFilterTab] = useState<FilterTab>("all")
   const [openId, setOpenId] = useState<string | null>(null)
   const [detailId, setDetailId] = useState<string | null>(null)
-
-  // 首次加载 & 切换用户时拉取
-  useEffect(() => {
-    if (staffId) fetchNotifications(staffId)
-  }, [staffId, fetchNotifications])
+  // 数据由 BLayout 在顶层拉取，本页只消费 store
 
   // 筛选
   const filtered = useMemo(() => {

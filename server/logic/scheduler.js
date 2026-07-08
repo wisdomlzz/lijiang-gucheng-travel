@@ -126,7 +126,7 @@ function acceptTimeout() {
     for (const order of orders) {
       const now = new Date().toISOString()
       db.prepare(
-        "UPDATE convenience_orders SET status='A10', staffId=NULL, staffName=NULL, staffPhone=NULL, updatedAt=? WHERE id=?",
+        "UPDATE convenience_orders SET status='A10', staffId=NULL, staffName=NULL, staffPhone=NULL, updatedAt=? WHERE id=? AND status='A20'",
       ).run(now, order.id)
       if (order.staffId) {
         db.prepare("UPDATE staff SET assignedOrders=MAX(0,assignedOrders-1) WHERE id=?").run(order.staffId)
@@ -151,7 +151,7 @@ function payTimeout() {
     for (const order of orders) {
       const now = new Date().toISOString()
       db.prepare(
-        "UPDATE convenience_orders SET status='S90', beforeManualStatus=?, manualReason='pay_timeout', updatedAt=? WHERE id=?",
+        "UPDATE convenience_orders SET status='S90', beforeManualStatus=?, manualReason='pay_timeout', updatedAt=? WHERE id=? AND status='A35'",
       ).run(order.status, now, order.id)
       logOperation(order.id, "system", null, "payTimeout", order.status, "S90", `支付超时 ${min} 分钟`)
     }
@@ -173,7 +173,7 @@ function autoConfirm() {
     for (const order of orders) {
       const now = new Date().toISOString()
       db.prepare(
-        "UPDATE convenience_orders SET status='S40', completedAt=?, reviewStatus='pending', updatedAt=? WHERE id=?",
+        "UPDATE convenience_orders SET status='S40', completedAt=?, reviewStatus='pending', updatedAt=? WHERE id=? AND status='S55'",
       ).run(now, now, order.id)
       // 自动记账
       if (order.priceQuote && order.staffId) {

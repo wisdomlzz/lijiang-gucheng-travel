@@ -362,8 +362,18 @@ router.post("/:id/transition", (req, res) => {
       if (!extraFields.quotedAt) extraFields.quotedAt = now
     }
 
+    // MVP 允许从 extraFields 更新的白名单列
+    const ALLOWED_COLS = new Set([
+      "priceQuote", "quotedAt", "arrivedAt", "paymentMethod", "paymentMethodLocked",
+      "paidAmount", "completionPhotos", "paymentProof", "completedAt",
+      "arbitrationRemark", "rejectReason", "rejectQuoteReason",
+      "beforeManualStatus", "manualReason", "cancelFee", "images", "note",
+    ])
     const jsonFields = ["images", "completionPhotos"]
-    const serialized = { status: next, ...extraFields }
+    const serialized = { status: next }
+    for (const [k, v] of Object.entries(extraFields)) {
+      if (ALLOWED_COLS.has(k)) serialized[k] = v
+    }
 
     // 完成态自动填 completedAt(S40)
     if (next === "S40" && !serialized.completedAt) {
@@ -402,10 +412,10 @@ router.post("/:id/transition", (req, res) => {
     if (next === "S40") {
       const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
       onOrderCompleted(updated)
-      // 通知服务人员订单完成
-      if (order.staffId) {
+      // 通知服务人员订单完成（用 updated 确保 staffId 是最新的）
+      if (updated.staffId) {
         createNotification({
-          staffId: order.staffId,
+          staffId: updated.staffId,
           type: "order_completed",
           title: `订单已完成`,
           message: `${order.serviceType}订单 ${order.id} 已由用户确认完成${order.priceQuote ? `，收入 ¥${order.priceQuote}` : ""}`,
