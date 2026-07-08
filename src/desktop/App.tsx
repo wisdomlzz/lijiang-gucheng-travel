@@ -10,10 +10,10 @@ import { RedirectTo } from "../shared/components/RedirectTo"
 
 // 懒加载页面组件
 const Workbench = lazy(() => import("./pages/Workbench").then((m) => ({ default: m.Workbench })))
-const SupplierApplicationsList = lazy(() => import("./pages/supplier-applications/list"))
-const SupplierApplicationsShow = lazy(() => import("./pages/supplier-applications/show"))
+const SupplierApplicationsList = lazy(() => import("../features/supplier/desktop/pages/list"))
+const SupplierApplicationsShow = lazy(() => import("../features/supplier/desktop/pages/show"))
 const SupplierEntryDesktop = lazy(() =>
-  import("./pages/supplier-applications/SupplierEntryDesktop").then((m) => ({ default: m.SupplierEntryDesktop }))
+  import("../features/supplier/desktop/pages/SupplierEntryDesktop").then((m) => ({ default: m.SupplierEntryDesktop }))
 )
 const ConvenienceOverviewPage = lazy(() => import("../features/convenience/desktop/pages/ConvenienceOverviewPage"))
 const ConveniencePage = lazy(() => import("../features/convenience/desktop/pages/ConveniencePage"))
