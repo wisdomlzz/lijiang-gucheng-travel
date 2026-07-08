@@ -9,6 +9,7 @@ import { Input } from "../../../shared/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../shared/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { toast } from "sonner"
+import { readFileAsDataURL } from "@/shared/utils/validation"
 
 const MAX_FILE_SIZE = 500 * 1024 // 500KB
 const ALLOWED_TYPES = ["image/png", "image/webp"]
@@ -180,7 +181,7 @@ export function GridSettingsPage() {
     setEditImageUrl(item.imageUrl)
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -193,11 +194,8 @@ export function GridSettingsPage() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      setEditImageUrl(ev.target?.result as string)
-    }
-    reader.readAsDataURL(file)
+    const result = await readFileAsDataURL(file)
+    setEditImageUrl(result)
     e.target.value = ""
   }
 

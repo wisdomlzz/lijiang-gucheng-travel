@@ -6,7 +6,7 @@ import { useMerchantRegistrationStore } from "../../store/registration-store"
 import { useContentMerchantStore } from "../../../../platform/content/merchant-store"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { Search, Store, User, Phone, MapPin, Clock, AlignLeft, CheckCircle, Shield, Camera } from "lucide-react"
-import { PHONE_REGEX } from "@/shared/utils/validation"
+import { PHONE_REGEX, readFileAsDataURL } from "@/shared/utils/validation"
 import { merchantCategoryLabels } from "@/shared/constants/content-config"
 import { toast } from "sonner"
 import type { Merchant } from "../../../../shared/types/content-types"
@@ -74,28 +74,19 @@ export function MerchantRegistrationPage() {
     )
   }, [query, unclaimedMerchants])
 
-  const handleCredentialUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCredentialUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        const result = ev.target?.result
-        if (result) setCredentialImages((prev) => [...prev, result as string])
-      }
-      reader.readAsDataURL(file)
-    })
+    const results = await Promise.all(Array.from(files).map(readFileAsDataURL))
+    setCredentialImages((prev) => [...prev, ...results])
     e.target.value = ""
   }
 
-  const handleCoverUpload = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCoverUpload = (setter: (v: string) => void) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      if (ev.target?.result) setter(ev.target.result as string)
-    }
-    reader.readAsDataURL(file)
+    const result = await readFileAsDataURL(file)
+    setter(result)
     e.target.value = ""
   }
 

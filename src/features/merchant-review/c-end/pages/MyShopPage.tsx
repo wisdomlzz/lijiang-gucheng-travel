@@ -8,7 +8,7 @@ import {
   Store, Phone, FileText, Power, CheckCircle2, Clock3, XCircle,
   BadgeCheck, X, Image, Tag, Edit3, MapPin, Shield, Camera, User,
 } from "lucide-react"
-import { PHONE_REGEX } from "@/shared/utils/validation"
+import { PHONE_REGEX, readFileAsDataURL } from "@/shared/utils/validation"
 import { toast } from "sonner"
 
 const STATUS_META = {
@@ -370,14 +370,11 @@ export function MyShopPage() {
                   <span className="text-[12px]">点击上传营业执照</span>
                 </button>
               )}
-              <input ref={businessLicenseInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => {
+              <input ref={businessLicenseInputRef} type="file" accept="image/*" className="hidden" onChange={async (e) => {
                 const file = e.target.files?.[0]
                 if (!file) return
-                const reader = new FileReader()
-                reader.onload = (ev) => {
-                  if (ev.target?.result) setBusinessLicenseUpload(ev.target.result as string)
-                }
-                reader.readAsDataURL(file)
+                const result = await readFileAsDataURL(file)
+                setBusinessLicenseUpload(result)
                 e.target.value = ""
               }} />
             </div>

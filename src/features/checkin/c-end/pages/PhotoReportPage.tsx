@@ -3,6 +3,7 @@ import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { MapPin, ChevronDown, Camera, X } from "lucide-react"
 import { toast } from "sonner"
 import { useNavigate } from "react-router"
+import { readFileAsDataURL } from "@/shared/utils/validation"
 
 const areaOptions = ["古城", "白沙", "束河"]
 
@@ -113,22 +114,15 @@ export function PhotoReportPage() {
     }, 1000)
   }
 
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
     if (photos.length + files.length > 9) {
       toast.error("最多上传 9 张照片")
       return
     }
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        if (ev.target?.result) {
-          setPhotos((prev) => [...prev, ev.target!.result as string])
-        }
-      }
-      reader.readAsDataURL(file)
-    })
+    const results = await Promise.all(Array.from(files).map(readFileAsDataURL))
+    setPhotos((prev) => [...prev, ...results])
   }
 
   const removePhoto = (index: number) => {

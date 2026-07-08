@@ -10,6 +10,7 @@ import { ConfirmDialog } from "../../components/common/ConfirmDialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Plus, Trash2, Upload, X, Search } from "lucide-react"
 import { toast } from "sonner"
+import { readFileAsDataURL } from "@/shared/utils/validation"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import { useAnnouncementStore, type Announcement } from "../../../features/announcement/store/announcement-store"
@@ -110,7 +111,7 @@ export function AnnouncementManagePage() {
     toast.success("公告已下架")
   }
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!editTarget) return
     const file = e.target.files?.[0]
     if (!file) return
@@ -124,12 +125,8 @@ export function AnnouncementManagePage() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      const base64 = ev.target?.result as string
-      setEditTarget({ ...editTarget, images: [...editTarget.images, base64] })
-    }
-    reader.readAsDataURL(file)
+    const result = await readFileAsDataURL(file)
+    setEditTarget({ ...editTarget, images: [...editTarget.images, result] })
     e.target.value = ""
   }
 

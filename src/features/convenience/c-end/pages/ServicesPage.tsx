@@ -11,6 +11,7 @@ import { StatusProgress } from "../components/StatusProgress"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import type { ConvenienceOrder } from "../../../../shared/types"
 import { ConvenienceStatusLabel } from "../../../../shared/types"
+import { readFileAsDataURL } from "@/shared/utils/validation"
 
 const CONVENIENCE_STEP_LABELS = ["已下单", "已派单", "已核价", "已付款", "服务中", "已完成"]
 
@@ -71,22 +72,18 @@ function OrderModal({ service, onClose }: OrderModalProps) {
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId)
   const selectedEndAddress = addresses.find((a) => a.id === selectedEndAddressId)
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         toast.error("图片大小不能超过 5MB")
         return
       }
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const result = e.target?.result as string
-        setUploadedImages((prev) => {
-          if (prev.length >= 5) return prev
-          return [...prev, result]
-        })
-      }
-      reader.readAsDataURL(file)
+      const result = await readFileAsDataURL(file)
+      setUploadedImages((prev) => {
+        if (prev.length >= 5) return prev
+        return [...prev, result]
+      })
     }
   }
 

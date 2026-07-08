@@ -10,6 +10,7 @@ import { ConfirmDialog } from "../../components/common/ConfirmDialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Eye, Pencil, Plus, Trash2, ChevronUp, ChevronDown, EyeOff, Upload, X } from "lucide-react"
 import { toast } from "sonner"
+import { readFileAsDataURL } from "@/shared/utils/validation"
 import type { BannerConfig } from "../../../shared/types"
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
@@ -83,7 +84,7 @@ export function BannerManagePage() {
     toast.success(banner.visible ? "已隐藏" : "已显示")
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, banner: BannerConfig) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, banner: BannerConfig) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -96,17 +97,13 @@ export function BannerManagePage() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      const base64 = ev.target?.result as string
-      updateBanner(banner.id, { imageUrl: base64 })
-      toast.success("图片已更新")
-    }
-    reader.readAsDataURL(file)
+    const result = await readFileAsDataURL(file)
+    updateBanner(banner.id, { imageUrl: result })
+    toast.success("图片已更新")
     e.target.value = ""
   }
 
-  const handleDialogFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDialogFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !editTarget) return
 
@@ -119,12 +116,8 @@ export function BannerManagePage() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      const base64 = ev.target?.result as string
-      setEditTarget({ ...editTarget, imageUrl: base64 })
-    }
-    reader.readAsDataURL(file)
+    const result = await readFileAsDataURL(file)
+    setEditTarget({ ...editTarget, imageUrl: result })
     e.target.value = ""
   }
 

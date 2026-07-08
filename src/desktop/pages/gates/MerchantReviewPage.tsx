@@ -18,6 +18,7 @@ import {
   type ShopClaimRequest,
 } from "../../../features/merchant-review/store"
 import { useContentMerchantStore } from "../../../platform/content/merchant-store"
+import { RejectDialog } from "../../../shared/components/ui/RejectDialog"
 
 type Tab = "claim" | "new-shop" | "info-change"
 
@@ -300,27 +301,14 @@ function ClaimReview() {
       </Dialog>
 
       {/* 驳回弹窗 */}
-      <Dialog open={!!rejectTarget} onOpenChange={(o) => { if (!o) setRejectTarget(null) }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>驳回认领申请</DialogTitle>
-          </DialogHeader>
-          <Textarea
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            placeholder="驳回原因"
-            rows={3}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRejectTarget(null)}>
-              取消
-            </Button>
-            <Button variant="destructive" onClick={handleReject}>
-              确认驳回
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <RejectDialog
+        open={!!rejectTarget}
+        onOpenChange={(o) => { if (!o) setRejectTarget(null) }}
+        title="驳回认领申请"
+        reason={rejectReason}
+        onReasonChange={setRejectReason}
+        onConfirm={handleReject}
+      />
     </>
   )
 }
@@ -551,27 +539,14 @@ function NewShopReview() {
       </Dialog>
 
       {/* 驳回弹窗 */}
-      <Dialog open={!!rejectTarget} onOpenChange={(o) => { if (!o) setRejectTarget(null) }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>驳回入驻申请</DialogTitle>
-          </DialogHeader>
-          <Textarea
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            placeholder="驳回原因"
-            rows={3}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRejectTarget(null)}>
-              取消
-            </Button>
-            <Button variant="destructive" onClick={handleReject}>
-              确认驳回
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <RejectDialog
+        open={!!rejectTarget}
+        onOpenChange={(o) => { if (!o) setRejectTarget(null) }}
+        title="驳回入驻申请"
+        reason={rejectReason}
+        onReasonChange={setRejectReason}
+        onConfirm={handleReject}
+      />
     </>
   )
 }
@@ -845,27 +820,14 @@ function InfoChangeReview() {
       </Dialog>
 
       {/* 整体驳回弹窗（表格行操作） */}
-      <Dialog open={!!rejectTarget} onOpenChange={(o) => { if (!o) setRejectTarget(null) }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>驳回变更申请</DialogTitle>
-          </DialogHeader>
-          <Textarea
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            placeholder="驳回原因"
-            rows={3}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRejectTarget(null)}>
-              取消
-            </Button>
-            <Button variant="destructive" onClick={handleReject}>
-              确认驳回
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <RejectDialog
+        open={!!rejectTarget}
+        onOpenChange={(o) => { if (!o) setRejectTarget(null) }}
+        title="驳回变更申请"
+        reason={rejectReason}
+        onReasonChange={setRejectReason}
+        onConfirm={handleReject}
+      />
     </>
   )
 }
