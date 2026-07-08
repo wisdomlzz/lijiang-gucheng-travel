@@ -465,10 +465,6 @@ function NewShopReview() {
                   <span className="text-text-tertiary">店铺电话</span>
                   <span className="text-text-body">{detail.newPhone}</span>
                 </div>
-                <div className="flex justify-between text-[12px]">
-                  <span className="text-text-tertiary">营业时间</span>
-                  <span className="text-text-body">{detail.newHours}</span>
-                </div>
                 <div className="text-[12px]">
                   <span className="text-text-tertiary">店铺简介</span>
                   <p className="text-text-body mt-1">{detail.newDescription}</p>

@@ -34,6 +34,7 @@ npm run lint:fix           # eslint src --fix
 npm run format             # prettier --write "src/**/*.{ts,tsx,css,json}"
 npm run format:check       # prettier --check ↑
 npm run verify:all         # 运行全部 vitest 测试
+npm run verify:flow        # 仅运行业务流测试（verification/tests/business-flow.spec.ts）
 npm run verify:seeds       # 校验便民服务种子数据（npx tsx src/shared/mock/validate-seeds.ts）
 npm run deploy             # 调用 ../scripts/deploy.sh 部署（本地可能不存在）
 ```
@@ -135,7 +136,7 @@ features/convenience/
 
 ## 关键架构概念
 
-### 1. 三端共享 Auth（`src/shared/stores/auth-store.ts` / `src/platform/auth/`）
+### 1. 三端共享 Auth（`src/platform/auth/store.ts` / `src/platform/auth/`）
 
 - Zustand store 持久化到 `localStorage`（key: `lijiang-demo-auth`）
 - `user.roles: UnifiedRole[]` —— **角色是叠加的**，同一用户可以是 `["tourist", "supplier"]`
@@ -143,6 +144,7 @@ features/convenience/
 - `currentPlatform: "c" | "b" | "desktop"` —— 当前展示的端
 - `switchPlatform()` 切换端不重置登录态
 - 三个 `App.tsx` 在 `useEffect` 里检查是否需要自动 `switchPlatform`
+- `Platform` 层还有其他共享 store：`notification` 通知、`ui` 组件入口
 
 ### 2. 用户账号（`src/shared/types/seed-users.ts`）
 
@@ -260,6 +262,13 @@ server/
 - JSON 字段存为 TEXT，应用层序列化/反序列化
 - `server/db/data.db` 在 `.gitignore` 中
 
+### 数据库迁移（`server/db/migrations/`）
+
+- 迁移由 `server/db/migrate.js` 管理，通过 `schema_migrations` 表追踪已执行的文件
+- 迁移文件命名约定：`<序号>_<描述>.sql`，例如 `000_baseline.sql`
+- migrate 与 schema.sql / seed.js 的关系：启动时先 apply 未执行迁移，再执行 seed（幂等插入）
+- 新增表或改表结构应创建新的迁移文件，不要修改已执行过的迁移
+
 ### 文件上传
 
 - 通过 multer 保存到 `server/uploads/`
@@ -305,10 +314,24 @@ server/
 
 ---
 
+## 测试
+
+- 测试框架：**vitest**（配置继承 `vite.config.ts`，无独立 `vitest.config.ts`）
+- 测试文件位置：`verification/tests/business-flow.spec.ts`（业务流测试）；API 集成测试位于对应的 feature 目录下或 `verification/`
+- 运行全部测试：`npm run verify:all`
+- 仅运行业务流测试：`npm run verify:flow`
+- API 集成测试（需要后端运行）：`npm run verify:api`（如存在）
+- **测试模式**：store 测试直接测试 zustand store 的 action/state；API 测试通过 fetch 调用真实 Express 后端
+- mock 工具：`makeMockOrder()` 等辅助函数定义在测试文件顶部
+
+---
+
 ## 相关文档
 
 - `DESIGN.md` —— 设计系统完整规范
 - `docs/api-contract.md` —— 后端 API 契约
 - `docs/notes/` —— 业务逻辑说明（便民服务流程等）
+- `docs/requirements/` —— 需求文档
+- `docs/specs/` —— 规格说明
 - `docs/superpowers/specs/` —— 设计方案文档
 - `docs/superpowers/plans/` —— 实施计划

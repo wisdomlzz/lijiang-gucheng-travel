@@ -12,14 +12,14 @@ import { syncAction } from "@/api/sync"
 
 export interface ShopClaimRequest {
   id: string
-  type: "claim" | "new_shop" // 认领已有店铺 OR 新建店铺
+  type: "claim" | "new_shop"
   userId: string
   userName: string
   userPhone: string
 
   // claim 场景：用户声称的店铺
-  claimedShopId?: string // 用户声称的店铺 ID
-  claimedShopName?: string // 用户声称的店铺名
+  claimedShopId?: string
+  claimedShopName?: string
 
   // new_shop 场景：用户提交的新店铺信息
   newShopName?: string
@@ -27,7 +27,11 @@ export interface ShopClaimRequest {
   newAddress?: string
   newPhone?: string
   newDescription?: string
-  newHours?: string
+
+  // 资质证明图片（base64 data url 数组）
+  credentialImages?: string[]
+  newLat?: number
+  newLng?: number
 
   // 审核信息
   status: "pending" | "approved" | "rejected"
@@ -48,6 +52,7 @@ type RegistrationState = {
     userPhone: string
     claimedShopId: string
     claimedShopName: string
+    credentialImages?: string[]
   }) => Promise<void>
   /** 提交入驻申请（店铺不存在，新建） */
   submitRegistration: (input: {
@@ -59,7 +64,9 @@ type RegistrationState = {
     newAddress: string
     newPhone: string
     newDescription: string
-    newHours: string
+    credentialImages?: string[]
+    newLat?: number
+    newLng?: number
   }) => Promise<void>
   approveRegistration: (id: string, reviewer: string) => Promise<void>
   rejectRegistration: (id: string, reviewer: string, reason: string) => Promise<void>
@@ -80,6 +87,7 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
       userPhone: input.userPhone,
       claimedShopId: input.claimedShopId,
       claimedShopName: input.claimedShopName,
+      credentialImages: input.credentialImages,
       status: "pending" as const,
     }
     await syncAction("submitClaim", () => merchantRegApi.create(payload), (result) => {
@@ -98,7 +106,9 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
       newAddress: input.newAddress,
       newPhone: input.newPhone,
       newDescription: input.newDescription,
-      newHours: input.newHours,
+      credentialImages: input.credentialImages,
+      newLat: input.newLat,
+      newLng: input.newLng,
       status: "pending" as const,
     }
     await syncAction("submitRegistration", () => merchantRegApi.create(payload), (result) => {
@@ -149,7 +159,7 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
         description: req.newDescription ?? "",
         address: req.newAddress ?? "",
         phone: req.newPhone ?? "",
-        hours: req.newHours ?? "",
+        hours: "",
         rating: 5.0,
         reviewCount: 0,
         creditScore: 80,

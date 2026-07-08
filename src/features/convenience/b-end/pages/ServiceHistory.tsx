@@ -22,7 +22,6 @@ const SERVICE_COLORS: Record<string, string> = {
   垃圾清运: "#0891B2",
   送水服务: "#3B82F6",
   布草配送: "#7C3AED",
-  应急医疗: "#DC2626",
 }
 
 function mapConv(o: ConvenienceOrder): ServiceOrder {

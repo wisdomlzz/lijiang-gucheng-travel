@@ -11,7 +11,6 @@ import { StatusProgress } from "../components/StatusProgress"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import type { ConvenienceOrder } from "../../../../shared/types"
 import { ConvenienceStatusLabel } from "../../../../shared/types"
-import { isPointToPoint } from "../../shared/types"
 
 const CONVENIENCE_STEP_LABELS = ["已下单", "已派单", "已核价", "已付款", "服务中", "已完成"]
 
@@ -525,8 +524,7 @@ export function ServicesPage() {
   const orders = useConvenienceStore((s) => s.orders)
   const user = useAuthStore((s) => s.user)
   const allServices = useServiceConfigStore((s) => s.services)
-  const isMerchant = user?.roles?.includes("supplier") ?? false
-  const services = isMerchant ? allServices : allServices.filter((s) => isPointToPoint(s.name))
+  const services = allServices
   const recentOrder = (() => {
     const userOrders = user
       ? orders.filter((o) => o.userId === user.id && o.status !== "S50")
@@ -536,7 +534,7 @@ export function ServicesPage() {
 
   return (
     <div className="min-h-full bg-gradient-to-b from-primary-100 via-primary-50 to-surface-page flex flex-col">
-      <PageHeader title="便民服务" back={isMerchant ? "/c/merchant-services" : "/c/visitor-services"} />
+      <PageHeader title="便民服务" back={() => navigate(-1)} />
       <div className="pt-4 pb-3 text-center">
         <span className="text-[16px] text-white tracking-wider font-medium drop-shadow-sm">便民服务</span>
       </div>
