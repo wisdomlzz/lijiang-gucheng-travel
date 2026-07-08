@@ -38,6 +38,12 @@ export const META_ACTIONS = new Set(["requestCancel", "rejectCancel"])
 // approveCancel = cancelRequested=0 + status=S50(实际是 cancel 的一种)
 export const APPROVE_CANCEL = "approveCancel"
 
+// 需要校验操作人是否为指派服务人员的动作
+export const STAFF_OWNERSHIP_ACTIONS = new Set([
+  "accept", "reject", "quote", "startService", "complete",
+  "arriveCheckin",
+])
+
 export function canTransition(from, action) {
   return TRANSITIONS[from]?.[action] ?? null
 }

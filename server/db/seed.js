@@ -462,6 +462,8 @@ export function seedIfNeeded() {
     { id: "cfg_settlement_t", configKey: "settlementTDays", configValue: "7", description: "结算 T+N 天", updatedBy: "system" },
     { id: "cfg_min_withdraw", configKey: "minWithdrawalAmount", configValue: "100", description: "最低提现金额", updatedBy: "system" },
     { id: "cfg_daily_limit", configKey: "dailyOrderLimit", configValue: "20", description: "每日接单上限", updatedBy: "system" },
+    { id: "cfg_quote_min", configKey: "quoteMinPrice", configValue: "1", description: "报价最低金额(元)", updatedBy: "system" },
+    { id: "cfg_quote_max", configKey: "quoteMaxPrice", configValue: "9999", description: "报价最高金额(元)", updatedBy: "system" },
   ])
 
   // ====== Flow Areas (人流量区域数据) ======

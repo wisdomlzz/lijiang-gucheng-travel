@@ -2,7 +2,7 @@ import { Router } from "express"
 import db from "../db/connection.js"
 import { ok, fail } from "../middleware/response.js"
 import { crudRoutes, deserializeRow, logOperation } from "./crud.js"
-import { transition, META_ACTIONS, APPROVE_CANCEL } from "../logic/transitions.js"
+import { transition, META_ACTIONS, APPROVE_CANCEL, STAFF_OWNERSHIP_ACTIONS } from "../logic/transitions.js"
 import { pickStaff, lookupStaff } from "../logic/dispatch.js"
 import { calcCancelFee } from "../logic/pricing.js"
 import { createNotification } from "./notifications.js"
@@ -308,8 +308,15 @@ router.post("/:id/transition", (req, res) => {
   try {
     const order = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(req.params.id)
     if (!order) return res.json(fail("订单不存在", 404))
-    const { action, ...extraFields } = req.body
+    const { action, operatorId, operatorType, ...extraFields } = req.body
     const now = new Date().toISOString()
+
+    // ── 人员归属校验：要求操作人是指派的服务人员 ──
+    if (STAFF_OWNERSHIP_ACTIONS.has(action) && order.staffId) {
+      if (operatorType === "staff" && operatorId && operatorId !== order.staffId) {
+        return res.json(fail("您不是该订单的指派服务人员，无权操作"))
+      }
+    }
 
     // ── 元动作:改 cancelRequested 但不改 status ──
     if (META_ACTIONS.has(action)) {
@@ -359,6 +366,13 @@ router.post("/:id/transition", (req, res) => {
     // ── 前置校验 ──
     if (action === "quote") {
       if (!order.arrivedAt) return res.json(fail("请先完成到场打卡再报价"))
+      // 报价金额校验
+      const minPrice = Number(db.prepare("SELECT configValue FROM system_configs WHERE configKey='quoteMinPrice'").get()?.configValue || 1)
+      const maxPrice = Number(db.prepare("SELECT configValue FROM system_configs WHERE configKey='quoteMaxPrice'").get()?.configValue || 9999)
+      const quoteAmount = Number(extraFields.priceQuote)
+      if (!quoteAmount || quoteAmount < minPrice || quoteAmount > maxPrice) {
+        return res.json(fail(`报价金额需在 ¥${minPrice}~¥${maxPrice} 之间`))
+      }
       if (!extraFields.quotedAt) extraFields.quotedAt = now
     }
 
