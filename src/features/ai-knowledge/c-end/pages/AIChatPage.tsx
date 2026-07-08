@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react"
-import { Trash2, Send, Clock, MapPin, Star, Route, UtensilsCrossed, CalendarDays, Ticket, Headphones } from "lucide-react"
+import { Trash2, Send, Clock, MapPin, Star, Route, UtensilsCrossed, CalendarDays, Ticket, Headphones, ChevronLeft } from "lucide-react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { useNavigate } from "react-router"
 import aiAvatar from "@/c-end/assets/ai-avatar-new.png"
@@ -652,6 +652,9 @@ export function AIChatPage() {
             background: "linear-gradient(180deg, #2D63C0 0%, #3D6FC5 40%, #4A78C8 70%, #6C93D4 100%)",
           }}
         >
+          <button onClick={() => navigate(-1)} className="flex items-center justify-center size-9 rounded-lg text-white/80 hover:text-white active:scale-90 transition-all">
+            <ChevronLeft size={22} />
+          </button>
           <div className="flex-1" />
           <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center leading-tight">
             <h1 className="text-[16px] text-white font-semibold tracking-tight">AI 旅游助手</h1>
