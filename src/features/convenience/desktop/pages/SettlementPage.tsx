@@ -4,12 +4,15 @@ import { Button } from "../../../../shared/components/ui/button"
 import { Badge } from "../../../../shared/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../../shared/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../shared/components/ui/table"
+import { Input } from "../../../../shared/components/ui/input"
 import { ConfirmDialog } from "../../../../desktop/components/common/ConfirmDialog"
-import { Wallet, TrendingUp, Banknote, Smartphone, Users, Clock } from "lucide-react"
+import { Wallet, TrendingUp, Banknote, Smartphone, Users, Clock, Search } from "lucide-react"
 import { toast } from "sonner"
 import { useSettlementStore } from "../../store"
 import type { WithdrawalRequest } from "../../store/settlement-store"
 import { useStaffStore } from "../../store"
+import { usePagination } from "@/shared/hooks/usePagination"
+import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 
 export function SettlementPage() {
   const [gmvStats, setGmvStats] = useState<any>(null)
@@ -47,12 +50,27 @@ export function SettlementPage() {
 
   const [rejectTarget, setRejectTarget] = useState<WithdrawalRequest | null>(null)
   const [rejectReason, setRejectReason] = useState("")
+  const [withdrawSearch, setWithdrawSearch] = useState("")
+  const [withdrawTab, setWithdrawTab] = useState<"all" | "pending" | "approved" | "rejected">("pending")
 
   // 按服务人员汇总收入
   const staffIncomes = staff
     .map((s) => ({ staff: s, summary: getStaffSummary(s.id) }))
     .filter((x) => x.summary.total > 0)
     .sort((a, b) => b.summary.total - a.summary.total)
+
+  const filteredWithdrawals = useMemo(() => {
+    let list = withdrawals
+    if (withdrawTab === "pending") list = list.filter((w) => w.status === "pending")
+    else if (withdrawTab === "approved") list = list.filter((w) => w.status === "approved")
+    else if (withdrawTab === "rejected") list = list.filter((w) => w.status === "rejected")
+    if (withdrawSearch.trim()) {
+      const q = withdrawSearch.trim().toLowerCase()
+      list = list.filter((w) => w.staffName.toLowerCase().includes(q) || w.id.toLowerCase().includes(q))
+    }
+    return list
+  }, [withdrawals, withdrawTab, withdrawSearch])
+  const withdrawPagination = usePagination(filteredWithdrawals, 10)
 
   const pendingWithdrawals = withdrawals.filter((w) => w.status === "pending")
 
@@ -189,6 +207,20 @@ export function SettlementPage() {
         </TabsContent>
 
         <TabsContent value="withdrawal">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Input placeholder="搜索服务人员..." value={withdrawSearch} onChange={(e) => setWithdrawSearch(e.target.value)} className="pl-9 h-9 text-sm" />
+            </div>
+            <div className="flex gap-1">
+              {(["all", "pending", "approved", "rejected"] as const).map((t) => (
+                <button key={t} onClick={() => setWithdrawTab(t)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${withdrawTab === t ? "bg-primary text-white" : "bg-gray-100 text-text-secondary hover:bg-gray-200"}`}>
+                  {t === "all" ? "全部" : t === "pending" ? "待审批" : t === "approved" ? "已通过" : "已驳回"}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="bg-white rounded-lg border border-border-light overflow-hidden">
             <Table>
               <TableHeader>
@@ -201,7 +233,7 @@ export function SettlementPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {withdrawals.map((w) => (
+                {withdrawPagination.paginatedItems.map((w: any) => (
                   <TableRow key={w.id}>
                     <TableCell className="font-medium">{w.staffName}</TableCell>
                     <TableCell className="font-semibold">¥{w.amount}</TableCell>
@@ -239,6 +271,9 @@ export function SettlementPage() {
                 ))}
               </TableBody>
             </Table>
+          </div>
+          <div className="mt-3 border-t pt-3">
+            <PaginationBar page={withdrawPagination.currentPage} totalPages={withdrawPagination.totalPages} onPageChange={withdrawPagination.setCurrentPage} pageSize={10} onPageSizeChange={() => {}} total={withdrawPagination.total} />
           </div>
         </TabsContent>
       </Tabs>
