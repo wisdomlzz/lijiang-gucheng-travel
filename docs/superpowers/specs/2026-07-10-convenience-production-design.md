@@ -569,6 +569,7 @@ C端用户                   Server                    桌面端管理员
 - 用户主动提交评价才 INSERT
 - 评价不可修改、不可删除（管理员可软删）
 - 好评率 = (评分 ≥ 4 的评价数) / 总评价数，无评价默认 1.0
+- > `isDeleted` 字段为 **新增需求**（Demo 中 `reviews` 表无此字段），生产需加迁移
 
 ### 7.4 income_records（收入记录）
 
@@ -721,23 +722,23 @@ C端用户                   Server                    桌面端管理员
 
 ### 8.3 桌面端（管理员）
 
-| 页面/模块 | 功能 |
-|-----------|------|
-| ConveniencePage | 订单管理（全部/待派单/S90/取消审批/报价审核 tab） |
-| OrderTableTab | 订单列表（含搜索/筛选/分页/操作） |
-| OrderDialogs | 手动派单/取消审批/强制取消/详情弹窗 |
-| ConvenienceStaffPage | 人员管理（列表/新增/编辑/禁用+处理进行中订单） |
-| StaffFormDialog | 人员表单弹窗 |
-| StaffListTab | 人员列表 tab |
-| StaffStatusTab | 员工状态/在线情况 tab |
-| ZoneManagementPage | 片区+站点管理（JSON 配置） |
-| StaffReviewPage | 入驻审核（通过/驳回） |
-| ReviewManagementPage | 评价管理（查看/回复/软删） |
-| SettlementPage | 结算管理（收入明细/提现审批） |
-| ConvenienceOverviewPage | 全局统计概览 |
-| DispatchConfigPage | 派单配置 |
-| SystemConfigPage | 系统配置（扣费规则/超时时间/每日上限等） |
-| FinancialReportPage | 财务报表（线上/现金 GMV 统计） |
+| 页面/模块 | 功能 | 状态 |
+|-----------|------|------|
+| ConveniencePage | 订单管理（全部/待派单/S90/取消审批/报价审核 tab） | Demo 已有 |
+| OrderTableTab | 订单列表（含搜索/筛选/分页/操作） | Demo 已有 |
+| OrderDialogs | 手动派单/取消审批/强制取消/详情弹窗 | Demo 已有 |
+| ConvenienceStaffPage | 人员管理（列表/新增/编辑/禁用+处理进行中订单） | Demo 已有 |
+| StaffFormDialog | 人员表单弹窗 | Demo 已有 |
+| StaffListTab | 人员列表 tab | Demo 已有 |
+| StaffStatusTab | 员工状态/在线情况 tab | Demo 已有 |
+| ZoneManagementPage | 片区+站点管理（JSON 配置） | Demo 已有 |
+| StaffReviewPage | 入驻审核（通过/驳回） | Demo 已有 |
+| ReviewManagementPage | 评价管理（查看/回复/软删） | Demo 已有 |
+| SettlementPage | 结算管理（收入明细/提现审批） | Demo 已有 |
+| ConvenienceOverviewPage | 全局统计概览 | Demo 已有 |
+| DispatchConfigPage | 派单配置 | Demo 已有 |
+| SystemConfigPage | 系统配置（扣费规则/超时时间/每日上限等） | **新增**（Demo 无） |
+| FinancialReportPage | 财务报表（线上/现金 GMV 统计） | **新增**（Demo 无） |
 
 ---
 
@@ -876,6 +877,7 @@ Server 定时任务每分钟扫 `A35` 且 `quotedAt < now - 30min`：
 - 触发时机：订单到达 S40 时
 - 触发方式：Server 端 transition 到 S40 时自动调用 `onOrderCompleted()`
 - 生成内容：INSERT income_records（staffId, amount, payMethod, orderId）
+- > **注意**: Demo 中的 T+7 自动结算（`settleT7()`）为 **stub 实现**，函数体跳过不执行。原因：`income_records` 缺少 `settlementStatus` 字段，避免重复累加。生产开发时需补全：① `income_records` 加 `settlementStatus` 字段；② `settleT7()` 改为真实累加 `staff.balance`
 
 ### 12.2 支付方式区分
 
@@ -961,6 +963,7 @@ goodRate = (rating >= 4 的评价数) / (总评价数)
 - 服务列表 + 价格从 `service_configs` 表读取
 - 价格模板支持模板变量（`¥{startPrice}/{unit} 起`）
 - 超距加价规则可配
+- > **注意**: Demo 中价格为 **硬编码**（`services-store.ts` 中的 `DEFAULT` 常量），未从 `service_configs` 表读取。生产需新增：① `service_configs` 表增加价格字段（`startPrice`, `unitPrice`, `extraKmPrice` 等）；② `GET /api/v1/service-configs` 端点；③ 前端页面价格改为 API 调用
 
 ---
 
