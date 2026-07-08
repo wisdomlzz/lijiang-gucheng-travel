@@ -333,15 +333,15 @@ export function ServiceTasks() {
         order={opened}
         onClose={() => setOpenId(null)}
         onStateChange={(id, next, pricingMode) => {
+          // 子组件的 change() 已通过 store 调用 API 更新状态
+          // 父组件只需要关闭弹窗 + 刷新列表，不需要重复调用 store
           const convStore = useConvenienceStore.getState()
           const conv = convStore.orders.find((c) => c.id === id)
-          if (conv) {
-            if (next === "accepted" && conv.status === "A20") convStore.acceptOrder(id)
-            if (next === "paid" && conv.status === "A35") convStore.markPaid(id, conv.payMethod ?? "online")
-            if (next === "serving" && conv.status === "A40") convStore.startService(id)
-            if (next === "cancelled" && conv.cancelRequested) convStore.approveCancelRequest(id)
-            if (next === "serving" && conv.cancelRequested) convStore.rejectCancelRequest(id)
-            if (next === "done" && conv.status === "S90") convStore.forceCancel(id)
+          if (!conv) return
+          // only handle parent-level side effects: markPaid (from QuoteAndPhotoFlow callback)
+          // and closing the detail panel on state changes
+          if (next === "done" && conv.status === "S90") {
+            // manual-resolve: just show toast, don't forceCancel
             return
           }
         }}

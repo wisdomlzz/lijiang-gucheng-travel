@@ -51,8 +51,9 @@ export function ServiceOrderDetail({
   const [flow, setFlow] = useState<"quote" | "photo" | "proof" | null>(null)
   const [hasPaymentProof, setHasPaymentProof] = useState(false)
   const [confirm, setConfirm] = useState<
-    null | "accept" | "start" | "approve-cancel" | "reject-cancel" | "manual-resolve"
+    null | "accept" | "start" | "approve-cancel" | "reject-cancel" | "manual-resolve" | "reject"
   >(null)
+  const [rejectReason, setRejectReason] = useState("")
   const [toast, setToast] = useState("")
   const liveOrder = useConvenienceStore((s) => (order ? s.orders.find((item) => item.id === order.id) : undefined))
 
@@ -68,6 +69,7 @@ export function ServiceOrderDetail({
     setFlow(null)
     setHasPaymentProof(false)
     setConfirm(null)
+    setRejectReason("")
     return () => clearTimeout(toastTimerRef.current)
   }, [order?.id])
 
@@ -121,10 +123,7 @@ export function ServiceOrderDetail({
         return (
           <div className="flex gap-2">
             <button
-              onClick={() => {
-                useConvenienceStore.getState().rejectOrder(order.id, "")
-                onClose()
-              }}
+              onClick={() => setConfirm("reject")}
               className="flex-1 h-11 rounded-2xl bg-white border border-slate-200 text-text-secondary text-[14px]"
             >
               暂不接单
@@ -273,6 +272,37 @@ export function ServiceOrderDetail({
           <StatusBadge kind={meta.kind}>{meta.label}</StatusBadge>
           <span className="text-[11px] text-text-tertiary">订单 #{order.id}</span>
         </div>
+
+        {/* Cancel request banner — show on any active order */}
+        {liveOrder?.cancelRequested === 1 && cur !== "cancelled" && (
+          <div className="rounded-2xl p-4" style={{ background: "#FEF3C7", border: "1px solid #F59E0B" }}>
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="size-5 shrink-0 mt-0.5" style={{ color: "#D97706" }} />
+              <div className="flex-1">
+                <div className="text-[13px] font-medium" style={{ color: "#92400E" }}>用户申请取消订单</div>
+                <div className="mt-1 text-[12px]" style={{ color: "#A16207" }}>
+                  {liveOrder?.note ? `原因：${liveOrder.note}` : "用户已提交取消申请，请选择是否同意"}
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => setConfirm("reject-cancel")}
+                    className="flex-1 h-9 rounded-xl bg-white border text-[12px]"
+                    style={{ borderColor: "#D97706", color: "#92400E" }}
+                  >
+                    拒绝取消
+                  </button>
+                  <button
+                    onClick={() => setConfirm("approve-cancel")}
+                    className="flex-1 h-9 rounded-xl text-white text-[12px] font-medium"
+                    style={{ background: "#D97706" }}
+                  >
+                    同意取消
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Stage progress */}
         {/* @ts-expect-error: cancelReview is not in BServiceState but valid at runtime */}
@@ -481,6 +511,53 @@ export function ServiceOrderDetail({
         confirm="知道了"
         onConfirm={() => setConfirm(null)}
       />
+
+      {/* Reject reason modal */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end justify-center ${confirm === "reject" ? "" : "hidden"}`}
+        onClick={() => { setConfirm(null); setRejectReason("") }}
+      >
+        <div
+          className="w-full bg-white rounded-t-3xl overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+          style={{ maxHeight: "60vh" }}
+        >
+          <div className="px-4 pt-4 pb-2 text-center">
+            <div className="text-[15px] font-medium text-text-heading">选择拒单原因</div>
+            <div className="mt-1 text-[12px] text-text-tertiary">您的拒单原因将提交给平台</div>
+          </div>
+          <div className="px-4 py-2 space-y-2">
+            {["距离太远", "当前忙不过来", "订单信息不清晰", "服务类型不符", "其他原因"].map((r) => (
+              <button
+                key={r}
+                onClick={() => setRejectReason(r)}
+                className={`w-full text-left px-4 py-3 rounded-xl text-[13px] transition ${
+                  rejectReason === r
+                    ? "bg-primary-50 text-primary border border-primary/30"
+                    : "bg-gray-50 text-text-body border border-transparent"
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+          <div className="px-4 pb-5 pt-2">
+            <button
+              onClick={() => {
+                if (!rejectReason) { showToast("请选择拒单原因"); return }
+                useConvenienceStore.getState().rejectOrder(order.id, rejectReason)
+                setConfirm(null)
+                setRejectReason("")
+                onClose()
+              }}
+              className="w-full h-11 rounded-2xl bg-[#EF4444] text-white text-[14px] font-medium disabled:opacity-40"
+              disabled={!rejectReason}
+            >
+              确认拒单
+            </button>
+          </div>
+        </div>
+      </div>
 
       <QuoteAndPhotoFlow
         open={flow !== null}

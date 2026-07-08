@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router"
 import { ArrowLeft, Wrench, Check } from "lucide-react"
 import { api } from "@/api/client"
+import { useAuthStore } from "@/platform/auth"
 import { toast } from "sonner"
 
 const SERVICE_TYPES = [
@@ -15,6 +16,8 @@ const SERVICE_TYPES = [
 
 export function StaffRegister() {
   const navigate = useNavigate()
+  const currentUser = useAuthStore((s) => s.user)
+  const supplierId = currentUser?.supplierId || "sup_001"
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
   const [idCard, setIdCard] = useState("")
@@ -51,7 +54,7 @@ export function StaffRegister() {
     setSubmitting(true)
     try {
       await api.create("staff", {
-        supplierId: "sup_001",
+        supplierId: supplierId,
         name: name.trim(),
         phone: phone.trim(),
         idCard: idCard.trim(),

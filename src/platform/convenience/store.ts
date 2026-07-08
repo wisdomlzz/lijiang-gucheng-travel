@@ -168,7 +168,7 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
       (result) => {
         set((s) => ({ orders: replaceOrder(s.orders, orderId, result) }))
         notify(o, "服务已核价", `您的${o.serviceType}订单已报价 ¥${price}，请在时间内确认支付`, `/c/orders/${orderId}`)
-        setTimer(`conv:${orderId}:pay`, 15000, async () => {
+        setTimer(`conv:${orderId}:pay`, 30 * 60 * 1000, async () => {
           const order = get().orders.find((oo) => oo.id === orderId)
           if (order?.status === "A35") {
             // 支付超时:走 transition API
@@ -198,7 +198,7 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
     if (!o) return
     await syncAction<ConvenienceOrder>(
       "markPaid",
-      () => ordersApi.transition(orderId, "pay", { payMethod: method }),
+      () => ordersApi.transition(orderId, "pay", { paymentMethod: method }),
       (result) => {
         set((s) => ({ orders: replaceOrder(s.orders, orderId, result) }))
         notify(
@@ -393,7 +393,7 @@ export const useConvenienceStore = create<ConvenienceState>((set, get) => ({
   rejectOrder: async (orderId, reason) => {
     await syncAction<ConvenienceOrder>(
       "rejectOrder",
-      () => ordersApi.transition(orderId, "reject", { reason }),
+      () => ordersApi.transition(orderId, "reject", { rejectReason: reason }),
       (result) => set((s) => ({ orders: replaceOrder(s.orders, orderId, result) })),
     )
   },

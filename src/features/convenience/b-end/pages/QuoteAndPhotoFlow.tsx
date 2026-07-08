@@ -28,7 +28,7 @@ export function QuoteAndPhotoFlow({
   const [step, setStep] = useState<Step>(initial)
   const [amount, setAmount] = useState("")
   const [photos, setPhotos] = useState(0)
-  const [waitTime, setWaitTime] = useState(900)
+  const [waitTime, setWaitTime] = useState(1800) // 30 minutes, matches server PAY_TIMEOUT
   const [timedOut, setTimedOut] = useState(false)
   const timeoutFired = useRef(false)
   const fileInputRef = useRef<HTMLInputElement>(null)

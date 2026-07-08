@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS convenience_orders (
   ratedAt TEXT,
   completedAt TEXT,
   cancelRequested INTEGER DEFAULT 0,
+  rejectReason TEXT DEFAULT '',
   lat REAL,
   lng REAL,
   arbitrationRemark TEXT,
