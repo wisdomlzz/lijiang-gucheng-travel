@@ -28,21 +28,26 @@ export function MerchantManageContent() {
   const [search, setSearch] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<any>(null)
-  const [form, setForm] = useState({ name: "", category: "餐饮", address: "", phone: "", description: "" })
+  const [form, setForm] = useState({ name: "", category: "餐饮", address: "", phone: "", description: "", contactName: "", contactPhone: "", lat: "", lng: "" })
 
   const filtered = search.trim() ? merchants.filter((m) => m.name.toLowerCase().includes(search.toLowerCase())) : merchants
   const pagination = usePagination(filtered, 10)
 
-  const openAdd = () => { setEditing(null); setForm({ name: "", category: "餐饮", address: "", phone: "", description: "" }); setDialogOpen(true) }
-  const openEdit = (item: any) => { setEditing(item); setForm({ name: item.name, category: item.category || "餐饮", address: item.address || "", phone: item.phone || "", description: item.description || "" }); setDialogOpen(true) }
+  const openAdd = () => { setEditing(null); setForm({ name: "", category: "餐饮", address: "", phone: "", description: "", contactName: "", contactPhone: "", lat: "", lng: "" }); setDialogOpen(true) }
+  const openEdit = (item: any) => { setEditing(item); setForm({ name: item.name, category: item.category || "餐饮", address: item.address || "", phone: item.phone || "", description: item.description || "", contactName: item.contactName || "", contactPhone: item.contactPhone || "", lat: item.lat != null ? String(item.lat) : "", lng: item.lng != null ? String(item.lng) : "" }); setDialogOpen(true) }
 
   const handleSave = () => {
     if (!form.name.trim()) { toast.error("请输入商户名称"); return }
+    const payload = {
+      ...form,
+      lat: form.lat ? Number(form.lat) : undefined,
+      lng: form.lng ? Number(form.lng) : undefined,
+    }
     if (editing) {
-      updateMerchant(editing.id, form)
+      updateMerchant(editing.id, payload)
       toast.success("商户已更新")
     } else {
-      addMerchant({ id: `m_${Date.now()}`, ...form } as any)
+      addMerchant({ id: `m_${Date.now()}`, ...payload } as any)
       toast.success("商户已添加")
     }
     setDialogOpen(false)
@@ -64,6 +69,8 @@ export function MerchantManageContent() {
             <TableHead>分类</TableHead>
             <TableHead>地址</TableHead>
             <TableHead>电话</TableHead>
+            <TableHead>联系人</TableHead>
+            <TableHead>联系电话</TableHead>
             <TableHead className="text-right">操作</TableHead>
           </TableRow>
         </TableHeader>
@@ -78,6 +85,8 @@ export function MerchantManageContent() {
               </TableCell>
               <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">{item.address}</TableCell>
               <TableCell className="text-xs text-muted-foreground">{item.phone || "-"}</TableCell>
+              <TableCell className="text-xs text-muted-foreground">{item.contactName || "-"}</TableCell>
+              <TableCell className="text-xs text-muted-foreground">{item.contactPhone || "-"}</TableCell>
               <TableCell className="text-right">
                 <div className="flex gap-1 justify-end">
                   <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEdit(item)}><Pencil className="size-3.5" /></Button>
@@ -86,7 +95,7 @@ export function MerchantManageContent() {
               </TableCell>
             </TableRow>
           ))}
-          {filtered.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">暂无商户</TableCell></TableRow>}
+          {filtered.length === 0 && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">暂无商户</TableCell></TableRow>}
         </TableBody>
       </Table>
       <div className="mt-3 border-t pt-3"><PaginationBar page={pagination.currentPage} totalPages={pagination.totalPages} onPageChange={pagination.setCurrentPage} pageSize={10} onPageSizeChange={() => {}} total={pagination.total} /></div>
@@ -106,6 +115,14 @@ export function MerchantManageContent() {
             </div>
             <div><label className="block text-sm text-muted-foreground mb-1">地址</label><Input value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))} className="h-9" /></div>
             <div><label className="block text-sm text-muted-foreground mb-1">描述</label><Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="h-9" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><label className="block text-sm text-muted-foreground mb-1">联系人</label><Input value={form.contactName} onChange={(e) => setForm((f) => ({ ...f, contactName: e.target.value }))} className="h-9" /></div>
+              <div><label className="block text-sm text-muted-foreground mb-1">联系电话</label><Input value={form.contactPhone} onChange={(e) => setForm((f) => ({ ...f, contactPhone: e.target.value }))} className="h-9" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><label className="block text-sm text-muted-foreground mb-1">纬度 (lat)</label><Input type="number" step="any" value={form.lat} onChange={(e) => setForm((f) => ({ ...f, lat: e.target.value }))} className="h-9" placeholder="如 26.8765" /></div>
+              <div><label className="block text-sm text-muted-foreground mb-1">经度 (lng)</label><Input type="number" step="any" value={form.lng} onChange={(e) => setForm((f) => ({ ...f, lng: e.target.value }))} className="h-9" placeholder="如 100.2345" /></div>
+            </div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setDialogOpen(false)}>取消</Button><Button onClick={handleSave}>{editing ? "保存" : "添加"}</Button></DialogFooter>
         </DialogContent>

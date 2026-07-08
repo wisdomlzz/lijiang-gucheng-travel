@@ -15,7 +15,7 @@ export interface MerchantChangeRequest {
   supplierId: string
   supplierName: string
   merchantName: string // 店铺名
-  fields: { field: string; label: string; oldValue: string; newValue: string }[]
+  fields: Array<{ field: string; label: string; oldValue: string; newValue: string; status?: "pending" | "approved" | "rejected" }>
   status: "pending" | "approved" | "rejected"
   submittedAt: string
   reviewedAt?: string
@@ -32,6 +32,8 @@ type MerchantReviewState = {
   /** 审核通过：更新请求状态 + 将变更应用到 merchant-store */
   approve: (id: string, reviewer: string) => Promise<void>
   reject: (id: string, reviewer: string, reason: string) => Promise<void>
+  approveField: (id: string, fieldKey: string, reviewer: string) => Promise<void>
+  rejectField: (id: string, fieldKey: string) => Promise<void>
 }
 
 export const useMerchantReviewStore = create<MerchantReviewState>((set, get) => ({
@@ -70,7 +72,9 @@ export const useMerchantReviewStore = create<MerchantReviewState>((set, get) => 
     if (merchant) {
       const updates: Record<string, string> = {}
       req.fields.forEach((f) => {
-        updates[f.field] = f.newValue
+        if (f.status !== "rejected") {
+          updates[f.field] = f.newValue
+        }
       })
       merchantStore.updateMerchant(merchant.id, updates)
     }
@@ -104,5 +108,44 @@ export const useMerchantReviewStore = create<MerchantReviewState>((set, get) => 
         targetUrl: "/c/my-shop",
       })
     }
+  },
+
+  approveField: async (id, fieldKey, reviewer) => {
+    const req = get().requests.find((r) => r.id === id)
+    if (!req) return
+    const field = req.fields.find((f) => f.field === fieldKey)
+    if (!field) return
+    set((s) => ({
+      requests: s.requests.map((r) =>
+        r.id === id
+          ? {
+              ...r,
+              fields: r.fields.map((f) =>
+                f.field === fieldKey ? { ...f, status: "approved" as const } : f
+              ),
+            }
+          : r
+      ),
+    }))
+    const merchantStore = useContentMerchantStore.getState()
+    const merchant = merchantStore.merchants.find((m) => m.name === req.merchantName)
+    if (merchant) {
+      merchantStore.updateMerchant(merchant.id, { [field.field]: field.newValue })
+    }
+  },
+
+  rejectField: async (id, fieldKey) => {
+    set((s) => ({
+      requests: s.requests.map((r) =>
+        r.id === id
+          ? {
+              ...r,
+              fields: r.fields.map((f) =>
+                f.field === fieldKey ? { ...f, status: "rejected" as const } : f
+              ),
+            }
+          : r
+      ),
+    }))
   },
 }))
