@@ -1,9 +1,10 @@
-import { useState, useRef, type ReactNode } from "react"
+import { useState, useRef, useMemo, useEffect, type ReactNode } from "react"
 import { useNavigate } from "react-router"
 import { ChevronLeft, ChevronRight, MapPin, FileText, X, Expand, Share2 } from "lucide-react"
 import { HeritageItem, heritageTypeMeta } from "@/features/heritage/shared/types"
 import { HeritageMap } from "@/features/heritage/c-end/components/HeritageMap"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
+import { useFlowWarningStore, LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
 
 /* ────────── 字段行（所有类型通用） ────────── */
 export function FieldRow({ label, value }: { label: string; value: string | string[] | boolean | undefined }) {
@@ -188,6 +189,21 @@ export function HeritageDetailLayout({ item, fields }: HeritageDetailLayoutProps
 
   const meta = heritageTypeMeta[item.type]
 
+  const flowAreas = useFlowWarningStore((s) => s.areas)
+  const loadAreas = useFlowWarningStore((s) => s.loadAreas)
+
+  const nearbyFlow = useMemo(() => {
+    if (!item.address) return null
+    const matched = flowAreas.find((a) => (item.address || "").includes(a.name.replace("街", "")))
+    if (matched) {
+      const pct = Math.round((matched.current / matched.capacity) * 100)
+      return { name: matched.name, pct, level: matched.level }
+    }
+    return null
+  }, [item, flowAreas])
+
+  useEffect(() => { loadAreas() }, [loadAreas])
+
   const openViewer = (index: number) => {
     setViewerIndex(index)
     setViewerOpen(true)
@@ -253,7 +269,15 @@ export function HeritageDetailLayout({ item, fields }: HeritageDetailLayoutProps
               {item.address && (
                 <div className="px-5 pt-4 pb-2 flex items-start gap-2.5">
                   <MapPin size={15} className="text-primary mt-0.5 shrink-0" />
-                  <span className="text-[14px] text-text-body">{item.address}</span>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] text-text-body">{item.address}</span>
+                    {nearbyFlow && (
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-page text-[10px] mt-1">
+                        <span className={`size-2 rounded-full ${nearbyFlow.level === "green" ? "bg-emerald-500" : nearbyFlow.level === "yellow" ? "bg-amber-500" : nearbyFlow.level === "orange" ? "bg-orange-500" : "bg-red-500"}`} />
+                        <span className="text-text-tertiary">{nearbyFlow.name} · 人流{nearbyFlow.pct}% · {LEVEL_META[nearbyFlow.level].label}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
               <div className="px-0 pb-0">

@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { ChevronLeft, Share2, MapPin, Phone, Navigation, Shield, BadgeCheck, Award, ChevronRight } from "lucide-react"
 import { useNavigate, useParams } from "react-router"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { toast } from "sonner"
 import { useContentMerchantStore } from "@/features/content/store/merchant-store"
+import { useFlowWarningStore, LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
 
 const qualificationBadges = [
   { icon: BadgeCheck, label: "实名认证", color: "#27AE60" },
@@ -31,6 +32,21 @@ export function MerchantDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const merchant = useContentMerchantStore((s) => s.merchants.find((m) => m.id === id))
+
+  const flowAreas = useFlowWarningStore((s) => s.areas)
+  const loadAreas = useFlowWarningStore((s) => s.loadAreas)
+
+  const nearbyFlow = useMemo(() => {
+    if (!merchant?.address) return null
+    const matched = flowAreas.find((a) => (merchant.address || "").includes(a.name.replace("街", "")))
+    if (matched) {
+      const pct = Math.round((matched.current / matched.capacity) * 100)
+      return { name: matched.name, pct, level: matched.level }
+    }
+    return null
+  }, [merchant, flowAreas])
+
+  useEffect(() => { loadAreas() }, [loadAreas])
 
   if (!merchant) {
     return (
@@ -76,6 +92,12 @@ export function MerchantDetailPage() {
           <div className="flex items-center gap-3 min-w-0">
             <MapPin size={16} className="text-primary flex-shrink-0" />
             <span className="text-[14px] text-text-body truncate">{merchant.address}</span>
+                  {nearbyFlow && (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-page text-[10px] mt-1">
+                      <span className={`size-2 rounded-full ${nearbyFlow.level === "green" ? "bg-emerald-500" : nearbyFlow.level === "yellow" ? "bg-amber-500" : nearbyFlow.level === "orange" ? "bg-orange-500" : "bg-red-500"}`} />
+                      <span className="text-text-tertiary">{nearbyFlow.name} · 人流{nearbyFlow.pct}% · {LEVEL_META[nearbyFlow.level].label}</span>
+                    </div>
+                  )}
           </div>
           <button
             onClick={() => openMerchantNavigation(merchant)}

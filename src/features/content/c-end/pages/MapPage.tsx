@@ -372,6 +372,26 @@ export function MapPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-surface-page/10 via-transparent to-surface-page/30" />
 
+          {/* 人流概况浮层 */}
+          {warningAreas.length > 0 && (
+            <div className="absolute top-4 left-4 right-4 z-10 bg-white/90 backdrop-blur rounded-2xl p-3 shadow-elevated">
+              <div className="flex items-center justify-between text-[12px]">
+                <span className="font-medium">古城人流</span>
+                <span className="text-text-tertiary">
+                  {warningAreas.filter(a => a.level === "red" || a.level === "orange").length > 0 ? "部分区域拥挤" : "各区域通畅"}
+                </span>
+              </div>
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {warningAreas.slice(0, 7).map((a) => (
+                  <div key={a.id} className="flex items-center gap-1 text-[10px]">
+                    <span className={`size-2 rounded-full ${a.level === "green" ? "bg-emerald-500" : a.level === "yellow" ? "bg-amber-500" : a.level === "orange" ? "bg-orange-500" : "bg-red-500"}`} />
+                    <span className="text-text-tertiary">{a.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {activeCat === "parking" ? (
             // 停车场视图
             <>
