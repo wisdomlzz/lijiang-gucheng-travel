@@ -17,6 +17,7 @@ import reviewsRoutes from "./routes/reviews.js"
 import bookingsRoutes from "./routes/bookings.js"
 import contentRoutes from "./routes/content.js"
 import uploadsRoutes from "./routes/uploads.js"
+import notificationsRoutes from "./routes/notifications.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -59,6 +60,9 @@ app.use("/api/v1/bookings", bookingsRoutes)
 
 // ====== Uploads ======
 app.use("/api/v1/upload", uploadsRoutes)
+
+// ====== Notifications ======
+app.use("/api/v1/notifications", notificationsRoutes)
 
 // ====== Announcements + Flow Warnings ======
 app.use("/api/v1/announcements", crudRoutes("announcements"))

@@ -5,6 +5,7 @@ import { crudRoutes, deserializeRow, logOperation } from "./crud.js"
 import { transition, META_ACTIONS, APPROVE_CANCEL } from "../logic/transitions.js"
 import { pickStaff, lookupStaff } from "../logic/dispatch.js"
 import { calcCancelFee } from "../logic/pricing.js"
+import { createNotification } from "./notifications.js"
 
 const router = Router()
 
@@ -80,6 +81,14 @@ router.post("/:id/dispatch", (req, res) => {
     ).run(order.id, staff.id, mode === "manual" ? "manual" : "auto", staff.name, "派单", now)
     logOperation(order.id, mode === "manual" ? "admin" : "system", req.body.operatorId || null, "dispatch", order.status, next, `派单给 ${staff.name}`)
     const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
+    // 通知被派单的服务人员
+    createNotification({
+      staffId: staff.id,
+      type: "new_order",
+      title: `您有新的派单：${order.serviceType}`,
+      body: `${order.note ? order.note + " · " : ""}${order.addressTo ? `${order.address} → ${order.addressTo}` : order.address}${order.refPrice ? ` · 参考价 ¥${order.refPrice}` : ""}`,
+      orderId: order.id,
+    })
     res.json(ok(deserializeRow(updated)))
   } catch (e) {
     res.json(fail(e.message))
@@ -149,6 +158,16 @@ router.post("/:id/pay-online", (req, res) => {
     ).run(payId, order.id, "online", order.priceQuote, "success", now, now)
     logOperation(order.id, "user", req.body.userId || order.userId, "payOnline", order.status, "A40", `线上支付 ¥${order.priceQuote}`)
     const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
+    // 通知服务人员线上收款
+    if (order.staffId) {
+      createNotification({
+        staffId: order.staffId,
+        type: "payment_received",
+        title: `用户已付款 ¥${order.priceQuote}`,
+        body: `${order.serviceType}订单 ${order.id} 线上支付已到账`,
+        orderId: order.id,
+      })
+    }
     res.json(ok(deserializeRow(updated)))
   } catch (e) {
     res.json(fail(e.message))
@@ -176,6 +195,16 @@ router.post("/:id/confirm-cash", (req, res) => {
     ).run(payId, order.id, "cash", order.priceQuote, "success", req.body.staffId || order.staffId, now, now)
     logOperation(order.id, "staff", req.body.staffId || order.staffId, "confirmCash", order.status, "A40", `现金收款 ¥${order.priceQuote}`)
     const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
+    // 通知服务人员现金收款确认
+    if (order.staffId) {
+      createNotification({
+        staffId: order.staffId,
+        type: "payment_received",
+        title: `现金收款确认 ¥${order.priceQuote}`,
+        body: `${order.serviceType}订单 ${order.id} 现金已收款`,
+        orderId: order.id,
+      })
+    }
     res.json(ok(deserializeRow(updated)))
   } catch (e) {
     res.json(fail(e.message))
@@ -216,6 +245,16 @@ router.post("/:id/rate", (req, res) => {
     ).run(rating, now, now, order.id)
     logOperation(order.id, "user", req.body.userId || order.userId, "rate", order.status, order.status, `评价 ${rating} 星`)
     const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
+    // 通知服务人员评价
+    if (order.staffId) {
+      createNotification({
+        staffId: order.staffId,
+        type: "rating_received",
+        title: `用户已评价 · ${rating} 星`,
+        body: `${order.serviceType}订单 ${order.id} 用户已给出 ${rating} 星评价`,
+        orderId: order.id,
+      })
+    }
     res.json(ok(deserializeRow(updated)))
   } catch (e) {
     res.json(fail(e.message))
@@ -278,6 +317,16 @@ router.post("/:id/transition", (req, res) => {
       db.prepare("UPDATE convenience_orders SET cancelRequested=?, updatedAt=? WHERE id=?")
         .run(cancelRequested, now, order.id)
       logOperation(order.id, "user", req.body.userId || null, action, order.status, order.status, action === "requestCancel" ? "申请取消" : "撤销取消申请")
+      // 通知服务人员取消申请
+      if (action === "requestCancel" && order.staffId) {
+        createNotification({
+          staffId: order.staffId,
+          type: "order_cancel_request",
+          title: `用户申请取消订单`,
+          body: `${order.serviceType}订单 ${order.id} 用户申请了取消，请尽快处理`,
+          orderId: order.id,
+        })
+      }
       const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
       return res.json(ok(deserializeRow(updated)))
     }
@@ -289,6 +338,16 @@ router.post("/:id/transition", (req, res) => {
       db.prepare("UPDATE convenience_orders SET status=?, cancelRequested=0, cancelFee=?, updatedAt=? WHERE id=?")
         .run("S50", cancelFee, now, order.id)
       logOperation(order.id, "admin", req.body.adminId || null, "approveCancel", order.status, "S50", `批准取消,扣费 ¥${cancelFee}`)
+      // 通知服务人员取消已通过
+      if (order.staffId) {
+        createNotification({
+          staffId: order.staffId,
+          type: "cancel_approved",
+          title: `取消申请已通过`,
+          body: `${order.serviceType}订单 ${order.id} 取消已批准${cancelFee > 0 ? `，扣费 ¥${cancelFee}` : ""}`,
+          orderId: order.id,
+        })
+      }
       const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
       return res.json(ok(deserializeRow(updated)))
     }
@@ -339,10 +398,22 @@ router.post("/:id/transition", (req, res) => {
 
     logOperation(order.id, req.body.operatorType || "user", req.body.operatorId || null, action, order.status, next, req.body.remark || null)
 
-    // ── 副作用:S40 完成 → 自动记账 ──
+    // ── 副作用:S40 完成 → 自动记账 + 通知 ──
     if (next === "S40") {
       const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
       onOrderCompleted(updated)
+      // 通知服务人员订单完成
+      if (order.staffId) {
+        createNotification({
+          staffId: order.staffId,
+          type: "order_completed",
+          title: `订单已完成`,
+          body: `${order.serviceType}订单 ${order.id} 已由用户确认完成${order.priceQuote ? `，收入 ¥${order.priceQuote}` : ""}`,
+          orderId: order.id,
+        })
+      }
+      const final = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)
+      return res.json(ok(deserializeRow(final)))
     }
 
     const updated = db.prepare("SELECT * FROM convenience_orders WHERE id = ?").get(order.id)

@@ -324,6 +324,21 @@ export function seedIfNeeded() {
     { id: "act-cancelled", title: "古城摄影志愿服务", description: "因天气原因取消。原计划在古城各景点为游客提供免费拍照服务。", location: "丽江古城万古楼观景台", startTime: "2026-07-08 09:00", endTime: "2026-07-08 12:00", timeMode: "multi", dailyStartTime: "09:00", dailyEndTime: "12:00", maxParticipants: 10, currentParticipants: 3, status: "cancelled", tags: [] },
   ])
 
+  // ====== Notifications (for each staff member) ======
+  insertMany("notifications", [
+    { id: "n1_s1", staffId: "s1", type: "new_order", title: "您有新的派单", body: "行李搬运订单，从古城北门到四方街，参考价 ¥70", orderId: "CO20260511001", isRead: 0, createdAt: "2026-05-11 10:00" },
+    { id: "n2_s1", staffId: "s1", type: "order_completed", title: "订单已完成", body: "行李搬运订单 CO20260509001 用户已确认完成", orderId: "CO20260509001", isRead: 0, createdAt: "2026-05-09 12:00" },
+    { id: "n3_s1", staffId: "s1", type: "payment_received", title: "用户已付款 ¥60", body: "行李搬运订单 CO20260509001 线上支付已到账", orderId: "CO20260509001", isRead: 1, createdAt: "2026-05-09 11:30" },
+    { id: "n4_s1", staffId: "s1", type: "rating_received", title: "用户已评价", body: "用户对行李搬运服务给出了 5 星好评", orderId: "CO20260509001", isRead: 1, createdAt: "2026-05-09 14:00" },
+    { id: "n5_s1", staffId: "s1", type: "new_order", title: "您有新的派单", body: "布草配送订单，送到七一街兴文巷，参考价 ¥70", orderId: "CO20260511003", isRead: 0, createdAt: "2026-05-11 10:00" },
+    { id: "n6_s1", staffId: "s1", type: "order_cancel_request", title: "用户申请取消订单", body: "用户申请取消布草配送订单 CO20260511003，请尽快处理", orderId: "CO20260511003", isRead: 0, createdAt: "2026-05-11 11:00" },
+
+    { id: "n1_s3", staffId: "s3", type: "new_order", title: "您有新的派单", body: "建筑垃圾清运订单，五一街振兴巷12号，参考价 ¥50", orderId: "CO20260511002", isRead: 1, createdAt: "2026-05-11 09:00" },
+    { id: "n2_s3", staffId: "s3", type: "payment_received", title: "用户已付款 ¥60", body: "建筑垃圾清运订单 CO20260511002 线上支付已到账", orderId: "CO20260511002", isRead: 1, createdAt: "2026-05-11 10:30" },
+    { id: "n3_s3", staffId: "s3", type: "new_order", title: "您有新的派单", body: "生活垃圾清运订单，新华街三个垃圾桶需要清运", orderId: "CO20260511006", isRead: 0, createdAt: "2026-05-11 07:00" },
+    { id: "n4_s3", staffId: "s3", type: "order_cancel_request", title: "用户申请取消订单", body: "用户申请取消生活垃圾清运订单", orderId: "CO20260511006", isRead: 0, createdAt: "2026-05-11 08:00" },
+  ])
+
   // ====== Announcements (4 items) ======
   insertMany("announcements", [
     { id: "ann-1", title: "古城游览安全提醒", content: "温馨提示各位游客：\n1. 游览时请注意人身财产安全\n2. 妥善保管贵重物品\n3. 夜间行走请选择明亮路段\n4. 如遇紧急情况请联系：0888-5110110", images: ["https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=800&q=70"], type: "公告", publishTime: "2024-04-10T08:00:00Z", status: "published" },

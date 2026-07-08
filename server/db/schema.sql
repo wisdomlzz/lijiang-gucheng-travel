@@ -697,3 +697,17 @@ CREATE TABLE IF NOT EXISTS system_configs (
 ALTER TABLE content_routes ADD COLUMN isFeatured INTEGER DEFAULT 0;
 ALTER TABLE content_routes ADD COLUMN subtitle TEXT DEFAULT '';
 ALTER TABLE content_routes ADD COLUMN tagColor TEXT DEFAULT '#3B82F6';
+
+-- ====== Notifications ======
+CREATE TABLE IF NOT EXISTS notifications (
+  id TEXT PRIMARY KEY,
+  staffId TEXT NOT NULL REFERENCES staff(id) ON DELETE CASCADE,
+  type TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body TEXT DEFAULT '',
+  orderId TEXT,
+  isRead INTEGER DEFAULT 0,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_notif_staff ON notifications(staffId);
+CREATE INDEX IF NOT EXISTS idx_notif_read ON notifications(staffId, isRead);
