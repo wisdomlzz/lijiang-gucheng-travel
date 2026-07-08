@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import {
   ChevronLeft,
   Share2,
@@ -42,6 +42,23 @@ export function CulturalCourtyardDetailPage() {
   const navigate = useNavigate()
   const courtyards = useContentCourtyardStore((s) => s.courtyards)
   const courtyard = courtyards.find((c) => c.id === id)
+  const flowAreas = useFlowWarningStore((s) => s.areas)
+
+  // 根据院落地址匹配所在街道的人流饱和度
+  const nearbyFlow = useMemo(() => {
+    if (!courtyard?.location) return null
+    const loc = courtyard.location
+    const matched = flowAreas.find((a) => loc.includes(a.name.replace("街", "")))
+    if (matched) {
+      const pct = Math.round((matched.current / matched.capacity) * 100)
+      return { name: matched.name, pct, level: matched.level }
+    }
+    return null
+  }, [courtyard, flowAreas])
+
+  // 加载人流数据
+  const loadAreas = useFlowWarningStore((s) => s.loadAreas)
+  useEffect(() => { loadAreas() }, [loadAreas])
 
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [playerOpen, setPlayerOpen] = useState(false)
@@ -302,6 +319,12 @@ export function CulturalCourtyardDetailPage() {
             <div className="flex-1">
               <p className="text-[13px] text-text-secondary">地址</p>
               <p className="text-[14px] text-text-body mt-0.5">{courtyard.location}</p>
+              {nearbyFlow && (
+                <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-page text-[10px]">
+                  <span className={`size-2 rounded-full ${nearbyFlow.level === "green" ? "bg-emerald-500" : nearbyFlow.level === "yellow" ? "bg-amber-500" : nearbyFlow.level === "orange" ? "bg-orange-500" : "bg-red-500"}`} />
+                  <span className="text-text-tertiary">{nearbyFlow.name} · 人流{nearbyFlow.pct}% · {LEVEL_META[nearbyFlow.level].label}</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">

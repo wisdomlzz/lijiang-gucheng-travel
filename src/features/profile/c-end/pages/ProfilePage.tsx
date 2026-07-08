@@ -240,27 +240,6 @@ export function ProfilePage() {
           </button>
         </div>
 
-        {/* Supplier entry */}
-        <div className="mx-4 mt-6">
-          <div
-            onClick={() => navigate("/c/supplier-entry")}
-            className="bg-gradient-to-r from-primary/8 to-primary/5 border border-primary/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-transform"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Store size={20} className="text-white" />
-              </div>
-              <div>
-                <div className="text-[14px] text-text-body font-medium">供应商入驻</div>
-                <div className="text-[11px] text-text-tertiary mt-0.5">入驻开启线上经营</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-1 text-primary text-[12px]">
-              <span>立即入驻</span>
-              <ChevronRight size={16} />
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
