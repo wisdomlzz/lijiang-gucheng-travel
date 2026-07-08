@@ -5,6 +5,7 @@ import { toast } from "sonner"
 import { useSearch } from "@/shared/hooks/useSearch"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import { useNotificationStore } from "../../store/notification-store"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 import { useAuthStore } from "@/platform/auth"
 import type { NotificationItem } from "../../store/notification-store"
 
@@ -155,7 +156,11 @@ export function BNotificationsPage() {
       {/* 列表 */}
       <div className="flex-1 overflow-y-auto px-4 space-y-2 mt-2">
         {loading && notifications.length === 0 ? (
-          <div className="text-center py-16 text-[13px] text-text-tertiary">加载中...</div>
+          <div className="space-y-3 p-4">
+            <Skeleton className="h-16 w-full rounded-xl" />
+            <Skeleton className="h-16 w-full rounded-xl" />
+            <Skeleton className="h-16 w-3/4 rounded-xl" />
+          </div>
         ) : visible.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-text-tertiary">
             <Bell size={48} className="opacity-40 mb-3" />
