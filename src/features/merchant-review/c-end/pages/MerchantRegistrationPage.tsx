@@ -91,23 +91,12 @@ export function MerchantRegistrationPage() {
     e.target.value = ""
   }
 
-  const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCoverUpload = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
     reader.onload = (ev) => {
-      if (ev.target?.result) setNewShopCover(ev.target.result as string)
-    }
-    reader.readAsDataURL(file)
-    e.target.value = ""
-  }
-
-  const handleClaimCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      if (ev.target?.result) setClaimCover(ev.target.result as string)
+      if (ev.target?.result) setter(ev.target.result as string)
     }
     reader.readAsDataURL(file)
     e.target.value = ""
@@ -286,7 +275,7 @@ export function MerchantRegistrationPage() {
                     <Camera size={16} />
                   </button>
                 </div>
-                <input ref={claimCoverInputRef} type="file" accept="image/*" className="hidden" onChange={handleClaimCoverUpload} />
+                <input ref={claimCoverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverUpload(setClaimCover)} />
               </div>
 
               {/* 店铺名称（只读） */}
@@ -473,7 +462,7 @@ export function MerchantRegistrationPage() {
                     <span className="text-[12px]">点击上传店铺封面</span>
                   </button>
                 )}
-                <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} />
+                <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverUpload(setNewShopCover)} />
                 {errors.cover && <p className="text-[11px] text-red-500 mt-1">{errors.cover}</p>}
               </div>
 

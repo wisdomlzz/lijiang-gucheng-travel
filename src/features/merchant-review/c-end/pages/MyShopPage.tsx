@@ -97,7 +97,7 @@ export function MyShopPage() {
     [myRequests],
   )
 
-  const [shopOpen, setShopOpen] = useState(merchant.status !== "closed")
+  
   const [activeSheet, setActiveSheet] = useState<SheetType>(null)
   const [sheetValue, setSheetValue] = useState("")
 
@@ -562,18 +562,18 @@ export function MyShopPage() {
                 </button>
                 <button
                   onClick={async () => {
-                    const newStatus = shopOpen ? "closed" : "open"
+                    const newStatus = merchant.status !== "closed" ? "closed" : "open"
                     try {
                       await useContentMerchantStore.getState().updateMerchant(merchant.id, { status: newStatus })
-                      setShopOpen(!shopOpen)
+                      
                       toast.success(newStatus === "open" ? "店铺已恢复营业" : "店铺已暂停营业")
                     } catch {
                       toast.error("操作失败")
                     }
                   }}
-                  className={`text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 ${shopOpen ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-text-tertiary"}`}
+                  className={`text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 ${merchant.status !== "closed" ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-text-tertiary"}`}
                 >
-                  <Power size={11} /> {shopOpen ? "营业中" : "休息中"}
+                  <Power size={11} /> {merchant.status !== "closed" ? "营业中" : "休息中"}
                 </button>
               </div>
               <span className="text-[12px] text-amber-500 shrink-0">⭐ {merchant.rating}</span>
