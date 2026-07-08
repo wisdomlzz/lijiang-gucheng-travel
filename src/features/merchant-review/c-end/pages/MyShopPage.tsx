@@ -173,60 +173,19 @@ export function MyShopPage() {
 
   const latestRequest = myRequests[0]
 
+  const SIMPLE_META: Record<string, { label: string; inputType: "input" | "textarea"; submitMode: "direct" | "review" }> = {
+    cover: { label: "封面图", inputType: "input", submitMode: "direct" },
+    description: { label: "店铺简介", inputType: "textarea", submitMode: "direct" },
+    name: { label: "店铺名称", inputType: "input", submitMode: "review" },
+    address: { label: "店铺地址", inputType: "input", submitMode: "review" },
+    phone: { label: "联系电话", inputType: "input", submitMode: "review" },
+    category: { label: "店铺分类", inputType: "input", submitMode: "review" },
+    contactName: { label: "联系人", inputType: "input", submitMode: "review" },
+  }
+
   // ── Bottom sheet content ──
   const renderSheet = () => {
     if (!activeSheet) return null
-
-    // 封面（直接编辑）
-    if (activeSheet === "cover") {
-      return (
-        <Sheet open onClose={closeSheet} title="修改封面图">
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <img src={merchant.cover} alt="" className="w-20 h-14 rounded-lg object-cover" />
-              <span className="text-[12px] text-text-tertiary">当前封面</span>
-            </div>
-            <input
-              value={sheetValue}
-              onChange={(e) => setSheetValue(e.target.value)}
-              placeholder="输入新的图片链接"
-              className="w-full h-10 px-3 rounded-xl bg-gray-50 text-[13px] outline-none"
-            />
-            <button
-              onClick={() => handleDirectSave("cover", sheetValue)}
-              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
-            >
-              保存
-            </button>
-          </div>
-        </Sheet>
-      )
-    }
-
-    // 简介（直接编辑）
-    if (activeSheet === "description") {
-      return (
-        <Sheet open onClose={closeSheet} title="修改店铺简介">
-          <div className="space-y-3">
-            <p className="text-[12px] text-text-tertiary">当前简介</p>
-            <p className="text-[13px] text-text-body bg-gray-50 rounded-xl p-3">{merchant.description}</p>
-            <textarea
-              value={sheetValue}
-              onChange={(e) => setSheetValue(e.target.value)}
-              placeholder="输入新的简介"
-              rows={4}
-              className="w-full text-[13px] outline-none bg-gray-50 rounded-xl p-3 resize-none"
-            />
-            <button
-              onClick={() => handleDirectSave("description", sheetValue)}
-              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
-            >
-              保存
-            </button>
-          </div>
-        </Sheet>
-      )
-    }
 
     // 详情图片（直接编辑）
     if (activeSheet === "detailImages") {
@@ -462,43 +421,41 @@ export function MyShopPage() {
       )
     }
 
-    // 审核类字段（需提交审核）
-    const CRITICAL_META: Record<string, { label: string }> = {
-      name: { label: "店铺名称" },
-      address: { label: "店铺地址" },
-      phone: { label: "联系电话" },
-      category: { label: "店铺分类" },
-      contactName: { label: "联系人" },
-    }
-    const meta = CRITICAL_META[activeSheet]
-    if (meta) {
+    const simpleMeta = SIMPLE_META[activeSheet]
+    if (simpleMeta) {
       const currentValue = String((merchant as any)[activeSheet] ?? "")
+      const isDirect = simpleMeta.submitMode === "direct"
       return (
-        <Sheet open onClose={closeSheet} title={`修改${meta.label}`}>
+        <Sheet open onClose={closeSheet} title={`修改${simpleMeta.label}`}>
           <div className="space-y-3">
             <div>
               <p className="text-[12px] text-text-tertiary mb-1">当前值</p>
-              <p className="text-[13px] text-text-body bg-gray-50 rounded-xl p-3">
-                {currentValue || "未设置"}
-              </p>
+              {activeSheet === "cover" ? (
+                <div className="flex items-center gap-3">
+                  <img src={merchant.cover} alt="" className="w-20 h-14 rounded-lg object-cover" />
+                  <span className="text-[12px] text-text-tertiary">当前封面</span>
+                </div>
+              ) : (
+                <p className="text-[13px] text-text-body bg-gray-50 rounded-xl p-3">{currentValue || "未设置"}</p>
+              )}
             </div>
             <div>
               <p className="text-[12px] text-text-tertiary mb-1">新值</p>
-              <input
-                value={sheetValue}
-                onChange={(e) => setSheetValue(e.target.value)}
-                placeholder={`输入新的${meta.label}`}
-                className="w-full h-10 px-3 rounded-xl bg-gray-50 text-[13px] outline-none"
-              />
+              {simpleMeta.inputType === "textarea" ? (
+                <textarea value={sheetValue} onChange={(e) => setSheetValue(e.target.value)} rows={3}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 text-[13px] outline-none resize-none" />
+              ) : (
+                <input value={sheetValue} onChange={(e) => setSheetValue(e.target.value)}
+                  placeholder={`输入新的${simpleMeta.label}`}
+                  className="w-full h-10 px-3 rounded-xl bg-gray-50 text-[13px] outline-none" />
+              )}
             </div>
-            <p className="text-[11px] text-amber-600 flex items-center gap-1">
-              <Clock3 size={12} /> 修改需平台审核通过后生效
-            </p>
-            <button
-              onClick={() => handleChangeRequest(activeSheet, meta.label, sheetValue)}
-              className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium"
-            >
-              提交申请
+            {!isDirect && <p className="text-[11px] text-amber-600 flex items-center gap-1"><Clock3 size={12} /> 修改需平台审核通过后生效</p>}
+            <button onClick={() => {
+              if (isDirect) handleDirectSave(activeSheet, sheetValue)
+              else handleChangeRequest(activeSheet, simpleMeta.label, sheetValue)
+            }} className="w-full h-10 rounded-xl bg-primary text-white text-[13px] font-medium">
+              {isDirect ? "保存" : "提交申请"}
             </button>
           </div>
         </Sheet>
