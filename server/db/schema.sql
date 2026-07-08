@@ -704,10 +704,11 @@ CREATE TABLE IF NOT EXISTS notifications (
   staffId TEXT NOT NULL REFERENCES staff(id) ON DELETE CASCADE,
   type TEXT NOT NULL,
   title TEXT NOT NULL,
-  body TEXT DEFAULT '',
+  message TEXT DEFAULT '',
   orderId TEXT,
   isRead INTEGER DEFAULT 0,
-  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+  updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_notif_staff ON notifications(staffId);
 CREATE INDEX IF NOT EXISTS idx_notif_read ON notifications(staffId, isRead);

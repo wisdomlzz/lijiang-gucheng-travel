@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react"
 import { useNavigate } from "react-router"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
-import { useContentMerchantStore } from "@/features/content/store/merchant-store"
+import { useContentMerchantStore } from "@/platform/content/merchant-store"
 import { useMerchantReviewStore } from "@/features/merchant-review/store"
 import { useAuthStore } from "@/platform/auth"
 import { Store, Clock, Phone, FileText, Power, CheckCircle2, Clock3, XCircle, BadgeCheck } from "lucide-react"

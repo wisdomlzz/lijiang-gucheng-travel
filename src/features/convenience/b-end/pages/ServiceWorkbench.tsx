@@ -5,6 +5,7 @@ import { StatusBadge } from "@/shared/components/ui/status-badge"
 import { QuoteAndPhotoFlow } from "./QuoteAndPhotoFlow"
 import { useStaffStore } from "../../store/staff-store"
 import { useConvenienceStore } from "../../store"
+import { useNotificationStore } from "../../store/notification-store"
 import { useAuthStore } from "@/platform/auth"
 import type { ConvenienceStatus } from "../../../../shared/types"
 
@@ -44,6 +45,7 @@ export function ServiceWorkbench() {
   const setStaffStatus = useStaffStore((s) => s.setStaffStatus)
   const staffItem = useStaffStore((s) => s.staff.find((x) => x.id === staffId))
   const convOrders = useConvenienceStore((s) => s.orders)
+  const unreadCount = useNotificationStore((s) => s.unreadCount)
   const [status, setStatus] = useState<WorkStatus>(staffItem?.status ?? "online")
   const [quoteFlow, setQuoteFlow] = useState<"quote" | "photo" | null>(null)
   const meta = STATUS_META[status]
@@ -113,9 +115,19 @@ export function ServiceWorkbench() {
               </div>
             </div>
           </div>
-          <button className="relative size-9 rounded-full bg-white/80 backdrop-blur-xl flex items-center justify-center shadow-[0_4px_12px_rgba(60,120,200,0.12)]">
+          <button
+            onClick={() => navigate("/b/service/notifications")}
+            className="relative size-9 rounded-full bg-white/80 backdrop-blur-xl flex items-center justify-center shadow-[0_4px_12px_rgba(60,120,200,0.12)]"
+          >
             <Bell className="size-4" style={{ color: "#F59E0B" }} />
-            <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-destructive" />
+            {unreadCount > 0 && (
+              <span
+                className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-[4px] rounded-full bg-[#EF4444] text-white text-[9px] font-medium flex items-center justify-center leading-none"
+                style={{ boxShadow: "0 2px 6px rgba(239,68,68,0.4)" }}
+              >
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </button>
         </div>
 

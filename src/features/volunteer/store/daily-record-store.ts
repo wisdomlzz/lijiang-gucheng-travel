@@ -1,6 +1,6 @@
 import type { VolunteerDailyRecord, VolunteerDailyStatus } from "@/shared/types"
 import { fmt } from "./helpers"
-import { usePointsStore } from "@/features/points/store/points-store"
+import { usePointsStore } from "@/platform/points/points-store"
 
 export function createDailyRecordSlice(set: any, get: any) {
   return {

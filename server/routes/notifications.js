@@ -6,12 +6,12 @@ import { crudRoutes, deserializeRow } from "./crud.js"
 const router = Router()
 
 /** 内部辅助：创建一条通知并返回 id */
-export function createNotification({ staffId, type, title, body, orderId }) {
+export function createNotification({ staffId, type, title, message, orderId }) {
   const id = `notif_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
   const now = new Date().toISOString()
   db.prepare(
-    "INSERT INTO notifications (id, staffId, type, title, body, orderId, createdAt) VALUES (?,?,?,?,?,?,?)"
-  ).run(id, staffId, type, title, body, orderId || null, now)
+    "INSERT INTO notifications (id, staffId, type, title, message, orderId, createdAt) VALUES (?,?,?,?,?,?,?)"
+  ).run(id, staffId, type, title, message || null, orderId || null, now)
   return id
 }
 
@@ -50,9 +50,9 @@ router.get("/", (req, res) => {
 })
 
 // ============================================================
-// PATCH /read-all — 全部已读
+// POST /read-all — 全部已读
 // ============================================================
-router.patch("/read-all", (req, res) => {
+router.post("/read-all", (req, res) => {
   try {
     const { staffId } = req.body
     if (!staffId) return res.json(fail("staffId 必填"))
@@ -66,9 +66,9 @@ router.patch("/read-all", (req, res) => {
 })
 
 // ============================================================
-// PATCH /:id/read — 单条已读
+// POST /:id/read — 单条已读
 // ============================================================
-router.patch("/:id/read", (req, res) => {
+router.post("/:id/read", (req, res) => {
   try {
     const n = db.prepare("SELECT * FROM notifications WHERE id = ?").get(req.params.id)
     if (!n) return res.json(fail("通知不存在", 404))

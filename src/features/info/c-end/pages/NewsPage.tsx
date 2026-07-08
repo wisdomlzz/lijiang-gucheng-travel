@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router"
 import { ChevronRight } from "lucide-react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
-import { useContentNewsStore } from "@/features/content/store/news-store"
+import { useContentNewsStore } from "@/platform/content/news-store"
 
 export function NewsPage() {
   const navigate = useNavigate()

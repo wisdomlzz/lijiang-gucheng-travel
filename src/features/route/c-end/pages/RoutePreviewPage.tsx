@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router"
 import { ChevronLeft, Navigation, Clock, MapPin } from "lucide-react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { toast } from "sonner"
-import { useContentGuideStore } from "@/features/content/store/guide-store"
+import { useContentGuideStore } from "@/platform/content/guide-store"
 
 export function RoutePreviewPage() {
   const { id } = useParams()

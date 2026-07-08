@@ -16,7 +16,7 @@ import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import { StatusBadge } from "@/shared/components/ui/status-badge"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { useAuthStore } from "@/platform/auth"
-import { useConvenienceStore } from "../../../../features/convenience/store"
+import { useConvenienceStore } from "@/platform/convenience/store"
 import { useComplaintStore } from "../../store"
 import { usePagination } from "@/shared/hooks/usePagination"
 import {

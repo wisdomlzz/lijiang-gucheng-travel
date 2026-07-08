@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { toast } from "sonner"
 import { useContentMerchantStore } from "@/features/content/store/merchant-store"
-import { useFlowWarningStore, LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
+import { useFlowWarningStore, LEVEL_META } from "@/platform/flow-warning/flow-warning-store"
 
 const qualificationBadges = [
   { icon: BadgeCheck, label: "实名认证", color: "#27AE60" },

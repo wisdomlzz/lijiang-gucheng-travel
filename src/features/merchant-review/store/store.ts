@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { useContentMerchantStore } from "../../content/store/merchant-store"
+import { useContentMerchantStore } from "../../../platform/content/merchant-store"
 import { useNotificationStore } from "@/platform/notification"
 import { api } from "@/api/client"
 import { syncAction } from "@/api/sync"

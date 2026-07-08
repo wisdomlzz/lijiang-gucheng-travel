@@ -3,8 +3,8 @@ import { ChevronLeft, Search } from "lucide-react"
 import { useState } from "react"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { EmptyState } from "@/shared/components/mobile/EmptyState"
-import { useContentMerchantStore } from "@/features/content/store/merchant-store"
-import { useContentGuideStore } from "@/features/content/store/guide-store"
+import { useContentMerchantStore } from "@/platform/content/merchant-store"
+import { useContentGuideStore } from "@/platform/content/guide-store"
 import { useAnnouncementStore } from "@/features/announcement/store/announcement-store"
 
 export function SearchResultsPage() {

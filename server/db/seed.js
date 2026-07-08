@@ -326,17 +326,17 @@ export function seedIfNeeded() {
 
   // ====== Notifications (for each staff member) ======
   insertMany("notifications", [
-    { id: "n1_s1", staffId: "s1", type: "new_order", title: "您有新的派单", body: "行李搬运订单，从古城北门到四方街，参考价 ¥70", orderId: "CO20260511001", isRead: 0, createdAt: "2026-05-11 10:00" },
-    { id: "n2_s1", staffId: "s1", type: "order_completed", title: "订单已完成", body: "行李搬运订单 CO20260509001 用户已确认完成", orderId: "CO20260509001", isRead: 0, createdAt: "2026-05-09 12:00" },
-    { id: "n3_s1", staffId: "s1", type: "payment_received", title: "用户已付款 ¥60", body: "行李搬运订单 CO20260509001 线上支付已到账", orderId: "CO20260509001", isRead: 1, createdAt: "2026-05-09 11:30" },
-    { id: "n4_s1", staffId: "s1", type: "rating_received", title: "用户已评价", body: "用户对行李搬运服务给出了 5 星好评", orderId: "CO20260509001", isRead: 1, createdAt: "2026-05-09 14:00" },
-    { id: "n5_s1", staffId: "s1", type: "new_order", title: "您有新的派单", body: "布草配送订单，送到七一街兴文巷，参考价 ¥70", orderId: "CO20260511003", isRead: 0, createdAt: "2026-05-11 10:00" },
-    { id: "n6_s1", staffId: "s1", type: "order_cancel_request", title: "用户申请取消订单", body: "用户申请取消布草配送订单 CO20260511003，请尽快处理", orderId: "CO20260511003", isRead: 0, createdAt: "2026-05-11 11:00" },
+    { id: "n1_s1", staffId: "s1", type: "new_order", title: "您有新的派单", message: "行李搬运订单，从古城北门到四方街，参考价 ¥70", orderId: "CO20260511001", isRead: 0, createdAt: "2026-05-11 10:00", updatedAt: "2026-05-11 10:00" },
+    { id: "n2_s1", staffId: "s1", type: "order_completed", title: "订单已完成", message: "行李搬运订单 CO20260509001 用户已确认完成", orderId: "CO20260509001", isRead: 0, createdAt: "2026-05-09 12:00", updatedAt: "2026-05-09 12:00" },
+    { id: "n3_s1", staffId: "s1", type: "payment_received", title: "用户已付款 ¥60", message: "行李搬运订单 CO20260509001 线上支付已到账", orderId: "CO20260509001", isRead: 1, createdAt: "2026-05-09 11:30", updatedAt: "2026-05-09 11:30" },
+    { id: "n4_s1", staffId: "s1", type: "rating_received", title: "用户已评价", message: "用户对行李搬运服务给出了 5 星好评", orderId: "CO20260509001", isRead: 1, createdAt: "2026-05-09 14:00", updatedAt: "2026-05-09 14:00" },
+    { id: "n5_s1", staffId: "s1", type: "new_order", title: "您有新的派单", message: "布草配送订单，送到七一街兴文巷，参考价 ¥70", orderId: "CO20260511003", isRead: 0, createdAt: "2026-05-11 10:00", updatedAt: "2026-05-11 10:00" },
+    { id: "n6_s1", staffId: "s1", type: "order_cancel_request", title: "用户申请取消订单", message: "用户申请取消布草配送订单 CO20260511003，请尽快处理", orderId: "CO20260511003", isRead: 0, createdAt: "2026-05-11 11:00", updatedAt: "2026-05-11 11:00" },
 
-    { id: "n1_s3", staffId: "s3", type: "new_order", title: "您有新的派单", body: "建筑垃圾清运订单，五一街振兴巷12号，参考价 ¥50", orderId: "CO20260511002", isRead: 1, createdAt: "2026-05-11 09:00" },
-    { id: "n2_s3", staffId: "s3", type: "payment_received", title: "用户已付款 ¥60", body: "建筑垃圾清运订单 CO20260511002 线上支付已到账", orderId: "CO20260511002", isRead: 1, createdAt: "2026-05-11 10:30" },
-    { id: "n3_s3", staffId: "s3", type: "new_order", title: "您有新的派单", body: "生活垃圾清运订单，新华街三个垃圾桶需要清运", orderId: "CO20260511006", isRead: 0, createdAt: "2026-05-11 07:00" },
-    { id: "n4_s3", staffId: "s3", type: "order_cancel_request", title: "用户申请取消订单", body: "用户申请取消生活垃圾清运订单", orderId: "CO20260511006", isRead: 0, createdAt: "2026-05-11 08:00" },
+    { id: "n1_s3", staffId: "s3", type: "new_order", title: "您有新的派单", message: "建筑垃圾清运订单，五一街振兴巷12号，参考价 ¥50", orderId: "CO20260511002", isRead: 1, createdAt: "2026-05-11 09:00", updatedAt: "2026-05-11 09:00" },
+    { id: "n2_s3", staffId: "s3", type: "payment_received", title: "用户已付款 ¥60", message: "建筑垃圾清运订单 CO20260511002 线上支付已到账", orderId: "CO20260511002", isRead: 1, createdAt: "2026-05-11 10:30", updatedAt: "2026-05-11 10:30" },
+    { id: "n3_s3", staffId: "s3", type: "new_order", title: "您有新的派单", message: "生活垃圾清运订单，新华街三个垃圾桶需要清运", orderId: "CO20260511006", isRead: 0, createdAt: "2026-05-11 07:00", updatedAt: "2026-05-11 07:00" },
+    { id: "n4_s3", staffId: "s3", type: "order_cancel_request", title: "用户申请取消订单", message: "用户申请取消生活垃圾清运订单", orderId: "CO20260511006", isRead: 0, createdAt: "2026-05-11 08:00", updatedAt: "2026-05-11 08:00" },
   ])
 
   // ====== Announcements (4 items) ======

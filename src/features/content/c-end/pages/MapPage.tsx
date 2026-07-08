@@ -3,7 +3,7 @@ import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { useContentPOIStore } from "@/features/content/store/poi-store"
 import { useContentGuideStore } from "@/features/content/store/guide-store"
-import { useFlowWarningStore, LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
+import { useFlowWarningStore, LEVEL_META } from "@/platform/flow-warning/flow-warning-store"
 import {
   Search,
   X,

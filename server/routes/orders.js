@@ -86,7 +86,7 @@ router.post("/:id/dispatch", (req, res) => {
       staffId: staff.id,
       type: "new_order",
       title: `您有新的派单：${order.serviceType}`,
-      body: `${order.note ? order.note + " · " : ""}${order.addressTo ? `${order.address} → ${order.addressTo}` : order.address}${order.refPrice ? ` · 参考价 ¥${order.refPrice}` : ""}`,
+      message: `${order.note ? order.note + " · " : ""}${order.addressTo ? `${order.address} → ${order.addressTo}` : order.address}${order.refPrice ? ` · 参考价 ¥${order.refPrice}` : ""}`,
       orderId: order.id,
     })
     res.json(ok(deserializeRow(updated)))
@@ -164,7 +164,7 @@ router.post("/:id/pay-online", (req, res) => {
         staffId: order.staffId,
         type: "payment_received",
         title: `用户已付款 ¥${order.priceQuote}`,
-        body: `${order.serviceType}订单 ${order.id} 线上支付已到账`,
+        message: `${order.serviceType}订单 ${order.id} 线上支付已到账`,
         orderId: order.id,
       })
     }
@@ -201,7 +201,7 @@ router.post("/:id/confirm-cash", (req, res) => {
         staffId: order.staffId,
         type: "payment_received",
         title: `现金收款确认 ¥${order.priceQuote}`,
-        body: `${order.serviceType}订单 ${order.id} 现金已收款`,
+        message: `${order.serviceType}订单 ${order.id} 现金已收款`,
         orderId: order.id,
       })
     }
@@ -251,7 +251,7 @@ router.post("/:id/rate", (req, res) => {
         staffId: order.staffId,
         type: "rating_received",
         title: `用户已评价 · ${rating} 星`,
-        body: `${order.serviceType}订单 ${order.id} 用户已给出 ${rating} 星评价`,
+        message: `${order.serviceType}订单 ${order.id} 用户已给出 ${rating} 星评价`,
         orderId: order.id,
       })
     }
@@ -323,7 +323,7 @@ router.post("/:id/transition", (req, res) => {
           staffId: order.staffId,
           type: "order_cancel_request",
           title: `用户申请取消订单`,
-          body: `${order.serviceType}订单 ${order.id} 用户申请了取消，请尽快处理`,
+          message: `${order.serviceType}订单 ${order.id} 用户申请了取消，请尽快处理`,
           orderId: order.id,
         })
       }
@@ -344,7 +344,7 @@ router.post("/:id/transition", (req, res) => {
           staffId: order.staffId,
           type: "cancel_approved",
           title: `取消申请已通过`,
-          body: `${order.serviceType}订单 ${order.id} 取消已批准${cancelFee > 0 ? `，扣费 ¥${cancelFee}` : ""}`,
+          message: `${order.serviceType}订单 ${order.id} 取消已批准${cancelFee > 0 ? `，扣费 ¥${cancelFee}` : ""}`,
           orderId: order.id,
         })
       }
@@ -408,7 +408,7 @@ router.post("/:id/transition", (req, res) => {
           staffId: order.staffId,
           type: "order_completed",
           title: `订单已完成`,
-          body: `${order.serviceType}订单 ${order.id} 已由用户确认完成${order.priceQuote ? `，收入 ¥${order.priceQuote}` : ""}`,
+          message: `${order.serviceType}订单 ${order.id} 已由用户确认完成${order.priceQuote ? `，收入 ¥${order.priceQuote}` : ""}`,
           orderId: order.id,
         })
       }

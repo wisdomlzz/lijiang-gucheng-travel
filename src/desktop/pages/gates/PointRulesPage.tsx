@@ -11,7 +11,7 @@ import { Plus, Settings2, TrendingUp, TrendingDown, Pencil, Trash2, Search } fro
 import { toast } from "sonner"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
-import { usePointsStore, type PointRule } from "../../../features/points/store/points-store"
+import { usePointsStore, type PointRule } from "../../../platform/points/points-store"
 
 export function PointRulesPage() {
   const rules = usePointsStore((s) => s.rules)

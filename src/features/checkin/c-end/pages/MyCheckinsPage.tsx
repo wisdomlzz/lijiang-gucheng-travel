@@ -3,7 +3,7 @@ import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { MapPin, Clock, CheckCircle } from "lucide-react"
 import { useCheckinStore } from "../../store"
-import { useContentCourtyardStore } from "../../../content/store/courtyard-store"
+import { useContentCourtyardStore } from "../../../../platform/content/courtyard-store"
 import { useLoadMore } from "../../../../shared/hooks/useLoadMore"
 
 export function MyCheckinsPage() {

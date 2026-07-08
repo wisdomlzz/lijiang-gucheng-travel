@@ -7,7 +7,7 @@ import { Input } from "../../../../shared/components/ui/input"
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
 } from "../../../../shared/components/ui/dialog"
-import { useContentPOIStore } from "../../../../features/content/store"
+import { useContentPOIStore } from "../../../../platform/content/poi-store"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import { Plus, Pencil, Trash2, Search } from "lucide-react"

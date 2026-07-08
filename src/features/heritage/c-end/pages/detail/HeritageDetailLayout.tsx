@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, MapPin, FileText, X, Expand, Share2 } from "
 import { HeritageItem, heritageTypeMeta } from "@/features/heritage/shared/types"
 import { HeritageMap } from "@/features/heritage/c-end/components/HeritageMap"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
-import { useFlowWarningStore, LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
+import { useFlowWarningStore, LEVEL_META } from "@/platform/flow-warning/flow-warning-store"
 
 /* ────────── 字段行（所有类型通用） ────────── */
 export function FieldRow({ label, value }: { label: string; value: string | string[] | boolean | undefined }) {

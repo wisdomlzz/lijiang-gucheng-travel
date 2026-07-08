@@ -10,7 +10,7 @@ import { useHomepageConfigStore } from "../../store/homepage-store"
 import { useAnnouncementStore } from "@/features/announcement/store/announcement-store"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import { CRMEB_C_URL } from "@/shared/constants"
-import { useContentGuideStore } from "@/features/content/store/guide-store"
+import { useContentGuideStore } from "@/platform/content/guide-store"
 
 export function HomePage() {
   const navigate = useNavigate()

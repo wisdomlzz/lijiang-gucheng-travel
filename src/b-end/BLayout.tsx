@@ -1,6 +1,8 @@
-import { type ReactNode } from "react"
+import { useEffect, type ReactNode } from "react"
 import { useLocation, useNavigate } from "react-router"
 import { MiniProgramFrame } from "../shared/components/MiniProgramFrame"
+import { useAuthStore } from "@/platform/auth"
+import { useNotificationStore } from "@/features/convenience/store/notification-store"
 import { LayoutGrid, Inbox, Bell, History, User } from "lucide-react"
 
 type TabDef = {
@@ -25,6 +27,15 @@ type BLayoutProps = {
 export function BLayout({ children }: BLayoutProps) {
   const location = useLocation()
   const navigate = useNavigate()
+  const currentUser = useAuthStore((s) => s.user)
+  const staffId = currentUser?.staffId ?? ""
+  const fetchNotifications = useNotificationStore((s) => s.fetchNotifications)
+  const unreadCount = useNotificationStore((s) => s.unreadCount)
+
+  // 当 staffId 可用时加载通知
+  useEffect(() => {
+    if (staffId) fetchNotifications(staffId)
+  }, [staffId, fetchNotifications])
 
   const tabBar = (
     <div
@@ -33,11 +44,12 @@ export function BLayout({ children }: BLayoutProps) {
     >
       {SERVICE_TABS.map((t) => {
         const isActive = location.pathname === t.path
+        const showBadge = t.key === "notifications" && unreadCount > 0
         return (
           <button
             key={t.key}
             onClick={() => navigate(t.path)}
-            className="flex flex-col items-center gap-0.5 py-1.5 active:scale-95 transition"
+            className="flex flex-col items-center gap-0.5 py-1.5 active:scale-95 transition relative"
           >
             <div
               className="flex items-center justify-center"
@@ -47,6 +59,14 @@ export function BLayout({ children }: BLayoutProps) {
               }}
             >
               {t.icon}
+              {showBadge && (
+                <span
+                  className="absolute -top-0.5 -right-1.5 min-w-[16px] h-[16px] px-[4px] rounded-full bg-[#EF4444] text-white text-[9px] font-medium flex items-center justify-center leading-none"
+                  style={{ boxShadow: "0 2px 6px rgba(239,68,68,0.4)" }}
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </div>
             <span className="text-[10px]" style={{ color: isActive ? "var(--primary)" : "#999999" }}>
               {t.label}

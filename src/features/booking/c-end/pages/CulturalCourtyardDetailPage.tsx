@@ -15,10 +15,10 @@ import {
   CalendarCheck,
 } from "lucide-react"
 import { useNavigate, useParams } from "react-router"
-import { useContentCourtyardStore } from "@/features/content/store/courtyard-store"
-import { useContentGuideStore } from "@/features/content/store/guide-store"
-import { useCheckinStore } from "@/features/checkin/store"
-import { useFlowWarningStore, LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
+import { useContentCourtyardStore } from "@/platform/content/courtyard-store"
+import { useContentGuideStore } from "@/platform/content/guide-store"
+import { useCheckinStore } from "@/platform/checkin/checkin-store"
+import { useFlowWarningStore, LEVEL_META } from "@/platform/flow-warning/flow-warning-store"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
 import { toast } from "sonner"
 

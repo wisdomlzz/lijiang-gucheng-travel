@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router"
 import { Search, Clock, MapPin } from "lucide-react"
 import { ImageWithFallback } from "@/shared/components/ui/image-with-fallback"
-import { useContentGuideStore } from "@/features/content/store/guide-store"
+import { useContentGuideStore } from "@/platform/content/guide-store"
 import { PageHeader } from "@/shared/components/mobile/PageHeader"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 
