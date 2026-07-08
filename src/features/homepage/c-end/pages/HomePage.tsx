@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import { useNavigate } from "react-router"
 import { motion, AnimatePresence } from "motion/react"
-import { Search, ScanLine, Sparkles, Newspaper, Users } from "lucide-react"
+import { Search, ScanLine, Sparkles, Newspaper, Users, ChevronRight, MapPin } from "lucide-react"
 import { SectionHeader } from "@/shared/components/mobile/SectionHeader"
 import { GridIcon } from "@/shared/components/mobile/GridIcon"
 import { InfoListItem } from "@/shared/components/mobile/InfoListItem"
@@ -13,6 +13,15 @@ import { LEVEL_META } from "@/features/flow-warning/store/flow-warning-store"
 import { useLoadMore } from "@/shared/hooks/useLoadMore"
 import { CRMEB_C_URL } from "@/shared/constants"
 import { useContentGuideStore } from "@/features/content/store/guide-store"
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+}
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+}
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -185,7 +194,9 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* 古城人流实时状态 */}
+      <motion.div variants={container} initial="hidden" animate="show" className="px-0">
+        <motion.div variants={item}>
+          {/* 古城人流实时状态 */}
       {areas.length > 0 && (
         <div className="px-4 mt-5">
           <div className="bg-white rounded-2xl p-4 shadow-elevated">
@@ -211,6 +222,8 @@ export function HomePage() {
           </div>
         </div>
       )}
+        </motion.div>
+      </motion.div>
 
       {/* 8-grid with swipe pagination */}
       <div
