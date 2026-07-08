@@ -27,19 +27,19 @@ export interface ShopClaimRequest {
   claimedDesc?: string
 
   // new_shop 场景：用户提交的新店铺信息
-  newShopName?: string
-  newCategory?: string
-  newAddress?: string
-  newPhone?: string
-  newDescription?: string
+  merchantName?: string
+  category?: string
+  address?: string
+  phone?: string
+  description?: string
 
   // 资质证明图片（base64 data url 数组）
   credentialImages?: string[]
-  newLat?: number
-  newLng?: number
+  lat?: number
+  lng?: number
 
   // new_shop 封面（FINDING 2）
-  newCoverImage?: string
+  coverImage?: string
 
   // 审核信息
   status: "pending" | "approved" | "rejected"
@@ -70,15 +70,15 @@ type RegistrationState = {
     userId: string
     userName: string
     userPhone: string
-    newShopName: string
-    newCategory: string
-    newAddress: string
-    newPhone: string
-    newDescription: string
+    merchantName: string
+    category: string
+    address: string
+    phone: string
+    description: string
     credentialImages?: string[]
-    newLat?: number
-    newLng?: number
-    newCoverImage?: string
+    lat?: number
+    lng?: number
+    coverImage?: string
   }) => Promise<void>
   approveRegistration: (id: string, reviewer: string) => Promise<void>
   rejectRegistration: (id: string, reviewer: string, reason: string) => Promise<void>
@@ -100,9 +100,6 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
       claimedShopId: input.claimedShopId,
       claimedShopName: input.claimedShopName,
       credentialImages: input.credentialImages,
-      claimedCategory: input.claimedCategory,
-      claimedPhone: input.claimedPhone,
-      claimedDesc: input.claimedDesc,
       status: "pending" as const,
     }
     await syncAction("submitClaim", () => merchantRegApi.create(payload), (result) => {
@@ -116,15 +113,14 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
       userId: input.userId,
       userName: input.userName,
       userPhone: input.userPhone,
-      newShopName: input.newShopName,
-      newCategory: input.newCategory,
-      newAddress: input.newAddress,
-      newPhone: input.newPhone,
-      newDescription: input.newDescription,
+      merchantName: input.merchantName,
+      category: input.category,
+      address: input.address,
+      contactName: input.userName,
+      contactPhone: input.userPhone,
       credentialImages: input.credentialImages,
-      newLat: input.newLat,
-      newLng: input.newLng,
-      newCoverImage: input.newCoverImage,
+      lat: input.lat,
+      lng: input.lng,
       status: "pending" as const,
     }
     await syncAction("submitRegistration", () => merchantRegApi.create(payload), (result) => {
@@ -165,16 +161,16 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
     if (req.type === "new_shop") {
       merchantStore.addMerchant({
         id: `m_${Date.now()}`,
-        name: req.newShopName ?? "",
-        category: req.newCategory ?? "",
+        name: req.merchantName ?? "",
+        category: req.category ?? "",
         source: "商家提交",
         reviewStatus: "通过",
         publishedAt: new Date().toLocaleString("zh-CN"),
         logo: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&h=200&fit=crop",
-        cover: req.newCoverImage || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&h=400&fit=crop",
-        description: req.newDescription ?? "",
-        address: req.newAddress ?? "",
-        phone: req.newPhone ?? "",
+        cover: req.coverImage || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&h=400&fit=crop",
+        description: req.description ?? "",
+        address: req.address ?? "",
+        phone: req.phone ?? "",
         hours: "",
         rating: 5.0,
         reviewCount: 0,
@@ -207,7 +203,7 @@ export const useMerchantRegistrationStore = create<RegistrationState>((set, get)
     useNotificationStore.getState().addNotification({
       type: "system",
       title: "店铺认领审核通过",
-      summary: `您的店铺「${req.type === "claim" ? req.claimedShopName : req.newShopName}」已审核通过，您现在可以管理店铺信息了。`,
+      summary: `您的店铺「${req.type === "claim" ? req.claimedShopName : req.merchantName}」已审核通过，您现在可以管理店铺信息了。`,
       targetUrl: "/c/my-shop",
     })
   },

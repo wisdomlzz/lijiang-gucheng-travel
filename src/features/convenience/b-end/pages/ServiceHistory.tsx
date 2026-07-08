@@ -57,7 +57,7 @@ export function ServiceHistory() {
   // 计算本月收入
   const today = new Date()
   const monthStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`
-  const monthOrders = convOrders.filter((o) => o.staffId === currentStaffId && o.createdAt.startsWith(monthStr))
+  const monthOrders = convOrders.filter((o) => o.staffId === currentStaffId && o.status === "S40" && o.createdAt.startsWith(monthStr))
   const monthRevenue = monthOrders.reduce((sum, o) => sum + (o.priceQuote ?? 0), 0)
   const cashRevenue = monthOrders.filter((o) => o.payMethod === "cash").reduce((sum, o) => sum + (o.priceQuote ?? 0), 0)
   const onlineRevenue = monthOrders
