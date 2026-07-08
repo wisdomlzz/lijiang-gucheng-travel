@@ -18,6 +18,7 @@ import bookingsRoutes from "./routes/bookings.js"
 import contentRoutes from "./routes/content.js"
 import uploadsRoutes from "./routes/uploads.js"
 import notificationsRoutes from "./routes/notifications.js"
+import pointsRoutes from "./routes/points.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -91,53 +92,7 @@ app.use("/api/v1/ai-knowledge", crudRoutes("ai_knowledge", { searchField: "quest
 app.use("/api/v1/suppliers", crudRoutes("suppliers"))
 
 // ====== Points 特殊端点 ======
-// GET /api/v1/points/account/:userId
-app.get("/api/v1/points/account/:userId", (req, res) => {
-  try {
-    const account = db.prepare("SELECT * FROM points_accounts WHERE userId = ?").get(req.params.userId)
-      || { userId: req.params.userId, balance: 0, totalEarned: 0, totalUsed: 0 }
-    const ledgers = db.prepare("SELECT * FROM points_ledgers WHERE userId = ? ORDER BY createdAt DESC").all(req.params.userId)
-    res.json(ok({ ...account, ledgers }))
-  } catch (e) {
-    res.json(fail(e.message))
-  }
-})
-
-// POST /api/v1/points/transact
-app.post("/api/v1/points/transact", (req, res) => {
-  try {
-    const { userId, sourceCode, refId, customDelta } = req.body
-    const rule = db.prepare("SELECT * FROM points_rules WHERE code = ? AND enabled = 1").get(sourceCode)
-    if (!rule) return res.json(fail(`积分规则 ${sourceCode} 不存在或已停用`))
-    let delta = customDelta ?? rule.points
-    if (rule.direction === "OUT") delta = -Math.abs(delta)
-    else delta = Math.abs(delta)
-    let account = db.prepare("SELECT * FROM points_accounts WHERE userId = ?").get(userId)
-    if (!account) {
-      db.prepare("INSERT INTO points_accounts (userId, balance, totalEarned, totalUsed) VALUES (?, 0, 0, 0)").run(userId)
-      account = { userId, balance: 0, totalEarned: 0, totalUsed: 0 }
-    }
-    const newBalance = account.balance + delta
-    if (newBalance < 0) return res.json(fail("积分余额不足"))
-    const now = new Date().toISOString()
-    db.prepare("UPDATE points_accounts SET balance=?, totalEarned=?, totalUsed=?, updatedAt=? WHERE userId=?")
-      .run(
-        newBalance,
-        account.totalEarned + (delta > 0 ? delta : 0),
-        account.totalUsed + (delta < 0 ? -delta : 0),
-        now,
-        userId,
-      )
-    const ledgerId = `pl_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
-    db.prepare(
-      "INSERT INTO points_ledgers (id, userId, direction, delta, sourceCode, sourceLabel, refId, balanceAfter, createdAt) VALUES (?,?,?,?,?,?,?,?,?)",
-    ).run(ledgerId, userId, rule.direction, Math.abs(delta), sourceCode, rule.label, refId || null, newBalance, now)
-    const updated = db.prepare("SELECT * FROM points_accounts WHERE userId = ?").get(userId)
-    res.json(ok(updated, `积分${delta > 0 ? "+" : ""}${delta}`))
-  } catch (e) {
-    res.json(fail(e.message))
-  }
-})
+app.use("/api/v1/points", pointsRoutes)
 
 // ====== Error handler ======
 app.use((err, req, res, _next) => {
