@@ -16,7 +16,7 @@ import {
 import { PageLayout } from "../../../../desktop/components/common/PageLayout"
 import { useZoneStore } from "../../store"
 import type { Zone, ServiceStation } from "../../store/zone-store"
-import type { ConvenienceServiceType } from "../../../../shared/types"
+import { ConvenienceServiceType, ZONE_BASED_TYPES } from "@/features/convenience/shared/types"
 import { Map, Plus, Trash2, Pencil, ChevronDown, ChevronRight, Search } from "lucide-react"
 import { toast } from "sonner"
 import { usePagination } from "@/shared/hooks/usePagination"
@@ -29,7 +29,6 @@ const SERVICE_TYPE_COLORS: Record<string, string> = {
   布草配送: "bg-purple-100 text-purple-700",
 }
 
-const ZONE_SERVICE_TYPES: ConvenienceServiceType[] = ["送水服务", "生活垃圾清运", "建筑垃圾清运", "布草配送"]
 
 type ZoneFormMode = { kind: "add" } | { kind: "edit"; zone: Zone } | null
 
@@ -53,7 +52,7 @@ export default function ZoneManagementPage() {
   const [stationDialogZoneId, setStationDialogZoneId] = useState<string | null>(null)
   const [stationForm, setStationForm] = useState({
     name: "",
-    serviceType: ZONE_SERVICE_TYPES[0] as ConvenienceServiceType,
+    serviceType: ZONE_BASED_TYPES[0] as ConvenienceServiceType,
     address: "",
     lat: "26.8721",
     lng: "100.2299",
@@ -100,7 +99,7 @@ export default function ZoneManagementPage() {
   const openAddStation = (zoneId: string) => {
     setStationForm({
       name: "",
-      serviceType: ZONE_SERVICE_TYPES[0],
+      serviceType: ZONE_BASED_TYPES[0],
       address: "",
       lat: "26.8721",
       lng: "100.2299",
@@ -358,7 +357,7 @@ export default function ZoneManagementPage() {
                 }
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
-                {ZONE_SERVICE_TYPES.map((t) => (
+                {ZONE_BASED_TYPES.map((t) => (
                   <option key={t} value={t}>
                     {t}
                   </option>

@@ -4,15 +4,7 @@ import { ArrowLeft, Wrench, Check } from "lucide-react"
 import { api } from "@/api/client"
 import { useAuthStore } from "@/platform/auth"
 import { toast } from "sonner"
-
-const SERVICE_TYPES = [
-  "送货服务",
-  "行李搬运",
-  "生活垃圾清运",
-  "建筑垃圾清运",
-  "送水服务",
-  "布草配送",
-]
+import { ALL_CONVENIENCE_TYPES } from "@/features/convenience/shared/types"
 
 export function StaffRegister() {
   const navigate = useNavigate()
@@ -186,7 +178,7 @@ export function StaffRegister() {
               服务类型 <span className="text-red-500">*</span>
             </h3>
             <div className="grid grid-cols-2 gap-2">
-              {SERVICE_TYPES.map((type) => (
+              {ALL_CONVENIENCE_TYPES.map((type) => (
                 <button
                   key={type}
                   type="button"
