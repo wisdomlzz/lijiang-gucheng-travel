@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import { Routes, Route } from "react-router"
 import { BLayout } from "../../../../b-end/BLayout"
+import { Skeleton } from "../../../../shared/components/ui/skeleton"
 import { ServiceWorkbench } from "./ServiceWorkbench"
 import { ServiceTasks } from "./ServiceTasks"
 import { ServiceHistory } from "./ServiceHistory"
@@ -14,8 +15,12 @@ export function ServiceApp() {
     <BLayout>
       <Suspense
         fallback={
-          <div className="flex items-center justify-center h-full min-h-[400px] text-sm text-text-tertiary">
-            加载中...
+          <div className="p-4 space-y-3">
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
           </div>
         }
       >

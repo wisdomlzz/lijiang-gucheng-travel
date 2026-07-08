@@ -1,4 +1,5 @@
 import { MapPin, Navigation, ExternalLink } from "lucide-react"
+import { Skeleton } from "../../../../shared/components/ui/skeleton"
 
 interface HeritageMapProps {
   lat: number
@@ -49,7 +50,7 @@ export function HeritageMap({ lat, lng, name, address }: HeritageMapProps) {
         <div className="absolute inset-0 bg-[#F5F5F5] flex items-center justify-center">
           <div className="text-center">
             <MapPin size={32} className="text-text-tertiary mx-auto mb-2" />
-            <p className="text-[12px] text-text-tertiary">地图加载中...</p>
+            <Skeleton className="h-3 w-20 mx-auto" />
           </div>
         </div>
       </div>

@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "../../../../shared/components/ui/table"
 import { Card, CardContent } from "../../../../shared/components/ui/card"
+import { Skeleton } from "../../../../shared/components/ui/skeleton"
 import { api } from "@/api/client"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
@@ -184,11 +185,15 @@ export default function StaffReviewPage() {
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                  加载中...
-                </TableCell>
-              </TableRow>
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  {Array.from({ length: 8 }).map((__, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className="h-5 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : pagination.paginatedItems.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">

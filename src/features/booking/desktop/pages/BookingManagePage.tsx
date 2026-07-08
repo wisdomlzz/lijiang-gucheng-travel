@@ -5,6 +5,7 @@ import { Badge } from "../../../../shared/components/ui/badge"
 import { Button } from "../../../../shared/components/ui/button"
 import { Input } from "../../../../shared/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../shared/components/ui/table"
+import { Skeleton } from "../../../../shared/components/ui/skeleton"
 import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import { usePagination } from "@/shared/hooks/usePagination"
 import { api } from "@/api/client"
@@ -45,7 +46,11 @@ export default function BookingManagePage() {
   if (loading) {
     return (
       <PageLayout title="预约管理" description="院落预约核销与查询">
-        <div className="text-center text-muted-foreground py-8">加载中...</div>
+        <div className="space-y-3 p-4">
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-64 w-full" />
+        </div>
       </PageLayout>
     )
   }
