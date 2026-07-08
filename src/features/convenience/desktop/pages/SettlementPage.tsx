@@ -58,6 +58,7 @@ export function SettlementPage() {
     .map((s) => ({ staff: s, summary: getStaffSummary(s.id) }))
     .filter((x) => x.summary.total > 0)
     .sort((a, b) => b.summary.total - a.summary.total)
+  const incomePagination = usePagination(staffIncomes, 10)
 
   const filteredWithdrawals = useMemo(() => {
     let list = withdrawals
@@ -181,28 +182,39 @@ export function SettlementPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {staffIncomes.map(({ staff, summary: s }) => (
-                  <TableRow key={staff.id}>
-                    <TableCell>
-                      <div className="font-medium">{staff.name}</div>
-                      <div className="text-[11px] text-text-tertiary">{staff.serviceTypes?.join(" · ")}</div>
+                {incomePagination.paginatedItems.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                      暂无数据
                     </TableCell>
-                    <TableCell className="font-semibold text-emerald-600">¥{s.total}</TableCell>
-                    <TableCell>
-                      <span className="flex items-center gap-1 text-[12px]">
-                        <Smartphone size={12} className="text-primary" />¥{s.online}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="flex items-center gap-1 text-[12px]">
-                        <Banknote size={12} className="text-amber-500" />¥{s.cash}
-                      </span>
-                    </TableCell>
-                    <TableCell className="font-medium">¥{s.monthTotal}</TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  incomePagination.paginatedItems.map(({ staff, summary: s }) => (
+                    <TableRow key={staff.id}>
+                      <TableCell>
+                        <div className="font-medium">{staff.name}</div>
+                        <div className="text-[11px] text-text-tertiary">{staff.serviceTypes?.join(" · ")}</div>
+                      </TableCell>
+                      <TableCell className="font-semibold text-emerald-600">¥{s.total}</TableCell>
+                      <TableCell>
+                        <span className="flex items-center gap-1 text-[12px]">
+                          <Smartphone size={12} className="text-primary" />¥{s.online}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="flex items-center gap-1 text-[12px]">
+                          <Banknote size={12} className="text-amber-500" />¥{s.cash}
+                        </span>
+                      </TableCell>
+                      <TableCell className="font-medium">¥{s.monthTotal}</TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
+          </div>
+          <div className="mt-3 border-t pt-3">
+            <PaginationBar page={incomePagination.currentPage} totalPages={incomePagination.totalPages} onPageChange={incomePagination.setCurrentPage} pageSize={10} onPageSizeChange={() => {}} total={incomePagination.total} />
           </div>
         </TabsContent>
 

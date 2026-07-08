@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Card, CardContent } from "../../../../shared/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../shared/components/ui/table"
 import { Button } from "../../../../shared/components/ui/button"
@@ -17,8 +17,10 @@ import { PageLayout } from "../../../../desktop/components/common/PageLayout"
 import { useZoneStore } from "../../store"
 import type { Zone, ServiceStation } from "../../store/zone-store"
 import type { ConvenienceServiceType } from "../../../../shared/types"
-import { Map, Plus, Trash2, Pencil, ChevronDown, ChevronRight } from "lucide-react"
+import { Map, Plus, Trash2, Pencil, ChevronDown, ChevronRight, Search } from "lucide-react"
 import { toast } from "sonner"
+import { usePagination } from "@/shared/hooks/usePagination"
+import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 
 const SERVICE_TYPE_COLORS: Record<string, string> = {
   送水服务: "bg-blue-100 text-blue-700",
@@ -38,6 +40,16 @@ export default function ZoneManagementPage() {
   const [expandedZone, setExpandedZone] = useState<string | null>(null)
   const [zoneForm, setZoneForm] = useState<ZoneFormMode>(null)
   const [zoneName, setZoneName] = useState("")
+  const [zoneSearch, setZoneSearch] = useState("")
+  const filteredZones = useMemo(() => {
+    if (!zoneSearch.trim()) return zones
+    const q = zoneSearch.trim().toLowerCase()
+    return zones.filter(
+      (z) =>
+        z.name.toLowerCase().includes(q) ||
+        z.stations.some((s) => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q))
+    )
+  }, [zones, zoneSearch])
   const [stationDialogZoneId, setStationDialogZoneId] = useState<string | null>(null)
   const [stationForm, setStationForm] = useState({
     name: "",
@@ -152,7 +164,20 @@ export default function ZoneManagementPage() {
 
       <Card className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-sm text-muted-foreground">共 {zones.length} 个片区</div>
+          <div className="flex items-center gap-3">
+            <div className="relative w-56">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Input
+                placeholder="搜索片区或站点..."
+                value={zoneSearch}
+                onChange={(e) => setZoneSearch(e.target.value)}
+                className="pl-9 h-9 text-sm"
+              />
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {zoneSearch.trim() ? `${filteredZones.length} / ${zones.length} 个片区` : `共 ${zones.length} 个片区`}
+            </div>
+          </div>
           <Button size="sm" onClick={openAddZone}>
             <Plus className="size-4 mr-1" />
             新增片区
@@ -160,7 +185,7 @@ export default function ZoneManagementPage() {
         </div>
 
         <div className="space-y-3">
-          {zones.map((zone) => {
+          {filteredZones.map((zone) => {
             const isExpanded = expandedZone === zone.id
             return (
               <div key={zone.id} className="border rounded-lg overflow-hidden">
@@ -268,8 +293,10 @@ export default function ZoneManagementPage() {
             )
           })}
 
-          {zones.length === 0 && (
-            <div className="text-sm text-muted-foreground py-10 text-center">暂无片区，点击右上角「新增片区」开始</div>
+          {filteredZones.length === 0 && (
+            <div className="text-sm text-muted-foreground py-10 text-center">
+              {zoneSearch.trim() ? "无匹配的片区" : "暂无片区，点击右上角「新增片区」开始"}
+            </div>
           )}
         </div>
       </Card>
