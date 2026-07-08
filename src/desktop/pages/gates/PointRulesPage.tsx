@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { PageLayout } from "../../components/common/PageLayout"
 import { Button } from "../../../shared/components/ui/button"
 import { Badge } from "../../../shared/components/ui/badge"
@@ -7,8 +7,10 @@ import { Label } from "../../../shared/components/ui/label"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../shared/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Switch } from "../../../shared/components/ui/switch"
-import { Plus, Settings2, TrendingUp, TrendingDown, Pencil, Trash2 } from "lucide-react"
+import { Plus, Settings2, TrendingUp, TrendingDown, Pencil, Trash2, Search } from "lucide-react"
 import { toast } from "sonner"
+import { usePagination } from "@/shared/hooks/usePagination"
+import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import { usePointsStore, type PointRule } from "../../../features/points/store/points-store"
 
 export function PointRulesPage() {
@@ -19,6 +21,21 @@ export function PointRulesPage() {
 
   const [editing, setEditing] = useState<PointRule | null>(null)
   const [creating, setCreating] = useState(false)
+
+  const [searchQuery, setSearchQuery] = useState("")
+  const [directionFilter, setDirectionFilter] = useState<"all" | "IN" | "OUT">("all")
+
+  const filteredList = useMemo(() => {
+    let list = rules
+    if (directionFilter === "IN") list = list.filter((r) => r.direction === "IN")
+    else if (directionFilter === "OUT") list = list.filter((r) => r.direction === "OUT")
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      list = list.filter((r) => (r.code || "").toLowerCase().includes(q) || (r.label || "").toLowerCase().includes(q))
+    }
+    return list
+  }, [rules, directionFilter, searchQuery])
+  const pagination = usePagination(filteredList, 10)
 
   const blank: PointRule = { code: "", label: "", points: 1, direction: "IN", enabled: true }
   const [form, setForm] = useState<PointRule>(blank)
@@ -63,6 +80,34 @@ export function PointRulesPage() {
         </Button>
       </div>
 
+      <div className="flex items-center justify-between mb-4 gap-4">
+        <div className="flex items-center gap-2">
+          {[
+            { value: "all", label: "全部" },
+            { value: "IN", label: "赚取" },
+            { value: "OUT", label: "消耗" },
+          ].map((item) => (
+            <Button
+              key={item.value}
+              variant={directionFilter === item.value ? "default" : "outline"}
+              size="sm"
+              onClick={() => setDirectionFilter(item.value as "all" | "IN" | "OUT")}
+            >
+              {item.label}
+            </Button>
+          ))}
+        </div>
+        <div className="relative w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input
+            placeholder="搜索编码或名称..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 h-9"
+          />
+        </div>
+      </div>
+
       <div className="bg-white rounded-lg border border-border-light overflow-hidden">
         <Table>
           <TableHeader>
@@ -77,7 +122,14 @@ export function PointRulesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rules.map((r) => (
+            {filteredList.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-10 text-text-tertiary">
+                  暂无规则
+                </TableCell>
+              </TableRow>
+            ) : (
+              pagination.paginatedItems.map((r) => (
               <TableRow key={r.code}>
                 <TableCell>
                   <code className="text-[12px] bg-gray-50 px-1.5 py-0.5 rounded">{r.code}</code>
@@ -113,10 +165,19 @@ export function PointRulesPage() {
                   </Button>
                 </TableCell>
               </TableRow>
-            ))}
+            )))}
           </TableBody>
         </Table>
       </div>
+
+      <PaginationBar
+        page={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={pagination.setCurrentPage}
+        pageSize={10}
+        onPageSizeChange={() => {}}
+        total={pagination.total}
+      />
 
       <Dialog
         open={creating || !!editing}

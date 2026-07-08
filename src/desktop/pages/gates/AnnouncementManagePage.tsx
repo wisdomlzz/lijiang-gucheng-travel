@@ -10,6 +10,8 @@ import { ConfirmDialog } from "../../components/common/ConfirmDialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Plus, Trash2, Upload, X, Search } from "lucide-react"
 import { toast } from "sonner"
+import { usePagination } from "@/shared/hooks/usePagination"
+import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import { useAnnouncementStore, type Announcement } from "../../../features/announcement/store/announcement-store"
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
@@ -34,6 +36,8 @@ export function AnnouncementManagePage() {
     .filter((a) => filterStatus === "all" || a.status === filterStatus)
     .filter((a) => !searchKeyword || a.title.includes(searchKeyword))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+
+  const pagination = usePagination(filteredAnnouncements, 10)
 
   // 初始化新增数据
   const getDefaultAnnouncement = (): Announcement => ({
@@ -222,7 +226,7 @@ export function AnnouncementManagePage() {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredAnnouncements.map((ann) => (
+              pagination.paginatedItems.map((ann) => (
                 <TableRow key={ann.id}>
                   <TableCell className="font-medium">{ann.title}</TableCell>
                   <TableCell>{getStatusBadge(ann.status)}</TableCell>
@@ -288,6 +292,17 @@ export function AnnouncementManagePage() {
             )}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="mt-4">
+        <PaginationBar
+          page={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={pagination.setCurrentPage}
+          pageSize={10}
+          onPageSizeChange={() => {}}
+          total={pagination.total}
+        />
       </div>
 
       {/* 新增/编辑弹窗 */}

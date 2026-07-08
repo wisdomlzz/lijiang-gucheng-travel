@@ -1,12 +1,15 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { PageLayout } from "../../components/common/PageLayout"
 import { Button } from "../../../shared/components/ui/button"
 import { Badge } from "../../../shared/components/ui/badge"
+import { Input } from "../../../shared/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../shared/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../shared/components/ui/dialog"
 import { Textarea } from "../../../shared/components/ui/textarea"
-import { Store, Check, X, UserPlus } from "lucide-react"
+import { Store, Check, X, UserPlus, Search } from "lucide-react"
 import { toast } from "sonner"
+import { usePagination } from "@/shared/hooks/usePagination"
+import { PaginationBar } from "@/shared/components/ui/data-toolbar"
 import {
   useMerchantReviewStore,
   useMerchantRegistrationStore,
@@ -65,6 +68,22 @@ function ClaimReview() {
   const [detail, setDetail] = useState<ShopClaimRequest | null>(null)
   const [rejectTarget, setRejectTarget] = useState<ShopClaimRequest | null>(null)
   const [rejectReason, setRejectReason] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredList = useMemo(() => {
+    let list = [...claimRequests]
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      list = list.filter(
+        (r) =>
+          (r.claimedShopName || "").toLowerCase().includes(q) ||
+          (r.userName || "").toLowerCase().includes(q) ||
+          (r.userPhone || "").includes(q)
+      )
+    }
+    return list
+  }, [claimRequests, searchQuery])
+  const pagination = usePagination(filteredList, 10)
 
   const handleApprove = (req: ShopClaimRequest) => {
     approveRegistration(req.id, "管理员")
@@ -88,6 +107,16 @@ function ClaimReview() {
         {pendingCount > 0 && <Badge className="bg-rose-500">待审核 {pendingCount}</Badge>}
       </div>
 
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+        <Input
+          placeholder="搜索店铺名称、申请人、电话..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9 h-9 max-w-xs"
+        />
+      </div>
+
       <div className="bg-white rounded-lg border border-border-light overflow-hidden">
         <Table>
           <TableHeader>
@@ -101,14 +130,14 @@ function ClaimReview() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {claimRequests.length === 0 ? (
+            {filteredList.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-10 text-text-tertiary">
                   暂无认领申请
                 </TableCell>
               </TableRow>
             ) : (
-              claimRequests.map((r) => (
+              pagination.paginatedItems.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">{r.claimedShopName}</TableCell>
                   <TableCell className="text-[12px] text-text-secondary">{r.userName}</TableCell>
@@ -154,6 +183,15 @@ function ClaimReview() {
           </TableBody>
         </Table>
       </div>
+
+      <PaginationBar
+        page={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={pagination.setCurrentPage}
+        pageSize={10}
+        onPageSizeChange={() => {}}
+        total={pagination.total}
+      />
 
       {/* 详情弹窗 */}
       <Dialog
@@ -249,6 +287,22 @@ function NewShopReview() {
   const [detail, setDetail] = useState<ShopClaimRequest | null>(null)
   const [rejectTarget, setRejectTarget] = useState<ShopClaimRequest | null>(null)
   const [rejectReason, setRejectReason] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredList = useMemo(() => {
+    let list = [...newShopRequests]
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      list = list.filter(
+        (r) =>
+          (r.newShopName || "").toLowerCase().includes(q) ||
+          (r.userName || "").toLowerCase().includes(q) ||
+          (r.newPhone || "").includes(q)
+      )
+    }
+    return list
+  }, [newShopRequests, searchQuery])
+  const pagination = usePagination(filteredList, 10)
 
   const handleApprove = (req: ShopClaimRequest) => {
     approveRegistration(req.id, "管理员")
@@ -272,6 +326,16 @@ function NewShopReview() {
         {pendingCount > 0 && <Badge className="bg-rose-500">待审核 {pendingCount}</Badge>}
       </div>
 
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+        <Input
+          placeholder="搜索店铺名称、申请人、电话..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9 h-9 max-w-xs"
+        />
+      </div>
+
       <div className="bg-white rounded-lg border border-border-light overflow-hidden">
         <Table>
           <TableHeader>
@@ -286,14 +350,14 @@ function NewShopReview() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {newShopRequests.length === 0 ? (
+            {filteredList.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-10 text-text-tertiary">
                   暂无入驻申请
                 </TableCell>
               </TableRow>
             ) : (
-              newShopRequests.map((r) => (
+              pagination.paginatedItems.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">{r.newShopName}</TableCell>
                   <TableCell className="text-[12px] text-text-secondary">{r.userName}</TableCell>
@@ -350,6 +414,15 @@ function NewShopReview() {
           </TableBody>
         </Table>
       </div>
+
+      <PaginationBar
+        page={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={pagination.setCurrentPage}
+        pageSize={10}
+        onPageSizeChange={() => {}}
+        total={pagination.total}
+      />
 
       {/* 详情弹窗 */}
       <Dialog
@@ -468,6 +541,21 @@ function InfoChangeReview() {
   const [detail, setDetail] = useState<MerchantChangeRequest | null>(null)
   const [rejectTarget, setRejectTarget] = useState<MerchantChangeRequest | null>(null)
   const [rejectReason, setRejectReason] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredList = useMemo(() => {
+    let list = [...requests]
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      list = list.filter(
+        (r) =>
+          (r.merchantName || "").toLowerCase().includes(q) ||
+          (r.supplierName || "").toLowerCase().includes(q)
+      )
+    }
+    return list
+  }, [requests, searchQuery])
+  const pagination = usePagination(filteredList, 10)
 
   const handleApprove = (r: MerchantChangeRequest) => {
     approve(r.id, "管理员")
@@ -490,6 +578,16 @@ function InfoChangeReview() {
         {pendingCount > 0 && <Badge className="bg-rose-500">待审核 {pendingCount}</Badge>}
       </div>
 
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+        <Input
+          placeholder="搜索店铺名称、商户..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9 h-9 max-w-xs"
+        />
+      </div>
+
       <div className="bg-white rounded-lg border border-border-light overflow-hidden">
         <Table>
           <TableHeader>
@@ -503,10 +601,17 @@ function InfoChangeReview() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {requests.map((r) => (
-              <TableRow key={r.id}>
-                <TableCell className="font-medium">{r.merchantName}</TableCell>
-                <TableCell className="text-[12px] text-text-secondary">{r.supplierName}</TableCell>
+            {filteredList.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-10 text-text-tertiary">
+                  暂无变更申请
+                </TableCell>
+              </TableRow>
+            ) : (
+              pagination.paginatedItems.map((r) => (
+                <TableRow key={r.id}>
+                  <TableCell className="font-medium">{r.merchantName}</TableCell>
+                  <TableCell className="text-[12px] text-text-secondary">{r.supplierName}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {r.fields.map((f) => (
@@ -552,10 +657,19 @@ function InfoChangeReview() {
                   )}
                 </TableCell>
               </TableRow>
-            ))}
+            )))}
           </TableBody>
         </Table>
       </div>
+
+      <PaginationBar
+        page={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={pagination.setCurrentPage}
+        pageSize={10}
+        onPageSizeChange={() => {}}
+        total={pagination.total}
+      />
 
       {/* 详情弹窗 */}
       <Dialog

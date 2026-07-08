@@ -56,6 +56,14 @@ export function ServiceOrderDetail({
   const [toast, setToast] = useState("")
   const liveOrder = useConvenienceStore((s) => (order ? s.orders.find((item) => item.id === order.id) : undefined))
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  const showToast = (t: string) => {
+    clearTimeout(toastTimerRef.current)
+    setToast(t)
+    toastTimerRef.current = setTimeout(() => setToast(""), 1600)
+  }
+
   useEffect(() => {
     setFlow(null)
     setHasPaymentProof(false)
@@ -71,14 +79,6 @@ export function ServiceOrderDetail({
   const stageIndex = stages.findIndex((s) => s.key === cur)
   const hasUploadedPaymentProof = hasPaymentProof || Boolean(order.paymentProof) || Boolean(liveOrder?.paymentProof)
   const isFixed = order.pricingMode === "fixed"
-
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  const showToast = (t: string) => {
-    clearTimeout(toastTimerRef.current)
-    setToast(t)
-    toastTimerRef.current = setTimeout(() => setToast(""), 1600)
-  }
 
   const VALID_TRANSITIONS = B_STATE_TRANSITIONS
 
