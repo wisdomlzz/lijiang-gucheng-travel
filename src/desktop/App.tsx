@@ -1,4 +1,5 @@
 import { Suspense, lazy } from "react"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Routes, Route } from "react-router"
 import { useAuthStore } from "@/platform/auth"
 import { LoginPageDesktop } from "../shared/components/LoginPageDesktop"
@@ -54,7 +55,16 @@ const AIKnowledgeBasePage = lazy(() => import("./pages/AIKnowledgeBasePage").the
 const BookingManagePage = lazy(() => import("../features/booking/desktop/pages/BookingManagePage"))
 
 function Loading() {
-  return <div className="flex items-center justify-center h-screen">加载中...</div>
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="space-y-4 w-64">
+        <Skeleton className="h-8 w-1/2 mx-auto" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-3/4 mx-auto" />
+      </div>
+    </div>
+  )
 }
 
 export function DesktopApp() {

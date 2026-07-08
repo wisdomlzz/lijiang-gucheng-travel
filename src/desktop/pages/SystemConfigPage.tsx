@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/shared/components/ui/card"
 import { Input } from "@/shared/components/ui/input"
 import { Button } from "@/shared/components/ui/button"
 import { Label } from "@/shared/components/ui/label"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 import { api } from "@/api/client"
 import { toast } from "sonner"
 import { Settings } from "lucide-react"
@@ -54,7 +55,16 @@ export default function SystemConfigPage() {
   if (loading) {
     return (
       <PageLayout title="系统配置" description="取消扣费、派单参数、超时时间等">
-        <div className="text-center text-muted-foreground py-8">加载中...</div>
+        <div className="space-y-4 p-4">
+          <Skeleton className="h-6 w-1/3" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-6 w-1/4" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-6 w-1/5" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-6 w-1/3" />
+          <Skeleton className="h-10 w-full" />
+        </div>
       </PageLayout>
     )
   }
