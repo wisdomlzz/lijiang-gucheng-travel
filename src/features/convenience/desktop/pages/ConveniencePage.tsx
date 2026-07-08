@@ -1,50 +1,16 @@
 import { useMemo, useState } from "react"
-import { Card, CardContent } from "../../../../shared/components/ui/card"
-import { Tabs, TabsList, TabsTrigger } from "../../../../shared/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../shared/components/ui/table"
-import { Button } from "../../../../shared/components/ui/button"
-import { Badge } from "../../../../shared/components/ui/badge"
-import { Input } from "../../../../shared/components/ui/input"
-import { Textarea } from "../../../../shared/components/ui/textarea"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "../../../../shared/components/ui/dialog"
 import { PageLayout } from "../../../../desktop/components/common/PageLayout"
-import { StatusBadge } from "@/shared/components/ui/status-badge"
 import { useConvenienceStore, useStaffStore } from "../../store"
 import { usePagination } from "@/shared/hooks/usePagination"
-import { PaginationBar } from "@/shared/components/ui/data-toolbar"
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Search,
-  RefreshCw,
-  XCircle,
-  Eye,
-  Ban,
-  Image as ImageIcon,
-  Undo2,
-} from "lucide-react"
 import { toast } from "sonner"
 import type { ConvenienceServiceType, ConvenienceOrder } from "../../../../shared/types"
-
-// ====== Tab label config ======
-type TabKey = "all" | "pending-review" | "manual" | "cancel-approval" | "price-review" | "payment-proof"
-const TABS: { key: TabKey; label: string }[] = [
-  { key: "all", label: "全部订单" },
-  { key: "pending-review", label: "待派单" },
-  { key: "manual", label: "人工处理" },
-  { key: "cancel-approval", label: "取消审批" },
-  { key: "price-review", label: "报价审核" },
-  { key: "payment-proof", label: "付款凭证" },
-]
+import { TabNavigation } from "./orders/TabNavigation"
+import { OrderTableTab } from "./orders/OrderTableTab"
+import { OrderDialogs } from "./orders/OrderDialogs"
+import { type TabKey } from "./orders/tab-config"
 
 export default function ConveniencePage() {
+  // ---- Store selectors ----
   const orders = useConvenienceStore((s) => s.orders)
   const staffList = useStaffStore((s) => s.staff)
   const dispatchLog = useConvenienceStore((s) => s.dispatchLog)
@@ -61,6 +27,7 @@ export default function ConveniencePage() {
   const forceCancelWithReason = useConvenienceStore((s) => s.forceCancelWithReason)
   const restoreQuote = useConvenienceStore((s) => s.restoreQuote)
 
+  // ---- State declarations ----
   const [activeTab, setActiveTab] = useState<TabKey>("all")
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -80,20 +47,35 @@ export default function ConveniencePage() {
 
   // ---- Derived data ----
   const allOrders = orders
-  const pendingReviewOrders = useMemo(() => orders.filter((o) => o.status === "S90" || o.status === "S10" || o.status === "A10"), [orders])
+  const pendingReviewOrders = useMemo(
+    () => orders.filter((o) => o.status === "S90" || o.status === "S10" || o.status === "A10"),
+    [orders],
+  )
   const manualOrders = useMemo(() => orders.filter((o) => o.status === "S90"), [orders])
   const cancelRequestOrders = useMemo(() => orders.filter((o) => o.cancelRequested), [orders])
-  const priceReviewOrders = useMemo(() => orders.filter((o) => o.status === "A35" && !o.cancelRequested), [orders])
-  const paymentProofOrders = useMemo(() => orders.filter((o) => o.paymentProof && o.status !== "S40" && o.status !== "S50"), [orders])
+  const priceReviewOrders = useMemo(
+    () => orders.filter((o) => o.status === "A35" && !o.cancelRequested),
+    [orders],
+  )
+  const paymentProofOrders = useMemo(
+    () => orders.filter((o) => o.paymentProof && o.status !== "S40" && o.status !== "S50"),
+    [orders],
+  )
 
   const getActiveOrders = (): ConvenienceOrder[] => {
     switch (activeTab) {
-      case "pending-review": return pendingReviewOrders
-      case "manual": return manualOrders
-      case "cancel-approval": return cancelRequestOrders
-      case "price-review": return priceReviewOrders
-      case "payment-proof": return paymentProofOrders
-      default: return allOrders
+      case "pending-review":
+        return pendingReviewOrders
+      case "manual":
+        return manualOrders
+      case "cancel-approval":
+        return cancelRequestOrders
+      case "price-review":
+        return priceReviewOrders
+      case "payment-proof":
+        return paymentProofOrders
+      default:
+        return allOrders
     }
   }
 
@@ -106,7 +88,7 @@ export default function ConveniencePage() {
           o.id.toLowerCase().includes(q) ||
           (o.serviceType as string).toLowerCase().includes(q) ||
           (o.address || "").toLowerCase().includes(q) ||
-          (o.staffName || "").toLowerCase().includes(q)
+          (o.staffName || "").toLowerCase().includes(q),
       )
     }
     return list
@@ -178,9 +160,22 @@ export default function ConveniencePage() {
     }
   }
 
-  const handleForceCancel = () => {
+  const handleOpenForceCancelDialog = (orderId: string) => {
+    setForceCancelTarget(orderId)
+    setForceCancelReason("")
+  }
+
+  const handleForceCancelDirect = (orderId: string) => {
+    forceCancel(orderId)
+    toast.success("已驳回该订单")
+  }
+
+  const handleForceCancelWithReason = () => {
     if (!forceCancelTarget) return
-    if (!forceCancelReason.trim()) { toast.error("请输入取消理由"); return }
+    if (!forceCancelReason.trim()) {
+      toast.error("请输入取消理由")
+      return
+    }
     forceCancelWithReason(forceCancelTarget, forceCancelReason)
     setForceCancelTarget(null)
     setForceCancelReason("")
@@ -192,44 +187,42 @@ export default function ConveniencePage() {
     toast.success("已恢复报价状态")
   }
 
-  // Manual dispatch candidates
+  // ---- Manual dispatch candidates ----
   const manualCandidates = useMemo(() => {
     if (!manualTarget) return []
     const order = orders.find((o) => o.id === manualTarget)
     if (!order) return []
     return staffList.filter(
-      (s) => s.enabled && s.status === "online" && s.serviceTypes?.includes(order.serviceType as ConvenienceServiceType)
+      (s) =>
+        s.enabled &&
+        s.status === "online" &&
+        s.serviceTypes?.includes(order.serviceType as ConvenienceServiceType),
     )
   }, [manualTarget, orders, staffList])
 
   const filteredCandidates = useMemo(() => {
     if (!staffSearch.trim()) return manualCandidates
     const q = staffSearch.trim().toLowerCase()
-    return manualCandidates.filter((s) => s.name.toLowerCase().includes(q) || s.phone.includes(q))
+    return manualCandidates.filter(
+      (s) => s.name.toLowerCase().includes(q) || s.phone.includes(q),
+    )
   }, [manualCandidates, staffSearch])
-
-  // ---- Filter chips per tab ----
-  const TabFilters = () => (
-    <div className="relative w-56">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-      <Input
-        placeholder="搜索订单号、地址、人员..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="pl-9 h-9 text-sm"
-      />
-    </div>
-  )
 
   // ---- Count badges for tabs ----
   const tabBadge = (key: TabKey): number | undefined => {
     switch (key) {
-      case "pending-review": return pendingReviewOrders.length || undefined
-      case "manual": return manualOrders.length || undefined
-      case "cancel-approval": return cancelRequestOrders.length || undefined
-      case "price-review": return priceReviewOrders.length || undefined
-      case "payment-proof": return paymentProofOrders.length || undefined
-      default: return undefined
+      case "pending-review":
+        return pendingReviewOrders.length || undefined
+      case "manual":
+        return manualOrders.length || undefined
+      case "cancel-approval":
+        return cancelRequestOrders.length || undefined
+      case "price-review":
+        return priceReviewOrders.length || undefined
+      case "payment-proof":
+        return paymentProofOrders.length || undefined
+      default:
+        return undefined
     }
   }
 
@@ -237,566 +230,57 @@ export default function ConveniencePage() {
 
   return (
     <PageLayout title="订单管理" description="便民服务订单全生命周期管理">
-      {/* Tab 导航 + 筛选 */}
-      <div className="flex items-center justify-between mb-4">
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabKey)}>
-          <TabsList>
-            {TABS.map((tab) => (
-              <TabsTrigger key={tab.key} value={tab.key} className="relative">
-                {tab.label}
-                {tabBadge(tab.key) && (
-                  <Badge className="ml-1.5 bg-amber-500 text-white text-[10px] px-1.5 py-0">
-                    {tabBadge(tab.key)}
-                  </Badge>
-                )}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-        <TabFilters />
-      </div>
-
-      {/* ===== Tab 1: 全部订单 ===== */}
-      {activeTab === "all" && (
-        <Card className="p-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>订单号</TableHead>
-                <TableHead>服务类型</TableHead>
-                <TableHead>地址</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>服务人员</TableHead>
-                <TableHead>金额</TableHead>
-                <TableHead>时间</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pagination.paginatedItems.map((o) => (
-                <TableRow key={o.id}>
-                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                  <TableCell>{o.serviceType}</TableCell>
-                  <TableCell className="max-w-[180px] truncate">{o.address}</TableCell>
-                  <TableCell><StatusBadge status={o.status} kind="order" /></TableCell>
-                  <TableCell>{o.staffName || "-"}</TableCell>
-                  <TableCell>{o.priceQuote ? `¥${o.priceQuote}` : "-"}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{o.createdAt}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-1 justify-end">
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setDetailOrderId(o.id)} title="详情">
-                        <Eye className="size-3.5" />
-                      </Button>
-                      {(o.status === "S10" || o.status === "A10" || o.status === "S90") && (
-                        <>
-                          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleManualDispatch(o.id)}>
-                            派单
-                          </Button>
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => handleAutoRetry(o.id)} title="重试">
-                            <RefreshCw className="size-3.5" />
-                          </Button>
-                        </>
-                      )}
-                      {(o.status !== "S40" && o.status !== "S50") && (
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-rose-600"
-                          onClick={() => { setForceCancelTarget(o.id); setForceCancelReason("") }}
-                          title="强制取消">
-                          <Ban className="size-3.5" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredOrders.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                    {searchQuery.trim() ? "无匹配订单" : "暂无订单"}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <div className="mt-3 border-t pt-3">
-            <PaginationBar
-              page={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              onPageChange={pagination.setCurrentPage}
-              pageSize={10}
-              onPageSizeChange={() => {}}
-              total={pagination.total}
-            />
-          </div>
-        </Card>
-      )}
-
-      {/* ===== Tab 2: 待审核 ===== */}
-      {activeTab === "pending-review" && (
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle className="size-4 text-amber-500" />
-            <span className="text-sm text-muted-foreground">以下订单需要管理员审核处理</span>
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>订单号</TableHead>
-                <TableHead>服务类型</TableHead>
-                <TableHead>地址</TableHead>
-                <TableHead>当前状态</TableHead>
-                <TableHead>原因</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pagination.paginatedItems.map((o) => (
-                <TableRow key={o.id}>
-                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                  <TableCell>{o.serviceType}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">{o.address}</TableCell>
-                  <TableCell><StatusBadge status={o.status} kind="order" /></TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {o.status === "S90" ? "需人工干预" : o.status === "S10" ? "待派单" : "待处理"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-1 justify-end">
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
-                        onClick={() => handleResolvePendingReview(o.id, o.status)}>
-                        <CheckCircle2 className="size-3 mr-1" /> 通过
-                      </Button>
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
-                        onClick={() => { forceCancel(o.id); toast.success("已驳回该订单") }}>
-                        <XCircle className="size-3 mr-1" /> 驳回
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredOrders.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无待审核订单
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <div className="mt-3 border-t pt-3">
-            <PaginationBar
-              page={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              onPageChange={pagination.setCurrentPage}
-              pageSize={10}
-              onPageSizeChange={() => {}}
-              total={pagination.total}
-            />
-          </div>
-        </Card>
-      )}
-
-      {/* ===== Tab 3: 取消审批 ===== */}
-      {activeTab === "cancel-approval" && (
-        <Card className="p-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>订单号</TableHead>
-                <TableHead>服务类型</TableHead>
-                <TableHead>地址</TableHead>
-                <TableHead>当前状态</TableHead>
-                <TableHead>服务人员</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pagination.paginatedItems.map((o) => (
-                <TableRow key={o.id}>
-                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                  <TableCell>{o.serviceType}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">{o.address}</TableCell>
-                  <TableCell><StatusBadge status={o.status} kind="order" /></TableCell>
-                  <TableCell>{o.staffName || "-"}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-1 justify-end">
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
-                        onClick={() => handleApproveCancel(o.id)}>
-                        <CheckCircle2 className="size-3 mr-1" /> 同意
-                      </Button>
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
-                        onClick={() => { setRejectDialogId(o.id); setRejectReason("") }}>
-                        <XCircle className="size-3 mr-1" /> 拒绝
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredOrders.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无取消申请
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <div className="mt-3 border-t pt-3">
-            <PaginationBar
-              page={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              onPageChange={pagination.setCurrentPage}
-              pageSize={10}
-              onPageSizeChange={() => {}}
-              total={pagination.total}
-            />
-          </div>
-        </Card>
-      )}
-
-      {/* ===== Tab 4: 报价审核 ===== */}
-      {activeTab === "price-review" && (
-        <Card className="p-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>订单号</TableHead>
-                <TableHead>服务类型</TableHead>
-                <TableHead>地址</TableHead>
-                <TableHead>服务人员</TableHead>
-                <TableHead>报价</TableHead>
-                <TableHead>参考价</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pagination.paginatedItems.map((o) => (
-                <TableRow key={o.id}>
-                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                  <TableCell>{o.serviceType}</TableCell>
-                  <TableCell className="max-w-[180px] truncate">{o.address}</TableCell>
-                  <TableCell>{o.staffName || "-"}</TableCell>
-                  <TableCell className="font-medium">
-                    <span className="text-blue-600">¥{o.priceQuote ?? "-"}</span>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {o.refPrice ? `¥${o.refPrice}` : "-"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-1 justify-end">
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
-                        onClick={() => handleApprovePrice(o.id)}>
-                        <CheckCircle2 className="size-3 mr-1" /> 通过
-                      </Button>
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
-                        onClick={() => handleRejectPrice(o.id)}>
-                        <Ban className="size-3 mr-1" /> 驳回
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredOrders.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无待审核报价
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <div className="mt-3 border-t pt-3">
-            <PaginationBar
-              page={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              onPageChange={pagination.setCurrentPage}
-              pageSize={10}
-              onPageSizeChange={() => {}}
-              total={pagination.total}
-            />
-          </div>
-        </Card>
-      )}
-
-      {/* ===== Tab 5: 付款凭证 ===== */}
-      {activeTab === "payment-proof" && (
-        <Card className="p-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>订单号</TableHead>
-                <TableHead>服务类型</TableHead>
-                <TableHead>地址</TableHead>
-                <TableHead>服务人员</TableHead>
-                <TableHead>金额</TableHead>
-                <TableHead>凭证</TableHead>
-                <TableHead>上传时间</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pagination.paginatedItems.map((o) => (
-                <TableRow key={o.id}>
-                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                  <TableCell>{o.serviceType}</TableCell>
-                  <TableCell className="max-w-[160px] truncate">{o.address}</TableCell>
-                  <TableCell>{o.staffName || "-"}</TableCell>
-                  <TableCell className="font-medium">¥{o.priceQuote ?? "-"}</TableCell>
-                  <TableCell>
-                    {o.paymentProof ? (
-                      <a href={o.paymentProof} target="_blank" rel="noopener noreferrer">
-                        <ImageIcon className="size-5 text-blue-500 cursor-pointer hover:text-blue-700" />
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{o.completedAt || o.createdAt}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-1 justify-end">
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
-                        onClick={() => handleApprovePayment(o.id)}>
-                        <CheckCircle2 className="size-3 mr-1" /> 确认
-                      </Button>
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
-                        onClick={() => handleRejectPayment(o.id)}>
-                        <XCircle className="size-3 mr-1" /> 驳回
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredOrders.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无待审核付款凭证
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <div className="mt-3 border-t pt-3">
-            <PaginationBar
-              page={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              onPageChange={pagination.setCurrentPage}
-              pageSize={10}
-              onPageSizeChange={() => {}}
-              total={pagination.total}
-            />
-          </div>
-        </Card>
-      )}
-
-      {/* ===== Tab 6: 人工处理 ===== */}
-      {activeTab === "manual" && (
-        <Card className="p-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>订单号</TableHead>
-                <TableHead>服务类型</TableHead>
-                <TableHead>异常原因</TableHead>
-                <TableHead>进入前状态</TableHead>
-                <TableHead>服务人员</TableHead>
-                <TableHead>金额</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pagination.paginatedItems.map((o) => (
-                <TableRow key={o.id}>
-                  <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                  <TableCell>{o.serviceType}</TableCell>
-                  <TableCell>
-                    <Badge variant="destructive">
-                      {o.manualReason === "dispatch_failed" ? "派单失败" :
-                       o.manualReason === "quote_rejected" ? "报价争议" :
-                       o.manualReason === "pay_timeout" ? "支付超时" : o.manualReason || "未知"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{o.beforeManualStatus || "-"}</TableCell>
-                  <TableCell>{o.staffName || "-"}</TableCell>
-                  <TableCell>{o.priceQuote ? `¥${o.priceQuote}` : "-"}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-1 justify-end">
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-200"
-                        onClick={() => handleAutoRetry(o.id)}>
-                        <RefreshCw className="size-3 mr-1" /> 重试
-                      </Button>
-                      {o.manualReason === "quote_rejected" && (
-                        <Button variant="outline" size="sm" className="h-7 text-xs text-blue-600 border-blue-200"
-                          onClick={() => handleRestoreQuote(o.id)}>
-                          <Undo2 className="size-3 mr-1" /> 恢复
-                        </Button>
-                      )}
-                      <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-200"
-                        onClick={() => { setForceCancelTarget(o.id); setForceCancelReason("") }}>
-                        <Ban className="size-3 mr-1" /> 强制取消
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredOrders.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                    <CheckCircle2 className="size-5 text-emerald-500 inline mr-1" /> 暂无人工处理订单
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <div className="mt-3 border-t pt-3">
-            <PaginationBar
-              page={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              onPageChange={pagination.setCurrentPage}
-              pageSize={10}
-              onPageSizeChange={() => {}}
-              total={pagination.total}
-            />
-          </div>
-        </Card>
-      )}
-
-      {/* 手动派单弹窗 */}
-      <Dialog open={manualDialogOpen} onOpenChange={(open) => { setManualDialogOpen(open); if (!open) setStaffSearch("") }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>手动派单</DialogTitle>
-            <DialogDescription>选择服务人员进行手工派单</DialogDescription>
-          </DialogHeader>
-          <div className="relative mb-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              placeholder="搜索姓名或手机号..."
-              value={staffSearch}
-              onChange={(e) => setStaffSearch(e.target.value)}
-              className="pl-9 h-9 text-sm"
-            />
-          </div>
-          <div className="space-y-2 max-h-60 overflow-y-auto">
-            {filteredCandidates.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-4 text-center">
-                {staffSearch.trim() ? "无匹配的服务人员" : "无可用服务人员"}
-              </div>
-            ) : (
-              filteredCandidates.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  className="w-full flex items-center justify-between p-3 rounded-lg border hover:bg-slate-50 cursor-pointer transition-colors text-left"
-                  onClick={() => confirmManualDispatch(s.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="size-8 rounded-full bg-gradient-to-br from-sky-100 to-blue-100 grid place-items-center text-blue-700 text-xs font-medium">
-                      {s.name.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium">{s.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {s.phone} · 今日接单 {s.assignedOrders}
-                      </div>
-                    </div>
-                  </div>
-                  <Badge className={s.status === "online" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
-                    {s.status === "online" ? "在线" : "忙碌"}
-                  </Badge>
-                </button>
-              ))
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setManualDialogOpen(false)}>取消</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* 拒绝取消弹窗 */}
-      <Dialog open={rejectDialogId !== null} onOpenChange={(open) => !open && setRejectDialogId(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>拒绝取消</DialogTitle>
-            <DialogDescription>请输入拒绝取消的原因</DialogDescription>
-          </DialogHeader>
-          <Textarea
-            placeholder="请输入拒绝原因..."
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            rows={3}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRejectDialogId(null)}>取消</Button>
-            <Button variant="destructive" onClick={handleRejectCancel}>确认拒绝</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* 订单详情弹窗 */}
-      <Dialog open={detailOrderId !== null} onOpenChange={(open) => !open && setDetailOrderId(null)}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>订单详情</DialogTitle>
-          </DialogHeader>
-          {detailOrder && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                <div><span className="text-muted-foreground">订单号：</span><span className="font-mono">{detailOrder.id}</span></div>
-                <div><span className="text-muted-foreground">服务类型：</span><span>{detailOrder.serviceType}</span></div>
-                <div><span className="text-muted-foreground">地址：</span><span>{detailOrder.address}</span></div>
-                <div><span className="text-muted-foreground">状态：</span><StatusBadge status={detailOrder.status} kind="order" /></div>
-                <div><span className="text-muted-foreground">服务人员：</span><span>{detailOrder.staffName || "未指派"}</span></div>
-                <div><span className="text-muted-foreground">金额：</span><span>{detailOrder.priceQuote ? `¥${detailOrder.priceQuote}` : "未报价"}</span></div>
-                <div><span className="text-muted-foreground">下单时间：</span><span>{detailOrder.createdAt}</span></div>
-                <div><span className="text-muted-foreground">支付方式：</span><span>{detailOrder.payMethod === "online" ? "线上支付" : detailOrder.payMethod === "cash" ? "现金" : "未支付"}</span></div>
-              </div>
-              {detailOrder.note && (
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">备注：</div>
-                  <div className="p-3 bg-gray-50 rounded-lg text-sm">{detailOrder.note}</div>
-                </div>
-              )}
-              {detailOrder.completionPhotos && detailOrder.completionPhotos.length > 0 && (
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">完工照片：</div>
-                  <div className="flex gap-2">
-                    {detailOrder.completionPhotos.map((url, i) => (
-                      <img key={i} src={url} alt={`完工照${i + 1}`} className="w-20 h-20 object-cover rounded-lg" />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {detailOrder.paymentProof && (
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">付款凭证：</div>
-                  <a href={detailOrder.paymentProof} target="_blank" rel="noopener noreferrer">
-                    <img src={detailOrder.paymentProof} alt="付款凭证" className="w-40 h-auto rounded-lg border" />
-                  </a>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* 强制取消弹窗 */}
-      <Dialog open={forceCancelTarget !== null} onOpenChange={(open) => !open && setForceCancelTarget(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>强制取消订单</DialogTitle>
-            <DialogDescription>此操作不可撤销，请输入取消理由</DialogDescription>
-          </DialogHeader>
-          <Textarea
-            value={forceCancelReason}
-            onChange={(e) => setForceCancelReason(e.target.value)}
-            placeholder="取消理由（必填）"
-            rows={3}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setForceCancelTarget(null)}>取消</Button>
-            <Button variant="destructive" onClick={handleForceCancel}>确认强制取消</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <TabNavigation
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        tabBadge={tabBadge}
+      />
+      <OrderTableTab
+        activeTab={activeTab}
+        paginatedItems={pagination.paginatedItems}
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={pagination.setCurrentPage}
+        total={pagination.total}
+        filteredOrders={filteredOrders}
+        searchQuery={searchQuery}
+        onViewDetail={setDetailOrderId}
+        onManualDispatch={handleManualDispatch}
+        onAutoRetry={handleAutoRetry}
+        onForceCancelDialog={handleOpenForceCancelDialog}
+        onResolvePendingReview={handleResolvePendingReview}
+        onForceCancel={handleForceCancelDirect}
+        onApproveCancel={handleApproveCancel}
+        onRejectCancelDialog={setRejectDialogId}
+        onApprovePrice={handleApprovePrice}
+        onRejectPrice={handleRejectPrice}
+        onApprovePayment={handleApprovePayment}
+        onRejectPayment={handleRejectPayment}
+        onRestoreQuote={handleRestoreQuote}
+      />
+      <OrderDialogs
+        manualDialogOpen={manualDialogOpen}
+        setManualDialogOpen={setManualDialogOpen}
+        staffSearch={staffSearch}
+        setStaffSearch={setStaffSearch}
+        filteredCandidates={filteredCandidates}
+        confirmManualDispatch={confirmManualDispatch}
+        rejectDialogId={rejectDialogId}
+        setRejectDialogId={setRejectDialogId}
+        rejectReason={rejectReason}
+        setRejectReason={setRejectReason}
+        handleRejectCancel={handleRejectCancel}
+        detailOrderId={detailOrderId}
+        setDetailOrderId={setDetailOrderId}
+        detailOrder={detailOrder}
+        forceCancelTarget={forceCancelTarget}
+        setForceCancelTarget={setForceCancelTarget}
+        forceCancelReason={forceCancelReason}
+        setForceCancelReason={setForceCancelReason}
+        handleForceCancel={handleForceCancelWithReason}
+      />
     </PageLayout>
   )
 }
