@@ -215,7 +215,7 @@ export function DesktopLayout() {
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-gray-50">
+              <button className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-[#F5F7FA]">
                 <Avatar className="size-7">
                   <AvatarFallback className="bg-amber-500 text-white text-xs">{user?.name?.[0] ?? "?"}</AvatarFallback>
                 </Avatar>
@@ -258,9 +258,9 @@ export function DesktopLayout() {
       {/* Notifications Sheet */}
       <Sheet open={showNotifications} onOpenChange={setShowNotifications}>
         <SheetContent side="right" className="w-[420px] sm:max-w-[420px] overflow-y-auto bg-white p-0">
-          <SheetHeader className="p-5 border-b border-slate-100">
+          <SheetHeader className="p-5 border-b border-[#E5E6EB]">
             <div className="flex items-center justify-between">
-              <SheetTitle className="text-base font-semibold text-slate-900">消息与通知</SheetTitle>
+              <SheetTitle className="text-base font-semibold text-[#1D2129]">消息与通知</SheetTitle>
               <SheetClose asChild>
                 <Button variant="ghost" size="icon" className="size-8">
                   <X className="size-4" />
@@ -268,20 +268,20 @@ export function DesktopLayout() {
               </SheetClose>
             </div>
           </SheetHeader>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-[#E5E6EB]">
             {mockNotifications.map((n) => (
               <div
                 key={n.id}
-                className={`flex items-start gap-3 p-4 transition-colors hover:bg-slate-50 cursor-pointer ${
-                  !n.read ? "bg-blue-50/40" : ""
+                className={`flex items-start gap-3 p-4 transition-colors hover:bg-[#F5F7FA] cursor-pointer ${
+                  !n.read ? "bg-primary-50/40" : ""
                 }`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     {!n.read && <span className="size-2 rounded-full bg-primary shrink-0" />}
-                    <p className={`text-sm ${!n.read ? "font-medium text-slate-900" : "text-slate-600"}`}>{n.title}</p>
+                    <p className={`text-sm ${!n.read ? "font-medium text-[#1D2129]" : "text-[#4E5969]"}`}>{n.title}</p>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1 ml-4">{n.time}</p>
+                  <p className="text-xs text-[#86909C] mt-1 ml-4">{n.time}</p>
                 </div>
               </div>
             ))}
